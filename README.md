@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Beautiful Portfolio Template
+
+A modern and responsive portfolio template built with Next.js, Tailwind CSS, and Shadcn UI, and Shadcn UI Blocks.
+
+## Demo
+
+[Live Demo](https://shadcn-portfolio-template.vercel.app/)
+
+## Preview
+
+![Preview](./public/preview.png)
+
+## Features
+
+- 🎨 Modern and clean design
+- 📱 Fully responsive layout
+- 🎯 Built with Next.js 15
+- 💅 Styled with Tailwind CSS `4.0`
+- 🧩 Built with [Shadcn UI](https://ui.shadcn.com) and [Shadcn UI Blocks](https://shadcnui-blocks.com)
+- 🌙 Dark mode support
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+
+```bash
+git clone https://github.com/akash3444/portfolio-template.git
+cd shadcn-ui-landing-page
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Customization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Replace the placeholder images with your own content.
+2. Modify the text and styles in the components to match your brand and messaging.
+3. Add your own features and sections as needed.
 
-## Learn More
+## Why this template?
 
-To learn more about Next.js, take a look at the following resources:
+This project is a base template for a portfolio. It is built with Next.js, Tailwind CSS, Shadcn UI, and Shadcn UI Blocks. It is a great starting point for a portfolio. You can customized the content and media files as per your needs. It is not intended to be a complete solution for a portfolio. It is intended to be a starting point for a portfolio.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+If you have any suggestions or improvements, please create an issue or submit a pull request.
