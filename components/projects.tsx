@@ -4,68 +4,69 @@ import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { GithubLogo } from "./icons";
 
-interface ProjectCardProps {
-  title: string;
-  description: string;
-  image: string;
-  technologies: string[];
-  liveUrl?: string;
-  githubUrl?: string;
+interface ProyectoCardProps {
+  titulo: string;
+  descripcion: string;
+  imagen: string;
+  tecnologias: string[];
+  urlSitio?: string;
+  urlGithub?: string;
 }
 
-const ProjectCard = ({
-  title,
-  description,
-  image,
-  technologies,
-  liveUrl,
-  githubUrl,
-}: ProjectCardProps) => {
+const ProyectoCard = ({
+  titulo,
+  descripcion,
+  imagen,
+  tecnologias,
+  urlSitio,
+  urlGithub,
+}: ProyectoCardProps) => {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-accent transition-all hover:border-primary/50">
-      {/* Project Image */}
+      {/* Imagen del Proyecto */}
       <div className="relative h-64 overflow-hidden bg-accent">
         <Image
-          src={image}
-          alt={title}
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          fill
+          src={imagen}
+          alt={titulo}
+          className="object-cover transition-transform duration-300 group-hover:scale-100"
+          width={500}
+          height={500}
         />
       </div>
 
-      {/* Content */}
+      {/* Contenido */}
       <div className="flex-1 flex flex-col p-6">
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
-        <p className="text-muted-foreground mb-4">{description}</p>
+        <h3 className="text-xl font-semibold mb-2">{titulo}</h3>
+        <p className="text-muted-foreground mb-4">{descripcion}</p>
 
-        {/* Technologies */}
+        {/* Tecnologías */}
         <div className="flex flex-wrap gap-2 mb-6">
-          {technologies.map((tech) => (
+          {tecnologias.map((tech) => (
             <Badge key={tech} variant="secondary" className="rounded-full">
               {tech}
             </Badge>
           ))}
         </div>
 
-        {/* Actions */}
+        {/* Acciones */}
         <div className="flex gap-3 mt-auto">
-          {liveUrl && (
+          {urlSitio && (
             <Button variant="default" className="rounded-full" asChild>
-              <a href={liveUrl} target="_blank" rel="noopener noreferrer">
+              <a href={urlSitio} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="mr-1 h-4 w-4" />
-                Live Demo
+                Ver Sitio
               </a>
             </Button>
           )}
-          {githubUrl && (
+          {urlGithub && (
             <Button
               variant="outline"
               className="rounded-full shadow-none"
               asChild
             >
-              <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+              <a href={urlGithub} target="_blank" rel="noopener noreferrer">
                 <GithubLogo className="mr-1 h-4 w-4" />
-                View Code
+                Ver Código
               </a>
             </Button>
           )}
@@ -75,43 +76,37 @@ const ProjectCard = ({
   );
 };
 
-const Projects = () => {
-  const projects = [
+const Proyectos = () => {
+  const proyectos = [
     {
-      title: "E-Commerce Platform",
-      description:
-        "A full-featured e-commerce platform with real-time inventory management, payment processing, and admin dashboard.",
-      image: "/placeholder.svg",
-      technologies: ["Next.js", "TypeScript", "Stripe", "Prisma", "PostgreSQL"],
-      liveUrl: "https://ecommerce-demo.com",
-      githubUrl: "https://github.com/username/ecommerce",
+      titulo: "Yukayeke Playa",
+      descripcion:
+        "Plataforma web multilingüe para hospedería turística en Añasco, desarrollada con arquitectura moderna y enfoque en la experiencia de usuario y reservas.",
+      imagen: "/yukayeke-preview.png",
+      tecnologias: [
+        "Next.js 14",
+        "TypeScript",
+        "Tailwind CSS",
+        "i18n",
+        "Vercel",
+      ],
+      urlSitio: "https://yukayekeplaya.com",
+      urlGithub: "https://github.com/temiban013/yukayeke.git",
     },
     {
-      title: "AI Task Manager",
-      description:
-        "Smart task management app that uses AI to categorize, prioritize, and suggest optimal task scheduling.",
-      image: "/placeholder.svg",
-      technologies: ["React", "Python", "TensorFlow", "FastAPI", "MongoDB"],
-      liveUrl: "https://ai-taskmanager.com",
-      githubUrl: "https://github.com/username/ai-taskmanager",
-    },
-    {
-      title: "Real-time Chat Application",
-      description:
-        "Feature-rich chat application with real-time messaging, file sharing, and video calls.",
-      image: "/placeholder.svg",
-      technologies: ["React", "Socket.io", "WebRTC", "Node.js", "Redis"],
-      liveUrl: "https://chatapp-demo.com",
-      githubUrl: "https://github.com/username/chat-app",
-    },
-    {
-      title: "AI Image Generator",
-      description:
-        "An AI image generator that uses a model to generate images based on a prompt.",
-      image: "/placeholder.svg",
-      technologies: ["React", "Next.js", "Tailwind CSS", "Shadcn UI"],
-      liveUrl: "https://ai-image-generator.com",
-      githubUrl: "https://github.com/username/ai-image-generator",
+      titulo: "Jíbaro Eats",
+      descripcion:
+        "Plataforma de entrega de comida local que conecta restaurantes boricuas con clientes, incluyendo sistema de pagos, rastreo en tiempo real y panel administrativo.",
+      imagen: "/jibaroeats-preview.png",
+      tecnologias: [
+        "Next.js",
+        "Node.js",
+        "MongoDB",
+        "Stripe",
+        "Google Maps API",
+      ],
+      urlSitio: "https://jibaroeats.com",
+      urlGithub: "https://github.com/temiban013/jibaroeats.git",
     },
   ];
 
@@ -120,19 +115,20 @@ const Projects = () => {
       <div className="max-w-screen-md mx-auto">
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            Projects
+            Proyectos
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Featured Work
+            Trabajo Destacado
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            Showcasing some of my best projects and technical achievements
+            Soluciones tecnológicas innovadoras que he desarrollado e
+            implementado
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, index) => (
-            <ProjectCard key={index} {...project} />
+          {proyectos.map((proyecto) => (
+            <ProyectoCard key={proyecto.titulo} {...proyecto} />
           ))}
         </div>
       </div>
@@ -140,4 +136,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Proyectos;
