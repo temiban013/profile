@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Mario Rafael Ayala",
     url: "https://profile-black-gamma.vercel.app/",
     type: "website",
-    title: "Transformando ideas complejas en soluciones digitales elegantes",
+    title: "Mario Rafael Ayala | Desarrollador Full Stack",
     description:
       "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
     locale: "es-PR",
