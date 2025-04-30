@@ -71,9 +71,15 @@ const ProfileImage = ({
 }: HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("mt-10 w-48 h-48 md:w-64 md:h-64", className)} {...props}>
     <div className="relative w-full h-full rounded-2xl overflow-hidden bg-accent">
-      <Image src="/mra-profile.jpg" alt="" className="object-cover" fill />
+      <Image
+        src="/mra-profile.jpg"
+        alt="Mario Ayala profile"
+        className="object-cover"
+        fill
+        sizes="(max-width: 768px) 100vw, 25vw"
+      />
     </div>
-    <div className="mt-12 flex items-center justify-center gap-4">
+    <div className="mt-12 hidden md:flex items-center justify-center gap-4">
       <Button size="lg" className="rounded-full text-base" asChild>
         <Link href="#experience">
           Mis herramientas

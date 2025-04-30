@@ -10,6 +10,7 @@ import {
 import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
 import { NavigationSheet } from "./navigation-sheet";
+import { SocialMediaSheet } from "./social-media-sheet";
 
 const socialLinks = {
   whatsapp: "https://wa.me/14074767353", // Using your phone from resume
@@ -82,7 +83,7 @@ const Navbar = () => {
           </Button>
           <Button
             variant="outline"
-            className="rounded-full shadow-none"
+            className="sm:hidden inline-flex rounded-full shadow-none"
             size="icon"
           >
             <Link
@@ -96,6 +97,9 @@ const Navbar = () => {
           </Button>
 
           {/* Mobile Menu */}
+          <div className="sm:hidden">
+            <SocialMediaSheet />
+          </div>
           <div className="md:hidden">
             <NavigationSheet />
           </div>
