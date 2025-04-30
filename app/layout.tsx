@@ -10,7 +10,6 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 export const metadata: Metadata = {
-  manifest: "/es/manifest.json",
   metadataBase: new URL("https://profile-black-gamma.vercel.app/"),
   title: "Mario Rafael Ayala | Desarrollador Full Stack",
   keywords:

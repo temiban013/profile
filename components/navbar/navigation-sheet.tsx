@@ -26,7 +26,6 @@ export const NavigationSheet = () => {
         <SheetDescription className="sr-only">
           Menú de navegación principal del sitio
         </SheetDescription>
-        <NavMenu orientation="vertical" className="mt-12" />
       </SheetContent>
     </Sheet>
   );
