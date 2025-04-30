@@ -96,7 +96,7 @@ const Proyectos = () => {
     {
       titulo: "Jíbaro Eats",
       descripcion:
-        "Plataforma de entrega de comida local que conecta restaurantes boricuas con clientes, incluyendo sistema de pagos, rastreo en tiempo real y panel administrativo.",
+        "Sitio web de portafolio digital para un fotógrafo profesional que exhibe colecciones de imágenes y videos organizados por categorías, con una interfaz moderna y responsiva desarrollada con Next.js y Cloudinary",
       imagen: "/jibaroeats-preview.png",
       tecnologias: [
         "Next.js",
