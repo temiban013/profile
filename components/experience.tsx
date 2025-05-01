@@ -200,12 +200,11 @@ const Experience = () => {
           location: "Añasco, Puerto Rico",
           period: "Marzo 2024 - Diciembre 2024",
           description:
-            "Lideré iniciativas integrales de modernización digital, arquitectando e implementando una plataforma web multilingüe (ES/EN) utilizando Next.js 14, TypeScript y Tailwind CSS. Diseñé una arquitectura propietaria de sistema de reservas utilizando Rust y tecnologías web modernas para optimizar operaciones y mejorar la participación de huéspedes.",
+            "Lideré la renovación digital completa de Yukayeke Playa Resort, arquitectando e implementando una plataforma web bilingüe (ES/EN) utilizando Next.js 14, TypeScript y CSS modular con internacionalización dinámica. Diseñé e implementé un sistema de enrutamiento inteligente con detección automática de idioma basado en preferencias del navegador.",
           technologies: [
             "Next.js",
             "TypeScript",
             "Tailwind CSS",
-            "Rust",
             "Vercel",
             "Internacionalización",
           ],
