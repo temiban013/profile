@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Lock } from "lucide-react";
 import Image from "next/image";
 import { GithubLogo } from "./icons";
 
@@ -58,7 +58,7 @@ const ProyectoCard = ({
               </a>
             </Button>
           )}
-          {urlGithub && (
+          {urlGithub ? (
             <Button
               variant="outline"
               className="rounded-full shadow-none"
@@ -68,6 +68,15 @@ const ProyectoCard = ({
                 <GithubLogo className="mr-1 h-4 w-4" />
                 Ver Código
               </a>
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              className="rounded-full shadow-none opacity-80 cursor-default"
+              disabled
+            >
+              <Lock className="mr-1 h-4 w-4" />
+              Código Propietario
             </Button>
           )}
         </div>
@@ -96,7 +105,7 @@ const Proyectos = () => {
         "Cloudinary",
       ],
       urlSitio: "https://yukayekeplaya.com",
-      urlGithub: "https://github.com/temiban013/yukayeke.git",
+      // urlGithub removed for proprietary code
     },
     {
       titulo: "Jíbaro Eats",
