@@ -10,7 +10,7 @@ import {
 import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
 import { NavigationSheet } from "./navigation-sheet";
-import { SocialMediaSheet } from "./social-media-sheet";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const socialLinks = {
   whatsapp: "https://wa.me/14074767353", // Using your phone from resume
@@ -30,6 +30,7 @@ const Navbar = () => {
         <NavMenu className="hidden md:block" />
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <Button
             variant="outline"
             className="hidden sm:inline-flex rounded-full shadow-none"
@@ -97,9 +98,6 @@ const Navbar = () => {
           </Button>
 
           {/* Mobile Menu */}
-          <div className="sm:hidden">
-            <SocialMediaSheet />
-          </div>
           <div className="md:hidden">
             <NavigationSheet />
           </div>

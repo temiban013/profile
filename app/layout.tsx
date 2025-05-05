@@ -3,12 +3,13 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { LanguageProvider } from "@/lib/contexts/language-context";
 
 const geistSans = Geist({
   subsets: ["latin"],
 });
 export const metadata: Metadata = {
-  metadataBase: new URL("https://profile-black-gamma.vercel.app/"),
+  metadataBase: new URL("https://www.mariorafaelayala.com/"),
   title: "Mario Rafael Ayala | Ingeniero de Software",
   keywords:
     "desarrollador, full stack, ingeniero de software, ingeniero de sistemas, ingeniero informático, ingeniero en computación, ingeniero en software, ingeniero de software full stack, ingeniero de software backend, ingeniero de software frontend, ingeniero de software full stack, nextjs, typescript, javascript, react, nodejs, .net core, c#, sql server, mysql, mongodb, firebase, ingeniero de software en la nube, vercel",
@@ -56,11 +57,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body className={`${geistSans.className} antialiased`}>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <LanguageProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );

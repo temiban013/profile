@@ -1,3 +1,6 @@
+// components/navbar/nav-menu.tsx
+"use client";
+
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -7,28 +10,40 @@ import {
 import { cn } from "@/lib/utils";
 import type { NavigationMenuProps } from "@radix-ui/react-navigation-menu";
 import Link from "next/link";
+import { useLanguage } from "@/lib/contexts/language-context";
+import { getTranslation } from "@/lib/translations";
 
-export const NavMenu = ({ className, ...props }: NavigationMenuProps) => (
-  <NavigationMenu
-    className={cn("data-[orientation=vertical]:items-start", className)}
-    {...props}
-  >
-    <NavigationMenuList className="gap-1 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
-      <NavigationMenuItem>
-        <NavigationMenuLink asChild>
-          <Link href="#about">Sobre mí</Link>
-        </NavigationMenuLink>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <NavigationMenuLink asChild>
-          <Link href="#experience">Experiencia</Link>
-        </NavigationMenuLink>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <NavigationMenuLink asChild>
-          <Link href="#projects">Proyectos</Link>
-        </NavigationMenuLink>
-      </NavigationMenuItem>
-    </NavigationMenuList>
-  </NavigationMenu>
-);
+export const NavMenu = ({ className, ...props }: NavigationMenuProps) => {
+  const { language, isClient } = useLanguage();
+
+  return (
+    <NavigationMenu
+      className={cn("data-[orientation=vertical]:items-start", className)}
+      {...props}
+    >
+      <NavigationMenuList className="gap-1 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link href="#about">
+              {isClient ? getTranslation("about", language) : ""}
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link href="#experience">
+              {isClient ? getTranslation("experience", language) : ""}
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link href="#projects">
+              {isClient ? getTranslation("projects", language) : ""}
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+};
