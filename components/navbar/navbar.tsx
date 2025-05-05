@@ -83,7 +83,7 @@ const Navbar = () => {
           </Button>
           <Button
             variant="outline"
-            className="sm:hidden inline-flex rounded-full shadow-none"
+            className="inline-flex rounded-full shadow-none" // Modified
             size="icon"
           >
             <Link
@@ -92,7 +92,7 @@ const Navbar = () => {
               rel="noopener noreferrer"
               aria-label="GitHub Profile"
             >
-              <GithubLogo className="h-5! w-5!" />
+              <GithubLogo className="h-5 w-5" /> {/* Fixed class names */}
             </Link>
           </Button>
 

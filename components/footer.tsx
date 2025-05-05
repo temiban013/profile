@@ -24,6 +24,14 @@ const footerLinks = [
   },
 ];
 
+const socialLinks = {
+  whatsapp: "https://wa.me/14074767353",
+  youtube: "https://youtube.com/@mariorafaelayala8703",
+  gmail: "mailto:MarioAyalaMPA@gmail.com",
+  linkedin: "https://linkedin.com/in/marioayalamscs",
+  github: "https://github.com/temiban013",
+};
+
 const Footer = () => {
   return (
     <footer className="mt-20">
@@ -60,19 +68,39 @@ const Footer = () => {
           </span>
 
           <div className="flex items-center gap-5 text-muted-foreground">
-            <Link href="#" target="_blank">
+            <Link
+              href={socialLinks.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Profile"
+            >
               <GithubLogo className="h-5 w-5" />
             </Link>
-            <Link href="#" target="_blank">
+            <Link
+              href={socialLinks.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn Profile"
+            >
               <LinkedInLogo className="h-5 w-5" />
             </Link>
-            <Link href="#" target="_blank">
+            <Link href={socialLinks.gmail} aria-label="Send Email">
               <GmailLogo className="h-5 w-5" />
             </Link>
-            <Link href="#" target="_blank">
+            <Link
+              href={socialLinks.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube Channel"
+            >
               <YoutubeLogo className="h-5 w-5" />
             </Link>
-            <Link href="#" target="_blank">
+            <Link
+              href={socialLinks.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Contact on WhatsApp"
+            >
               <WhatsappLogo className="h-5 w-5" />
             </Link>
           </div>
