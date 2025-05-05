@@ -83,7 +83,7 @@ const Navbar = () => {
           </Button>
           <Button
             variant="outline"
-            className="inline-flex rounded-full shadow-none" // Modified
+            className="hidden sm:inline-flex rounded-full shadow-none" // Modified
             size="icon"
           >
             <Link
