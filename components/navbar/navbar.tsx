@@ -10,7 +10,8 @@ import {
 import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
 import { NavigationSheet } from "./navigation-sheet";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { SocialMediaSheet } from "./social-media-sheet";
+import LanguageSwitcher from "@/components/language-switcher";
 
 const socialLinks = {
   whatsapp: "https://wa.me/14074767353", // Using your phone from resume
@@ -98,6 +99,9 @@ const Navbar = () => {
           </Button>
 
           {/* Mobile Menu */}
+          <div className="sm:hidden">
+            <SocialMediaSheet />
+          </div>
           <div className="md:hidden">
             <NavigationSheet />
           </div>

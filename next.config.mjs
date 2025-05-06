@@ -3,10 +3,12 @@ import { withContentlayer } from "next-contentlayer";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
   /* config options here */
   devIndicators: false,
+  reactStrictMode: true,
+  images: {
+    domains: ["images.unsplash.com", "www.mariorafaelayala.com"], // Add any domains for images
+  },
 };
 
 export default withContentlayer(nextConfig);

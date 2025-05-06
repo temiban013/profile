@@ -6,7 +6,7 @@ import {
   useContext,
   useState,
   useEffect,
-  ReactNode,
+  type ReactNode,
 } from "react";
 
 export type LanguageKey = "en" | "es";
@@ -14,7 +14,6 @@ export type LanguageKey = "en" | "es";
 interface LanguageContextType {
   language: LanguageKey;
   setLanguage: (language: LanguageKey) => void;
-  isClient: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(
@@ -22,14 +21,13 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // Default to Spanish
+  // Default to Spanish without causing hydration mismatch
   const [language, setLanguage] = useState<LanguageKey>("es");
-  // Track if we're client side
-  const [isClient, setIsClient] = useState(false);
+  // Track whether we've initialized from localStorage
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // On mount, check if the user has a language preference stored
   useEffect(() => {
-    setIsClient(true);
     const storedLanguage = localStorage.getItem("language") as LanguageKey;
     if (
       storedLanguage &&
@@ -37,17 +35,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     ) {
       setLanguage(storedLanguage);
     }
+    setIsInitialized(true);
   }, []);
 
-  // Update localStorage when language changes
+  // Update localStorage when language changes, but only after initialization
   useEffect(() => {
-    if (isClient) {
+    if (isInitialized) {
       localStorage.setItem("language", language);
     }
-  }, [language, isClient]);
+  }, [language, isInitialized]);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, isClient }}>
+    <LanguageContext.Provider value={{ language, setLanguage }}>
       {children}
     </LanguageContext.Provider>
   );

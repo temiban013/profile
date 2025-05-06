@@ -6,22 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
 
 export default function LanguageSwitcher() {
-  const { language, setLanguage, isClient } = useLanguage();
-
-  // If not client-side yet, render a placeholder to avoid hydration mismatch
-  if (!isClient) {
-    return (
-      <Button
-        variant="outline"
-        size="icon"
-        className="rounded-full shadow-none"
-        disabled
-      >
-        <Globe className="h-5 w-5" />
-        <span className="sr-only">Loading...</span>
-      </Button>
-    );
-  }
+  const { language, setLanguage } = useLanguage();
 
   const toggleLanguage = () => {
     setLanguage(language === "en" ? "es" : "en");

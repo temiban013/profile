@@ -1,80 +1,76 @@
 // components/projects.tsx
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Lock } from "lucide-react";
 import Image from "next/image";
 import { GithubLogo } from "./icons";
-import { useLanguage } from "@/lib/contexts/language-context";
-import { allProjects } from "contentlayer/generated";
-import { useMDXComponent } from "next-contentlayer/hooks";
-import { labels } from "@/lib/content";
+// Import fallback data
+import { fallbackProjects } from "@/lib/fallback-content";
 
-import type { Project } from "contentlayer/generated";
-
-interface ProjectCardProps {
-  project: Project;
+interface ProyectoCardProps {
+  title: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  demo?: string;
+  github?: string;
+  featured?: boolean;
 }
 
-const ProjectCard = ({ project }: ProjectCardProps) => {
-  const { language } = useLanguage();
-  const MDXContent = useMDXComponent(project.body.code);
-
+const ProyectoCard = ({
+  title,
+  description,
+  image,
+  technologies,
+  demo,
+  github,
+}: ProyectoCardProps) => {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-accent transition-all hover:border-primary/50">
-      {/* Project Image */}
+      {/* image del Proyecto */}
       <div className="relative h-64 overflow-hidden bg-accent">
         <Image
-          src={project.image}
-          alt={project.title}
+          src={image}
+          alt={title}
           className="object-cover transition-transform duration-300 group-hover:scale-100"
           width={500}
           height={500}
         />
       </div>
 
-      {/* Content */}
+      {/* Contenido */}
       <div className="flex-1 flex flex-col p-6">
-        <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-        <p className="text-muted-foreground mb-4">{project.description}</p>
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-muted-foreground mb-4">{description}</p>
 
-        {/* Technologies */}
+        {/* Tecnologías */}
         <div className="flex flex-wrap gap-2 mb-6">
-          {project.technologies.map((tech: string) => (
+          {technologies.map((tech) => (
             <Badge key={tech} variant="secondary" className="rounded-full">
               {tech}
             </Badge>
           ))}
         </div>
 
-        {/* Actions */}
+        {/* Acciones */}
         <div className="flex gap-3 mt-auto">
-          {project.urlSitio && (
+          {demo && (
             <Button variant="default" className="rounded-full" asChild>
-              <a
-                href={project.urlSitio}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={demo} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="mr-1 h-4 w-4" />
-                {labels[language].viewSite}
+                Ver Sitio
               </a>
             </Button>
           )}
-          {project.urlGithub && (
+          {github ? (
             <Button
               variant="outline"
               className="rounded-full shadow-none"
               asChild
             >
-              <a
-                href={project.urlGithub}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={github} target="_blank" rel="noopener noreferrer">
                 <GithubLogo className="mr-1 h-4 w-4" />
-                {labels[language].viewCode}
+                Ver Código
               </a>
             </Button>
           ) : (
@@ -93,32 +89,29 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   );
 };
 
-const Projects = () => {
-  const { language } = useLanguage();
-
-  // Get projects for the current language
-  const projects = allProjects.filter(
-    (project) => project.language === language
-  );
+const Proyectos = () => {
+  // Use fallback data instead of Contentlayer
+  const proyectos = fallbackProjects;
 
   return (
     <section id="projects" className="relative py-20 px-6">
       <div className="max-w-screen-md mx-auto">
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            {labels[language].projects}
+            Proyectos
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            {labels[language].featuredWork}
+            Trabajo Destacado
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            {labels[language].innovativeTech}
+            Soluciones tecnológicas innovadoras que he desarrollado e
+            implementado
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project) => (
-            <ProjectCard key={project._id} project={project} />
+          {proyectos.map((proyecto) => (
+            <ProyectoCard key={proyecto.title} {...proyecto} />
           ))}
         </div>
       </div>
@@ -126,4 +119,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Proyectos;

@@ -14,7 +14,7 @@ import { useLanguage } from "@/lib/contexts/language-context";
 import { getTranslation } from "@/lib/translations";
 
 export const NavMenu = ({ className, ...props }: NavigationMenuProps) => {
-  const { language, isClient } = useLanguage();
+  const { language } = useLanguage();
 
   return (
     <NavigationMenu
@@ -24,23 +24,19 @@ export const NavMenu = ({ className, ...props }: NavigationMenuProps) => {
       <NavigationMenuList className="gap-1 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#about">
-              {isClient ? getTranslation("about", language) : ""}
-            </Link>
+            <Link href="#about">{getTranslation("about", language)}</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link href="#experience">
-              {isClient ? getTranslation("experience", language) : ""}
+              {getTranslation("experience", language)}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#projects">
-              {isClient ? getTranslation("projects", language) : ""}
-            </Link>
+            <Link href="#projects">{getTranslation("projects", language)}</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

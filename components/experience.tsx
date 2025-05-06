@@ -5,23 +5,160 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Calendar, MapPin, BookOpen, Award } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import {
-  allExperiences,
-  allEducations,
-  allCertifications,
-} from "contentlayer/generated";
+  getExperiences,
+  getEducations,
+  getCertifications,
+} from "@/lib/content";
 import { labels } from "@/lib/content";
 
 // Component definitions...
+interface ExperienceItemProps {
+  title: string;
+  company: string;
+  location: string;
+  period: string;
+  description: string;
+  technologies: string[];
+}
+
+interface EducationItemProps {
+  degree: string;
+  institution: string;
+  location: string;
+  period: string;
+  honors: string;
+}
+
+interface CertificationItemProps {
+  title: string;
+  organization: string;
+  location: string;
+  period: string;
+  url?: string;
+}
+
+const CertificationItem = ({
+  title,
+  organization,
+  location,
+  period,
+  url,
+}: CertificationItemProps) => {
+  return (
+    <div className="mb-8 relative">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <h3 className="text-xl font-semibold">{title}</h3>
+          <div className="flex items-center gap-2 text-muted-foreground mt-1">
+            <Building2 className="w-4 h-4" />
+            <span>{organization}</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4" />
+            <span>{location}</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Calendar className="w-4 h-4" />
+            <span>{period}</span>
+          </div>
+          {url && (
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline mt-2 inline-block"
+            >
+              View Certificate
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const EducationItem = ({
+  degree,
+  institution,
+  location,
+  period,
+  honors,
+}: EducationItemProps) => {
+  return (
+    <div className="mb-8 relative">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <h3 className="text-xl font-semibold">{degree}</h3>
+          <div className="flex items-center gap-2 text-muted-foreground mt-1">
+            <BookOpen className="w-4 h-4" />
+            <span>{institution}</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4" />
+            <span>{location}</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Calendar className="w-4 h-4" />
+            <span>{period}</span>
+          </div>
+          {honors && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Award className="w-4 h-4" />
+              <span>{honors}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ExperienceItem = ({
+  title,
+  company,
+  location,
+  period,
+  description,
+  technologies,
+}: ExperienceItemProps) => {
+  return (
+    <div className="mb-8 relative">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <h3 className="text-xl font-semibold">{title}</h3>
+          <div className="flex items-center gap-2 text-muted-foreground mt-1">
+            <Building2 className="w-4 h-4" />
+            <span>{company}</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4" />
+            <span>{location}</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Calendar className="w-4 h-4" />
+            <span>{period}</span>
+          </div>
+          <p className="mt-2">{description}</p>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {technologies.map((tech) => (
+              <Badge key={tech} variant="outline">
+                {tech}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Experience = () => {
   const { language } = useLanguage();
 
   // Get content for the current language
-  const experiences = allExperiences.filter((exp) => exp.language === language);
-  const educations = allEducations.filter((edu) => edu.language === language);
-  const certifications = allCertifications.filter(
-    (cert) => cert.language === language
-  );
+  const experiences = getExperiences(language);
+  const educations = getEducations(language);
+  const certifications = getCertifications(language);
 
   return (
     <section id="experience" className="relative py-20 px-6">

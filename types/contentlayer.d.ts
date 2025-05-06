@@ -1,6 +1,10 @@
 // types/contentlayer.d.ts
 // These types will be replaced by Contentlayer's generated types once they're available
-
+declare module "contentlayer/generated" {
+  // This is a temporary declaration until Contentlayer generates proper types
+  export const allProjects: any[];
+  export const allSections: any[];
+}
 export interface Section {
   _id: string;
   _raw: {
@@ -37,8 +41,8 @@ export interface Project {
   date: string;
   technologies: string[];
   image: string;
-  urlSitio?: string;
-  urlGithub?: string;
+  demo?: string;
+  github?: string;
   featured: boolean;
   body: {
     raw: string;
