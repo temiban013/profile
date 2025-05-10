@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import ExternalLink from "@/components/external-link";
 import {
   GithubLogo,
   LinkedInLogo,
@@ -68,41 +69,33 @@ const Footer = () => {
           </span>
 
           <div className="flex items-center gap-5 text-muted-foreground">
-            <Link
+            <ExternalLink
               href={socialLinks.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub Profile"
+              aria-label="Perfil de GitHub"
             >
               <GithubLogo className="h-5 w-5" />
-            </Link>
-            <Link
+            </ExternalLink>
+            <ExternalLink
               href={socialLinks.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn Profile"
+              aria-label="Perfil de LinkedIn"
             >
               <LinkedInLogo className="h-5 w-5" />
-            </Link>
-            <Link href={socialLinks.gmail} aria-label="Send Email">
+            </ExternalLink>
+            <Link href={socialLinks.gmail} aria-label="Enviar email">
               <GmailLogo className="h-5 w-5" />
             </Link>
-            <Link
+            <ExternalLink
               href={socialLinks.youtube}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="YouTube Channel"
+              aria-label="Canal de YouTube"
             >
               <YoutubeLogo className="h-5 w-5" />
-            </Link>
-            <Link
+            </ExternalLink>
+            <ExternalLink
               href={socialLinks.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Contact on WhatsApp"
+              aria-label="Contactar por WhatsApp"
             >
               <WhatsappLogo className="h-5 w-5" />
-            </Link>
+            </ExternalLink>
           </div>
         </div>
       </div>

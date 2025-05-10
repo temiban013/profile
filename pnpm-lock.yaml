@@ -41,6 +41,9 @@ dependencies:
   react-dom:
     specifier: ^19.0.0
     version: 19.1.0(react@19.1.0)
+  schema-dts:
+    specifier: ^1.1.5
+    version: 1.1.5
   tailwind-merge:
     specifier: ^3.0.2
     version: 3.2.0
@@ -3395,6 +3398,10 @@ packages:
 
   /scheduler@0.26.0:
     resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
+    dev: false
+
+  /schema-dts@1.1.5:
+    resolution: {integrity: sha512-RJr9EaCmsLzBX2NDiO5Z3ux2BVosNZN5jo0gWgsyKvxKIUL5R3swNvoorulAeL9kLB0iTSX7V6aokhla2m7xbg==}
     dev: false
 
   /semver@6.3.1:

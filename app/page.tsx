@@ -4,14 +4,35 @@ import About from "@/components/about";
 import Experience from "@/components/experience";
 import Hero from "@/components/hero";
 import Projects from "@/components/projects";
+import StructuredData from "@/components/structured-data";
 
 export default function Home() {
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Mario Rafael Ayala | Ingeniero de Software",
+    url: "https://www.mariorafaelayala.com",
+    description:
+      "Portfolio profesional de Mario Rafael Ayala, Ingeniero de Software Senior",
+    author: {
+      "@type": "Person",
+      name: "Mario Rafael Ayala",
+      jobTitle: "Ingeniero de Software Senior",
+      url: "https://www.mariorafaelayala.com",
+    },
+    inLanguage: "es",
+  };
+
   return (
-    <div className="space-y-10 sm:space-y-16">
-      <Hero />
-      <About />
-      <Experience />
-      <Projects />
-    </div>
+    <>
+      <StructuredData data={websiteSchema} />
+
+      <div className="space-y-10 sm:space-y-16">
+        <Hero />
+        <About />
+        <Experience />
+        <Projects />
+      </div>
+    </>
   );
 }

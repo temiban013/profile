@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Lock } from "lucide-react";
 import Image from "next/image";
 import { GithubLogo } from "./icons";
+import type { Metadata } from "next";
 
 interface ProyectoCardProps {
   titulo: string;
@@ -12,6 +13,25 @@ interface ProyectoCardProps {
   urlSitio?: string;
   urlGithub?: string;
 }
+
+export const projectsMetadata: Metadata = {
+  title: "Proyectos | Mario Rafael Ayala",
+  description:
+    "Soluciones tecnológicas innovadoras desarrolladas e implementadas por Mario Rafael Ayala",
+  openGraph: {
+    title: "Proyectos | Mario Rafael Ayala",
+    description:
+      "Soluciones tecnológicas innovadoras desarrolladas e implementadas por Mario Rafael Ayala",
+    images: [
+      {
+        url: "/images/projects-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Proyectos de Mario Rafael Ayala",
+      },
+    ],
+  },
+};
 
 const ProyectoCard = ({
   titulo,
