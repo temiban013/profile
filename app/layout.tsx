@@ -15,7 +15,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://profile-black-gamma.vercel.app/"),
+  metadataBase: new URL("https://www.mariorafaelayala.com/"),
   title: {
     default: "Mario Rafael Ayala | Ingeniero de Software",
     template: "%s | Mario Rafael Ayala",
@@ -25,30 +25,48 @@ export const metadata: Metadata = {
   ],
   description:
     "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
-  authors: [{ name: "Mario Ayala", url: "https://www.mariorafaelayala.com" }],
-  creator: "Mario Ayala",
-  publisher: "Mario Ayala",
+  authors: [
+    { name: "Mario R. Ayala", url: "https://www.mariorafaelayala.com" },
+  ],
+  creator: "Mario R. Ayala",
+  publisher: "Mario R. Ayala",
   formatDetection: {
     email: true,
     address: true,
     telephone: true,
   },
   alternates: {
-    canonical: "https://profile-black-gamma.vercel.app/",
+    canonical: "https://www.mariorafaelayala.com/",
   },
   openGraph: {
     siteName: "Mario Rafael Ayala",
-    url: "https://profile-black-gamma.vercel.app/",
+    url: "https://www.mariorafaelayala.com/",
     type: "website",
     title: "Mario Rafael Ayala | Ingeniero de Software",
     description:
       "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
     locale: "es-PR",
-    images: "https://profile-black-gamma.vercel.app/mra-profile.jpg",
+    images: "https://www.mariorafaelayala.com/mra-profile.jpg",
   },
   icons: {
-    icon: [{ url: "/favicon.ico" }],
-    apple: [{ url: "/mra-logo-rc.png" }],
+    icon: [
+      {
+        url: "https://www.mariorafaelayala.com/favicon.ico",
+        type: "image/x-icon",
+      },
+    ],
+    apple: [
+      {
+        url: "https://www.mariorafaelayala.com/mra-logo-icon.png",
+        type: "image/png",
+      },
+    ],
+    shortcut: [
+      {
+        url: "https://www.mariorafaelayala.com/mra-logo-icon.png",
+        type: "image/png",
+      },
+    ],
   },
   robots: {
     index: true,
@@ -64,7 +82,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Mario Rafael Ayala | Ingeniero de Software",
-    images: "https://profile-black-gamma.vercel.app/mra-profile.jpg",
+    images: "https://www.mariorafaelayala.com/mra-profile.jpg",
     description:
       "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
   },
