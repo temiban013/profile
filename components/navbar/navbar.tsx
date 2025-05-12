@@ -13,11 +13,11 @@ import { NavigationSheet } from "./navigation-sheet";
 import { SocialMediaSheet } from "./social-media-sheet";
 
 const socialLinks = {
-  whatsapp: "https://wa.me/14074767353", // Using your phone from resume
-  youtube: "https://youtube.com/@mariorafaelayala8703", // Replace with your channel
-  gmail: "mailto:MarioAyalaMPA@gmail.com", // Using your email from resume
-  linkedin: "https://linkedin.com/in/marioayalamscs", // Replace with your profile
-  github: "https://github.com/temiban013", // Replace with your GitHub username
+  whatsapp: "https://wa.me/14074767353",
+  youtube: "https://youtube.com/@mariorafaelayala8703",
+  gmail: "mailto:MarioAyalaMPA@gmail.com",
+  linkedin: "https://linkedin.com/in/marioayalamscs",
+  github: "https://github.com/temiban013",
 };
 
 const Navbar = () => {
