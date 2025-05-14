@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { Analytics } from "@vercel/analytics/next";
 import GoogleAnalytics from "@/components/google-analytics";
 
 const geistSans = Geist({
