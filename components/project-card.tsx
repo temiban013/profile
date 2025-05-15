@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Lock } from "lucide-react";
 import OptimizedImage from "@/components/optimized-image";
 import { GithubLogo } from "./icons";
+import { useLanguage } from "@/lib/contexts/language-context";
+import { translations } from "@/lib/i18n";
 
 interface ProjectCardProps {
   title: string;
@@ -22,6 +24,9 @@ export default function ProjectCard({
   demo,
   github,
 }: ProjectCardProps) {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-accent transition-all hover:border-primary/50">
       {/* Project image */}
@@ -59,7 +64,7 @@ export default function ProjectCard({
                 aria-label={`View live demo of ${title}`}
               >
                 <ExternalLink className="mr-1 h-4 w-4" />
-                Ver Sitio
+                {t.viewSite}
               </a>
             </Button>
           )}
@@ -76,7 +81,7 @@ export default function ProjectCard({
                 aria-label={`View source code for ${title} on GitHub`}
               >
                 <GithubLogo className="mr-1 h-4 w-4" />
-                Ver Código
+                {t.viewCode}
               </a>
             </Button>
           ) : (
@@ -86,7 +91,7 @@ export default function ProjectCard({
               disabled
             >
               <Lock className="mr-1 h-4 w-4" />
-              Código Propietario
+              {t.proprietaryCode}
             </Button>
           )}
         </div>

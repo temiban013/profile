@@ -11,6 +11,7 @@ import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
 import { NavigationSheet } from "./navigation-sheet";
 import { SocialMediaSheet } from "./social-media-sheet";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const socialLinks = {
   whatsapp: "https://wa.me/14074767353",
@@ -30,6 +31,7 @@ const Navbar = () => {
         <NavMenu className="hidden md:block" />
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <Button
             variant="outline"
             className="hidden sm:inline-flex rounded-full shadow-none"

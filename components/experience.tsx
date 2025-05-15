@@ -1,5 +1,10 @@
+// components/experience.tsx
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Building2, Calendar, MapPin, BookOpen, Award } from "lucide-react";
+import { useLanguage } from "@/lib/contexts/language-context";
+import { translations } from "@/lib/i18n";
 
 // Define types for each section
 interface ExperienceItemProps {
@@ -132,6 +137,8 @@ const CertificationItem = ({
   period,
   url,
 }: CertificationItemProps) => {
+  const { language } = useLanguage();
+
   return (
     <div className="relative pl-8 not-last:pb-12 group">
       {/* Timeline line */}
@@ -167,7 +174,7 @@ const CertificationItem = ({
             rel="noopener noreferrer"
             className="inline-block text-primary hover:underline"
           >
-            Visitar sitio web
+            {language === "en" ? "Visit website" : "Visitar sitio web"}
           </a>
         )}
       </div>
@@ -176,10 +183,164 @@ const CertificationItem = ({
 };
 
 const Experience = () => {
-  const experiences = [
-    {
-      section: "experience",
-      items: [
+  const { language } = useLanguage();
+  const t = translations[language];
+
+  // Define experiences data with language-specific content
+  const experiences = {
+    en: {
+      experience: [
+        {
+          title: "Leadership Instructor",
+          company: "MPA Consultants",
+          location: "Lares, Puerto Rico",
+          period: "March 2025 - May 2025",
+          description:
+            "Designed and taught a 70-hour intensive course on professional conduct and interview skills, enriching the original curriculum with modules on AI for job searching. Implemented a methodology based on progressive sequencing of knowledge, achieving a completion rate of over 90%.",
+          technologies: [
+            "Instructional Design",
+            "AI for Recruitment",
+            "Technical Presentations",
+            "Competency Assessment",
+          ],
+        },
+        {
+          title: "Digital Transformation Director",
+          company: "Yukayeke Playa",
+          location: "Añasco, Puerto Rico",
+          period: "March 2024 - December 2024",
+          description:
+            "Led the complete digital renovation of Yukayeke Playa Resort, architecting and implementing a bilingual web platform (ES/EN) using Next.js 14, TypeScript, and modular CSS with dynamic internationalization. Designed and implemented an intelligent routing system with automatic language detection based on browser preferences.",
+          technologies: [
+            "Next.js",
+            "TypeScript",
+            "Tailwind CSS",
+            "Vercel",
+            "Internationalization",
+          ],
+        },
+        {
+          title: "Principal Software Engineer",
+          company: "Disney Parks, Experiences and Products",
+          location: "Orlando, Florida",
+          period: "November 2015 - September 2021",
+          description:
+            "Architected and delivered a Business Intelligence Portal that unified data sources from SharePoint, Tableau, and MS SQL, allowing executives to access specific analyses and reports through a single secure platform. Developed mobile applications using geolocation and integration with data analysis systems.",
+          technologies: [
+            ".NET Core",
+            "C#",
+            "SQL Server",
+            "SharePoint",
+            "Tableau",
+            "API Architecture",
+            "Systems Integration",
+          ],
+        },
+        {
+          title: "Senior .NET Developer",
+          company: "AVM L.P.",
+          location: "Boca Raton, Florida",
+          period: "April 2011 - June 2012",
+          description:
+            "Maintained .NET financial reporting applications using advanced data grids. Participated in the third-party export of financial data representing derivative products and collaborated on the re-architecture of the middle tier for financial instrument valuation.",
+          technologies: [
+            ".NET",
+            "C#",
+            "SQL",
+            "Financial Integration",
+            "Janus UI Controls",
+          ],
+        },
+        {
+          title: "Senior Software Developer",
+          company: "ABB Concise",
+          location: "Coral Springs, Florida",
+          period: "June 2007 - February 2011",
+          description:
+            "Developed and maintained ASP.NET e-commerce applications for eye care using Microsoft technologies. Implemented WCF Services, AJAX controls with JQuery, and created new e-commerce functionalities like tiered pricing and automatic reordering.",
+          technologies: [
+            "ASP.NET",
+            "C#",
+            "SQL Server",
+            "WCF",
+            "AJAX",
+            "JQuery",
+            "JavaScript",
+          ],
+        },
+        {
+          title: "Developer III",
+          company: "Office Depot",
+          location: "Delray Beach, Florida",
+          period: "November 1998 - January 2005",
+          description:
+            "Led the implementation of the Oracle Retail MFP application for merchandise financial planning. Directed the integration of CTI technology with intranet applications and led the full development cycle of XML-based order entry applications.",
+          technologies: [
+            "Oracle",
+            "XML",
+            "ASP",
+            "B2B Integration",
+            "Systems Architecture",
+          ],
+        },
+        {
+          title: "Information Security Officer (RM2/E5)",
+          company: "United States Navy",
+          location: "East Coast, USA",
+          period: "June 2007 - February 2011",
+          description:
+            "Developed programs to automate the tracking and resolution of breakdowns that improved efficiency and saved time and resources. Was responsible for computer security through the installation and configuration of security software and the development of policies.",
+          technologies: [
+            "DBase IV",
+            "Systems Security",
+            "Process Automation",
+            "Infrastructure Management",
+          ],
+        },
+        // Additional English experiences...
+      ],
+      education: [
+        {
+          degree: "Master's in Computer Science",
+          institution: "Ellis University",
+          location: "Online",
+          period: "2009 - 2010",
+          honors: "Magna Cum Laude",
+        },
+        {
+          degree: "Bachelor's in Computer Science",
+          institution: "New York Institute of Technology",
+          location: "Online",
+          period: "2006 - 2007",
+          honors: "Cum Laude",
+        },
+        {
+          degree: "Courses in Computer Science",
+          institution: "Florida International University",
+          location: "Miami, Florida",
+          period: "1994 - 1998",
+          honors: "Honor Roll",
+        },
+      ],
+      certifications: [
+        {
+          title: "Founding Member",
+          organization: "Florida Interscholastic Cycling League",
+          location: "Florida",
+          period: "Present",
+          url: "http://FloridaMTB.org",
+        },
+        {
+          title: "American Sign Language (ASL) with Puerto Rican dialect",
+          organization: "Ideality group",
+          location: "Las Marías, Puerto Rico",
+          period: "2024",
+          url: "",
+        },
+      ],
+    },
+    es: {
+      experience: [
         {
           title: "Instructor de Liderazgo",
           company: "MPA Consultants",
@@ -210,10 +371,10 @@ const Experience = () => {
           ],
         },
         {
-          title: "Arquitecto de Software / Ingeniero de Datos",
+          title: "Ingeniero de Software Principal",
           company: "Disney Parks, Experiences and Products",
           location: "Orlando, Florida",
-          period: "Noviembre 2015 - Septiembre 2021",
+          period: "Noviembre 2015 - Serptiembre 2021",
           description:
             "Arquitecté y entregué un Portal de Inteligencia Empresarial que unificó fuentes de datos de SharePoint, Tableau y MS SQL, permitiendo a ejecutivos acceder a análisis y reportes específicos a través de una única plataforma segura. Desarrollé aplicaciones móviles utilizando geolocalización e integración con sistemas de análisis de datos.",
           technologies: [
@@ -223,7 +384,7 @@ const Experience = () => {
             "SharePoint",
             "Tableau",
             "Arquitectura de APIs",
-            "Integración de Sistemas",
+            "Inegración de Sistemas",
           ],
         },
         {
@@ -252,9 +413,9 @@ const Experience = () => {
             "ASP.NET",
             "C#",
             "SQL Server",
-            "Progress DB",
             "WCF",
-            "jQuery",
+            "AJAX",
+            "JQuery",
             "JavaScript",
           ],
         },
@@ -287,11 +448,9 @@ const Experience = () => {
             "Gestión de Infraestructura",
           ],
         },
+        // Additional Spanish experiences...
       ],
-    },
-    {
-      section: "education",
-      items: [
+      education: [
         {
           degree: "Maestría en Informática",
           institution: "Ellis University",
@@ -314,10 +473,7 @@ const Experience = () => {
           honors: "Cuadro de Honor",
         },
       ],
-    },
-    {
-      section: "certifications",
-      items: [
+      certifications: [
         {
           title: "Miembro Fundador",
           organization: "Florida Interscholastic Cycling League",
@@ -335,20 +491,10 @@ const Experience = () => {
         },
       ],
     },
-  ];
+  };
 
-  // Find each section for rendering with explicit type assertions
-  const experienceItems = (experiences.find(
-    (section) => section.section === "experience"
-  )?.items || []) as ExperienceItemProps[];
-
-  const educationItems = (experiences.find(
-    (section) => section.section === "education"
-  )?.items || []) as EducationItemProps[];
-
-  const certificationItems = (experiences.find(
-    (section) => section.section === "certifications"
-  )?.items || []) as CertificationItemProps[];
+  // Select data based on current language
+  const currentLanguageData = experiences[language];
 
   return (
     <section id="experience" className="relative py-20 px-6">
@@ -356,20 +502,20 @@ const Experience = () => {
         {/* Experience Section */}
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            Experiencia
+            {t.experience}
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Carrera Profesional
+            {t.professionalCareer}
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            Cronología de mi crecimiento profesional y logros
+            {t.careerTimeline}
           </p>
         </div>
 
         <div className="relative mb-16">
-          {experienceItems.map((item) => (
+          {currentLanguageData.experience.map((item, index) => (
             <ExperienceItem
-              key={`${item.company}-${item.title}-${item.period}`}
+              key={`${item.company}-${item.title}-${index}`}
               {...item}
             />
           ))}
@@ -378,20 +524,20 @@ const Experience = () => {
         {/* Education Section */}
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            Educación
+            {t.education}
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Formación Académica
+            {language === "en" ? "Academic Background" : "Formación Académica"}
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            Bases sólidas para un desarrollo profesional continuo
+            {t.academicBackground}
           </p>
         </div>
 
         <div className="relative mb-16">
-          {educationItems.map((item) => (
+          {currentLanguageData.education.map((item, index) => (
             <EducationItem
-              key={`${item.degree}-${item.institution}`}
+              key={`${item.degree}-${item.institution}-${index}`}
               {...item}
             />
           ))}
@@ -400,20 +546,22 @@ const Experience = () => {
         {/* Certifications Section */}
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            Certificaciones y Afiliaciones
+            {t.certifications}
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Reconocimientos y Participación
+            {language === "en"
+              ? "Recognitions and Participation"
+              : "Reconocimientos y Participación"}
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            Desarrollo continuo y contribuciones a la comunidad
+            {t.recognitions}
           </p>
         </div>
 
         <div className="relative">
-          {certificationItems.map((item) => (
+          {currentLanguageData.certifications.map((item, index) => (
             <CertificationItem
-              key={`${item.title}-${item.organization}`}
+              key={`${item.title}-${item.organization}-${index}`}
               {...item}
             />
           ))}

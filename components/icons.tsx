@@ -65,3 +65,27 @@ export const WhatsappLogo = (props: IconProps) => (
     {...props}
   />
 );
+
+export const USFlagIcon = (props: IconProps) => (
+  <Image
+    role="img"
+    src="/us-flag.png"
+    alt="English"
+    width={24}
+    height={24}
+    className={`h-5 w-5 rounded-full object-cover ${props.className || ""}`}
+    {...props}
+  />
+);
+
+export const PRFlagIcon = (props: IconProps) => (
+  <Image
+    role="img"
+    src="/pr-flag.png"
+    alt="Español"
+    width={24}
+    height={24}
+    className={`h-5 w-5 rounded-full object-cover ${props.className || ""}`}
+    {...props}
+  />
+);

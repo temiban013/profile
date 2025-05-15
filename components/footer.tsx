@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -9,21 +11,8 @@ import {
   YoutubeLogo,
   WhatsappLogo,
 } from "./icons";
-
-const footerLinks = [
-  {
-    title: "Sobre mí",
-    href: "#about",
-  },
-  {
-    title: "Experiencia",
-    href: "#experience",
-  },
-  {
-    title: "Proyectos",
-    href: "#projects",
-  },
-];
+import { useLanguage } from "@/lib/contexts/language-context";
+import { translations } from "@/lib/i18n";
 
 const socialLinks = {
   whatsapp: "https://wa.me/14074767353",
@@ -34,6 +23,41 @@ const socialLinks = {
 };
 
 const Footer = () => {
+  const { language } = useLanguage();
+  const t = translations[language];
+  const footerLinks = {
+    es: [
+      {
+        title: "Sobre mí",
+        href: "#about",
+      },
+      {
+        title: "Experiencia",
+        href: "#experience",
+      },
+      {
+        title: "Proyectos",
+        href: "#projects",
+      },
+    ],
+    en: [
+      {
+        title: "About",
+        href: "#about",
+      },
+      {
+        title: "Experience",
+        href: "#experience",
+      },
+      {
+        title: "Projects",
+        href: "#projects",
+      },
+    ],
+  };
+
+  const currentLanguageData = footerLinks[language];
+
   return (
     <footer className="mt-20">
       <div className="max-w-screen-md mx-auto">
@@ -48,7 +72,7 @@ const Footer = () => {
           />
 
           <ul className="mt-6 flex items-center gap-4 flex-wrap">
-            {footerLinks.map(({ title, href }) => (
+            {currentLanguageData.map(({ title, href }) => (
               <li key={title}>
                 <Link
                   href={href}
@@ -64,35 +88,35 @@ const Footer = () => {
         <div className="py-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6 xl:px-0">
           {/* Copyright */}
           <span className="text-muted-foreground">
-            &copy; {new Date().getFullYear()} Mario R. Ayala. Derechos
-            reservados.
+            &copy; {new Date().getFullYear()} Mario R. Ayala. {t.rightsreserved}
+            .
           </span>
 
           <div className="flex items-center gap-5 text-muted-foreground">
             <ExternalLink
               href={socialLinks.github}
-              aria-label="Perfil de GitHub"
+              aria-label={t.githubaccount}
             >
               <GithubLogo className="h-5 w-5" />
             </ExternalLink>
             <ExternalLink
               href={socialLinks.linkedin}
-              aria-label="Perfil de LinkedIn"
+              aria-label={t.linkedinaccount}
             >
               <LinkedInLogo className="h-5 w-5" />
             </ExternalLink>
-            <Link href={socialLinks.gmail} aria-label="Enviar email">
+            <Link href={socialLinks.gmail} aria-label={t.sendemail}>
               <GmailLogo className="h-5 w-5" />
             </Link>
             <ExternalLink
               href={socialLinks.youtube}
-              aria-label="Canal de YouTube"
+              aria-label={t.youtubeaccount}
             >
               <YoutubeLogo className="h-5 w-5" />
             </ExternalLink>
             <ExternalLink
               href={socialLinks.whatsapp}
-              aria-label="Contactar por WhatsApp"
+              aria-label={t.whatsappaccount}
             >
               <WhatsappLogo className="h-5 w-5" />
             </ExternalLink>

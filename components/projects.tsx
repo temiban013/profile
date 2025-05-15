@@ -1,9 +1,13 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Lock } from "lucide-react";
 import Image from "next/image";
 import { GithubLogo } from "./icons";
 import type { Metadata } from "next";
+import { useLanguage } from "@/lib/contexts/language-context";
+import { translations } from "@/lib/i18n";
 
 interface ProyectoCardProps {
   titulo: string;
@@ -14,23 +18,27 @@ interface ProyectoCardProps {
   urlGithub?: string;
 }
 
-export const projectsMetadata: Metadata = {
-  title: "Proyectos | Mario Rafael Ayala",
-  description:
-    "Soluciones tecnológicas innovadoras desarrolladas e implementadas por Mario Rafael Ayala",
-  openGraph: {
-    title: "Proyectos | Mario Rafael Ayala",
-    description:
-      "Soluciones tecnológicas innovadoras desarrolladas e implementadas por Mario Rafael Ayala",
-    images: [
-      {
-        url: "/images/projects-og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Proyectos de Mario Rafael Ayala",
-      },
-    ],
-  },
+export const projectsMetadata = (language: "en" | "es"): Metadata => {
+  const t = translations[language];
+  return {
+    title: t.projects,
+    description: t.innovativeTech,
+    openGraph: {
+      title: `${t.projects} | Mario Rafael Ayala`,
+      description: t.innovativeTech,
+      images: [
+        {
+          url: "/images/projects-og.jpg",
+          width: 1200,
+          height: 630,
+          alt:
+            language === "en"
+              ? `Mario Rafael Ayala's ${t.projects}`
+              : `${t.projects} de Mario Rafael Ayala`,
+        },
+      ],
+    },
+  };
 };
 
 const ProyectoCard = ({
@@ -41,6 +49,8 @@ const ProyectoCard = ({
   urlSitio,
   urlGithub,
 }: ProyectoCardProps) => {
+  const { language } = useLanguage();
+  const t = translations[language];
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-accent transition-all hover:border-primary/50">
       {/* Imagen del Proyecto */}
@@ -74,7 +84,7 @@ const ProyectoCard = ({
             <Button variant="default" className="rounded-full" asChild>
               <a href={urlSitio} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="mr-1 h-4 w-4" />
-                Ver Sitio
+                {t.viewSite}
               </a>
             </Button>
           )}
@@ -86,7 +96,7 @@ const ProyectoCard = ({
             >
               <a href={urlGithub} target="_blank" rel="noopener noreferrer">
                 <GithubLogo className="mr-1 h-4 w-4" />
-                Ver Código
+                {t.viewCode}
               </a>
             </Button>
           ) : (
@@ -96,7 +106,7 @@ const ProyectoCard = ({
               disabled
             >
               <Lock className="mr-1 h-4 w-4" />
-              Código Propietario
+              {t.proprietaryCode}
             </Button>
           )}
         </div>
@@ -106,65 +116,109 @@ const ProyectoCard = ({
 };
 
 const Proyectos = () => {
-  const proyectos = [
-    {
-      titulo: "Yukayeke Playa",
-      descripcion:
-        "Plataforma web bilingüe (español/inglés) con detección automática de idioma para hospedería turística en Añasco, desarrollada con Next.js 14, TypeScript y arquitectura app router. Implementa estrategias de SEO optimizadas, sistema de internacionalización basado en rutas dinámicas, y diseño responsivo adaptado específicamente para dispositivos móviles utilizando CSS modular.",
-      imagen: "/yukayeke-preview.png",
-      tecnologias: [
-        "Next.js 14 (App Router)",
-        "TypeScript",
-        "Tailwind CSS",
-        "i18n",
-        "Vercel",
-        "SEO",
-        "SSR",
-        "SSG",
-        "ImageKit",
-        "Cloudinary",
-      ],
-      urlSitio: "https://yukayekeplaya.com",
-      // urlGithub removed for proprietary code
-    },
-    {
-      titulo: "Jíbaro Eats",
-      descripcion:
-        "Sitio web de portafolio visual para un fotógrafo profesional especializado en gastronomía y diversas temáticas, que presenta imágenes de alta calidad y producciones audiovisuales en un diseño elegante y minimalista, desarrollado con Next.js App Router, optimizado con lazy-loading, imágenes adaptativas de Cloudinary y una experiencia de navegación fluida entre colecciones.",
-      imagen: "/jibaroeats-preview.png",
-      tecnologias: [
-        "Next.js 13+ (App Router)",
-        "TypeScript",
-        "Tailwind CSS",
-        "CSR",
-        "SSR",
-        "SSG",
-        "Cloudinary",
-        "Vercel",
-      ],
-      urlSitio: "https://jibaroeats.com",
-      urlGithub: "https://github.com/temiban013/jibaroeats.git",
-    },
-  ];
+  const { language } = useLanguage();
+  const t = translations[language];
+  const proyectos = {
+    es: [
+      {
+        titulo: "Yukayeke Playa",
+        descripcion:
+          "Plataforma web bilingüe (español/inglés) con detección automática de idioma para hospedería turística en Añasco, desarrollada con Next.js 14, TypeScript y arquitectura app router. Implementa estrategias de SEO optimizadas, sistema de internacionalización basado en rutas dinámicas, y diseño responsivo adaptado específicamente para dispositivos móviles utilizando CSS modular.",
+        imagen: "/yukayeke-preview.png",
+        tecnologias: [
+          "Next.js 14 (App Router)",
+          "TypeScript",
+          "Tailwind CSS",
+          "i18n",
+          "Vercel",
+          "SEO",
+          "SSR",
+          "SSG",
+          "ImageKit",
+          "Cloudinary",
+        ],
+        urlSitio: "https://yukayekeplaya.com",
+        // urlGithub removed for proprietary code
+      },
+      {
+        titulo: "Jíbaro Eats",
+        descripcion:
+          "Sitio web de portafolio visual para un fotógrafo profesional especializado en gastronomía y diversas temáticas, que presenta imágenes de alta calidad y producciones audiovisuales en un diseño elegante y minimalista, desarrollado con Next.js App Router, optimizado con lazy-loading, imágenes adaptativas de Cloudinary y una experiencia de navegación fluida entre colecciones.",
+        imagen: "/jibaroeats-preview.png",
+        tecnologias: [
+          "Next.js 13+ (App Router)",
+          "TypeScript",
+          "Tailwind CSS",
+          "CSR",
+          "SSR",
+          "SSG",
+          "Cloudinary",
+          "Vercel",
+        ],
+        urlSitio: "https://jibaroeats.com",
+        urlGithub: "https://github.com/temiban013/jibaroeats.git",
+      },
+    ],
+    en: [
+      {
+        titulo: "Yukayeke Playa",
+        descripcion:
+          "Bilingual web platform (Spanish/English) with automatic language detection for tourist accommodation in Añasco, developed with Next.js 14, TypeScript, and app router architecture. Implements optimized SEO strategies, a dynamic route-based internationalization system, and responsive design specifically adapted for mobile devices using modular CSS.",
+        imagen: "/yukayeke-preview.png",
+        tecnologias: [
+          "Next.js 14 (App Router)",
+          "TypeScript",
+          "Tailwind CSS",
+          "i18n",
+          "Vercel",
+          "SEO",
+          "SSR",
+          "SSG",
+          "ImageKit",
+          "Cloudinary",
+        ],
+        urlSitio: "https://yukayekeplaya.com",
+      },
+      {
+        titulo: "Jíbaro Eats",
+        descripcion:
+          "Visual portfolio website for a professional photographer specializing in gastronomy and various themes, showcasing high-quality images and audiovisual productions in an elegant and minimalist design, developed with Next.js App Router, optimized with lazy-loading, adaptive Cloudinary images, and a fluid navigation experience between collections.",
+        imagen: "/jibaroeats-preview.png",
+        tecnologias: [
+          "Next.js 13+ (App Router)",
+          "TypeScript",
+          "Tailwind CSS",
+          "CSR",
+          "SSR",
+          "SSG",
+          "Cloudinary",
+          "Vercel",
+        ],
+        urlSitio: "https://jibaroeats.com",
+        urlGithub: "https://github.com/temiban013/jibaroeats.git",
+      },
+    ],
+  };
+
+  const currentLanguageData = proyectos[language];
 
   return (
     <section id="projects" className="relative py-20 px-6">
       <div className="max-w-screen-md mx-auto">
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            Proyectos
+            {t.projects}
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Trabajo Destacado
+            {t.featuredWork}
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            Soluciones tecnológicas innovadoras que he desarrollado e
-            implementado
+            {t.innovativeTech}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {proyectos.map((proyecto) => (
+          {currentLanguageData.map((proyecto) => (
             <ProyectoCard key={proyecto.titulo} {...proyecto} />
           ))}
         </div>
