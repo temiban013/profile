@@ -6,6 +6,8 @@ import Footer from "@/components/footer";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { LanguageProvider } from "@/lib/contexts/language-context";
+import { Suspense } from "react";
+import LanguageUrlHandler from "@/components/language-url-handler";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -113,6 +115,9 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.className} antialiased`}>
         <LanguageProvider>
+          <Suspense fallback={null}>
+            <LanguageUrlHandler />
+          </Suspense>
           <Navbar />
           <main>{children}</main>
           <Footer />

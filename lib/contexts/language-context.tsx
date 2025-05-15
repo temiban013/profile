@@ -1,3 +1,4 @@
+// lib/contexts/language-context.tsx
 "use client";
 
 import {
@@ -21,27 +22,27 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   // Default to Spanish, but prevent hydration mismatch with useState
-  const [language, setLanguage] = useState<LanguageKey>("es");
+  const [language, setLanguageState] = useState<LanguageKey>("es");
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // On mount, check if the user has a language preference stored
+  const setLanguage = (newLanguage: LanguageKey) => {
+    setLanguageState(newLanguage);
+    if (isInitialized) {
+      localStorage.setItem("language", newLanguage);
+    }
+  };
+
+  // Effect to handle initialization from localStorage
   useEffect(() => {
     const storedLanguage = localStorage.getItem("language") as LanguageKey;
     if (
       storedLanguage &&
       (storedLanguage === "en" || storedLanguage === "es")
     ) {
-      setLanguage(storedLanguage);
+      setLanguageState(storedLanguage);
     }
     setIsInitialized(true);
   }, []);
-
-  // Update localStorage when language changes, but only after initialization
-  useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem("language", language);
-    }
-  }, [language, isInitialized]);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage }}>
