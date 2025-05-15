@@ -26,22 +26,29 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
 
   const setLanguage = (newLanguage: LanguageKey) => {
-    setLanguageState(newLanguage);
-    if (isInitialized) {
-      localStorage.setItem("language", newLanguage);
+    if (newLanguage === "en" || newLanguage === "es") {
+      setLanguageState(newLanguage);
+      if (isInitialized && typeof window !== "undefined") {
+        localStorage.setItem("language", newLanguage);
+      }
     }
   };
 
   // Effect to handle initialization from localStorage
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("language") as LanguageKey;
-    if (
-      storedLanguage &&
-      (storedLanguage === "en" || storedLanguage === "es")
-    ) {
-      setLanguageState(storedLanguage);
+    if (typeof window !== "undefined") {
+      const storedLanguage = localStorage.getItem("language") as LanguageKey;
+      if (
+        storedLanguage &&
+        (storedLanguage === "en" || storedLanguage === "es")
+      ) {
+        setLanguageState(storedLanguage);
+      } else {
+        // Default to Spanish if no valid language is found
+        setLanguageState("es");
+      }
+      setIsInitialized(true);
     }
-    setIsInitialized(true);
   }, []);
 
   return (

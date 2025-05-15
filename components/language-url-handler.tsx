@@ -1,3 +1,4 @@
+// components/language-url-handler.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -11,25 +12,32 @@ export default function LanguageUrlHandler(): null {
   const { setLanguage } = useLanguage();
 
   useEffect(() => {
+    // Get the lang parameter
     const langParam = searchParams.get("lang");
 
-    if (langParam && (langParam === "en" || langParam === "es")) {
-      // Set language from URL parameter
-      setLanguage(langParam as "en" | "es");
+    if (!langParam) return;
 
-      // Remove lang parameter from URL
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("lang");
+    // Clean the parameter by removing quotes if they exist
+    const cleanLangParam = langParam.replace(/^["']|["']$/g, "");
+
+    if (cleanLangParam === "en" || cleanLangParam === "es") {
+      // Set language from URL parameter
+      setLanguage(cleanLangParam as "en" | "es");
+
+      // Create a new URLSearchParams object with all current parameters
+      const newParams = new URLSearchParams(searchParams.toString());
+
+      // Remove lang parameter
+      newParams.delete("lang");
 
       // Create new URL without the lang parameter
       const newUrl =
-        pathname + (params.toString() ? `?${params.toString()}` : "");
+        pathname + (newParams.toString() ? `?${newParams.toString()}` : "");
 
       // Use replace to avoid adding to history stack
       router.replace(newUrl, { scroll: false });
     }
   }, [searchParams, pathname, router, setLanguage]);
 
-  // This component doesn't render anything
   return null;
 }
