@@ -32,6 +32,12 @@ export type TranslationLabels = {
   sendemail: string;
   youtubeaccount: string;
   whatsappaccount: string;
+  meta: {
+    title: string;
+    description: string;
+    ogDescription: string;
+    twitterDescription: string;
+  };
 };
 
 export const translations: Record<LanguageKey, TranslationLabels> = {
@@ -67,6 +73,15 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     sendemail: "Send Email",
     youtubeaccount: "YouTube Channel",
     whatsappaccount: "WhatsApp Contact",
+    meta: {
+      title: "Mario Rafael Ayala | Software Engineer",
+      description:
+        "With over 20 years of experience in software development, I specialize in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects. My academic background in Computer Science (obtained with honors) and my military experience have provided me with a solid foundation of discipline and methodology that I apply to every project. I'm passionate about finding elegant solutions to complex problems using modern technologies like Next.js, TypeScript, and .NET Core, always maintaining a pragmatic, results-oriented approach.",
+      ogDescription:
+        "With over 20 years of experience in software development, I specialize in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects. My academic background in Computer Science (obtained with honors) and my military experience have provided me with a solid foundation of discipline and methodology that I apply to every project. I'm passionate about finding elegant solutions to complex problems using modern technologies like Next.js, TypeScript, and .NET Core, always maintaining a pragmatic, results-oriented approach.",
+      twitterDescription:
+        "With over 20 years of experience in software development, I specialize in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects. My academic background in Computer Science (obtained with honors) and my military experience have provided me with a solid foundation of discipline and methodology that I apply to every project. I'm passionate about finding elegant solutions to complex problems using modern technologies like Next.js, TypeScript, and .NET Core, always maintaining a pragmatic, results-oriented approach.",
+    },
   },
   es: {
     about: "Sobre mí",
@@ -99,13 +114,29 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     sendemail: "Enviar Correo",
     youtubeaccount: "Canal de YouTube",
     whatsappaccount: "Contactar por WhatsApp",
+    meta: {
+      title: "Mario Rafael Ayala | Ingeniero de Software",
+      description:
+        "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
+      ogDescription:
+        "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
+      twitterDescription:
+        "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
+    },
   },
 };
 
 // Helper function to get translations
 export function getTranslation(
-  key: keyof TranslationLabels,
+  key: Exclude<keyof TranslationLabels, "meta">,
   language: LanguageKey
 ): string {
   return translations[language][key];
+}
+
+// If you need to access meta, use a separate function:
+export function getMetaTranslation(
+  language: LanguageKey
+): TranslationLabels["meta"] {
+  return translations[language].meta;
 }

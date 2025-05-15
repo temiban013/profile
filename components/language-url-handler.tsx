@@ -24,6 +24,9 @@ export default function LanguageUrlHandler(): null {
       // Set language from URL parameter
       setLanguage(cleanLangParam as "en" | "es");
 
+      // Update HTML lang attribute
+      document.documentElement.lang = cleanLangParam;
+
       // Create a new URLSearchParams object with all current parameters
       const newParams = new URLSearchParams(searchParams.toString());
 
