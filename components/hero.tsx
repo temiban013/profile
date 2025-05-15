@@ -14,7 +14,7 @@ const Hero = () => {
   const t = translations[language];
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-6 pt-6 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
       <AnimatedGridPattern
         numSquares={30}
         maxOpacity={0.1}
@@ -24,7 +24,7 @@ const Hero = () => {
           "inset-x-0 h-full skew-y-12"
         )}
       />
-      <div className="relative z-[1] text-center max-w-screen-md">
+      <div className="relative z-[1] text-center max-w-screen-md mt-12 md:mt-0">
         <Badge className="rounded-full border-none">
           <Zap className="fill-current" />
           {language === "en"
