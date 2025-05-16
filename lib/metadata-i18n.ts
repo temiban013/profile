@@ -10,6 +10,9 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
     },
     description:
       "With over 20 years of experience in software development, I've specialized in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects.",
+    keywords: [
+      "mario rafael ayala, feliche, humacao, puerto rico, developer, full stack, software engineer, systems engineer, computer engineer, computing engineer, software engineer, full stack software engineer, backend software engineer, frontend software engineer, full stack software engineer, nextjs, typescript, javascript, react, nodejs, .net core, c#, sql server, mysql, mongodb, firebase, cloud software engineer, vercel",
+    ],
     openGraph: {
       siteName: "Mario Rafael Ayala",
       url: "https://www.mariorafaelayala.com/",
@@ -35,6 +38,9 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
     },
     description:
       "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas.",
+    keywords: [
+      "mario rafael ayala, feliche, humacao, puerto rico, desarrollador, full stack, ingeniero de software, ingeniero de sistemas, ingeniero informático, ingeniero en computación, ingeniero en software, ingeniero de software full stack, ingeniero de software backend, ingeniero de software frontend, ingeniero de software full stack, nextjs, typescript, javascript, react, nodejs, .net core, c#, sql server, mysql, mongodb, firebase, ingeniero de software en la nube, vercel",
+    ],
     openGraph: {
       siteName: "Mario Rafael Ayala",
       url: "https://www.mariorafaelayala.com/",
@@ -60,11 +66,6 @@ export function generateMetadata(language: LanguageKey): Metadata {
   return {
     ...siteMetadata[language],
     metadataBase: new URL("https://www.mariorafaelayala.com/"),
-    keywords: [
-      language === "en"
-        ? "mario rafael ayala, feliche, humacao, puerto rico, developer, full stack, software engineer, systems engineer, computer engineer, computing engineer, software engineer, full stack software engineer, backend software engineer, frontend software engineer, full stack software engineer, nextjs, typescript, javascript, react, nodejs, .net core, c#, sql server, mysql, mongodb, firebase, cloud software engineer, vercel"
-        : "mario rafael ayala, feliche, humacao, puerto rico, desarrollador, full stack, ingeniero de software, ingeniero de sistemas, ingeniero informático, ingeniero en computación, ingeniero en software, ingeniero de software full stack, ingeniero de software backend, ingeniero de software frontend, ingeniero de software full stack, nextjs, typescript, javascript, react, nodejs, .net core, c#, sql server, mysql, mongodb, firebase, ingeniero de software en la nube, vercel",
-    ],
     alternates: {
       canonical: "https://www.mariorafaelayala.com/",
       languages: {
