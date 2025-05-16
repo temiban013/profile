@@ -8,7 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { LanguageProvider } from "@/lib/contexts/language-context";
 import { Suspense } from "react";
 import LanguageUrlHandler from "@/components/language-url-handler";
-import { generateMetadata as generateI18nMetadata } from "@/lib/metadata-i18n";
+import { generateMetadata } from "@/lib/metadata-i18n";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -22,7 +22,7 @@ export const viewport = {
 
 // Generate metadata based on the default language (Spanish)
 // We'll update this in the client-side
-export const metadata = generateI18nMetadata("es");
+export const metadata = generateMetadata("es");
 
 export default function RootLayout({
   children,
