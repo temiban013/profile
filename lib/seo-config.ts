@@ -20,8 +20,8 @@ export const seoConfig = {
     ],
   },
   twitter: {
-    handle: "@MarioAyalaMPA",
-    site: "@MarioAyalaMPA",
+    handle: "@MarioAyalaDev",
+    site: "@MarioAyalaDev",
     cardType: "summary_large_image",
   },
   additionalMetaTags: [

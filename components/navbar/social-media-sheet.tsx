@@ -19,7 +19,7 @@ import {
 const socialLinks = {
   whatsapp: "https://wa.me/14074767353",
   youtube: "https://youtube.com/@mariorafaelayala8703",
-  gmail: "mailto:MarioAyalaMPA@gmail.com",
+  gmail: "mailto:MarioAyalaDev@gmail.com",
   linkedin: "https://linkedin.com/in/marioayalamscs",
   github: "https://github.com/temiban013",
 };
