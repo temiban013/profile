@@ -11,14 +11,14 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Mario Rafael Ayala | Ingeniero de Software",
-    url: "https://www.mariorafaelayala.com",
+    url: `${process.env.NEXT_PUBLIC_BASE_URL}`,
     description:
       "Portfolio profesional de Mario Rafael Ayala, Ingeniero de Software Senior",
     author: {
       "@type": "Person",
       name: "Mario Rafael Ayala",
       jobTitle: "Ingeniero de Software Senior",
-      url: "https://www.mariorafaelayala.com",
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}`,
     },
     inLanguage: "es",
   };

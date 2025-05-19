@@ -156,7 +156,7 @@ const Proyectos = () => {
           "Vercel",
         ],
         urlSitio: "https://jibaroeats.com",
-        urlGithub: "https://github.com/temiban013/jibaroeats.git",
+        urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_JIBAROEATS_REPO}`,
       },
     ],
     en: [
@@ -195,7 +195,7 @@ const Proyectos = () => {
           "Vercel",
         ],
         urlSitio: "https://jibaroeats.com",
-        urlGithub: "https://github.com/temiban013/jibaroeats.git",
+        urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_JIBAROEATS_REPO}`,
       },
     ],
   };

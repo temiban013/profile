@@ -40,7 +40,7 @@ const About = () => {
             <div className="flex flex-wrap gap-4 justify-start">
               <Button className="rounded-full" asChild>
                 <a
-                  href="https://github.com/temiban013"
+                  href={process.env.NEXT_PUBLIC_SOCIAL_GITHUB || ""}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -52,13 +52,13 @@ const About = () => {
                 <a
                   href={
                     language === "en"
-                      ? "/Mario-R-Ayala-Resume-EN.pdf"
-                      : "/Mario-R-Ayala-Resume-ES.pdf"
+                      ? `/${process.env.NEXT_PUBLIC_RESUME_EN}`
+                      : `/${process.env.NEXT_PUBLIC_RESUME_ES}`
                   }
                   download={
                     language === "en"
-                      ? "Mario_R_Ayala_Resume.pdf"
-                      : "Mario_R_Ayala_CV.pdf"
+                      ? `${process.env.NEXT_PUBLIC_ENGLISH_RESUME_NAME}`
+                      : `${process.env.NEXT_PUBLIC_SPANISH_RESUME_NAME}`
                   }
                 >
                   <Download className="mr-2 h-4 w-4" />

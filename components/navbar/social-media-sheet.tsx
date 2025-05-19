@@ -17,11 +17,11 @@ import {
 } from "../icons";
 
 const socialLinks = {
-  whatsapp: "https://wa.me/14074767353",
-  youtube: "https://youtube.com/@mariorafaelayala8703",
-  gmail: "mailto:MarioAyalaDev@gmail.com",
-  linkedin: "https://linkedin.com/in/marioayalamscs",
-  github: "https://github.com/temiban013",
+  whatsapp: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "",
+  youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "",
+  gmail: process.env.NEXT_PUBLIC_SOCIAL_EMAIL || "",
+  linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "",
+  github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "",
 };
 
 export const SocialMediaSheet = () => {
