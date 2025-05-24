@@ -121,6 +121,25 @@ const Proyectos = () => {
   const proyectos = {
     es: [
       {
+        titulo: "Café Papamín",
+        descripcion:
+          "Plataforma de comercio electrónico personalizada para productor artesanal de café en Puerto Rico, desarrollada con Next.js 15.3.2 y TypeScript 5.8.3. Implementa integración directa con WhatsApp para procesamiento de pedidos, sistema de gestión de imágenes para storytelling visual de la finca al café, y optimizaciones de rendimiento específicas para el mercado móvil puertorriqueño. Representa una alternativa 95% más económica comparada con plataformas tradicionales de e-commerce.",
+        imagen: "/papamin-preview.png",
+        tecnologias: [
+          "Next.js 15.3.2 (App Router)",
+          "TypeScript 5.8.3",
+          "Tailwind CSS 4.1.7",
+          "React 19.1.0",
+          "WhatsApp Integration",
+          "Comercio Electrónico",
+          "SEO Optimization",
+          "Performance Optimization",
+          "Mobile-First Design",
+        ],
+        urlSitio: "https://www.cafepapaminllc.com",
+        // urlGithub removed for proprietary code
+      },
+      {
         titulo: "Yukayeke Playa",
         descripcion:
           "Plataforma web bilingüe (español/inglés) con detección automática de idioma para hospedería turística en Añasco, desarrollada con Next.js 14, TypeScript y arquitectura app router. Implementa estrategias de SEO optimizadas, sistema de internacionalización basado en rutas dinámicas, y diseño responsivo adaptado específicamente para dispositivos móviles utilizando CSS modular.",
@@ -160,6 +179,25 @@ const Proyectos = () => {
       },
     ],
     en: [
+      {
+        titulo: "Café Papamín",
+        descripcion:
+          "Custom e-commerce platform for artisanal coffee producer in Puerto Rico, developed with Next.js 15.3.2 and TypeScript 5.8.3. Implements direct WhatsApp integration for order processing, image management system for visual farm-to-cup storytelling, and performance optimizations specifically for the Puerto Rican mobile market. Represents a 95% cost reduction compared to traditional e-commerce platforms.",
+        imagen: "/papamin-preview.png",
+        tecnologias: [
+          "Next.js 15.3.2 (App Router)",
+          "TypeScript 5.8.3",
+          "Tailwind CSS 4.1.7",
+          "React 19.1.0",
+          "WhatsApp Integration",
+          "E-commerce",
+          "SEO Optimization",
+          "Performance Optimization",
+          "Mobile-First Design",
+        ],
+        urlSitio: "https://www.cafepapaminllc.com",
+        // urlGithub removed for proprietary code
+      },
       {
         titulo: "Yukayeke Playa",
         descripcion:
