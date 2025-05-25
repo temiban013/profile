@@ -40,10 +40,10 @@
 
 ```jsx
 // Good
-<ExternalLink href="https://github.com/temiban013" ariaLabel="Ver perfil de GitHub">
+<ExternalLink href="https://github.com/yourusername" rel="noopener noreferrer" ariaLabel="Ver perfil de GitHub">
   Ver código fuente
 </ExternalLink>
 
 // Bad
-<a href="https://github.com/temiban013">Click here</a>
+<a href="https://github.com/yourusername">Click here</a>
 ```
