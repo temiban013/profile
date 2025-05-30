@@ -1,3 +1,4 @@
+// components/navbar/navbar.tsx
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,16 +13,11 @@ import { NavMenu } from "./nav-menu";
 import { NavigationSheet } from "./navigation-sheet";
 import { SocialMediaSheet } from "./social-media-sheet";
 import { LanguageSwitcher } from "@/components/language-switcher";
-
-const socialLinks = {
-  whatsapp: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "",
-  youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "",
-  gmail: process.env.NEXT_PUBLIC_SOCIAL_EMAIL || "",
-  linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "",
-  github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "",
-};
+import { getFormattedSocialLinks } from "@/lib/social-links";
 
 const Navbar = () => {
+  const socialLinks = getFormattedSocialLinks();
+
   return (
     <nav className="fixed z-10 top-6 inset-x-4 h-14 bg-background border dark:border-slate-700/70 max-w-screen-md mx-auto rounded-full">
       <div className="h-full flex items-center justify-between mx-auto px-3">
@@ -85,7 +81,7 @@ const Navbar = () => {
           </Button>
           <Button
             variant="outline"
-            className="hidden sm:inline-flex rounded-full shadow-none" // Modified
+            className="hidden sm:inline-flex rounded-full shadow-none"
             size="icon"
           >
             <Link
@@ -94,7 +90,7 @@ const Navbar = () => {
               rel="noopener noreferrer"
               aria-label="GitHub Profile"
             >
-              <GithubLogo className="h-5 w-5" /> {/* Fixed class names */}
+              <GithubLogo className="h-5 w-5" />
             </Link>
           </Button>
 

@@ -1,3 +1,4 @@
+// components/footer.tsx
 "use client";
 
 import Image from "next/image";
@@ -13,18 +14,13 @@ import {
 } from "./icons";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
-
-const socialLinks = {
-  whatsapp: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "",
-  youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "",
-  gmail: process.env.NEXT_PUBLIC_SOCIAL_EMAIL || "",
-  linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "",
-  github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "",
-};
+import { getFormattedSocialLinks } from "@/lib/social-links";
 
 const Footer = () => {
   const { language } = useLanguage();
   const t = translations[language];
+  const socialLinks = getFormattedSocialLinks();
+
   const footerLinks = {
     es: [
       {
@@ -62,7 +58,6 @@ const Footer = () => {
     <footer className="mt-20">
       <div className="max-w-screen-md mx-auto">
         <div className="py-12 flex flex-col justify-start items-center">
-          {/* Logo */}
           <Image
             src={"/mra-logo-sq.png"}
             alt="Logo MRA"
@@ -86,7 +81,6 @@ const Footer = () => {
         </div>
         <Separator />
         <div className="py-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6 xl:px-0">
-          {/* Copyright */}
           <span className="text-muted-foreground">
             &copy; {new Date().getFullYear()} Mario R. Ayala. {t.rightsreserved}
             .

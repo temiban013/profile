@@ -1,3 +1,4 @@
+// components/navbar/social-media-sheet.tsx
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,16 +16,11 @@ import {
   YoutubeLogo,
   WhatsappLogo,
 } from "../icons";
-
-const socialLinks = {
-  whatsapp: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "",
-  youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "",
-  gmail: process.env.NEXT_PUBLIC_SOCIAL_EMAIL || "",
-  linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "",
-  github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "",
-};
+import { getFormattedSocialLinks } from "@/lib/social-links";
 
 export const SocialMediaSheet = () => {
+  const socialLinks = getFormattedSocialLinks();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -33,7 +29,6 @@ export const SocialMediaSheet = () => {
         </Button>
       </SheetTrigger>
       <SheetContent className="pt-10 px-6">
-        {/* Adding SheetTitle and SheetDescription for accessibility */}
         <SheetTitle>Redes Sociales</SheetTitle>
         <SheetDescription>
           Conecta conmigo a través de estas plataformas
