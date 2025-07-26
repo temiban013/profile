@@ -10,7 +10,6 @@ import {
   GraduationCap,
   MapPin,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 
