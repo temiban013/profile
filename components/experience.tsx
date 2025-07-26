@@ -1,12 +1,20 @@
 // components/experience.tsx
 "use client";
 
+import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Calendar, MapPin, BookOpen, Award } from "lucide-react";
+import {
+  Award,
+  Briefcase,
+  Calendar,
+  GraduationCap,
+  MapPin,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 
-// Define types for each section
+// Type definitions
 interface ExperienceItemProps {
   title: string;
   company: string;
@@ -21,7 +29,7 @@ interface EducationItemProps {
   institution: string;
   location: string;
   period: string;
-  honors: string;
+  honors?: string;
 }
 
 interface CertificationItemProps {
@@ -52,7 +60,7 @@ const ExperienceItem = ({
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <Building2 className="size-5 text-muted-foreground" />
+            <Briefcase className="size-5 text-muted-foreground" />
           </div>
           <span className="text-lg font-semibold">{company}</span>
         </div>
@@ -69,10 +77,10 @@ const ExperienceItem = ({
             </div>
           </div>
         </div>
-        <p className="text-muted-foreground">{description}</p>
+        <p className="text-muted-foreground leading-relaxed">{description}</p>
         <div className="flex flex-wrap gap-2">
           {technologies.map((tech) => (
-            <Badge key={tech} variant="secondary" className="rounded-full">
+            <Badge key={tech} variant="outline" className="text-xs">
               {tech}
             </Badge>
           ))}
@@ -101,7 +109,7 @@ const EducationItem = ({
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <BookOpen className="size-5 text-muted-foreground" />
+            <GraduationCap className="size-5 text-muted-foreground" />
           </div>
           <span className="text-lg font-semibold">{institution}</span>
         </div>
@@ -117,13 +125,8 @@ const EducationItem = ({
               <span>{location}</span>
             </div>
           </div>
+          {honors && <p className="text-primary font-medium mt-1">{honors}</p>}
         </div>
-        {honors && (
-          <div className="flex items-center gap-2">
-            <Award className="size-4 text-amber-500" />
-            <p className="text-muted-foreground font-medium">{honors}</p>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -186,22 +189,40 @@ const Experience = () => {
   const { language } = useLanguage();
   const t = translations[language];
 
-  // Define experiences data with language-specific content
+  // Define experiences data with language-specific content including new experiences
   const experiences = {
     en: {
       experience: [
         {
+          title: "Digital Transformation Program Designer",
+          company: "MPA Consultants",
+          location: "Las Marías, Puerto Rico",
+          period: "May 2025 - July 2025",
+          description:
+            "Developed a 150-hour intensive program that transforms displaced adults into digital professionals. My pedagogical innovation used the OSI network model as an educational framework, integrating AI, blockchain, and Microsoft tools. The program resulted in each student having an executive CV, a business plan, and an entrepreneurial digital presence, fostering local economic development and a community multiplier effect.",
+          technologies: [
+            "Educational Framework Design",
+            "OSI Network Model",
+            "AI Integration",
+            "Blockchain Education",
+            "Microsoft Tools",
+            "Digital Transformation",
+          ],
+        },
+        {
           title: "Leadership Instructor",
           company: "MPA Consultants",
-          location: "Lares, Puerto Rico",
+          location: "Santurce, Puerto Rico",
           period: "March 2025 - May 2025",
           description:
-            "Designed and taught a 70-hour intensive course on professional conduct and interview skills, enriching the original curriculum with modules on AI for job searching. Implemented a methodology based on progressive sequencing of knowledge, achieving a completion rate of over 90%.",
+            "Designed and taught a 70-hour intensive course on professional behavior and interviewing skills, enriching the original curriculum with modules on AI for job search. Created comprehensive course material including presentations, assessments and practical exercises that promoted active discussion and student participation. Implemented methodology based on progressive sequencing of knowledge, achieving a course completion rate above 90%.",
           technologies: [
             "Instructional Design",
             "AI for Recruitment",
             "Technical Presentations",
             "Competency Assessment",
+            "Course Development",
+            "Educational Methodology",
           ],
         },
         {
@@ -210,13 +231,48 @@ const Experience = () => {
           location: "Añasco, Puerto Rico",
           period: "March 2024 - December 2024",
           description:
-            "Led the complete digital renovation of Yukayeke Playa Resort, architecting and implementing a bilingual web platform (ES/EN) using Next.js 14, TypeScript, and modular CSS with dynamic internationalization. Designed and implemented an intelligent routing system with automatic language detection based on browser preferences.",
+            "Led comprehensive digital modernization initiatives, architecting and implementing a multilingual (ES/EN) web platform using Next.js 14, TypeScript, and Tailwind CSS, resulting in enhanced user experience and improved online presence. Designed and currently implementing (as external consultant) a proprietary booking system architecture utilizing Rust and modern web technologies to streamline operations and enhance guest engagement. Spearheaded migration from legacy platform (Squarespace) to modern tech stack hosted on Vercel.",
+          technologies: [
+            "Next.js 14",
+            "TypeScript",
+            "Tailwind CSS",
+            "Rust",
+            "Vercel",
+            "Internationalization",
+            "System Architecture",
+          ],
+        },
+        {
+          title: "Educational Technology Specialist",
+          company: "WOTEC",
+          location: "Las Marías, Puerto Rico",
+          period: "April 2024 - July 2024",
+          description:
+            "Designed and implemented a 400-hour technical literacy program transforming novices into digitally competent professionals. Developed a comprehensive curriculum integrating AI tools, productivity software, and collaboration platforms achieving 85% completion rate. Created custom learning modules for practical technology applications, including data analysis and automated workflows. Mentored diverse learners in essential digital competencies including cloud collaboration and web technologies.",
+          technologies: [
+            "Curriculum Development",
+            "AI Tools Training",
+            "Digital Literacy",
+            "Cloud Collaboration",
+            "Data Analysis",
+            "Automated Workflows",
+          ],
+        },
+        {
+          title: "Independent Technology Consultant",
+          company: "Self-Employed",
+          location: "Mayagüez, Puerto Rico",
+          period: "September 2021 - Present",
+          description:
+            "Created and continues maintaining the website for Café Papamín in San Sebastian. Developed and deployed blockchain applications including an NFT marketplace prototype using Solidity and React. Conducted technology workshops educating professionals and students on blockchain fundamentals and smart contract development. Built custom web applications for small businesses using Next.js and TypeScript, implementing modern UI/UX practices.",
           technologies: [
             "Next.js",
             "TypeScript",
-            "Tailwind CSS",
-            "Vercel",
-            "Internationalization",
+            "Solidity",
+            "React",
+            "Blockchain Development",
+            "Smart Contracts",
+            "UI/UX Design",
           ],
         },
         {
@@ -225,13 +281,14 @@ const Experience = () => {
           location: "Orlando, Florida",
           period: "November 2015 - September 2021",
           description:
-            "Architected and delivered a Business Intelligence Portal that unified data sources from SharePoint, Tableau, and MS SQL, allowing executives to access specific analyses and reports through a single secure platform. Developed mobile applications using geolocation and integration with data analysis systems.",
+            "Led enterprise-wide technical initiatives as principal software architect and data engineering specialist at Disney Parks, serving as the sole software engineer for critical business intelligence projects. Architected and delivered an enterprise-scale Business Intelligence Portal unifying SharePoint, Tableau, and MS SQL data sources, implementing an MVC/REST architecture that enabled role-based access authenticating with NTLM for executives across Disney's global operations. Pioneered a cross-platform mobile application with Xamarin utilizing geolocation and barcode scanning technologies.",
           technologies: [
             ".NET Core",
             "C#",
             "SQL Server",
             "SharePoint",
             "Tableau",
+            "Xamarin",
             "API Architecture",
             "Systems Integration",
           ],
@@ -242,13 +299,15 @@ const Experience = () => {
           location: "Boca Raton, Florida",
           period: "April 2011 - June 2012",
           description:
-            "Maintained .NET financial reporting applications using advanced data grids. Participated in the third-party export of financial data representing derivative products and collaborated on the re-architecture of the middle tier for financial instrument valuation.",
+            "Architected and implemented mission-critical financial reporting systems for derivatives trading, achieving 100% accuracy in OTC transaction validation through robust real-time data verification. Designed and developed secure data export frameworks for OTC and non-OTC derivative products, ensuring compliance with industry standards while maintaining data integrity. Led the re-architecture of middle-tier systems in ASP.NET and C# for swap-related financial instruments.",
           technologies: [
             ".NET",
             "C#",
             "SQL",
-            "Financial Integration",
-            "Janus UI Controls",
+            "Financial Systems",
+            "OTC Trading",
+            "Data Verification",
+            "Moq Framework",
           ],
         },
         {
@@ -257,7 +316,7 @@ const Experience = () => {
           location: "Coral Springs, Florida",
           period: "June 2007 - February 2011",
           description:
-            "Developed and maintained ASP.NET e-commerce applications for eye care using Microsoft technologies. Implemented WCF Services, AJAX controls with JQuery, and created new e-commerce functionalities like tiered pricing and automatic reordering.",
+            "Developed and maintained ASP.NET e-commerce applications for eye care using C#, SQL Server, Progress DB, and Visual Studio 2010. Implemented WCF Services, AJAX controls with JQuery and JavaScript for database and client-side communication. Created new e-commerce features like tiered pricing, coupons, shipping rebates, and auto reordering.",
           technologies: [
             "ASP.NET",
             "C#",
@@ -269,18 +328,20 @@ const Experience = () => {
           ],
         },
         {
-          title: "Developer III",
+          title: "Senior Technical Lead / Developer III",
           company: "Office Depot",
           location: "Delray Beach, Florida",
           period: "November 1998 - January 2005",
           description:
-            "Led the implementation of the Oracle Retail MFP application for merchandise financial planning. Directed the integration of CTI technology with intranet applications and led the full development cycle of XML-based order entry applications.",
+            "Led architecture and implementation of Oracle Retail MFP platform, integrating predictive analytics with enterprise financial systems. Engineered automated data integration framework connecting disparate enterprise databases (SQL Server, Oracle, DB2, Teradata). Developed real-time UNIX process monitoring system utilizing early AJAX implementation. Architected ASP-based integration between Rockwell telephony systems and intranet applications.",
           technologies: [
             "Oracle",
             "XML",
             "ASP",
+            "UNIX",
             "B2B Integration",
-            "Systems Architecture",
+            "Enterprise Architecture",
+            "Predictive Analytics",
           ],
         },
         {
@@ -289,7 +350,7 @@ const Experience = () => {
           location: "East Coast, USA",
           period: "June 2007 - February 2011",
           description:
-            "Developed programs to automate the tracking and resolution of breakdowns that improved efficiency and saved time and resources. Was responsible for computer security through the installation and configuration of security software and the development of policies.",
+            "Developed programs to automate troubleshooting and resolution of system failures that improved efficiency and saved time and resources. Was responsible for computer security through the installation and configuration of security software and the development of policies.",
           technologies: [
             "DBase IV",
             "Systems Security",
@@ -297,7 +358,6 @@ const Experience = () => {
             "Infrastructure Management",
           ],
         },
-        // Additional English experiences...
       ],
       education: [
         {
@@ -342,17 +402,35 @@ const Experience = () => {
     es: {
       experience: [
         {
+          title: "Diseñador de Programa de Transformación Digital",
+          company: "MPA Consultants",
+          location: "Las Marías, Puerto Rico",
+          period: "Mayo 2025 - Julio 2025",
+          description:
+            "Desarrollé un programa intensivo de 150 horas transformando adultos desplazados en profesionales digitales. Innovación pedagógica: usé modelo OSI de redes como framework educativo. Integré IA, blockchain y herramientas Microsoft. Resultados: CV ejecutivo, plan de negocio, presencia digital empresarial para cada estudiante. Impacto: desarrollo económico local + efecto multiplicador comunitario.",
+          technologies: [
+            "Diseño de Marco Educativo",
+            "Modelo OSI de Redes",
+            "Integración de IA",
+            "Educación Blockchain",
+            "Herramientas Microsoft",
+            "Transformación Digital",
+          ],
+        },
+        {
           title: "Instructor de Liderazgo",
           company: "MPA Consultants",
-          location: "Lares, Puerto Rico",
+          location: "Santurce, Puerto Rico",
           period: "Marzo 2025 - Mayo 2025",
           description:
-            "Diseñé e impartí curso intensivo de 70 horas sobre conducta profesional y habilidades para entrevistas, enriqueciendo el currículo original con módulos sobre IA para búsqueda de empleo. Implementé metodología basada en secuenciación progresiva del conocimiento, logrando una tasa de finalización superior al 90%.",
+            "Diseñé e impartí curso intensivo de 70 horas sobre conducta profesional y habilidades para entrevistas, enriqueciendo el currículo original con módulos sobre IA para búsqueda de empleo. Creé material didáctico comprensible incluyendo presentaciones, evaluaciones y ejercicios prácticos que promovieron discusión activa y participación estudiantil. Implementé metodología basada en secuenciación progresiva del conocimiento, logrando una tasa de finalización del curso superior al 90%.",
           technologies: [
             "Diseño Instruccional",
             "IA para Reclutamiento",
             "Presentaciones Técnicas",
             "Evaluación de Competencias",
+            "Desarrollo de Cursos",
+            "Metodología Educativa",
           ],
         },
         {
@@ -361,30 +439,66 @@ const Experience = () => {
           location: "Añasco, Puerto Rico",
           period: "Marzo 2024 - Diciembre 2024",
           description:
-            "Lideré la renovación digital completa de Yukayeke Playa Resort, arquitectando e implementando una plataforma web bilingüe (ES/EN) utilizando Next.js 14, TypeScript y CSS modular con internacionalización dinámica. Diseñé e implementé un sistema de enrutamiento inteligente con detección automática de idioma basado en preferencias del navegador.",
+            "Lideré iniciativas integrales de modernización digital, arquitectando e implementando una plataforma web multilingüe (ES/EN) utilizando Next.js 14, TypeScript y Tailwind CSS, resultando en una mejor experiencia de usuario y presencia en línea. Diseñé y actualmente implemento (como consultor externo) una arquitectura propietaria de sistema de reservas utilizando Rust y tecnologías web modernas para optimizar operaciones y mejorar la participación de huéspedes. Dirigí la migración desde plataforma heredada (Squarespace) a stack tecnológico moderno alojado en Vercel.",
+          technologies: [
+            "Next.js 14",
+            "TypeScript",
+            "Tailwind CSS",
+            "Rust",
+            "Vercel",
+            "Internacionalización",
+            "Arquitectura de Sistemas",
+          ],
+        },
+        {
+          title: "Especialista en Tecnología Educativa",
+          company: "WOTEC",
+          location: "Las Marías, Puerto Rico",
+          period: "Abril 2024 - Julio 2024",
+          description:
+            "Diseñé e implementé un programa de alfabetización técnica de 400 horas transformando novatos en profesionales digitalmente competentes. Desarrollé un currículo integral integrando herramientas de IA, software de productividad y plataformas de colaboración logrando una tasa de finalización del 85%. Creé módulos de aprendizaje personalizados para aplicaciones prácticas de tecnología, incluyendo análisis de datos y flujos de trabajo automatizados. Mentoré a estudiantes diversos en competencias digitales esenciales incluyendo colaboración en la nube y tecnologías web.",
+          technologies: [
+            "Desarrollo Curricular",
+            "Entrenamiento en Herramientas IA",
+            "Alfabetización Digital",
+            "Colaboración en la Nube",
+            "Análisis de Datos",
+            "Flujos de Trabajo Automatizados",
+          ],
+        },
+        {
+          title: "Consultor Independiente de Tecnología",
+          company: "Independiente",
+          location: "Mayagüez, Puerto Rico",
+          period: "Septiembre 2021 - Presente",
+          description:
+            "Creé y continúo manteniendo el sitio web para Café Papamín en San Sebastián. Desarrollé e implementé aplicaciones blockchain incluyendo un prototipo de mercado NFT usando Solidity y React. Conduje talleres de tecnología educando profesionales y estudiantes sobre fundamentos blockchain y desarrollo de contratos inteligentes. Construí aplicaciones web personalizadas para pequeñas empresas usando Next.js y TypeScript, implementando prácticas modernas de UI/UX.",
           technologies: [
             "Next.js",
             "TypeScript",
-            "Tailwind CSS",
-            "Vercel",
-            "Internacionalización",
+            "Solidity",
+            "React",
+            "Desarrollo Blockchain",
+            "Contratos Inteligentes",
+            "Diseño UI/UX",
           ],
         },
         {
           title: "Ingeniero de Software Principal",
           company: "Disney Parks, Experiences and Products",
           location: "Orlando, Florida",
-          period: "Noviembre 2015 - Serptiembre 2021",
+          period: "Noviembre 2015 - Septiembre 2021",
           description:
-            "Arquitecté y entregué un Portal de Inteligencia Empresarial que unificó fuentes de datos de SharePoint, Tableau y MS SQL, permitiendo a ejecutivos acceder a análisis y reportes específicos a través de una única plataforma segura. Desarrollé aplicaciones móviles utilizando geolocalización e integración con sistemas de análisis de datos.",
+            "Lideré iniciativas técnicas empresariales como arquitecto principal de software y especialista en ingeniería de datos en Disney Parks, sirviendo como el único ingeniero de software para proyectos críticos de inteligencia empresarial. Arquitecté y entregué un Portal de Inteligencia Empresarial a escala empresarial unificando fuentes de datos de SharePoint, Tableau y MS SQL, implementando una arquitectura MVC/REST que habilitó acceso basado en roles autenticando con NTLM para ejecutivos a través de las operaciones globales de Disney. Fui pionero en una aplicación móvil multiplataforma con Xamarin utilizando geolocalización y tecnologías de escaneo de códigos de barras.",
           technologies: [
             ".NET Core",
             "C#",
             "SQL Server",
             "SharePoint",
             "Tableau",
-            "Arquitectura de APIs",
-            "Inegración de Sistemas",
+            "Xamarin",
+            "Arquitectura API",
+            "Integración de Sistemas",
           ],
         },
         {
@@ -393,13 +507,15 @@ const Experience = () => {
           location: "Boca Raton, Florida",
           period: "Abril 2011 - Junio 2012",
           description:
-            "Mantuve aplicaciones .NET para reportes financieros utilizando grillas de datos avanzadas. Participé en la exportación a terceros de datos financieros representando productos derivados y colaboré en la re-arquitectura del nivel intermedio para la valoración de instrumentos financieros.",
+            "Arquitecté e implementé sistemas de informes financieros críticos para el comercio de derivados, logrando 100% de precisión en la validación de transacciones OTC a través de verificación robusta de datos en tiempo real. Diseñé y desarrollé marcos de exportación de datos seguros para productos derivados OTC y no-OTC, asegurando el cumplimiento con estándares de la industria mientras mantenía la integridad de los datos. Lideré la re-arquitectura de sistemas de nivel medio en ASP.NET y C# para instrumentos financieros relacionados con swaps.",
           technologies: [
             ".NET",
             "C#",
             "SQL",
-            "Integración Financiera",
-            "Janus UI Controls",
+            "Sistemas Financieros",
+            "Comercio OTC",
+            "Verificación de Datos",
+            "Framework Moq",
           ],
         },
         {
@@ -408,7 +524,7 @@ const Experience = () => {
           location: "Coral Springs, Florida",
           period: "Junio 2007 - Febrero 2011",
           description:
-            "Desarrollé y mantuve aplicaciones de comercio electrónico ASP.NET para el cuidado de la vista utilizando tecnologías Microsoft. Implementé Servicios WCF, controles AJAX con JQuery y creé nuevas funciones de comercio electrónico como precios por niveles y reordenamiento automático.",
+            "Desarrollé y mantuve aplicaciones de comercio electrónico ASP.NET para cuidado ocular usando C#, SQL Server, Progress DB y Visual Studio 2010. Implementé Servicios WCF, controles AJAX con JQuery y JavaScript para comunicación de base de datos y del lado del cliente. Creé nuevas características de comercio electrónico como precios escalonados, cupones, reembolsos de envío y reordenamiento automático.",
           technologies: [
             "ASP.NET",
             "C#",
@@ -420,23 +536,25 @@ const Experience = () => {
           ],
         },
         {
-          title: "Desarrollador III",
+          title: "Líder Técnico Senior / Desarrollador III",
           company: "Office Depot",
           location: "Delray Beach, Florida",
           period: "Noviembre 1998 - Enero 2005",
           description:
-            "Lideré la implementación de la aplicación Oracle Retail MFP para planificación financiera de mercadería. Dirigí la integración de tecnología CTI con aplicaciones intranet y lideré el ciclo completo de desarrollo de aplicaciones de ingreso de pedidos basadas en XML.",
+            "Lideré la arquitectura e implementación de la plataforma Oracle Retail MFP, integrando análisis predictivos con sistemas financieros empresariales. Diseñé un marco de integración de datos automatizado conectando bases de datos empresariales dispares (SQL Server, Oracle, DB2, Teradata). Desarrollé un sistema de monitoreo de procesos UNIX en tiempo real utilizando una implementación temprana de AJAX. Arquitecté la integración basada en ASP entre sistemas de telefonía Rockwell y aplicaciones de intranet.",
           technologies: [
             "Oracle",
             "XML",
             "ASP",
+            "UNIX",
             "Integración B2B",
-            "Arquitectura de Sistemas",
+            "Arquitectura Empresarial",
+            "Análisis Predictivos",
           ],
         },
         {
           title: "Oficial de Seguridad de la Información (RM2/E5)",
-          company: "Armada Naval de los Estados Unidos (NAVY)",
+          company: "Armada Naval de los Estados Unidos",
           location: "Costa Este, EE.UU.",
           period: "Junio 2007 - Febrero 2011",
           description:
@@ -448,7 +566,6 @@ const Experience = () => {
             "Gestión de Infraestructura",
           ],
         },
-        // Additional Spanish experiences...
       ],
       education: [
         {
@@ -483,7 +600,7 @@ const Experience = () => {
         },
         {
           title:
-            "Lenguage de Señas Americano (ASL) con dialecto puertorriqueño",
+            "Lenguaje de Señas Americano (ASL) con dialecto puertorriqueño",
           organization: "Ideality group",
           location: "Las Marías, Puerto Rico",
           period: "2024",
@@ -530,14 +647,16 @@ const Experience = () => {
             {language === "en" ? "Academic Background" : "Formación Académica"}
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            {t.academicBackground}
+            {language === "en"
+              ? "Educational foundation and achievements"
+              : "Base educativa y logros académicos"}
           </p>
         </div>
 
         <div className="relative mb-16">
           {currentLanguageData.education.map((item, index) => (
             <EducationItem
-              key={`${item.degree}-${item.institution}-${index}`}
+              key={`${item.institution}-${item.degree}-${index}`}
               {...item}
             />
           ))}
@@ -546,22 +665,24 @@ const Experience = () => {
         {/* Certifications Section */}
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            {t.certifications}
+            {language === "en" ? "Certifications" : "Certificaciones"}
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
             {language === "en"
-              ? "Recognitions and Participation"
-              : "Reconocimientos y Participación"}
+              ? "Professional Recognition"
+              : "Reconocimiento Profesional"}
           </h2>
           <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            {t.recognitions}
+            {language === "en"
+              ? "Achievements and community involvement"
+              : "Logros y participación comunitaria"}
           </p>
         </div>
 
         <div className="relative">
           {currentLanguageData.certifications.map((item, index) => (
             <CertificationItem
-              key={`${item.title}-${item.organization}-${index}`}
+              key={`${item.organization}-${item.title}-${index}`}
               {...item}
             />
           ))}
