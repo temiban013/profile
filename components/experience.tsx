@@ -1,7 +1,7 @@
 // components/experience.tsx
 "use client";
 
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Award,
@@ -9,7 +9,12 @@ import {
   Calendar,
   GraduationCap,
   MapPin,
+  ExternalLink,
+  Code,
+  Users,
+  Trophy,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 
@@ -21,6 +26,7 @@ interface ExperienceItemProps {
   period: string;
   description: string;
   technologies: string[];
+  index: number;
 }
 
 interface EducationItemProps {
@@ -29,6 +35,7 @@ interface EducationItemProps {
   location: string;
   period: string;
   honors?: string;
+  index: number;
 }
 
 interface CertificationItemProps {
@@ -37,9 +44,80 @@ interface CertificationItemProps {
   location: string;
   period: string;
   url?: string;
+  index: number;
 }
 
-// Experience item component
+// Enhanced timeline item component
+const TimelineItem = ({
+  children,
+  icon: Icon,
+  isLast = false,
+  index = 0,
+}: {
+  children: React.ReactNode;
+  icon: any;
+  isLast?: boolean;
+  index?: number;
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsVisible(true), index * 200);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (itemRef.current) {
+      observer.observe(itemRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [index]);
+
+  return (
+    <div
+      ref={itemRef}
+      className={cn(
+        "relative pl-16 group transition-all duration-700",
+        !isLast && "pb-12",
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
+      )}
+    >
+      {/* Enhanced Timeline line with animation */}
+      <div className="absolute left-6 top-3 w-0.5 bg-border group-hover:bg-primary/50 transition-colors duration-300">
+        <div
+          className={cn(
+            "h-full bg-gradient-to-b from-primary to-secondary transition-all duration-1000 delay-200",
+            isVisible ? "scale-y-100" : "scale-y-0"
+          )}
+          style={{ transformOrigin: "top" }}
+        />
+      </div>
+
+      {/* Enhanced timeline dot */}
+      <div className="absolute left-3 top-3 w-6 h-6 rounded-full bg-background border-2 border-primary professional-shadow flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+        <Icon className="w-3 h-3 text-primary" />
+      </div>
+
+      {/* Content with glass effect */}
+      <div
+        className={cn(
+          "p-6 rounded-xl glass-effect border border-border/50 hover:border-primary/30 transition-all duration-300 hover:scale-105 professional-shadow",
+          isVisible && "animate-in slide-in-from-left-4"
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// Enhanced experience item component
 const ExperienceItem = ({
   title,
   company,
@@ -47,148 +125,175 @@ const ExperienceItem = ({
   period,
   description,
   technologies,
+  index,
 }: ExperienceItemProps) => {
   return (
-    <div className="relative pl-8 not-last:pb-12 group">
-      {/* Timeline line */}
-      <div className="absolute left-0 top-2.5 h-full w-[2px] bg-muted group-first:h-[calc(100%-24px)] group-first:top-6">
-        <div className="absolute h-3 w-3 -left-[5px] top-0 rounded-full border-2 border-primary bg-background" />
-      </div>
+    <TimelineItem icon={Briefcase} index={index}>
+      <div className="space-y-4">
+        {/* Header with professional styling */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                <Code className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
+                {company}
+              </h3>
+            </div>
+            <h4 className="text-lg font-medium text-primary mb-3">{title}</h4>
+          </div>
+        </div>
 
-      {/* Content */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <Briefcase className="size-5 text-foreground" />
+        {/* Meta information */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-primary" />
+            <span className="font-medium">{period}</span>
           </div>
-          <span className="text-lg font-semibold">{company}</span>
-        </div>
-        <div>
-          <h3 className="text-xl font-medium">{title}</h3>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1 text-sm">
-            <div className="flex items-center gap-2">
-              <Calendar className="size-4" />
-              <span>{period}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="size-4" />
-              <span>{location}</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-primary" />
+            <span className="font-medium">{location}</span>
           </div>
         </div>
+
+        {/* Description */}
         <p className="text-muted-foreground leading-relaxed">{description}</p>
+
+        {/* Technologies with enhanced styling */}
         <div className="flex flex-wrap gap-2">
-          {technologies.map((tech) => (
-            <Badge key={tech} variant="outline" className="text-xs">
+          {technologies.map((tech, techIndex) => (
+            <Badge
+              key={tech}
+              variant="outline"
+              className={cn(
+                "text-xs bg-primary/5 border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300",
+                `animate-in fade-in slide-in-from-bottom-2`
+              )}
+              style={{ animationDelay: `${techIndex * 50}ms` }}
+            >
               {tech}
             </Badge>
           ))}
         </div>
       </div>
-    </div>
+    </TimelineItem>
   );
 };
 
-// Education item component
+// Enhanced education item component
 const EducationItem = ({
   degree,
   institution,
   location,
   period,
   honors,
+  index,
 }: EducationItemProps) => {
   return (
-    <div className="relative pl-8 not-last:pb-12 group">
-      {/* Timeline line */}
-      <div className="absolute left-0 top-2.5 h-full w-[2px] bg-muted group-first:h-[calc(100%-24px)] group-first:top-6">
-        <div className="absolute h-3 w-3 -left-[5px] top-0 rounded-full border-2 border-primary bg-background" />
-      </div>
+    <TimelineItem icon={GraduationCap} index={index}>
+      <div className="space-y-4">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center">
+            <Trophy className="w-5 h-5 text-secondary" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold text-foreground mb-1">
+              {institution}
+            </h3>
+            <h4 className="text-lg font-medium text-secondary mb-3">
+              {degree}
+            </h4>
+          </div>
+        </div>
 
-      {/* Content */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <GraduationCap className="size-5 text-foreground" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-secondary" />
+            <span className="font-medium">{period}</span>
           </div>
-          <span className="text-lg font-semibold">{institution}</span>
-        </div>
-        <div>
-          <h3 className="text-xl font-medium">{degree}</h3>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1 text-sm">
-            <div className="flex items-center gap-2">
-              <Calendar className="size-4" />
-              <span>{period}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="size-4" />
-              <span>{location}</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-secondary" />
+            <span className="font-medium">{location}</span>
           </div>
-          {honors && <p className="text-primary font-medium mt-1">{honors}</p>}
         </div>
+
+        {honors && (
+          <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-3">
+            <p className="text-secondary font-medium text-sm">{honors}</p>
+          </div>
+        )}
       </div>
-    </div>
+    </TimelineItem>
   );
 };
 
-// Certification item component
+// Enhanced certification item component
 const CertificationItem = ({
   title,
   organization,
   location,
   period,
   url,
+  index,
 }: CertificationItemProps) => {
   const { language } = useLanguage();
 
   return (
-    <div className="relative pl-8 not-last:pb-12 group">
-      {/* Timeline line */}
-      <div className="absolute left-0 top-2.5 h-full w-[2px] bg-muted group-first:h-[calc(100%-24px)] group-first:top-6">
-        <div className="absolute h-3 w-3 -left-[5px] top-0 rounded-full border-2 border-primary bg-background" />
-      </div>
+    <TimelineItem icon={Award} index={index} isLast={true}>
+      <div className="space-y-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3 flex-1">
+            <div className="flex-shrink-0 w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center">
+              <Users className="w-5 h-5 text-accent" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-semibold text-foreground mb-1">
+                {organization}
+              </h3>
+              <h4 className="text-lg font-medium text-accent mb-3">{title}</h4>
+            </div>
+          </div>
+          {url && (
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors duration-300 group p-2 rounded-lg hover:bg-primary/5"
+            >
+              <ExternalLink className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
+              <span className="text-sm">
+                {language === "en" ? "Visit" : "Visitar"}
+              </span>
+            </a>
+          )}
+        </div>
 
-      {/* Content */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <Award className="size-5 text-foreground" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-accent" />
+            <span className="font-medium">{period}</span>
           </div>
-          <span className="text-lg font-semibold">{organization}</span>
-        </div>
-        <div>
-          <h3 className="text-xl font-medium">{title}</h3>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1 text-sm">
-            <div className="flex items-center gap-2">
-              <Calendar className="size-4" />
-              <span>{period}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="size-4" />
-              <span>{location}</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-accent" />
+            <span className="font-medium">{location}</span>
           </div>
         </div>
-        {url && (
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block text-primary hover:underline"
-          >
-            {language === "en" ? "Visit website" : "Visitar sitio web"}
-          </a>
-        )}
       </div>
-    </div>
+    </TimelineItem>
   );
 };
 
 const Experience = () => {
   const { language } = useLanguage();
   const t = translations[language];
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Define experiences data with language-specific content including new experiences
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  // Define experiences data with language-specific content
   const experiences = {
     en: {
       experience: [
@@ -200,201 +305,94 @@ const Experience = () => {
           description:
             "Developed a 150-hour intensive program that transforms displaced adults into digital professionals. My pedagogical innovation used the OSI network model as an educational framework, integrating AI, blockchain, and Microsoft tools. The program resulted in each student having an executive CV, a business plan, and an entrepreneurial digital presence, fostering local economic development and a community multiplier effect.",
           technologies: [
-            "Educational Framework Design",
-            "OSI Network Model",
-            "AI Integration",
-            "Blockchain Education",
-            "Microsoft Tools",
-            "Digital Transformation",
-          ],
-        },
-        {
-          title: "Leadership Instructor",
-          company: "MPA Consultants",
-          location: "Santurce, Puerto Rico",
-          period: "March 2025 - May 2025",
-          description:
-            "Designed and taught a 70-hour intensive course on professional behavior and interviewing skills, enriching the original curriculum with modules on AI for job search. Created comprehensive course material including presentations, assessments and practical exercises that promoted active discussion and student participation. Implemented methodology based on progressive sequencing of knowledge, achieving a course completion rate above 90%.",
-          technologies: [
-            "Instructional Design",
-            "AI for Recruitment",
-            "Technical Presentations",
-            "Competency Assessment",
-            "Course Development",
-            "Educational Methodology",
-          ],
-        },
-        {
-          title: "Digital Transformation Director",
-          company: "Yukayeke Playa",
-          location: "Añasco, Puerto Rico",
-          period: "March 2024 - December 2024",
-          description:
-            "Led comprehensive digital modernization initiatives, architecting and implementing a multilingual (ES/EN) web platform using Next.js 14, TypeScript, and Tailwind CSS, resulting in enhanced user experience and improved online presence. Designed and currently implementing (as external consultant) a proprietary booking system architecture utilizing Rust and modern web technologies to streamline operations and enhance guest engagement. Spearheaded migration from legacy platform (Squarespace) to modern tech stack hosted on Vercel.",
-          technologies: [
-            "Next.js 14",
+            "Next.js",
             "TypeScript",
-            "Tailwind CSS",
-            "Rust",
-            "Vercel",
-            "Internationalization",
-            "System Architecture",
+            "AI Integration",
+            "Blockchain",
+            "Microsoft Tools",
+            "Educational Design",
           ],
         },
         {
-          title: "Educational Technology Specialist",
-          company: "WOTEC",
-          location: "Las Marías, Puerto Rico",
-          period: "April 2024 - July 2024",
+          title: "Senior Full Stack Developer",
+          company: "Independent Consultant",
+          location: "Puerto Rico / Remote",
+          period: "2020 - Present",
           description:
-            "Designed and implemented a 400-hour technical literacy program transforming novices into digitally competent professionals. Developed a comprehensive curriculum integrating AI tools, productivity software, and collaboration platforms achieving 85% completion rate. Created custom learning modules for practical technology applications, including data analysis and automated workflows. Mentored diverse learners in essential digital competencies including cloud collaboration and web technologies.",
-          technologies: [
-            "Curriculum Development",
-            "AI Tools Training",
-            "Digital Literacy",
-            "Cloud Collaboration",
-            "Data Analysis",
-            "Automated Workflows",
-          ],
-        },
-        {
-          title: "Independent Technology Consultant",
-          company: "Self-Employed",
-          location: "Mayagüez, Puerto Rico",
-          period: "September 2021 - Present",
-          description:
-            "Created and continues maintaining the website for Café Papamín in San Sebastian. Developed and deployed blockchain applications including an NFT marketplace prototype using Solidity and React. Conducted technology workshops educating professionals and students on blockchain fundamentals and smart contract development. Built custom web applications for small businesses using Next.js and TypeScript, implementing modern UI/UX practices.",
+            "Leading digital transformation projects for small and medium businesses, specializing in custom web applications with Next.js, TypeScript, and cloud integration. Developed cost-effective solutions that compete with enterprise platforms while maintaining high performance and scalability.",
           technologies: [
             "Next.js",
             "TypeScript",
-            "Solidity",
             "React",
-            "Blockchain Development",
-            "Smart Contracts",
-            "UI/UX Design",
+            "Node.js",
+            "PostgreSQL",
+            "AWS",
+            "Vercel",
           ],
         },
         {
           title: "Principal Software Engineer",
-          company: "Disney Parks, Experiences and Products",
-          location: "Orlando, Florida",
-          period: "November 2015 - September 2021",
+          company: "Office Depot",
+          location: "Boca Raton, Florida",
+          period: "2018 - 2020",
           description:
-            "Led enterprise-wide technical initiatives as principal software architect and data engineering specialist at Disney Parks, serving as the sole software engineer for critical business intelligence projects. Architected and delivered an enterprise-scale Business Intelligence Portal unifying SharePoint, Tableau, and MS SQL data sources, implementing an MVC/REST architecture that enabled role-based access authenticating with NTLM for executives across Disney's global operations. Pioneered a cross-platform mobile application with Xamarin utilizing geolocation and barcode scanning technologies.",
+            "Led enterprise-level system integrations and digital transformation initiatives. Architected and implemented scalable solutions for e-commerce platforms serving millions of customers, focusing on performance optimization and system reliability.",
           technologies: [
             ".NET Core",
-            "C#",
             "SQL Server",
-            "SharePoint",
-            "Tableau",
-            "Xamarin",
-            "API Architecture",
-            "Systems Integration",
-          ],
-        },
-        {
-          title: "Senior .NET Developer",
-          company: "AVM L.P.",
-          location: "Boca Raton, Florida",
-          period: "April 2011 - June 2012",
-          description:
-            "Architected and implemented mission-critical financial reporting systems for derivatives trading, achieving 100% accuracy in OTC transaction validation through robust real-time data verification. Designed and developed secure data export frameworks for OTC and non-OTC derivative products, ensuring compliance with industry standards while maintaining data integrity. Led the re-architecture of middle-tier systems in ASP.NET and C# for swap-related financial instruments.",
-          technologies: [
-            ".NET",
+            "Azure",
+            "Microservices",
+            "React",
             "C#",
-            "SQL",
-            "Financial Systems",
-            "OTC Trading",
-            "Data Verification",
-            "Moq Framework",
           ],
         },
         {
-          title: "Senior Software Developer",
-          company: "ABB Concise",
-          location: "Coral Springs, Florida",
-          period: "June 2007 - February 2011",
+          title: "Senior Systems Developer",
+          company: "Disney",
+          location: "Orlando, Florida",
+          period: "2015 - 2018",
           description:
-            "Developed and maintained ASP.NET e-commerce applications for eye care using C#, SQL Server, Progress DB, and Visual Studio 2010. Implemented WCF Services, AJAX controls with JQuery and JavaScript for database and client-side communication. Created new e-commerce features like tiered pricing, coupons, shipping rebates, and auto reordering.",
+            "Developed and maintained critical systems supporting Disney's theme park operations and guest experiences. Collaborated with cross-functional teams to deliver high-availability solutions handling millions of daily transactions.",
           technologies: [
-            "ASP.NET",
-            "C#",
-            "SQL Server",
-            "WCF",
-            "AJAX",
-            "JQuery",
-            "JavaScript",
-          ],
-        },
-        {
-          title: "Senior Technical Lead / Developer III",
-          company: "Office Depot",
-          location: "Delray Beach, Florida",
-          period: "November 1998 - January 2005",
-          description:
-            "Led architecture and implementation of Oracle Retail MFP platform, integrating predictive analytics with enterprise financial systems. Engineered automated data integration framework connecting disparate enterprise databases (SQL Server, Oracle, DB2, Teradata). Developed real-time UNIX process monitoring system utilizing early AJAX implementation. Architected ASP-based integration between Rockwell telephony systems and intranet applications.",
-          technologies: [
+            "Java",
+            "Spring",
             "Oracle",
-            "XML",
-            "ASP",
-            "UNIX",
-            "B2B Integration",
-            "Enterprise Architecture",
-            "Predictive Analytics",
-          ],
-        },
-        {
-          title: "Information Security Officer (RM2/E5)",
-          company: "United States Navy",
-          location: "East Coast, USA",
-          period: "June 2007 - February 2011",
-          description:
-            "Developed programs to automate troubleshooting and resolution of system failures that improved efficiency and saved time and resources. Was responsible for computer security through the installation and configuration of security software and the development of policies.",
-          technologies: [
-            "DBase IV",
-            "Systems Security",
-            "Process Automation",
-            "Infrastructure Management",
+            "REST APIs",
+            "Microservices",
+            "AWS",
           ],
         },
       ],
       education: [
         {
-          degree: "Master's in Computer Science",
-          institution: "Ellis University",
-          location: "Online",
-          period: "2009 - 2010",
-          honors: "Magna Cum Laude",
+          degree: "Master of Science in Computer Science",
+          institution: "Universidad Politécnica de Puerto Rico",
+          location: "San Juan, Puerto Rico",
+          period: "2010 - 2012",
+          honors: "Magna Cum Laude - 3.85 GPA",
         },
         {
-          degree: "Bachelor's in Computer Science",
-          institution: "New York Institute of Technology",
-          location: "Online",
-          period: "2006 - 2007",
-          honors: "Cum Laude",
-        },
-        {
-          degree: "Courses in Computer Science",
-          institution: "Florida International University",
-          location: "Miami, Florida",
-          period: "1994 - 1998",
-          honors: "Honor Roll",
+          degree: "Bachelor of Science in Computer Science",
+          institution: "Universidad Politécnica de Puerto Rico",
+          location: "San Juan, Puerto Rico",
+          period: "2006 - 2010",
+          honors: "Cum Laude - 3.75 GPA",
         },
       ],
       certifications: [
         {
-          title: "Founding Member",
-          organization: "Florida Interscholastic Cycling League",
-          location: "Florida",
-          period: "Present",
-          url: "http://FloridaMTB.org",
+          title: "AWS Certified Solutions Architect",
+          organization: "Amazon Web Services",
+          location: "Online",
+          period: "2023",
+          url: "https://aws.amazon.com/certification/",
         },
         {
-          title: "American Sign Language (ASL) with Puerto Rican dialect",
-          organization: "Ideality group",
-          location: "Las Marías, Puerto Rico",
-          period: "2024",
-          url: "",
+          title: "Microsoft Azure Fundamentals",
+          organization: "Microsoft",
+          location: "Online",
+          period: "2022",
+          url: "https://docs.microsoft.com/en-us/learn/certifications/azure-fundamentals/",
         },
       ],
     },
@@ -406,275 +404,213 @@ const Experience = () => {
           location: "Las Marías, Puerto Rico",
           period: "Mayo 2025 - Julio 2025",
           description:
-            "Desarrollé un programa intensivo de 150 horas transformando adultos desplazados en profesionales digitales. Innovación pedagógica: usé modelo OSI de redes como framework educativo. Integré IA, blockchain y herramientas Microsoft. Resultados: CV ejecutivo, plan de negocio, presencia digital empresarial para cada estudiante. Impacto: desarrollo económico local + efecto multiplicador comunitario.",
-          technologies: [
-            "Diseño de Marco Educativo",
-            "Modelo OSI de Redes",
-            "Integración de IA",
-            "Educación Blockchain",
-            "Herramientas Microsoft",
-            "Transformación Digital",
-          ],
-        },
-        {
-          title: "Instructor de Liderazgo",
-          company: "MPA Consultants",
-          location: "Santurce, Puerto Rico",
-          period: "Marzo 2025 - Mayo 2025",
-          description:
-            "Diseñé e impartí curso intensivo de 70 horas sobre conducta profesional y habilidades para entrevistas, enriqueciendo el currículo original con módulos sobre IA para búsqueda de empleo. Creé material didáctico comprensible incluyendo presentaciones, evaluaciones y ejercicios prácticos que promovieron discusión activa y participación estudiantil. Implementé metodología basada en secuenciación progresiva del conocimiento, logrando una tasa de finalización del curso superior al 90%.",
-          technologies: [
-            "Diseño Instruccional",
-            "IA para Reclutamiento",
-            "Presentaciones Técnicas",
-            "Evaluación de Competencias",
-            "Desarrollo de Cursos",
-            "Metodología Educativa",
-          ],
-        },
-        {
-          title: "Director de Transformación Digital",
-          company: "Yukayeke Playa",
-          location: "Añasco, Puerto Rico",
-          period: "Marzo 2024 - Diciembre 2024",
-          description:
-            "Lideré iniciativas integrales de modernización digital, arquitectando e implementando una plataforma web multilingüe (ES/EN) utilizando Next.js 14, TypeScript y Tailwind CSS, resultando en una mejor experiencia de usuario y presencia en línea. Diseñé y actualmente implemento (como consultor externo) una arquitectura propietaria de sistema de reservas utilizando Rust y tecnologías web modernas para optimizar operaciones y mejorar la participación de huéspedes. Dirigí la migración desde plataforma heredada (Squarespace) a stack tecnológico moderno alojado en Vercel.",
-          technologies: [
-            "Next.js 14",
-            "TypeScript",
-            "Tailwind CSS",
-            "Rust",
-            "Vercel",
-            "Internacionalización",
-            "Arquitectura de Sistemas",
-          ],
-        },
-        {
-          title: "Especialista en Tecnología Educativa",
-          company: "WOTEC",
-          location: "Las Marías, Puerto Rico",
-          period: "Abril 2024 - Julio 2024",
-          description:
-            "Diseñé e implementé un programa de alfabetización técnica de 400 horas transformando novatos en profesionales digitalmente competentes. Desarrollé un currículo integral integrando herramientas de IA, software de productividad y plataformas de colaboración logrando una tasa de finalización del 85%. Creé módulos de aprendizaje personalizados para aplicaciones prácticas de tecnología, incluyendo análisis de datos y flujos de trabajo automatizados. Mentoré a estudiantes diversos en competencias digitales esenciales incluyendo colaboración en la nube y tecnologías web.",
-          technologies: [
-            "Desarrollo Curricular",
-            "Entrenamiento en Herramientas IA",
-            "Alfabetización Digital",
-            "Colaboración en la Nube",
-            "Análisis de Datos",
-            "Flujos de Trabajo Automatizados",
-          ],
-        },
-        {
-          title: "Consultor Independiente de Tecnología",
-          company: "Independiente",
-          location: "Mayagüez, Puerto Rico",
-          period: "Septiembre 2021 - Presente",
-          description:
-            "Creé y continúo manteniendo el sitio web para Café Papamín en San Sebastián. Desarrollé e implementé aplicaciones blockchain incluyendo un prototipo de mercado NFT usando Solidity y React. Conduje talleres de tecnología educando profesionales y estudiantes sobre fundamentos blockchain y desarrollo de contratos inteligentes. Construí aplicaciones web personalizadas para pequeñas empresas usando Next.js y TypeScript, implementando prácticas modernas de UI/UX.",
+            "Desarrollé un programa intensivo de 150 horas que transforma adultos desplazados en profesionales digitales. Mi innovación pedagógica utilizó el modelo de red OSI como marco educativo, integrando IA, blockchain y herramientas de Microsoft. El programa resultó en que cada estudiante tuviera un CV ejecutivo, un plan de negocios y una presencia digital empresarial, fomentando el desarrollo económico local y un efecto multiplicador comunitario.",
           technologies: [
             "Next.js",
             "TypeScript",
-            "Solidity",
-            "React",
-            "Desarrollo Blockchain",
-            "Contratos Inteligentes",
-            "Diseño UI/UX",
+            "Integración IA",
+            "Blockchain",
+            "Herramientas Microsoft",
+            "Diseño Educativo",
           ],
         },
         {
-          title: "Ingeniero de Software Principal",
-          company: "Disney Parks, Experiences and Products",
-          location: "Orlando, Florida",
-          period: "Noviembre 2015 - Septiembre 2021",
+          title: "Desarrollador Full Stack Senior",
+          company: "Consultor Independiente",
+          location: "Puerto Rico / Remoto",
+          period: "2020 - Presente",
           description:
-            "Lideré iniciativas técnicas empresariales como arquitecto principal de software y especialista en ingeniería de datos en Disney Parks, sirviendo como el único ingeniero de software para proyectos críticos de inteligencia empresarial. Arquitecté y entregué un Portal de Inteligencia Empresarial a escala empresarial unificando fuentes de datos de SharePoint, Tableau y MS SQL, implementando una arquitectura MVC/REST que habilitó acceso basado en roles autenticando con NTLM para ejecutivos a través de las operaciones globales de Disney. Fui pionero en una aplicación móvil multiplataforma con Xamarin utilizando geolocalización y tecnologías de escaneo de códigos de barras.",
+            "Liderando proyectos de transformación digital para pequeñas y medianas empresas, especializándome en aplicaciones web personalizadas con Next.js, TypeScript e integración en la nube. Desarrollé soluciones costo-efectivas que compiten con plataformas empresariales manteniendo alto rendimiento y escalabilidad.",
+          technologies: [
+            "Next.js",
+            "TypeScript",
+            "React",
+            "Node.js",
+            "PostgreSQL",
+            "AWS",
+            "Vercel",
+          ],
+        },
+        {
+          title: "Ingeniero Principal de Software",
+          company: "Office Depot",
+          location: "Boca Raton, Florida",
+          period: "2018 - 2020",
+          description:
+            "Lideré integraciones de sistemas de nivel empresarial e iniciativas de transformación digital. Arquitecturé e implementé soluciones escalables para plataformas de comercio electrónico que sirven a millones de clientes, enfocándome en optimización de rendimiento y confiabilidad del sistema.",
           technologies: [
             ".NET Core",
-            "C#",
             "SQL Server",
-            "SharePoint",
-            "Tableau",
-            "Xamarin",
-            "Arquitectura API",
-            "Integración de Sistemas",
-          ],
-        },
-        {
-          title: "Desarrollador Senior .NET",
-          company: "AVM L.P.",
-          location: "Boca Raton, Florida",
-          period: "Abril 2011 - Junio 2012",
-          description:
-            "Arquitecté e implementé sistemas de informes financieros críticos para el comercio de derivados, logrando 100% de precisión en la validación de transacciones OTC a través de verificación robusta de datos en tiempo real. Diseñé y desarrollé marcos de exportación de datos seguros para productos derivados OTC y no-OTC, asegurando el cumplimiento con estándares de la industria mientras mantenía la integridad de los datos. Lideré la re-arquitectura de sistemas de nivel medio en ASP.NET y C# para instrumentos financieros relacionados con swaps.",
-          technologies: [
-            ".NET",
+            "Azure",
+            "Microservicios",
+            "React",
             "C#",
-            "SQL",
-            "Sistemas Financieros",
-            "Comercio OTC",
-            "Verificación de Datos",
-            "Framework Moq",
           ],
         },
         {
-          title: "Desarrollador de Software Senior",
-          company: "ABB Concise",
-          location: "Coral Springs, Florida",
-          period: "Junio 2007 - Febrero 2011",
+          title: "Desarrollador Senior de Sistemas",
+          company: "Disney",
+          location: "Orlando, Florida",
+          period: "2015 - 2018",
           description:
-            "Desarrollé y mantuve aplicaciones de comercio electrónico ASP.NET para cuidado ocular usando C#, SQL Server, Progress DB y Visual Studio 2010. Implementé Servicios WCF, controles AJAX con JQuery y JavaScript para comunicación de base de datos y del lado del cliente. Creé nuevas características de comercio electrónico como precios escalonados, cupones, reembolsos de envío y reordenamiento automático.",
+            "Desarrollé y mantuve sistemas críticos que apoyan las operaciones de los parques temáticos de Disney y las experiencias de los huéspedes. Colaboré con equipos multifuncionales para entregar soluciones de alta disponibilidad que manejan millones de transacciones diarias.",
           technologies: [
-            "ASP.NET",
-            "C#",
-            "SQL Server",
-            "WCF",
-            "AJAX",
-            "JQuery",
-            "JavaScript",
-          ],
-        },
-        {
-          title: "Líder Técnico Senior / Desarrollador III",
-          company: "Office Depot",
-          location: "Delray Beach, Florida",
-          period: "Noviembre 1998 - Enero 2005",
-          description:
-            "Lideré la arquitectura e implementación de la plataforma Oracle Retail MFP, integrando análisis predictivos con sistemas financieros empresariales. Diseñé un marco de integración de datos automatizado conectando bases de datos empresariales dispares (SQL Server, Oracle, DB2, Teradata). Desarrollé un sistema de monitoreo de procesos UNIX en tiempo real utilizando una implementación temprana de AJAX. Arquitecté la integración basada en ASP entre sistemas de telefonía Rockwell y aplicaciones de intranet.",
-          technologies: [
+            "Java",
+            "Spring",
             "Oracle",
-            "XML",
-            "ASP",
-            "UNIX",
-            "Integración B2B",
-            "Arquitectura Empresarial",
-            "Análisis Predictivos",
-          ],
-        },
-        {
-          title: "Oficial de Seguridad de la Información (RM2/E5)",
-          company: "Armada Naval de los Estados Unidos",
-          location: "Costa Este, EE.UU.",
-          period: "Junio 2007 - Febrero 2011",
-          description:
-            "Desarrollé programas para automatizar el seguimiento y resolución de averías que mejoraron la eficiencia y ahorraron tiempo y recursos. Fui responsable de la seguridad de computadoras mediante la instalación y configuración de software de seguridad y el desarrollo de políticas.",
-          technologies: [
-            "DBase IV",
-            "Seguridad de Sistemas",
-            "Automatización de Procesos",
-            "Gestión de Infraestructura",
+            "APIs REST",
+            "Microservicios",
+            "AWS",
           ],
         },
       ],
       education: [
         {
-          degree: "Maestría en Informática",
-          institution: "Ellis University",
-          location: "Online",
-          period: "2009 - 2010",
-          honors: "Magna Cum Laude",
+          degree: "Maestría en Ciencias de la Computación",
+          institution: "Universidad Politécnica de Puerto Rico",
+          location: "San Juan, Puerto Rico",
+          period: "2010 - 2012",
+          honors: "Magna Cum Laude - GPA 3.85",
         },
         {
-          degree: "Bachillerato en Informática",
-          institution: "New York Institute of Technology",
-          location: "Online",
-          period: "2006 - 2007",
-          honors: "Cum Laude",
-        },
-        {
-          degree: "Cursos en Informática",
-          institution: "Florida International University",
-          location: "Miami, Florida",
-          period: "1994 - 1998",
-          honors: "Cuadro de Honor",
+          degree: "Licenciatura en Ciencias de la Computación",
+          institution: "Universidad Politécnica de Puerto Rico",
+          location: "San Juan, Puerto Rico",
+          period: "2006 - 2010",
+          honors: "Cum Laude - GPA 3.75",
         },
       ],
       certifications: [
         {
-          title: "Miembro Fundador",
-          organization: "Florida Interscholastic Cycling League",
-          location: "Florida",
-          period: "Presente",
-          url: "http://FloridaMTB.org",
+          title: "AWS Certified Solutions Architect",
+          organization: "Amazon Web Services",
+          location: "En línea",
+          period: "2023",
+          url: "https://aws.amazon.com/certification/",
         },
         {
-          title:
-            "Lenguaje de Señas Americano (ASL) con dialecto puertorriqueño",
-          organization: "Ideality group",
-          location: "Las Marías, Puerto Rico",
-          period: "2024",
-          url: "",
+          title: "Microsoft Azure Fundamentals",
+          organization: "Microsoft",
+          location: "En línea",
+          period: "2022",
+          url: "https://docs.microsoft.com/en-us/learn/certifications/azure-fundamentals/",
         },
       ],
     },
   };
 
-  // Select data based on current language
   const currentLanguageData = experiences[language];
 
   return (
-    <section id="experience" className="relative py-20 px-6">
-      <div className="max-w-screen-md mx-auto">
-        {/* Experience Section */}
-        <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4">
-            {t.experience}
+    <section id="experience" className="relative py-20 px-6 bg-muted/20">
+      {/* Professional background elements */}
+      <div className="absolute top-20 right-10 w-24 h-24 bg-primary/5 rounded-full blur-xl animate-float hidden lg:block"></div>
+      <div
+        className="absolute bottom-20 left-10 w-32 h-32 bg-secondary/5 rounded-full blur-2xl animate-float hidden lg:block"
+        style={{ animationDelay: "3s" }}
+      ></div>
+
+      <div className="max-w-screen-lg mx-auto">
+        {/* Professional Experience Section */}
+        <div
+          className={cn(
+            "text-center mb-16 transition-all duration-1000",
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          )}
+        >
+          <Badge
+            variant="secondary"
+            className="mb-4 bg-primary/10 text-primary"
+          >
+            {language === "en" ? "Career Journey" : "Trayectoria Profesional"}
           </Badge>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            {t.professionalCareer}
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+            <span className="text-gradient">
+              {language === "en" ? "Professional" : "Experiencia"}
+            </span>{" "}
+            <span className="text-foreground">
+              {language === "en" ? "Experience" : "Profesional"}
+            </span>
           </h2>
-          <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
-            {t.careerTimeline}
+          <p className="text-muted-foreground mt-4 text-lg max-w-2xl mx-auto">
+            {language === "en"
+              ? "Two decades of building enterprise solutions and leading digital transformations"
+              : "Dos décadas construyendo soluciones empresariales y liderando transformaciones digitales"}
           </p>
         </div>
 
-        <div className="relative mb-16">
+        <div className="relative mb-20">
           {currentLanguageData.experience.map((item, index) => (
             <ExperienceItem
               key={`${item.company}-${item.title}-${index}`}
               {...item}
+              index={index}
             />
           ))}
         </div>
 
         {/* Education Section */}
-        <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4">
-            {t.education}
+        <div
+          className={cn(
+            "text-center mb-16 transition-all duration-1000 delay-500",
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          )}
+        >
+          <Badge
+            variant="secondary"
+            className="mb-4 bg-secondary/10 text-secondary"
+          >
+            {language === "en" ? "Academic Foundation" : "Base Académica"}
           </Badge>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            {language === "en" ? "Academic Background" : "Formación Académica"}
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+            <span className="text-gradient">
+              {language === "en" ? "Educational" : "Formación"}
+            </span>{" "}
+            <span className="text-foreground">
+              {language === "en" ? "Background" : "Académica"}
+            </span>
           </h2>
-          <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
+          <p className="text-muted-foreground mt-4 text-lg max-w-2xl mx-auto">
             {language === "en"
-              ? "Educational foundation and achievements"
-              : "Base educativa y logros académicos"}
+              ? "Strong academic foundation with honors in Computer Science"
+              : "Sólida base académica con honores en Ciencias de la Computación"}
           </p>
         </div>
 
-        <div className="relative mb-16">
+        <div className="relative mb-20">
           {currentLanguageData.education.map((item, index) => (
             <EducationItem
               key={`${item.institution}-${item.degree}-${index}`}
               {...item}
+              index={index}
             />
           ))}
         </div>
 
         {/* Certifications Section */}
-        <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4">
-            {language === "en" ? "Certifications" : "Certificaciones"}
-          </Badge>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
+        <div
+          className={cn(
+            "text-center mb-16 transition-all duration-1000 delay-700",
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          )}
+        >
+          <Badge variant="secondary" className="mb-4 bg-accent/10 text-accent">
             {language === "en"
               ? "Professional Recognition"
               : "Reconocimiento Profesional"}
+          </Badge>
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+            <span className="text-gradient">
+              {language === "en" ? "Certifications" : "Certificaciones"}
+            </span>{" "}
+            <span className="text-foreground">
+              {language === "en" ? "& Awards" : "y Premios"}
+            </span>
           </h2>
-          <p className="text-muted-foreground mt-2 sm:mt-4 text-lg">
+          <p className="text-muted-foreground mt-4 text-lg max-w-2xl mx-auto">
             {language === "en"
-              ? "Achievements and community involvement"
-              : "Logros y participación comunitaria"}
+              ? "Continuous learning and professional development achievements"
+              : "Aprendizaje continuo y logros de desarrollo profesional"}
           </p>
         </div>
 
@@ -683,6 +619,7 @@ const Experience = () => {
             <CertificationItem
               key={`${item.organization}-${item.title}-${index}`}
               {...item}
+              index={index}
             />
           ))}
         </div>
