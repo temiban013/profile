@@ -59,7 +59,7 @@ const ExperienceItem = ({
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <Briefcase className="size-5 text-muted-foreground" />
+            <Briefcase className="size-5 text-foreground" />
           </div>
           <span className="text-lg font-semibold">{company}</span>
         </div>
@@ -108,7 +108,7 @@ const EducationItem = ({
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <GraduationCap className="size-5 text-muted-foreground" />
+            <GraduationCap className="size-5 text-foreground" />
           </div>
           <span className="text-lg font-semibold">{institution}</span>
         </div>
@@ -152,7 +152,7 @@ const CertificationItem = ({
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 size-9 bg-accent rounded-full flex items-center justify-center">
-            <Award className="size-5 text-muted-foreground" />
+            <Award className="size-5 text-foreground" />
           </div>
           <span className="text-lg font-semibold">{organization}</span>
         </div>

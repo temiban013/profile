@@ -44,7 +44,7 @@ const About = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <GithubLogo className="mr-2 h-4 w-4" />
+                  <GithubLogo className="mr-2 h-4 w-4 rounded-full" />
                   {t.githubProjects}
                 </a>
               </Button>

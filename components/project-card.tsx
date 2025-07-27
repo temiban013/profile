@@ -80,7 +80,7 @@ export default function ProjectCard({
                 rel="noopener noreferrer"
                 aria-label={`View source code for ${title} on GitHub`}
               >
-                <GithubLogo className="mr-1 h-4 w-4" />
+                <GithubLogo className="mr-1 h-4 w-4 rounded-b-full" />
                 {t.viewCode}
               </a>
             </Button>

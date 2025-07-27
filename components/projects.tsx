@@ -95,7 +95,7 @@ const ProyectoCard = ({
               asChild
             >
               <a href={urlGithub} target="_blank" rel="noopener noreferrer">
-                <GithubLogo className="mr-1 h-4 w-4" />
+                <GithubLogo className="mr-1 h-4 w-4 rounded-full" />
                 {t.viewCode}
               </a>
             </Button>
