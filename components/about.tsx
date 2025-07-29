@@ -352,11 +352,9 @@ const About = () => {
             </div>
             <div className="glass-effect rounded-2xl p-8">
               <blockquote className="text-lg italic text-muted-foreground leading-relaxed">
-                "
                 {language === "en"
                   ? "Technology should serve business goals, not the other way around. My approach focuses on creating solutions that are not just technically excellent, but also practical, maintainable, and aligned with real-world business needs."
                   : "La tecnología debe servir a los objetivos de negocio, no al revés. Mi enfoque se centra en crear soluciones que no son solo técnicamente excelentes, sino también prácticas, mantenibles y alineadas con necesidades reales de negocio."}
-                "
               </blockquote>
               <div className="flex items-center gap-3 mt-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
