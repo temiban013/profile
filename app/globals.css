@@ -306,3 +306,243 @@ html {
   box-shadow: 0 10px 15px -3px oklch(0.08 0.02 230 / 0.4),
     0 4px 6px -2px oklch(0.08 0.02 230 / 0.3);
 }
+
+/* Navigation Enhancement Animations */
+@keyframes slide-in-from-left-4 {
+  0% {
+    transform: translateX(-1rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-right-4 {
+  0% {
+    transform: translateX(1rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-4 {
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-right-2 {
+  0% {
+    transform: translateX(0.5rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-2 {
+  0% {
+    transform: translateY(0.5rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Navigation utility classes */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.slide-in-from-left-4 {
+  animation-name: slide-in-from-left-4;
+}
+
+.slide-in-from-right-4 {
+  animation-name: slide-in-from-right-4;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slide-in-from-bottom-4;
+}
+
+.slide-in-from-right-2 {
+  animation-name: slide-in-from-right-2;
+}
+
+.slide-in-from-bottom-2 {
+  animation-name: slide-in-from-bottom-2;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+/* Active section indicator enhancements */
+.nav-link-active::before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75%;
+  height: 2px;
+  background: linear-gradient(90deg, oklch(0.25 0.08 230), oklch(0.6 0.12 240));
+  border-radius: 1px;
+  animation: scale-in 0.3s ease-out;
+}
+
+@keyframes scale-in {
+  0% {
+    transform: translateX(-50%) scaleX(0);
+  }
+  100% {
+    transform: translateX(-50%) scaleX(1);
+  }
+}
+
+/* Enhanced mobile navigation animations */
+.mobile-nav-item {
+  transform: translateX(-1rem);
+  opacity: 0;
+  animation: slide-in-stagger 0.4s ease-out forwards;
+}
+
+.mobile-nav-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.mobile-nav-item:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.mobile-nav-item:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.mobile-nav-item:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+@keyframes slide-in-stagger {
+  0% {
+    transform: translateX(-1rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Scroll progress enhancements */
+.scroll-progress-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    oklch(0.7 0.08 240 / 0.4),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Professional backdrop blur for better visibility */
+.navbar-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Smooth transitions for hover states */
+.nav-social-icon {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-social-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Enhanced glass effect for mobile menu */
+.mobile-menu-glass {
+  background: oklch(1 0 0 / 0.8);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid oklch(0.7 0.08 240 / 0.2);
+}
+
+.dark .mobile-menu-glass {
+  background: oklch(0.08 0.02 230 / 0.8);
+  border: 1px solid oklch(0.7 0.08 240 / 0.3);
+}
+
+/* Active section highlighting animation */
+.section-highlight {
+  position: relative;
+}
+
+.section-highlight::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -0.5rem;
+  right: -0.5rem;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    oklch(0.25 0.08 230 / 0.05),
+    oklch(0.6 0.12 240 / 0.05)
+  );
+  border-radius: 1rem;
+  opacity: 0;
+  animation: highlight-fade-in 0.5s ease-out forwards;
+}
+
+@keyframes highlight-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/lib/contexts/language-context";
 import { Suspense } from "react";
 import LanguageUrlHandler from "@/components/language-url-handler";
 import { generateMetadata } from "@/lib/metadata-i18n";
+import { BreadcrumbNav } from "@/components/navbar/breadcrumb-nav";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -46,6 +47,7 @@ export default function RootLayout({
             <LanguageUrlHandler />
           </Suspense>
           <Navbar />
+          <BreadcrumbNav />
           <main>{children}</main>
           <Footer />
           <Analytics />
