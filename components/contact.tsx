@@ -54,7 +54,7 @@ interface FormStatus {
 const contactInfo = {
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "marioayaladev@gmail.com",
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+1 (407) 476-7353",
-  location: "Miami, FL",
+  location: "Puerto Rico",
   github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "#",
   linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "#",
   youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "#",
@@ -83,17 +83,17 @@ const projectTypes = {
 // Budget ranges
 const budgetRanges = {
   en: [
+    { value: "500 - 5K", label: "$500 - $5,000" },
     { value: "5k-15k", label: "$5,000 - $15,000" },
     { value: "15k-30k", label: "$15,000 - $30,000" },
-    { value: "30k-50k", label: "$30,000 - $50,000" },
-    { value: "50k+", label: "$50,000+" },
+    { value: "30k+", label: "$30,000+" },
     { value: "discuss", label: "Let's Discuss" },
   ],
   es: [
+    { value: "500 - 5K", label: "$500 - $5,000" },
     { value: "5k-15k", label: "$5,000 - $15,000" },
     { value: "15k-30k", label: "$15,000 - $30,000" },
-    { value: "30k-50k", label: "$30,000 - $50,000" },
-    { value: "50k+", label: "$50,000+" },
+    { value: "30k+", label: "$30,000+" },
     { value: "discuss", label: "Hablemos" },
   ],
 };
