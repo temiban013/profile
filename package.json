@@ -22,12 +22,14 @@
     "lucide-react": "^0.476.0",
     "motion": "^12.4.7",
     "next": "15.2.0",
+    "prettier": "^3.6.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^4.7.0",
     "schema-dts": "^1.1.5",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

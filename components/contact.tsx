@@ -52,9 +52,9 @@ interface FormStatus {
 
 // Contact information constants
 const contactInfo = {
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "#", // Replace with actual email
-  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "#", // Replace with actual phone
-  location: "Puerto Rico",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "marioayaladev@gmail.com",
+  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+1 (407) 476-7353",
+  location: "Miami, FL",
   github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "#",
   linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "#",
   youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "#",
@@ -83,17 +83,17 @@ const projectTypes = {
 // Budget ranges
 const budgetRanges = {
   en: [
-    { value: "500 - 5K", label: "$500 - $5,000" },
     { value: "5k-15k", label: "$5,000 - $15,000" },
     { value: "15k-30k", label: "$15,000 - $30,000" },
-    { value: "30k+", label: "$30,000+" },
+    { value: "30k-50k", label: "$30,000 - $50,000" },
+    { value: "50k+", label: "$50,000+" },
     { value: "discuss", label: "Let's Discuss" },
   ],
   es: [
-    { value: "500 - 5K", label: "$500 - $5,000" },
     { value: "5k-15k", label: "$5,000 - $15,000" },
     { value: "15k-30k", label: "$15,000 - $30,000" },
-    { value: "30k+", label: "$30,000+" },
+    { value: "30k-50k", label: "$30,000 - $50,000" },
+    { value: "50k+", label: "$50,000+" },
     { value: "discuss", label: "Hablemos" },
   ],
 };
@@ -262,23 +262,38 @@ const Contact: React.FC = () => {
     setStatus({ type: "loading", message: "" });
 
     try {
-      // Simulate API call - replace with actual implementation
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Here you would typically send the data to your backend/API
-      console.log("Form data:", formData);
-
-      setStatus({ type: "success", message: t.successMessage });
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        projectType: "",
-        budget: "",
-        timeline: "",
-        message: "",
+      // Send form data to API
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          language,
+        }),
       });
-    } catch {
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setStatus({ type: "success", message: t.successMessage });
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          projectType: "",
+          budget: "",
+          timeline: "",
+          message: "",
+        });
+      } else {
+        // Handle API errors
+        const errorMessage = result.error || t.errorMessage;
+        setStatus({ type: "error", message: errorMessage });
+      }
+    } catch (error) {
+      console.error("Contact form submission error:", error);
       setStatus({ type: "error", message: t.errorMessage });
     }
   };
@@ -573,7 +588,13 @@ const Contact: React.FC = () => {
             {/* Action Buttons */}
             <div className="space-y-4">
               <Button variant="outline" className="w-full rounded-full" asChild>
-                <Link href="https://calendly.com/your-username" target="_blank">
+                <Link
+                  href={
+                    process.env.NEXT_PUBLIC_CALENDLY_URL ||
+                    "https://calendly.com/temiban013"
+                  }
+                  target="_blank"
+                >
                   <Calendar className="mr-2 h-4 w-4" />
                   {t.scheduleCall}
                 </Link>
@@ -581,11 +602,15 @@ const Contact: React.FC = () => {
               <Button variant="outline" className="w-full rounded-full" asChild>
                 <Link
                   href={
-                    language === "es"
-                      ? process.env.NEXT_PUBLIC_RESUME_ES ||
-                        "/Mario_R_Ayala_CV.pdf"
-                      : process.env.NEXT_PUBLIC_RESUME_EN ||
-                        "/Mario_R_Ayala_Resume.pdf"
+                    language === "en"
+                      ? `/${
+                          process.env.NEXT_PUBLIC_ENGLISH_RESUME ||
+                          "Mario-R-Ayala-Resume-EN.pdf"
+                        }`
+                      : `/${
+                          process.env.NEXT_PUBLIC_SPANISH_RESUME ||
+                          "Mario-R-Ayala-Resume-ES.pdf"
+                        }`
                   }
                   target="_blank"
                 >
@@ -598,7 +623,7 @@ const Contact: React.FC = () => {
             {/* Social Media */}
             <div className="glass-effect rounded-2xl p-6 professional-shadow">
               <h3 className="text-xl font-semibold mb-4">{t.socialMedia}</h3>
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
                 <Link
                   href={contactInfo.github}
                   target="_blank"
@@ -622,6 +647,14 @@ const Contact: React.FC = () => {
                   className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
                 >
                   <Youtube className="h-5 w-5" />
+                </Link>
+                <Link
+                  href={process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
+                >
+                  <Phone className="h-5 w-5" />
                 </Link>
               </div>
             </div>
