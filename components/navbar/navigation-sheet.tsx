@@ -6,11 +6,13 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetClose,
   SheetTitle,
   SheetDescription,
-  SheetClose,
 } from "@/components/ui/sheet";
-import { Menu, X, ChevronRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { JSX, useState } from "react";
+import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
@@ -18,109 +20,89 @@ import {
   useActiveSection,
   scrollToSection,
 } from "@/lib/hooks/use-active-section";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-
-const SECTION_IDS = ["hero", "about", "experience", "projects"];
+import { usePathname, useRouter } from "next/navigation";
 
 interface MobileNavItemProps {
   href: string;
   children: React.ReactNode;
   isActive?: boolean;
-  delay?: number;
+  delay: number;
   onNavigate: () => void;
+  isExternal?: boolean;
 }
 
 const MobileNavItem = ({
   href,
   children,
   isActive,
-  delay = 0,
+  delay,
   onNavigate,
-}: MobileNavItemProps) => {
-  const handleClick = () => {
-    const sectionId = href.replace("#", "");
-    scrollToSection(sectionId);
-    onNavigate(); // Close the sheet
+  isExternal = false,
+}: MobileNavItemProps): JSX.Element => {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleClick = (): void => {
+    // Close the sheet first
+    onNavigate();
+
+    // Handle navigation based on context
+    if (href.startsWith("#")) {
+      // Hash navigation - scroll to section
+      if (pathname !== "/") {
+        // If not on home page, navigate to home first, then scroll
+        router.push(`/${href}`);
+      } else {
+        // Already on home page, just scroll
+        scrollToSection(href.substring(1));
+      }
+    } else if (isExternal) {
+      // External link
+      window.open(href, "_blank", "noopener,noreferrer");
+    } else {
+      // Internal page navigation
+      router.push(href);
+    }
   };
 
   return (
     <button
       onClick={handleClick}
       className={cn(
-        "w-full group flex items-center justify-between p-4 rounded-2xl",
-        "text-left transition-all duration-300 hover:scale-[1.02]",
-        "border border-transparent hover:border-border/50",
-        "animate-in slide-in-from-left-4 fade-in",
-        // Active state
-        isActive && [
-          "bg-primary/10 border-primary/20 text-primary",
-          "professional-shadow",
-        ],
-        !isActive && [
-          "hover:bg-accent/50 hover:text-accent-foreground",
-          "glass-effect",
-        ]
+        "animate-in slide-in-from-right-4 fade-in duration-300",
+        "w-full p-4 rounded-xl text-left",
+        "transition-all duration-200",
+        "hover:bg-accent/50 hover:scale-[1.02]",
+        isActive
+          ? "bg-primary/10 text-primary border border-primary/20"
+          : "hover:bg-accent/30"
       )}
-      style={{
-        animationDelay: `${delay}ms`,
-        animationDuration: "400ms",
-        animationFillMode: "both",
-      }}
+      style={{ animationDelay: `${delay}ms` }}
+      type="button"
     >
-      <div className="flex flex-col">
-        <span
-          className={cn(
-            "font-medium text-base transition-colors",
-            isActive ? "text-primary" : "text-foreground"
-          )}
-        >
-          {children}
-        </span>
-        {isActive && (
-          <span className="text-xs text-primary/70 mt-1">Current section</span>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2">
-        {isActive && (
-          <div className="w-2 h-2 bg-primary rounded-full animate-pulse-glow" />
-        )}
-        <ChevronRight
-          className={cn(
-            "h-4 w-4 transition-transform duration-300",
-            "group-hover:translate-x-1",
-            isActive ? "text-primary" : "text-muted-foreground"
-          )}
-        />
+      <div className="flex items-center gap-3">
+        <div className="text-base font-medium">{children}</div>
       </div>
     </button>
   );
 };
 
-export const NavigationSheet = () => {
+export const NavigationSheet = (): JSX.Element => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const { language } = useLanguage();
   const t = translations[language];
+  const SECTION_IDS = ["about", "experience", "projects"];
   const activeSection = useActiveSection({ sectionIds: SECTION_IDS });
-  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
-  const handleNavigate = () => {
+  const handleNavigate = (): void => {
     setIsOpen(false);
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className={cn(
-            "rounded-full transition-all duration-300",
-            "hover:scale-110 hover:rotate-90",
-            "professional-shadow hover:professional-shadow-lg",
-            isOpen && "rotate-90"
-          )}
-        >
+        <Button variant="ghost" size="icon" className="relative" type="button">
           {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </Button>
       </SheetTrigger>
@@ -142,6 +124,7 @@ export const NavigationSheet = () => {
                 variant="ghost"
                 size="icon"
                 className="rounded-full hover:rotate-90 transition-transform duration-300"
+                type="button"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -183,13 +166,23 @@ export const NavigationSheet = () => {
           >
             {t.projects}
           </MobileNavItem>
+
+          {/* Blog Navigation Item - NEW */}
+          <MobileNavItem
+            href="/blog"
+            isActive={pathname.startsWith("/blog")}
+            delay={500}
+            onNavigate={handleNavigate}
+          >
+            Blog
+          </MobileNavItem>
         </nav>
 
         {/* Footer info */}
         <div
           className={cn(
             "absolute bottom-6 left-6 right-6",
-            "animate-in slide-in-from-bottom-4 fade-in duration-300 delay-500",
+            "animate-in slide-in-from-bottom-4 fade-in duration-300 delay-600",
             "glass-effect p-4 rounded-2xl text-center"
           )}
         >

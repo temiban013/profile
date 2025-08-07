@@ -1,4 +1,4 @@
-// components/navbar/navbar.tsx
+// components/navbar/navbar.tsx - Mobile Responsive Version
 "use client";
 
 import Link from "next/link";
@@ -18,15 +18,15 @@ import { ScrollProgress, CircularScrollProgress } from "./scroll-progress";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { getFormattedSocialLinks } from "@/lib/social-links";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 
-const Navbar = () => {
+const Navbar = (): JSX.Element => {
   const socialLinks = getFormattedSocialLinks();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
   // Add scroll effect for navbar background
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       setIsScrolled(window.scrollY > 50);
     };
 
@@ -36,11 +36,32 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Main Navbar */}
+      {/* Independent Logo positioned at top-left */}
+      <div
+        className={cn(
+          "fixed z-20 transition-all duration-300",
+          // Desktop positioning
+          "top-6 left-6",
+          // Mobile positioning - smaller and adjusted
+          "sm:top-6 sm:left-6 top-4 left-4",
+          // Add backdrop blur when scrolled for better visibility
+          isScrolled && "backdrop-blur-sm"
+        )}
+      >
+        <div className="transform sm:scale-100 scale-90">
+          <Logo />
+        </div>
+      </div>
+
+      {/* Main Navigation - responsive positioning */}
       <nav
         className={cn(
-          "fixed z-10 top-6 inset-x-4 h-14 transition-all duration-300",
-          "max-w-screen-md mx-auto rounded-full",
+          "fixed z-10 h-14 transition-all duration-300",
+          // Desktop positioning - top-right with proper spacing
+          "sm:top-6 sm:right-4 sm:left-auto",
+          // Mobile positioning - centered but avoid logo
+          "top-4 right-4 left-20", // left-20 provides space for logo
+          "rounded-full",
           "border dark:border-slate-700/70",
           // Dynamic background based on scroll
           isScrolled
@@ -49,18 +70,16 @@ const Navbar = () => {
         )}
       >
         <div className="h-full flex items-center justify-between mx-auto px-3">
-          <Logo />
-
-          {/* Desktop Menu */}
+          {/* Desktop Menu - now has more space */}
           <NavMenu className="hidden md:block" />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <LanguageSwitcher />
 
-            {/* Social Media Links - Desktop */}
+            {/* Social Media Links - Desktop only to preserve space */}
             <Button
               variant="outline"
-              className="hidden sm:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
+              className="hidden lg:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
               size="icon"
             >
               <Link
@@ -75,7 +94,7 @@ const Navbar = () => {
 
             <Button
               variant="outline"
-              className="hidden sm:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
+              className="hidden lg:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
               size="icon"
             >
               <Link
@@ -90,7 +109,7 @@ const Navbar = () => {
 
             <Button
               variant="outline"
-              className="hidden sm:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
+              className="hidden lg:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
               size="icon"
             >
               <Link href={socialLinks.gmail} aria-label="Send Email">
@@ -100,7 +119,7 @@ const Navbar = () => {
 
             <Button
               variant="outline"
-              className="hidden sm:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
+              className="hidden lg:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
               size="icon"
             >
               <Link
@@ -115,7 +134,7 @@ const Navbar = () => {
 
             <Button
               variant="outline"
-              className="hidden sm:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
+              className="hidden lg:inline-flex rounded-full shadow-none hover:scale-110 transition-transform duration-300"
               size="icon"
             >
               <Link
@@ -128,8 +147,8 @@ const Navbar = () => {
               </Link>
             </Button>
 
-            {/* Mobile Menus */}
-            <div className="sm:hidden">
+            {/* Mobile Menus - adjusted for better spacing */}
+            <div className="lg:hidden">
               <SocialMediaSheet />
             </div>
             <div className="md:hidden">
