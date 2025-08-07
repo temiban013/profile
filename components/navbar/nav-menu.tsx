@@ -1,4 +1,4 @@
-// components/navbar/nav-menu.tsx (replace the existing file)
+// components/navbar/nav-menu.tsx
 "use client";
 
 import {
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import type { NavigationMenuProps } from "@radix-ui/react-navigation-menu";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   useActiveSection,
@@ -29,15 +29,15 @@ interface NavMenuItemProps {
 }
 
 /**
- * Enhanced NavMenuItem Component
+ * Smart Navigation Component
  *
- * This component intelligently handles two types of navigation:
- * 1. Internal section scrolling (for portfolio sections like #about)
- * 2. External page navigation (for pages like /blog)
+ * This component implements a hybrid navigation pattern that elegantly handles
+ * both single-page section scrolling and multi-page routing. The key insight
+ * is that we need to detect the current page context and route accordingly:
  *
- * The key insight is that we need different behaviors:
- * - For sections: prevent default, use custom smooth scrolling
- * - For pages: let Next.js handle the navigation naturally
+ * 1. If we're on the home page (/): Use smooth scrolling to sections
+ * 2. If we're on another page (/blog): Navigate to home page with hash fragment
+ * 3. If navigating to /blog: Use standard Next.js routing
  */
 const NavMenuItem = ({
   href,
@@ -46,15 +46,34 @@ const NavMenuItem = ({
   onClick,
   isExternal = false,
 }: NavMenuItemProps) => {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const handleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+    onClick?.();
+
+    // Handle external links (like /blog) with standard Next.js navigation
     if (isExternal) {
-      onClick?.();
-      return;
+      return; // Let the Link component handle this
     }
+
+    // For internal sections, we need smart routing logic
     e.preventDefault();
     const sectionId = href.replace("#", "");
-    scrollToSection(sectionId);
-    onClick?.();
+
+    if (pathname === "/") {
+      // We're on the home page - use smooth scrolling
+      scrollToSection(sectionId);
+    } else {
+      // We're on a different page - navigate to home page with hash
+      router.push(`/${href}`);
+
+      // After navigation completes, scroll to the section
+      // We use a small delay to ensure the page has loaded
+      setTimeout(() => {
+        scrollToSection(sectionId);
+      }, 100);
+    }
   };
 
   const linkContent = (
@@ -90,9 +109,7 @@ const NavMenuItem = ({
     <NavigationMenuItem>
       <NavigationMenuLink asChild={isExternal}>
         {isExternal ? (
-          <Link href={href} onClick={onClick}>
-            {linkContent}
-          </Link>
+          <Link href={href}>{linkContent}</Link>
         ) : (
           <div
             onClick={handleClick}
@@ -118,8 +135,9 @@ export const NavMenu = ({ className, ...props }: NavigationMenuProps) => {
   const activeSection = useActiveSection({ sectionIds: SECTION_IDS });
   const pathname = usePathname();
 
-  // Determine if we're currently on a blog page for active state
+  // Intelligent active state detection
   const isOnBlogPage = pathname.startsWith("/blog");
+  const isOnHomePage = pathname === "/";
 
   return (
     <NavigationMenu
@@ -127,21 +145,26 @@ export const NavMenu = ({ className, ...props }: NavigationMenuProps) => {
       {...props}
     >
       <NavigationMenuList className="gap-1 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
-        <NavMenuItem href="#about" isActive={activeSection === "about"}>
+        <NavMenuItem
+          href="#about"
+          isActive={isOnHomePage && activeSection === "about"}
+        >
           {t.about}
         </NavMenuItem>
         <NavMenuItem
           href="#experience"
-          isActive={activeSection === "experience"}
+          isActive={isOnHomePage && activeSection === "experience"}
         >
           {t.experience}
         </NavMenuItem>
-        <NavMenuItem href="#projects" isActive={activeSection === "projects"}>
+        <NavMenuItem
+          href="#projects"
+          isActive={isOnHomePage && activeSection === "projects"}
+        >
           {t.projects}
         </NavMenuItem>
-        {/* Blog navigation item with external navigation */}
         <NavMenuItem href="/blog" isActive={isOnBlogPage} isExternal={true}>
-          {t.blog}
+          {t.blog || "Blog"}
         </NavMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
