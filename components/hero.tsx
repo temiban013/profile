@@ -93,7 +93,7 @@ const Hero = () => {
       ></div>
 
       {/* Main Content */}
-      <div className="relative z-[1] text-center max-w-screen-md mt-12 md:mt-0">
+      <div className="relative z-[1] text-center max-w-screen-md mt-12 pt-10 md:mt-0">
         {/* Professional Badge */}
         <Badge className="rounded-full border-none bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-300 hover:scale-105 professional-shadow">
           <Zap className="fill-current mr-2 h-4 w-4" />

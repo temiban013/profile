@@ -375,7 +375,7 @@ const About = () => {
 
         {/* Skills Grid */}
         <div className="mb-20">
-          <h3 className="text-3xl font-bold text-center mb-12">
+          <h3 className="text-3xl font-bold text-center mb-12 text-gradient block">
             {language === "en"
               ? "Core Competencies"
               : "Competencias Principales"}
@@ -395,7 +395,7 @@ const About = () => {
 
         {/* Technologies */}
         <div className="text-center">
-          <h3 className="text-3xl font-bold mb-8">
+          <h3 className="text-3xl font-bold mb-8 text-gradient block">
             {language === "en"
               ? "Technologies & Tools"
               : "Tecnologías y Herramientas"}

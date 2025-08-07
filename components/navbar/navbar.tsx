@@ -83,7 +83,7 @@ const Navbar = (): JSX.Element => {
             Navigation Menu - Now has adequate space to display all items
             The removal of individual social media icons eliminates horizontal competition
           */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center whitespace-nowrap">
             <NavMenu className="mx-auto" />
           </div>
 
@@ -95,7 +95,7 @@ const Navbar = (): JSX.Element => {
             - Language switcher (essential for bilingual portfolio)
             - Social media dropdown (space-efficient access to all platforms)
           */}
-          <div className="absolute right-4 flex items-center gap-3">
+          <div className="right-4 flex items-center gap-3">
             <LanguageSwitcher />
 
             {/* 

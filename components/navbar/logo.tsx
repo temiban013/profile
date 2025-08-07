@@ -17,21 +17,21 @@ export const Logo = ({
   const logoConfig = {
     header: {
       width: 180, // Significantly increased for better visibility
-      height: 72, // Proportionally increased to maintain aspect ratio
-      containerClasses: "h-18 w-45", // Fixed container prevents layout shift during loading
-      imageClasses: "h-18 w-auto rounded-xl", // Auto width maintains natural proportions
+      height: 52, // Proportionally increased to maintain aspect ratio
+      containerClasses: "h-13 w-45", // Fixed container prevents layout shift during loading
+      imageClasses: "h-13 w-45 rounded-xl", // Auto width maintains natural proportions
     },
     mobile: {
       width: 160,
-      height: 64,
-      containerClasses: "h-16 w-40",
-      imageClasses: "h-16 w-auto rounded-lg",
+      height: 46,
+      containerClasses: "h-12 w-40",
+      imageClasses: "h-12 w-40 rounded-lg",
     },
     footer: {
       width: 140,
-      height: 56,
-      containerClasses: "h-14 w-35",
-      imageClasses: "h-14 w-auto rounded-lg",
+      height: 40,
+      containerClasses: "h-10 w-35",
+      imageClasses: "h-10 w-35 rounded-lg",
     },
   };
 

@@ -585,7 +585,7 @@ const Experience = () => {
           <Badge variant="secondary" className="mb-6 text-sm font-medium">
             {language === "en" ? "Education" : "Educación"}
           </Badge>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 text-gradient block">
             {language === "en" ? "Academic Foundation" : "Formación Académica"}
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
@@ -610,7 +610,7 @@ const Experience = () => {
           <Badge variant="secondary" className="mb-6 text-sm font-medium">
             {language === "en" ? "Certifications" : "Certificaciones"}
           </Badge>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 text-gradient block">
             {language === "en"
               ? "Recognition & Leadership"
               : "Reconocimiento y Liderazgo"}

@@ -85,7 +85,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Blog post header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <div className="container mx-auto pt-25 px-4 py-12 max-w-4xl">
           {/* Breadcrumb navigation */}
           <nav className="mb-8" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">

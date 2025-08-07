@@ -132,7 +132,7 @@ export const SocialMediaDropdown = (): JSX.Element => {
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "rounded-full shadow-none transition-all duration-300",
-          "hover:scale-110 hover:bg-primary/10 hover:border-primary/30",
+          "hover:scale-110 hover:bg-secondary/70 hover:border-primary/30",
           // Active state provides clear visual feedback
           isOpen && "bg-primary/10 border-primary/30 scale-105"
         )}
