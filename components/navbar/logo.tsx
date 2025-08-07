@@ -1,95 +1,113 @@
-import type { ComponentPropsWithoutRef, JSX } from "react";
+// components/navbar/logo.tsx
 import Image from "next/image";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { JSX } from "react";
 
-interface LogoProps extends ComponentPropsWithoutRef<"div"> {
-  size?: "sm" | "md" | "lg";
-  showText?: boolean;
+interface LogoProps {
+  variant?: "header" | "mobile" | "footer";
+  className?: string;
 }
 
-const sizeConfig = {
-  sm: {
-    container: "h-8",
-    image: "h-8 w-8",
-    text: "text-lg",
-  },
-  md: {
-    container: "h-10",
-    image: "h-10 w-10",
-    text: "text-xl",
-  },
-  lg: {
-    container: "h-12",
-    image: "h-12 w-12",
-    text: "text-2xl",
-  },
-} as const;
-
 export const Logo = ({
-  size = "md",
-  showText = true,
+  variant = "header",
   className,
-  ...props
 }: LogoProps): JSX.Element => {
-  const config = sizeConfig[size];
+  // Configuration object that defines different sizes and styling for different contexts
+  // This approach ensures consistency while allowing context-appropriate scaling
+  const logoConfig = {
+    header: {
+      width: 180, // Significantly increased for better visibility
+      height: 72, // Proportionally increased to maintain aspect ratio
+      containerClasses: "h-18 w-45", // Fixed container prevents layout shift during loading
+      imageClasses: "h-18 w-auto rounded-xl", // Auto width maintains natural proportions
+    },
+    mobile: {
+      width: 160,
+      height: 64,
+      containerClasses: "h-16 w-40",
+      imageClasses: "h-16 w-auto rounded-lg",
+    },
+    footer: {
+      width: 140,
+      height: 56,
+      containerClasses: "h-14 w-35",
+      imageClasses: "h-14 w-auto rounded-lg",
+    },
+  };
 
-  const LogoContent = (): JSX.Element => (
+  const config = logoConfig[variant];
+
+  return (
     <div
       className={cn(
-        "flex items-center gap-3 transition-all duration-300",
-        "hover:scale-105 active:scale-95",
-        config.container,
+        "relative group cursor-pointer transition-all duration-300",
+        config.containerClasses,
         className
       )}
-      {...props}
     >
-      {/* Logo Image - Fixed aspect ratio */}
+      {/* 
+        Enhanced background system for maximum visibility
+        The key insight here is layering multiple visual techniques:
+        1. Solid background color for guaranteed contrast
+        2. Backdrop blur for modern aesthetic
+        3. Border for definition
+        4. Shadow for depth perception
+      */}
       <div
         className={cn(
-          "relative overflow-hidden rounded-lg",
-          "bg-gradient-to-br from-primary/10 to-primary/5",
-          "border border-primary/20 shadow-sm",
-          config.image
+          "absolute inset-0 rounded-xl transition-all duration-300",
+          // Solid background ensures visibility against any page content
+          "bg-background/95 backdrop-blur-md",
+          // Border provides clear edge definition
+          "border-2 border-border/60",
+          // Enhanced shadow system creates depth and draws attention
+          "shadow-lg shadow-black/10 dark:shadow-black/20",
+          // Hover effects provide interactive feedback
+          "group-hover:bg-background group-hover:border-primary/40",
+          "group-hover:shadow-xl group-hover:shadow-primary/20"
         )}
-      >
-        <Image
-          src="/mra-logo-rc.png" // Ensure this path exists in your public folder
-          alt="Mario Ayala - Full Stack Software Engineer"
-          width={40} // Fixed intrinsic width
-          height={40} // Fixed intrinsic height
-          className="object-contain p-1" // CSS sizing respects container
-          priority
-          unoptimized={process.env.NODE_ENV === "development"} // Dev optimization
-        />
-      </div>
+      />
 
-      {/* Logo Text - Only show when requested */}
-      {showText && (
-        <div className="flex flex-col leading-none">
-          <span
-            className={cn(
-              "font-bold text-foreground tracking-tight",
-              config.text
-            )}
-          >
-            Mario
-          </span>
-          <span className="text-xs text-muted-foreground font-medium">
-            Software Engineer
-          </span>
+      {/* 
+        Logo image with enhanced visibility techniques
+        Using multiple rendering strategies ensures the logo is clearly visible
+      */}
+      <Image
+        src="/mra-logo-rc.png"
+        alt="Mario Rafael Ayala - Full Stack Software Engineer"
+        width={config.width}
+        height={config.height}
+        className={cn(
+          config.imageClasses,
+          "relative z-10 transition-all duration-300",
+          // Scale effect provides hover feedback without being distracting
+          "group-hover:scale-105",
+          // Drop shadow ensures text/logo elements have contrast against backgrounds
+          "drop-shadow-sm filter",
+          // Brightness adjustment can help with visibility on complex backgrounds
+          "brightness-100 contrast-110"
+        )}
+        priority={variant === "header"} // Critical resource - load immediately for header usage
+      />
+
+      {/* 
+        Subtle professional identifier that appears on hover
+        This provides context about your role without cluttering the initial view
+      */}
+      {variant === "header" && (
+        <div
+          className={cn(
+            "absolute -bottom-2 left-1/2 transform -translate-x-1/2",
+            "text-xs text-primary font-medium tracking-wide",
+            "opacity-0 group-hover:opacity-90 transition-all duration-300",
+            "whitespace-nowrap pointer-events-none",
+            // Background ensures text readability
+            "bg-background/90 px-2 py-1 rounded-md shadow-sm"
+          )}
+        >
+          Software Engineer
         </div>
       )}
     </div>
-  );
-
-  return (
-    <Link
-      href="/"
-      className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-lg"
-      aria-label="Go to homepage"
-    >
-      <LogoContent />
-    </Link>
   );
 };

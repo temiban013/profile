@@ -10,7 +10,16 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  User,
+  Briefcase,
+  FolderOpen,
+  BookOpen,
+  ChevronRight,
+} from "lucide-react";
 import { JSX, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
@@ -25,15 +34,28 @@ import { usePathname, useRouter } from "next/navigation";
 interface MobileNavItemProps {
   href: string;
   children: React.ReactNode;
+  icon: React.ReactNode;
+  description?: string;
   isActive?: boolean;
   delay: number;
   onNavigate: () => void;
   isExternal?: boolean;
 }
 
+/*
+  Mobile Navigation Item Component
+  
+  This component demonstrates several mobile UX principles:
+  1. Touch-friendly sizing (minimum 44px tap targets)
+  2. Clear visual hierarchy with icons and descriptions
+  3. Immediate visual feedback for interactions
+  4. Context-aware navigation handling
+*/
 const MobileNavItem = ({
   href,
   children,
+  icon,
+  description,
   isActive,
   delay,
   onNavigate,
@@ -43,24 +65,26 @@ const MobileNavItem = ({
   const router = useRouter();
 
   const handleClick = (): void => {
-    // Close the sheet first
-    onNavigate();
+    // Provide immediate visual feedback by closing sheet first
+    // This creates the perception of instant response while navigation processes
+    setTimeout(() => onNavigate(), 150);
 
-    // Handle navigation based on context
+    // Context-aware navigation logic
+    // Different href patterns require different navigation strategies
     if (href.startsWith("#")) {
-      // Hash navigation - scroll to section
+      // Hash navigation - scroll to section on current page
       if (pathname !== "/") {
-        // If not on home page, navigate to home first, then scroll
+        // Navigate to home page first, then scroll to section
         router.push(`/${href}`);
       } else {
-        // Already on home page, just scroll
+        // Already on home page, just scroll to section
         scrollToSection(href.substring(1));
       }
     } else if (isExternal) {
-      // External link
+      // External link - open in new tab with security measures
       window.open(href, "_blank", "noopener,noreferrer");
     } else {
-      // Internal page navigation
+      // Internal page navigation - use Next.js router
       router.push(href);
     }
   };
@@ -69,19 +93,78 @@ const MobileNavItem = ({
     <button
       onClick={handleClick}
       className={cn(
-        "animate-in slide-in-from-right-4 fade-in duration-300",
-        "w-full p-4 rounded-xl text-left",
-        "transition-all duration-200",
-        "hover:bg-accent/50 hover:scale-[1.02]",
+        // Staggered entrance animation creates professional polish
+        "animate-in slide-in-from-right-4 fade-in duration-500",
+        // Touch-friendly sizing - minimum 44px height for accessibility
+        "w-full p-5 rounded-2xl text-left group",
+        // Smooth interaction feedback
+        "transition-all duration-300 ease-out",
+        "hover:bg-accent/50 active:scale-[0.98]",
+        // Enhanced border system for clear visual definition
+        "border-2 border-transparent hover:border-border/30",
+        // Active state styling - clear visual indication of current location
         isActive
-          ? "bg-primary/10 text-primary border border-primary/20"
-          : "hover:bg-accent/30"
+          ? [
+              "bg-primary/15 text-primary border-primary/40",
+              "shadow-lg shadow-primary/25",
+            ]
+          : "hover:bg-accent/20"
       )}
       style={{ animationDelay: `${delay}ms` }}
       type="button"
     >
-      <div className="flex items-center gap-3">
-        <div className="text-base font-medium">{children}</div>
+      <div className="flex items-center gap-4">
+        {/* 
+          Icon Container - Provides consistent visual anchoring
+          The icon serves as a visual memory aid and helps users scan options quickly
+        */}
+        <div
+          className={cn(
+            "flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300",
+            // Dynamic styling based on active state
+            isActive
+              ? "bg-primary/25 text-primary shadow-inner"
+              : [
+                  "bg-muted/60 text-muted-foreground",
+                  "group-hover:bg-primary/15 group-hover:text-primary",
+                  "group-hover:scale-110",
+                ]
+          )}
+        >
+          {icon}
+        </div>
+
+        {/* 
+          Content Area - Hierarchical text information
+          Main navigation label with optional descriptive text
+        */}
+        <div className="flex-1 min-w-0">
+          <div className="text-lg font-semibold leading-tight mb-1">
+            {children}
+          </div>
+          {description && (
+            <div className="text-sm text-muted-foreground leading-relaxed">
+              {description}
+            </div>
+          )}
+        </div>
+
+        {/* Visual Indicators - Reinforce interaction and state */}
+        <div className="flex items-center gap-2">
+          {/* Active indicator - pulsing dot draws attention to current location */}
+          {isActive && (
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          )}
+
+          {/* Navigation arrow - indicates interactive element */}
+          <ChevronRight
+            className={cn(
+              "h-5 w-5 transition-all duration-300",
+              "text-muted-foreground group-hover:text-primary",
+              "group-hover:translate-x-1"
+            )}
+          />
+        </div>
       </div>
     </button>
   );
@@ -102,46 +185,93 @@ export const NavigationSheet = (): JSX.Element => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative" type="button">
-          {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "relative rounded-full transition-all duration-300",
+            "hover:bg-primary/15 hover:scale-110",
+            "border-2 border-transparent hover:border-primary/30",
+            // Enhanced visual feedback for mobile touch interfaces
+            "active:scale-95 active:bg-primary/20"
+          )}
+          type="button"
+        >
+          <div className="relative">
+            {/* Icon with smooth transition between states */}
+            <div className="transition-transform duration-300">
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </div>
+
+            {/* Subtle background animation provides additional feedback */}
+            <div
+              className={cn(
+                "absolute -inset-2 rounded-full transition-all duration-300",
+                "bg-gradient-to-r from-primary/20 via-secondary/15 to-primary/20",
+                isOpen ? "opacity-100 scale-110" : "opacity-0 scale-95"
+              )}
+            />
+          </div>
         </Button>
       </SheetTrigger>
 
       <SheetContent
         className={cn(
-          "pt-6 px-6 w-80 sm:w-96",
-          "bg-background/95 backdrop-blur-xl",
-          "border-l border-border/50"
+          // Enhanced spacing for mobile comfort
+          "pt-10 px-6 w-80 sm:w-96",
+          // Superior visual depth and contrast
+          "bg-background/96 backdrop-blur-2xl",
+          "border-l-2 border-border/50",
+          // Professional shadow system
+          "shadow-2xl shadow-primary/10"
         )}
         side="right"
       >
-        {/* Header */}
-        <div className="animate-in slide-in-from-right-4 fade-in duration-300">
-          <div className="flex items-center justify-between mb-8">
-            <Logo />
+        {/* 
+          Enhanced Header Section
+          Combines branding with clear navigation purpose
+        */}
+        <div className="animate-in slide-in-from-right-4 fade-in duration-500">
+          <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center gap-4">
+              <Logo variant="mobile" />
+              <div>
+                <h2 className="text-xl font-bold text-foreground">Portfolio</h2>
+                <p className="text-sm text-muted-foreground">
+                  Navigate sections
+                </p>
+              </div>
+            </div>
             <SheetClose asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:rotate-90 transition-transform duration-300"
+                className={cn(
+                  "rounded-full transition-all duration-500",
+                  "hover:rotate-90 hover:bg-destructive/15 hover:text-destructive",
+                  "hover:scale-110"
+                )}
                 type="button"
               >
-                <X className="h-4 w-4" />
+                <X className="h-6 w-6" />
               </Button>
             </SheetClose>
           </div>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="space-y-3">
-          <div className="animate-in slide-in-from-right-4 fade-in duration-300 delay-100">
-            <h3 className="text-sm font-medium text-muted-foreground mb-4 px-4">
-              Navigation
-            </h3>
-          </div>
-
+        {/* 
+          Navigation Items - Core functionality with enhanced UX
+          Each item includes contextual information to help users understand destinations
+        */}
+        <nav className="space-y-4">
           <MobileNavItem
             href="#about"
+            icon={<User className="h-6 w-6" />}
+            description="Background, skills, and expertise"
             isActive={activeSection === "about"}
             delay={200}
             onNavigate={handleNavigate}
@@ -151,6 +281,8 @@ export const NavigationSheet = (): JSX.Element => {
 
           <MobileNavItem
             href="#experience"
+            icon={<Briefcase className="h-6 w-6" />}
+            description="Professional journey and achievements"
             isActive={activeSection === "experience"}
             delay={300}
             onNavigate={handleNavigate}
@@ -160,6 +292,8 @@ export const NavigationSheet = (): JSX.Element => {
 
           <MobileNavItem
             href="#projects"
+            icon={<FolderOpen className="h-6 w-6" />}
+            description="Portfolio of development work"
             isActive={activeSection === "projects"}
             delay={400}
             onNavigate={handleNavigate}
@@ -167,9 +301,10 @@ export const NavigationSheet = (): JSX.Element => {
             {t.projects}
           </MobileNavItem>
 
-          {/* Blog Navigation Item - NEW */}
           <MobileNavItem
             href="/blog"
+            icon={<BookOpen className="h-6 w-6" />}
+            description="Technical insights and articles"
             isActive={pathname.startsWith("/blog")}
             delay={500}
             onNavigate={handleNavigate}
@@ -178,24 +313,39 @@ export const NavigationSheet = (): JSX.Element => {
           </MobileNavItem>
         </nav>
 
-        {/* Footer info */}
+        {/* 
+          Professional Status Footer
+          Communicates availability while reinforcing expertise
+        */}
         <div
           className={cn(
-            "absolute bottom-6 left-6 right-6",
-            "animate-in slide-in-from-bottom-4 fade-in duration-300 delay-600",
-            "glass-effect p-4 rounded-2xl text-center"
+            "absolute bottom-8 left-6 right-6",
+            "animate-in slide-in-from-bottom-4 fade-in duration-500 delay-700",
+            // Enhanced visual styling for professional presentation
+            "glass-effect p-6 rounded-3xl text-center",
+            "border-2 border-border/40 shadow-xl shadow-primary/10"
           )}
         >
-          <p className="text-xs text-muted-foreground">25+ Years Experience</p>
-          <p className="text-sm font-medium text-primary mt-1">
-            Software Engineer
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-lg shadow-green-500/50" />
+            <p className="text-base font-semibold text-primary">
+              Available for Projects
+            </p>
+          </div>
+          <p className="text-sm text-muted-foreground mb-2">
+            Full Stack Software Engineer
+          </p>
+          <p className="text-xs text-muted-foreground">
+            25+ Years Enterprise Experience
           </p>
         </div>
 
-        {/* Hidden accessibility content */}
-        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+        {/* Accessibility enhancements - Hidden but essential for screen readers */}
+        <SheetTitle className="sr-only">Portfolio Navigation Menu</SheetTitle>
         <SheetDescription className="sr-only">
-          Navigate to different sections of the portfolio
+          Navigate to different sections of Mario Rafael Ayala's software
+          engineering portfolio including about, experience, projects, and blog
+          sections
         </SheetDescription>
       </SheetContent>
     </Sheet>
