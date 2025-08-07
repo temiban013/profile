@@ -13,7 +13,6 @@ import {
 import {
   Menu,
   X,
-  Home,
   User,
   Briefcase,
   FolderOpen,
@@ -343,7 +342,7 @@ export const NavigationSheet = (): JSX.Element => {
         {/* Accessibility enhancements - Hidden but essential for screen readers */}
         <SheetTitle className="sr-only">Portfolio Navigation Menu</SheetTitle>
         <SheetDescription className="sr-only">
-          Navigate to different sections of Mario Rafael Ayala's software
+          Navigate to different sections of Mario Rafael Ayala&apos;s software
           engineering portfolio including about, experience, projects, and blog
           sections
         </SheetDescription>

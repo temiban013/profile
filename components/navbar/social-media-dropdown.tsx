@@ -235,7 +235,7 @@ export const SocialMediaDropdown = (): JSX.Element => {
             )}
           >
             <p className="text-xs text-muted-foreground">
-              Let's discuss your next project
+              Let&apos;s discuss your next project
             </p>
           </div>
         </div>
