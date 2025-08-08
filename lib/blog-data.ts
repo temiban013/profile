@@ -187,9 +187,8 @@ ROI: Reducción de 30% en productos vencidos + mejor flujo de caja
 
 ### 4. Optimización de Precios: Data-Driven Sin Ser Walmart
 
-\`\`\`python
-# Ejemplo de prompt para análisis de precios
-prompt = f"""
+**Ejemplo de prompt para análisis de precios prompt** =
+\`\`\`
 Analiza estos datos de mi negocio:
 - Producto: {producto}
 - Costo: {costo}
@@ -202,7 +201,6 @@ Recomienda estrategia de precios considerando:
 2. Competitividad local
 3. Percepción de valor
 4. Estacionalidad
-"""
 \`\`\`
 
 ## Herramientas de IA por Área de Negocio

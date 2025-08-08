@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/blog-data";
 import { formatDate } from "@/lib/utils";
+import { parseMarkdownContent } from "@/lib/content-parser";
 
 interface BlogPostPageProps {
   readonly params: Promise<{ slug: string }>;
@@ -70,91 +71,75 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = getBlogPostBySlug(slug);
 
-  // Handle case where blog post doesn't exist
+  // Handle 404 for non-existent posts
   if (!post) {
     notFound();
   }
 
-  // Calculate related posts (same category, excluding current post)
-  const relatedPosts = getAllBlogPosts({
-    category: post.category,
-    limit: 3,
-  }).filter((relatedPost) => relatedPost.id !== post.id);
+  // Parse the markdown content to HTML
+  const parsedContent = parseMarkdownContent(post.content);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Blog post header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto pt-25 px-4 py-12 max-w-4xl">
-          {/* Breadcrumb navigation */}
-          <nav className="mb-8" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-              <li>
-                <Link
-                  href="/"
-                  className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </li>
-              <li>
-                <Link
-                  href="/blog"
-                  className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                >
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </li>
-              <li className="text-gray-900 dark:text-white font-medium">
-                {post.title}
-              </li>
-            </ol>
-          </nav>
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Breadcrumb Navigation */}
+      <nav className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="container mx-auto pt-30 px-4 py-3 max-w-4xl">
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <Link
+              href="/"
+              className="hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Inicio
+            </Link>
+            <span>/</span>
+            <Link
+              href="/blog"
+              className="hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Blog
+            </Link>
+            <span>/</span>
+            <span className="text-gray-900 dark:text-white font-medium">
+              {post.title.length > 50
+                ? `${post.title.slice(0, 50)}...`
+                : post.title}
+            </span>
+          </div>
+        </div>
+      </nav>
 
-          {/* Post metadata */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
-            <time dateTime={post.publishedAt.toISOString()}>
-              Published {formatDate(post.publishedAt)}
-            </time>
-            {post.updatedAt && (
-              <time dateTime={post.updatedAt.toISOString()}>
-                Updated {formatDate(post.updatedAt)}
-              </time>
-            )}
-            <span>{post.readingTime} min read</span>
-            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full font-medium">
+      {/* Blog post header */}
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-4 py-12 max-w-4xl">
+          {/* Category badge */}
+          <div className="mb-4">
+            <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
               {post.category}
             </span>
+            {post.featured && (
+              <span className="ml-2 inline-block bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
+                Destacado
+              </span>
+            )}
+          </div>
+
+          {/* Post metadata */}
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
+            <time dateTime={post.publishedAt.toISOString()}>
+              {formatDate(post.publishedAt)}
+            </time>
+            <span>•</span>
+            <span>{post.readingTime} min de lectura</span>
+            <span>•</span>
+            <span className="capitalize">
+              {post.language === "es" ? "Español" : "English"}
+            </span>
+            {post.updatedAt && (
+              <>
+                <span>•</span>
+                <span>Actualizado: {formatDate(post.updatedAt)}</span>
+              </>
+            )}
           </div>
 
           {/* Post title */}
@@ -172,7 +157,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
+                className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 #{tag}
               </span>
@@ -185,122 +170,90 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <main className="container mx-auto px-4 py-12 max-w-4xl">
         <article className="prose prose-lg dark:prose-invert max-w-none">
           {/* 
-            Convert markdown-style content to HTML
-            In a real implementation, you'd use a markdown parser like remark
-            For now, we'll render the content with basic formatting
+            Use our enhanced content parser instead of the basic regex approach
+            This provides much better formatting for paragraphs, code blocks, lists, etc.
           */}
           <div
-            className="leading-relaxed"
+            className="content-area"
             dangerouslySetInnerHTML={{
-              __html: post.content
-                .replace(/^# /gm, '<h1 class="text-3xl font-bold mt-8 mb-4">')
-                .replace(/^## /gm, '<h2 class="text-2xl font-bold mt-6 mb-3">')
-                .replace(/^### /gm, '<h3 class="text-xl font-bold mt-4 mb-2">')
-                .replace(
-                  /```typescript\n([\s\S]*?)```/g,
-                  '<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"><code class="language-typescript">$1</code></pre>'
-                )
-                .replace(
-                  /```\n([\s\S]*?)```/g,
-                  '<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"><code>$1</code></pre>'
-                )
-                .replace(
-                  /`([^`]+)`/g,
-                  '<code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm">$1</code>'
-                )
-                .replace(/\n\n/g, '</p><p class="mb-4">')
-                .replace(/^(?!<[h|p|c])/gm, '<p class="mb-4">')
-                .replace(/<p class="mb-4">(<h[1-6])/g, "$1")
-                .replace(/(<\/h[1-6]>)<\/p>/g, "$1"),
+              __html: parsedContent,
             }}
           />
         </article>
 
+        {/* Author bio section */}
+        <section className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-12">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">MA</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  Mario Rafael Ayala
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Ingeniero de Software Senior con 25+ años de experiencia.
+                  Especialista en desarrollo web full-stack, transformación
+                  digital y educación tecnológica. Actualmente enfocado en
+                  Next.js, TypeScript y soluciones para pequeños negocios.
+                </p>
+                <div className="flex space-x-4 mt-4">
+                  <Link
+                    href="/#sobre-mi"
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    Más sobre Mario
+                  </Link>
+                  <Link
+                    href="/blog"
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    Ver todos los artículos
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Related posts section */}
-        {relatedPosts.length > 0 && (
-          <aside className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Related Articles
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {relatedPosts.map((relatedPost) => (
-                <div
+        <section className="mt-16">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+            Artículos Relacionados
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Get related posts by category, excluding current post */}
+            {getAllBlogPosts({
+              category: post.category,
+              language: post.language,
+            })
+              .filter((relatedPost) => relatedPost.id !== post.id)
+              .slice(0, 2)
+              .map((relatedPost) => (
+                <Link
                   key={relatedPost.id}
-                  className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+                  href={`/blog/${relatedPost.slug}`}
+                  className="block bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
                 >
-                  <h3 className="font-bold mb-2">
-                    <Link
-                      href={`/blog/${relatedPost.slug}`}
-                      className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                    >
-                      {relatedPost.title}
-                    </Link>
+                  <div className="mb-3">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {relatedPost.category} • {relatedPost.readingTime} min
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                    {relatedPost.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
                     {relatedPost.excerpt}
                   </p>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatDate(relatedPost.publishedAt)} •{" "}
-                    {relatedPost.readingTime} min read
-                  </div>
-                </div>
+                </Link>
               ))}
-            </div>
-          </aside>
-        )}
-
-        {/* Navigation back to blog */}
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-          >
-            <svg
-              className="mr-2 w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back to all articles
-          </Link>
-        </div>
+          </div>
+        </section>
       </main>
-
-      {/* Structured data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: post.title,
-            description: post.excerpt,
-            author: {
-              "@type": "Person",
-              name: "Mario Rafael Ayala",
-            },
-            publisher: {
-              "@type": "Person",
-              name: "Mario Rafael Ayala",
-            },
-            datePublished: post.publishedAt.toISOString(),
-            dateModified:
-              post.updatedAt?.toISOString() || post.publishedAt.toISOString(),
-            keywords: post.tags.join(", "),
-            articleSection: post.category,
-            wordCount: post.content.split(" ").length,
-            timeRequired: `PT${post.readingTime}M`,
-            url: `/blog/${post.slug}`,
-          }),
-        }}
-      />
     </div>
   );
 }

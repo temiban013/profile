@@ -25,29 +25,29 @@ const Footer = () => {
     es: [
       {
         title: "Sobre mí",
-        href: "#about",
+        href: "/#about",
       },
       {
         title: "Experiencia",
-        href: "#experience",
+        href: "/#experience",
       },
       {
         title: "Proyectos",
-        href: "#projects",
+        href: "/#projects",
       },
     ],
     en: [
       {
         title: "About",
-        href: "#about",
+        href: "/#about",
       },
       {
         title: "Experience",
-        href: "#experience",
+        href: "/#experience",
       },
       {
         title: "Projects",
-        href: "#projects",
+        href: "/#projects",
       },
     ],
   };
