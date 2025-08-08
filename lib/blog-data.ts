@@ -99,7 +99,7 @@ Tu dominio es tu activo digital más importante. Construye sobre terreno que pos
 
 *¿Listo para tomar control de tu destino digital? El momento de actuar es ahora.*
     `,
-    publishedAt: new Date("2025-01-20"),
+    publishedAt: new Date("2025-05-18"),
     tags: [
       "Emprendimiento Digital",
       "Dominios Web",
@@ -110,6 +110,903 @@ Tu dominio es tu activo digital más importante. Construye sobre terreno que pos
     category: "Emprendimiento Digital",
     readingTime: 12,
     featured: true,
+    language: "es",
+  },
+
+  // Nuevo Post sobre IA para Pequeños Negocios
+  {
+    id: "ia-pequenos-negocios-guia-practica",
+    title:
+      "Inteligencia Artificial para Pequeños Negocios: Tu Ventaja Competitiva en 2025",
+    slug: "ia-pequenos-negocios-guia-practica",
+    excerpt:
+      "Descubre cómo las herramientas de IA pueden transformar tu pequeño negocio, automatizar procesos y competir con empresas más grandes, sin requerir conocimientos técnicos avanzados.",
+    content: `
+# La IA Ya No es Ciencia Ficción: Es Tu Oportunidad de Negocio
+
+Durante mi experiencia implementando programas de transformación digital, he observado un fenómeno fascinante: **los pequeños negocios que adoptan IA estratégicamente superan a competidores más grandes** que se resisten al cambio.
+
+La inteligencia artificial no es solo para Google o Microsoft. Es especialmente poderosa para pequeños negocios porque **nivela el campo de juego**.
+
+## Por Qué los Pequeños Negocios Tienen Ventaja con IA
+
+### Agilidad para Experimentar
+Las grandes empresas necesitan comités, presupuestos y aprobaciones para probar una nueva herramienta de IA. Tú puedes empezar **hoy mismo** con herramientas gratuitas y ver resultados en horas.
+
+### Menos Complejidad Organizacional
+No tienes sistemas heredados complicados o procesos burocráticos que limiten la implementación. Puedes integrar IA donde más impacto tenga **inmediatamente**.
+
+### Relación Directa con Clientes
+Conoces personalmente a tus clientes. La IA te ayuda a **escalar esa personalización** sin perder el toque humano.
+
+## Casos de Uso Reales: IA que Genera ROI Inmediato
+
+### 1. Servicio al Cliente: Nunca Más "Estamos Cerrados"
+
+\`\`\`
+Herramienta: ChatGPT + Zapier + WhatsApp Business
+Costo mensual: $20-50
+ROI: Captura de leads 24/7 + reducción de tiempo de respuesta
+\`\`\`
+
+**Ejemplo práctico**: Un restaurante en San Juan configuró un chatbot que:
+- Toma reservas automáticamente
+- Responde preguntas sobre el menú
+- Redirige pedidos de delivery
+- **Resultado**: 40% más reservas sin contratar personal adicional
+
+### 2. Marketing de Contenido: De 0 a Influencer Local
+
+\`\`\`
+Herramientas: ChatGPT + Canva AI + Buffer
+Costo mensual: $30-60
+ROI: Presencia digital profesional + engagement aumentado
+\`\`\`
+
+**Proceso automatizado**:
+1. **IA genera ideas** de contenido específicas para tu industria
+2. **IA crea los textos** adaptados a tu voz de marca
+3. **IA diseña las imágenes** con Canva
+4. **IA programa las publicaciones** optimizadas por horarios
+
+**Caso real**: Una tienda de artesanías pasó de 50 a 2,000 seguidores en Instagram en 6 meses usando esta metodología.
+
+### 3. Análisis de Inventario: Predictivo Sin Ser Adivino
+
+\`\`\`
+Herramientas: Google Sheets + Apps Script + Claude AI
+Costo: Gratuito con Gmail
+ROI: Reducción de 30% en productos vencidos + mejor flujo de caja
+\`\`\`
+
+**Implementación práctica**:
+- IA analiza patrones de venta históricos
+- Predice demanda por producto y temporada
+- Sugiere cantidades de reposición
+- Alerta sobre productos de movimiento lento
+
+### 4. Optimización de Precios: Data-Driven Sin Ser Walmart
+
+\`\`\`python
+# Ejemplo de prompt para análisis de precios
+prompt = f"""
+Analiza estos datos de mi negocio:
+- Producto: {producto}
+- Costo: {costo}
+- Precio actual: {precio_actual}
+- Ventas últimos 3 meses: {ventas}
+- Competencia promedio: {competencia}
+
+Recomienda estrategia de precios considerando:
+1. Margen saludable
+2. Competitividad local
+3. Percepción de valor
+4. Estacionalidad
+"""
+\`\`\`
+
+## Herramientas de IA por Área de Negocio
+
+### **Marketing y Ventas**
+- **ChatGPT/Claude**: Generación de contenido, email marketing
+- **Canva AI**: Diseño automático de posts y ads
+- **Jasper AI**: Copy publicitario optimizado para conversión
+- **Mailchimp AI**: Segmentación inteligente de audiencias
+
+### **Operaciones y Productividad**
+- **Notion AI**: Automatización de procesos internos
+- **Zapier**: Conexión entre herramientas sin programar
+- **Calendly AI**: Programación inteligente de citas
+- **Loom AI**: Videos explicativos con transcripción automática
+
+### **Finanzas y Análisis**
+- **QuickBooks AI**: Categorización automática de gastos
+- **Google Analytics Intelligence**: Insights automáticos de website
+- **Excel/Sheets Copilot**: Análisis de datos conversacional
+- **Wave Accounting**: Facturación inteligente
+
+### **Recursos Humanos (Para Cuando Crezcas)**
+- **LinkedIn Recruiter AI**: Búsqueda de talento optimizada
+- **Grammarly Business**: Comunicación profesional mejorada
+- **Calendly Team**: Coordinación automática de equipos
+
+## Implementación Paso a Paso: Tu Primera Semana con IA
+
+### **Día 1-2: Auditoría de Procesos**
+Identifica las 3 tareas que más tiempo te consumen diariamente. Pregúntate: *"¿Podría una IA hacer esto más rápido?"*
+
+### **Día 3-4: Selección de Herramientas**
+Elige UNA herramienta para el proceso más problemático. No intentes automatizar todo de una vez.
+
+### **Día 5-7: Implementación y Medición**
+Configura, prueba y mide el impacto. **Documenta el tiempo ahorrado** - será tu motivación para seguir.
+
+## Los Errores Que Debes Evitar
+
+### ❌ **"IA Shiny Object Syndrome"**
+Probar todas las herramientas nuevas sin dominar ninguna. **Enfócate en una, domínala, luego expande**.
+
+### ❌ **Esperar Perfección Inmediata**
+La IA es poderosa pero necesita entrenamiento. Prepárate para iterar y mejorar prompts.
+
+### ❌ **Reemplazar Completamente el Toque Humano**
+La IA debe **amplificar tu personalidad**, no reemplazarla. Los clientes siguen comprando a personas, no a robots.
+
+### ❌ **Ignorar la Privacidad de Datos**
+Lee los términos de servicio. Algunos datos sensibles no deben subirse a herramientas de IA públicas.
+
+## El ROI Real: Números Que Importan
+
+Basado en mi experiencia consultando pequeños negocios que han implementado IA:
+
+### **Ahorro de Tiempo Promedio**
+- **Marketing**: 15-20 horas/semana → 3-5 horas/semana
+- **Servicio al Cliente**: 24/7 disponibilidad vs horario comercial
+- **Análisis**: 8 horas/mes → 30 minutos/mes
+
+### **Aumento de Ingresos Típico**
+- **Captura de leads**: +25-40% (disponibilidad 24/7)
+- **Upselling**: +15-25% (recomendaciones personalizadas)
+- **Retención**: +20-30% (seguimiento automatizado)
+
+### **Reducción de Costos**
+- **Herramientas de diseño**: $200/mes → $20/mes
+- **Asistente virtual**: $1,200/mes → $50/mes
+- **Software especializado**: $300/mes → $30/mes
+
+## Preparándote para el Futuro: IA Emergente
+
+### **Tendencias a Observar en 2025**
+- **IA Multimodal**: Herramientas que procesan texto, imagen, audio y video simultáneamente
+- **IA Local**: Procesamiento en tu dispositivo sin subir datos a la nube
+- **IA Personalizada**: Entrenada específicamente con los datos de tu negocio
+- **Automatización Visual**: IA que puede "ver" y interactuar con interfaces gráficas
+
+## Tu Plan de Acción: Los Próximos 30 Días
+
+### **Semana 1: Educación**
+- Dedica 30 minutos diarios a explorar herramientas de IA
+- Únete a communities de IA para pequeños negocios
+- Identifica tu proceso más problemático
+
+### **Semana 2: Experimentación**
+- Prueba 2-3 herramientas gratuitas
+- Mide el tiempo baseline de tu proceso actual
+- Documenta primeras impresiones y resultados
+
+### **Semana 3: Implementación**
+- Elige la herramienta que mejor funcionó
+- Configura workflows básicos
+- Entrena a tu equipo (si tienes uno)
+
+### **Semana 4: Optimización**
+- Refina prompts y configuraciones
+- Mide ROI real (tiempo ahorrado + ingresos generados)
+- Planifica la siguiente área a automatizar
+
+## Conclusión: La IA es Tu Empleado Más Eficiente
+
+La inteligencia artificial no reemplazará a los pequeños negocios que la adopten. **Reemplazará a los que no lo hagan**.
+
+Pero recuerda: la IA es una herramienta, no una solución mágica. Su poder radica en **amplificar tu experiencia humana**, no reemplazarla.
+
+El momento de actuar es ahora. Mientras tus competidores debaten si la IA es relevante para su industria, tú puedes estar **ganando ventaja competitiva real**.
+
+*¿Listo para convertir la inteligencia artificial en tu ventaja competitiva? El futuro de tu negocio puede empezar hoy.*
+    `,
+    publishedAt: new Date("2025-07-22"),
+    tags: [
+      "Inteligencia Artificial",
+      "Pequeños Negocios",
+      "Automatización",
+      "Productividad",
+      "Tecnología",
+    ] as const,
+    category: "Tecnología Empresarial",
+    readingTime: 14,
+    featured: true,
+    language: "es",
+  },
+
+  // Nuevo Post sobre Desarrollador en el Círculo de Emprendedores
+  {
+    id: "desarrollador-circulo-emprendedores",
+    title:
+      "Por Qué Todo Emprendedor Necesita un Desarrollador en su Círculo: Más Allá del Código",
+    slug: "desarrollador-circulo-emprendedores",
+    excerpt:
+      "Descubre cómo tener un desarrollador en tu red de contactos puede transformar tu negocio, reducir costos tecnológicos y darte ventaja competitiva que va mucho más allá de crear websites.",
+    content: `
+# El Desarrollador: Tu Arma Secreta Empresarial
+
+Durante 25+ años en tecnología, he observado un patrón interesante: **los emprendedores más exitosos no necesariamente entienden programación, pero tienen desarrolladores en su círculo cercano**.
+
+No hablo de contratar uno a tiempo completo. Hablo de tener acceso a la **perspectiva tecnológica** cuando tomas decisiones empresariales críticas.
+
+## Más Que Código: La Perspectiva Sistémica
+
+### El Desarrollador Como Arquitecto de Procesos
+
+Los desarrolladores no solo escriben código; **pensamos en sistemas**. Vemos tu negocio como un conjunto de procesos interconectados y identificamos puntos de optimización que otros no ven.
+
+**Ejemplo real**: Un cliente restaurantero quería una app de delivery. Como desarrollador, le mostré que su problema real no era la app, sino el **flujo de pedidos**. Resultado: automatizamos el proceso existente por $200/mes vs $5,000 para desarrollar una app.
+
+### Traducción Técnica: Salvándote de Vendedores
+
+Escenario típico: *"Necesitas un CRM personalizado, servidor dedicado y licencias premium. Total: $15,000 iniciales + $800 mensuales."*
+
+Desarrollador en tu círculo: *"Esto se resuelve con Google Workspace ($12/mes), Zapier ($20/mes) y 2 horas de configuración."*
+
+**ROI inmediato**: Ahorro de $14,000+ desde el primer año.
+
+## La Ventaja de Costos: Números Reales
+
+### Comparación de Costos Anuales
+
+\`\`\`
+SOLUCIÓN TRADICIONAL:
+• Plataforma de e-commerce: $3,000/año
+• Email marketing: $1,200/año  
+• CRM: $1,800/año
+• Website builder: $600/año
+• Analytics: $400/año
+TOTAL: $7,000/año
+
+SOLUCIÓN CON DESARROLLADOR:
+• Hosting Vercel: $240/año
+• Dominio: $12/año
+• Configuración inicial: $2,000 una vez
+• Mantenimiento: $500/año
+TOTAL: $752/año (primer año: $2,752)
+AHORRO: 60-70% anual
+\`\`\`
+
+### El Costo Real de "Gratis"
+
+Las plataformas "gratuitas" tienen costos ocultos:
+
+**Wix/Squarespace**: 
+- Limitaciones de customización
+- Dependencia total de su ecosistema
+- Comisiones en transacciones
+- **Costo real**: Control limitado de tu negocio
+
+**Facebook/Instagram Business**:
+- Algoritmos cambiantes
+- Políticas restrictivas
+- Datos de clientes no exportables
+- **Costo real**: Vulnerabilidad a cambios externos
+
+## Casos de Uso: Desarrollador Como Consultor Estratégico
+
+### 1. Due Diligence Tecnológico
+
+**Situación**: Quieres comprar un negocio que tiene "sistemas automatizados".
+
+**Sin desarrollador**: Confías en lo que te dicen, posible sorpresa desagradable después.
+
+**Con desarrollador**: 
+- Auditoría técnica real del sistema
+- Identificación de deudas técnicas ocultas
+- Estimación realista de costos de mantenimiento
+- Poder de negociación basado en datos
+
+### 2. Selección de Herramientas
+
+**Situación**: Necesitas un sistema de inventario.
+
+**Sin desarrollador**: 
+- Comparas precios y features en papel
+- Posible incompatibilidad con procesos existentes
+- Costos de migración no contemplados
+
+**Con desarrollador**:
+- Análisis de integraciones posibles
+- Evaluación de escalabilidad real
+- Plan de implementación gradual
+- Estrategia de respaldo si la herramienta falla
+
+### 3. Negociación con Proveedores Tecnológicos
+
+**Sin desarrollador**: *"Sí, necesitamos todo eso que usted dice."*
+
+**Con desarrollador**: 
+- Cuestionamiento técnico específico
+- Identificación de features innecesarias
+- Propuestas de alternativas más económicas
+- Negociación informada sobre términos técnicos
+
+## El Factor Tiempo: Velocidad de Implementación
+
+### Startup Speed vs Enterprise Speed
+
+**Grandes empresas**: 6 meses para lanzar una landing page (comités, aprobaciones, procesos).
+
+**Pequeño negocio con desarrollador**: 
+- Idea → MVP: 2 semanas
+- Prueba de mercado: 1 mes
+- Iteración basada en feedback: Continua
+
+Esta velocidad es **ventaja competitiva real** en mercados dinámicos.
+
+### Experimentación de Bajo Costo
+
+\`\`\`typescript
+// Filosofía de desarrollo ágil aplicada a negocios:
+const experimentoNegocio = {
+  hipotesis: "Los clientes quieren X feature",
+  mvp: "Versión básica de X en 1 semana",
+  medicion: "Métricas de uso real",
+  decision: "Escalar, pivotar o descartar",
+  costo: "< $500 por experimento"
+}
+\`\`\`
+
+## Identificando Oportunidades de Automatización
+
+### El Ojo Entrenado del Desarrollador
+
+Los desarrolladores vemos **patrones repetitivos** donde otros ven "trabajo normal":
+
+**Proceso manual típico**:
+1. Cliente envía email con pedido
+2. Copias info a Excel
+3. Calculas precio manualmente
+4. Envías cotización por email
+5. Si acepta, creas factura
+6. Envías link de pago
+7. Actualizas inventario
+
+**Visión del desarrollador**: 
+*"Esto son 15 minutos de automatización que te ahorran 2 horas diarias."*
+
+### ROI de Automatización
+
+**Investment**: 4 horas de desarrollo × $50/hora = $200
+**Ahorro**: 2 horas diarias × $25/hora × 250 días = $12,500/año
+**ROI**: 6,150% anual
+
+## Cómo Encontrar y Mantener Esta Relación
+
+### Dónde Encontrar Desarrolladores Emprendedores-Friendly
+
+1. **Comunidades locales de tech**: Meetups, coworking spaces
+2. **Freelancers con experiencia empresarial**: No solo técnicos puros
+3. **Ex-consultores**: Entienden problemas de negocio
+4. **Desarrolladores con side projects**: Mentalidad emprendedora
+
+### Estructurando la Relación
+
+**NO es**: Amigo que te hace favores gratis
+**SÍ es**: Consultor estratégico con tarifa justa
+
+**Modelos que funcionan**:
+- **Retainer mensual**: $500-1,000/mes por disponibilidad
+- **Equity stake**: Pequeño porcentaje a cambio de desarrollo
+- **Project-based**: Tarifas por proyecto específico
+- **Revenue sharing**: Porcentaje de ingresos generados por soluciones
+
+### Maximizando el Valor de la Relación
+
+1. **Comparte tu visión de negocio**: Más contexto = mejores soluciones
+2. **Pregunta "¿Cómo harías esto?"** antes de comprar software
+3. **Involúcralo en decisiones tecnológicas**: Pequeña inversión, gran retorno
+4. **Respeta su tiempo**: Preparación previa = consultas más efectivas
+
+## Red Flags: Cuando el Desarrollador NO es la Respuesta
+
+### Señales de Alerta:
+- Solo habla de tecnología, no de resultados de negocio
+- Propone siempre la solución más compleja
+- No pregunta sobre tus clientes o modelo de negocio
+- Insiste en tecnologías que no conoces sin explicar beneficios
+
+### La Solución Correcta No Siempre es Técnica:
+A veces necesitas cambiar procesos, no automatizarlos. Un buen desarrollador te dirá cuándo NO usar tecnología.
+
+## Casos de Éxito: Desarrolladores Como Game Changers
+
+### Caso 1: Restaurante Local → Cadena Regional
+**Situación inicial**: Restaurante familiar exitoso pero limitado geográficamente.
+
+**Desarrollador aportó**:
+- Sistema de franquicias web-based
+- Capacitación remota automatizada
+- Control de calidad digital
+- **Resultado**: 5 ubicaciones en 18 meses
+
+### Caso 2: Consultor → Plataforma de Cursos
+**Situación inicial**: Consultor vendiendo tiempo por dinero.
+
+**Desarrollador aportó**:
+- Plataforma de cursos automatizada
+- Sistema de certificaciones
+- Marketplace de consultores
+- **Resultado**: Ingresos pasivos de $15K/mes
+
+### Caso 3: Tienda Física → Omnichannel
+**Situación inicial**: Tienda de ropa afectada por pandemia.
+
+**Desarrollador aportó**:
+- Sistema de inventario unificado
+- Experiencia de compra híbrida
+- Logística automatizada
+- **Resultado**: 300% aumento en ventas online
+
+## Tu Plan de Acción: Construyendo Tu Red Tech
+
+### **Mes 1: Identificación y Conexión**
+- Mapea desarrolladores en tu ciudad/industria
+- Asiste a 2 eventos de tech
+- Identifica 3 candidatos potenciales
+
+### **Mes 2: Evaluación y Primera Colaboración**
+- Proyecto pequeño de prueba ($200-500)
+- Evalúa comunicación y entendimiento de negocio
+- Define estructura de colaboración a futuro
+
+### **Mes 3: Integración Estratégica**
+- Incluye perspectiva tech en decisiones importantes
+- Establece reuniones regulares de estrategia
+- Documenta ahorros y optimizaciones logradas
+
+## Conclusión: La Inversión Más Inteligente
+
+Tener un desarrollador en tu círculo no es un gasto; es **la inversión más rentable que puedes hacer**.
+
+No se trata de tecnología por tecnología. Se trata de tener alguien que piense sistemáticamente, identifique ineficiencias, y convierta problemas en oportunidades automatizadas.
+
+Mientras tus competidores pagan precios completos por soluciones genéricas, tú tendrás ventajas personalizadas a fracción del costo.
+
+En el mundo actual, **no tener acceso a perspectiva tecnológica es como manejar un negocio con los ojos vendados**.
+
+*¿Ya tienes un desarrollador en tu círculo? Si no, ¿qué esperas para encontrarlo?*
+    `,
+    publishedAt: new Date("2025-01-24"),
+    tags: [
+      "Networking Empresarial",
+      "Desarrollo de Software",
+      "Optimización de Costos",
+      "Estrategia Tecnológica",
+      "Emprendimiento",
+    ] as const,
+    category: "Estrategia Empresarial",
+    readingTime: 16,
+    featured: false,
+    language: "es",
+  },
+
+  // Nuevo Post sobre Dominios Propios - Enfoque Técnico/Práctico
+  {
+    id: "guia-practica-dominio-propio-negocio",
+    title:
+      "Guía Práctica: Cómo Configurar tu Dominio Propio en 7 Días (Sin Conocimientos Técnicos)",
+    slug: "guia-practica-dominio-propio-negocio",
+    excerpt:
+      "Tutorial paso a paso para empresarios sin experiencia técnica: desde la compra del dominio hasta tener un sitio web profesional funcionando, con costos reales y mejores prácticas.",
+    content: `
+# De la Idea al Dominio Propio: Tu Roadmap de 7 Días
+
+Después de ayudar a docenas de pequeños negocios en Puerto Rico a establecer su presencia digital, he perfeccionado un proceso que **garantiza resultados en una semana**, sin importar tu nivel técnico.
+
+Este no es otro tutorial genérico. Es el sistema exacto que he usado con cafeterías en San Sebastián, consultorías en Las Marías, y tiendas en Mayagüez.
+
+## Pre-Requisitos: Lo Que Necesitas Antes de Empezar
+
+### Preparación Mental (Día 0)
+- **Mindset**: Tu dominio es una inversión, no un gasto
+- **Tiempo**: 2-3 horas diarias por 7 días
+- **Presupuesto**: $100-300 para el primer año (menos que 2 cenas en restaurante)
+
+### Herramientas que Usaremos
+- **Namecheap o GoDaddy**: Para comprar el dominio
+- **Vercel o Netlify**: Hosting gratuito/económico
+- **Canva**: Diseño básico (gratuito)
+- **Google Workspace**: Email profesional ($6/mes)
+
+## Día 1: Selección y Compra del Dominio
+
+### Paso 1: Brainstorming de Nombres (30 minutos)
+
+**Criterios importantes**:
+- Fácil de recordar y pronunciar
+- Relacionado con tu negocio
+- Evita números y guiones
+- .com es preferible (mayor credibilidad)
+
+**Herramientas de ayuda**:
+\`\`\`
+Generadores de nombres:
+• Namemesh.com
+• Lean domain search
+• Business name generator
+
+Verificación de disponibilidad:
+• Whois.net
+• Namecheap.com/domain-search
+\`\`\`
+
+### Paso 2: Compra del Dominio (15 minutos)
+
+**Proceso en Namecheap** (mi recomendación por precio/servicio):
+1. Busca tu dominio deseado
+2. Agrega al carrito (.com por ~$8-12/año)
+3. **NO agregues extras costosos** por ahora
+4. Completa la compra
+
+**⚠️ Configuraciones iniciales importantes**:
+- Activa WhoisGuard (protección de privacidad)
+- Anota tus credenciales de acceso
+- Verifica el email de confirmación
+
+### Paso 3: Verificación (15 minutos)
+Confirma que puedes acceder al panel de control del dominio. Esto es crítico para los pasos siguientes.
+
+## Día 2: Configuración de Hosting y Email Profesional
+
+### Hosting: Vercel (Recomendado para Principiantes)
+
+**Por qué Vercel**:
+- Plan gratuito generoso
+- Configuración súper simple
+- Performance mundial excelente
+- Escalable cuando crezcas
+
+**Proceso de configuración**:
+1. Regístrate en vercel.com con tu email
+2. Conecta tu cuenta de GitHub (se crea automáticamente)
+3. Anota las URLs que te proporciona
+
+### Email Profesional: La Diferencia Crucial
+
+**Comparación de impacto**:
+- ❌ **contacto@gmail.com** → Amateur
+- ✅ **contacto@tunegocio.com** → Profesional
+
+**Google Workspace setup** ($6/mes, vale cada centavo):
+1. Ve a admin.google.com
+2. "Empezar" → "Mi empresa no tiene dominio"
+3. Ingresa tu dominio comprado
+4. Sigue el proceso de verificación
+5. Configura tu primer email: contacto@tunegocio.com
+
+### Conexión Dominio ↔ Servicios (Técnico Pero Fácil)
+
+**En tu panel de Namecheap**:
+1. Domain List → Manage
+2. Advanced DNS → Add New Record
+
+**Configuraciones necesarias**:
+\`\`\`
+Para Vercel:
+A Record → @ → 76.76.19.61
+CNAME → www → cname.vercel-dns.com
+
+Para Google Workspace:
+MX Record → @ → 1 aspmx.l.google.com
+MX Record → @ → 5 alt1.aspmx.l.google.com
+\`\`\`
+
+**💡 Pro tip**: Estas configuraciones tardan 24-48 horas en activarse. ¡Paciencia!
+
+## Día 3: Diseño y Estructura del Sitio
+
+### Arquitectura de Información (1 hora)
+
+**Páginas esenciales para cualquier negocio**:
+1. **Inicio**: Qué haces, para quién, cómo contactarte
+2. **Servicios/Productos**: Oferta detallada con precios
+3. **Sobre Nosotros**: Historia, equipo, valores
+4. **Contacto**: Formulario, ubicación, horarios
+5. **Blog** (opcional pero recomendado): SEO + expertise
+
+### Herramientas de Diseño Sin Ser Diseñador
+
+**Canva para Business** (gratuito):
+- Templates profesionales prehechos
+- Biblioteca de fotos stock
+- Colores y fonts consistentes
+- Export optimizado para web
+
+**Proceso de creación**:
+1. Selecciona template "Website" relevante a tu industria
+2. Personaliza con tu información
+3. Mantén consistencia visual (mismo color palette)
+4. Exporta secciones como imágenes web-optimized
+
+### Content Strategy: El Contenido Que Convierte
+
+**Fórmula para cada página**:
+1. **Headline claro**: Qué haces en 10 palabras
+2. **Subheading explicativo**: Cómo ayudas al cliente
+3. **Social proof**: Testimonios, logos, números
+4. **Call to action**: Qué quieres que hagan
+
+**Ejemplo para un restaurante**:
+\`\`\`
+Headline: "Auténtica Comida Criolla en el Corazón de Mayagüez"
+Subheading: "Platos tradicionales hechos con recetas familiares 
+             transmitidas por 3 generaciones"
+Social Proof: "Más de 500 familias nos eligen cada semana"
+CTA: "Haz tu reserva ahora" / "Ve nuestro menú completo"
+\`\`\`
+
+## Día 4: Implementación del Sitio Web
+
+### Opción Rápida: WordPress.com Business Plan
+
+**Por qué WordPress para principiantes**:
+- Editor visual intuitivo
+- Themes profesionales incluidos
+- Plugins para funcionalidades específicas
+- SEO básico integrado
+
+**Proceso de setup**:
+1. WordPress.com → Business Plan ($25/mes)
+2. Conecta tu dominio comprado
+3. Selecciona theme apropiado para tu industria
+4. Instala plugins esenciales
+
+### Plugins Esenciales:
+
+**Para cualquier negocio**:
+- **Yoast SEO**: Optimización para buscadores
+- **Contact Form 7**: Formularios de contacto
+- **UpdraftPlus**: Respaldos automáticos
+- **Wordfence**: Seguridad básica
+
+**Para tiendas online** (si vendes productos):
+- **WooCommerce**: E-commerce completo
+- **Stripe/PayPal**: Procesamiento de pagos
+- **Inventory Manager**: Control de inventario
+
+### Configuración Básica de SEO (30 minutos)
+
+**En Yoast SEO**:
+1. Configuration Wizard → Sigue el proceso
+2. Configura título y descripción del sitio
+3. Agrega tu ubicación si es negocio local
+4. Conecta Google Search Console
+
+**Configuraciones críticas**:
+\`\`\`
+Título del sitio: "Nombre del Negocio | Lo Que Haces en Ciudad"
+Descripción: "Descripción atractiva en 150 caracteres con keywords"
+Keywords principales: 3-5 términos que tus clientes buscan
+\`\`\`
+
+## Día 5: Contenido y Optimización
+
+### Content Creation: Escribir Para Humanos y Google
+
+**Estructura de página exitosa**:
+1. **H1** (título principal): Include keyword principal
+2. **Párrafo intro**: Resume beneficio principal
+3. **H2** subsecciones: Organiza información lógicamente
+4. **Llamadas a acción**: Cada 2-3 párrafos
+
+**Ejemplo de estructura para página "Servicios"**:
+\`\`\`markdown
+# Servicios de Consultoría Empresarial en Mayagüez
+
+¿Tu negocio necesita crecer pero no sabes por dónde empezar? 
+Ofrecemos consultoría personalizada para pequeñas y medianas empresas.
+
+## Análisis de Negocio
+- Evaluación de procesos actuales
+- Identificación de oportunidades
+- Plan de acción detallado
+
+[Solicita tu consulta gratuita]
+
+## Optimización de Procesos
+- Automatización de tareas repetitivas
+- Implementación de herramientas digitales
+- Capacitación de equipo
+
+[Ve nuestros casos de éxito]
+\`\`\`
+
+### Optimización de Imágenes (Crítico para Performance)
+
+**Herramientas de compresión**:
+- TinyPNG.com: Reduce 70% el peso sin perder calidad
+- Canva: Export optimizado para web
+- WordPress: Plugin Smush para optimización automática
+
+**Mejores prácticas**:
+- Formato JPG para fotos, PNG para logos/gráficos
+- Tamaño máximo: 1920px ancho para desktop
+- Alt text descriptivo para SEO y accesibilidad
+
+## Día 6: Testing y Configuraciones Técnicas
+
+### Performance Testing: La Velocidad Importa
+
+**Herramientas de análisis**:
+- **PageSpeed Insights**: Análisis oficial de Google
+- **GTmetrix**: Análisis detallado con recomendaciones
+- **Pingdom**: Testing desde múltiples ubicaciones
+
+**Métricas importantes**:
+- **Load time**: < 3 segundos ideal
+- **First paint**: < 1 segundo
+- **Mobile score**: > 90 crítico
+
+### Configuraciones de Seguridad Básica
+
+**SSL Certificate** (HTTPS):
+- Vercel: Automático y gratuito
+- WordPress.com: Incluido en plan business
+- Verificación: Candado verde en browser
+
+**Respaldos automatizados**:
+\`\`\`
+Configuración en UpdraftPlus:
+• Frecuencia: Semanal
+• Almacenamiento: Google Drive (gratuito)
+• Incluir: Archivos + Base de datos
+• Retención: 4 backups
+\`\`\`
+
+### Google Analytics y Search Console
+
+**Analytics setup** (15 minutos):
+1. analytics.google.com → Crear cuenta
+2. Agregar sitio web
+3. Instalar código de tracking (plugin facilita esto)
+4. Verificar que recibe datos
+
+**Search Console** (10 minutos):
+1. search.google.com/search-console
+2. Agregar propiedad
+3. Verificar ownership
+4. Enviar sitemap XML
+
+## Día 7: Launch y Promoción
+
+### Pre-Launch Checklist
+
+**Funcionalidad básica**:
+- ✅ Todas las páginas cargan correctamente
+- ✅ Formularios de contacto funcionan
+- ✅ Email profesional recibe/envía
+- ✅ Sitio se ve bien en móvil
+- ✅ Enlaces internos funcionan
+
+**Contenido final**:
+- ✅ Información de contacto completa
+- ✅ Precios claros (si aplica)
+- ✅ Horarios de atención
+- ✅ Métodos de pago aceptados
+
+### Launch Strategy: Maximiza el Impacto
+
+**Secuencia de lanzamiento**:
+1. **Soft launch**: Comparte con familia/amigos cercanos
+2. **Feedback gathering**: Recopila comentarios y ajusta
+3. **Social media announcement**: Posts en todas tus redes
+4. **Email a base de datos**: Notifica a clientes existentes
+5. **Local networking**: Comparte en grupos empresariales
+
+### Content Marketing: Más Allá del Launch
+
+**Estrategia de blog** (si incluiste blog):
+- 1 post semanal mínimo
+- Enfoque en problemas de tus clientes
+- SEO local (include "en [tu ciudad]")
+- Comparte en redes sociales
+
+## Cálculo de ROI: Los Números Reales
+
+### Investment Total (Primer Año):
+\`\`\`
+Dominio: $12
+Google Workspace: $72 ($6 x 12 meses)  
+WordPress Business: $300 ($25 x 12 meses)
+Herramientas adicionales: $50
+TOTAL: $434 primer año
+\`\`\`
+
+### Returns Típicos:
+- **Credibilidad profesional**: Impacto inmediato en negociaciones
+- **Captura de leads**: 24/7 vs solo horario comercial
+- **Alcance geográfico**: Local → regional → nacional
+- **Automatización**: Consultas, cotizaciones, programación de citas
+
+### Break-even Analysis:
+Si tu dominio propio te genera **1 cliente adicional por mes** que no habrías conseguido de otra forma, ya pagaste la inversión completa.
+
+## Mantenimiento Post-Launch: Keeping It Fresh
+
+### Rutinas Semanales (30 minutos):
+- Revisar analytics para insights
+- Responder a formularios de contacto
+- Actualizar información si hay cambios
+- Compartir contenido en redes sociales
+
+### Rutinas Mensuales (2 horas):
+- Crear nuevo post para blog
+- Revisar y optimizar página con más tráfico
+- Backup manual adicional
+- Análisis de keywords y competencia
+
+### Rutinas Trimestrales (4 horas):
+- Audit completo de performance
+- Actualización de plugins y themes
+- Análisis de ROI y ajustes de estrategia
+- Planificación de nuevas páginas/funcionalidades
+
+## Troubleshooting: Problemas Comunes
+
+### "Mi sitio no aparece en Google"
+**Solución**: 
+- Verificar Search Console setup
+- Enviar sitemap manualmente
+- Crear contenido regularmente
+- **Tiempo esperado**: 2-8 semanas para indexación
+
+### "Los emails no llegan"
+**Solución**:
+- Verificar configuración MX records
+- Revisar carpeta de spam
+- Contactar soporte de Google Workspace
+
+### "El sitio carga muy lento"
+**Solución**:
+- Comprimir imágenes con TinyPNG
+- Instalar plugin de caché
+- Verificar hosting performance
+
+## Conclusión: Tu Nuevo Activo Digital
+
+En 7 días, has creado más que un website. Has establecido:
+- **Presencia profesional independiente**
+- **Sistema de captura de leads 24/7**
+- **Plataforma de crecimiento escalable**
+- **Activo digital que se aprecia con el tiempo**
+
+Recuerda: este es el beginning, no el final. Tu dominio propio es una plataforma que crecerá contigo y tu negocio.
+
+**Next steps recomendados**:
+1. Semana 2: Focus en crear tu primer post de blog
+2. Mes 2: Implementar chat automático básico
+3. Mes 3: A/B test diferentes llamadas a acción
+4. Mes 6: Considerar expansión a e-commerce si aplica
+
+*¿Completaste los 7 días? ¡Comparte tu nuevo dominio! Cada dominio propio es una victoria para la independencia digital de pequeños negocios.*
+    `,
+    publishedAt: new Date("2025-01-26"),
+    tags: [
+      "Dominios Web",
+      "Tutorial",
+      "Website",
+      "Pequeños Negocios",
+      "Guía Práctica",
+    ] as const,
+    category: "Tutoriales",
+    readingTime: 18,
+    featured: false,
     language: "es",
   },
 
@@ -297,7 +1194,7 @@ The beauty of this approach lies in its simplicity and performance characteristi
     tags: ["Next.js", "React", "Web Development", "App Router"] as const,
     category: "Web Development",
     readingTime: 8,
-    featured: true,
+    featured: false,
     language: "en",
   },
   {
