@@ -35,35 +35,36 @@ const Navbar = (): JSX.Element => {
   return (
     <>
       {/* 
-        Independent Logo Positioning
-        Maintains brand visibility without competing for navigation space
+        Logo - Only shown when there's enough space (large screens)
+        Hidden on smaller screens where it merges with navbar
       */}
       <div
         className={cn(
-          "fixed z-30 transition-all duration-500 ease-out",
-          "top-6 left-6",
-          "sm:top-6 sm:left-6 top-4 left-4",
-          isScrolled && [
-            "backdrop-blur-lg bg-background/20 rounded-2xl p-3",
-            "shadow-lg shadow-primary/10",
-          ]
+          "fixed z-30 hidden xl:block", // Only show on extra large screens
+          "top-6 left-6"
         )}
       >
-        <Logo variant="header" />
+        <Logo 
+          variant="header" 
+          className={cn(
+            isScrolled && [
+              "bg-background/90 backdrop-blur-xl",
+              "professional-shadow-lg border-primary/30",
+              "shadow-xl shadow-primary/20"
+            ]
+          )}
+        />
       </div>
 
       {/* 
-        Desktop Navigation System with Optimized Space Usage
-        
-        Key improvement: The social media dropdown replaces multiple individual icons,
-        freeing horizontal space for navigation menu items to display properly
+        Desktop Navigation System - Centered navbar for large screens only
+        When logo and navbar can coexist separately
       */}
       <nav
         className={cn(
           "fixed z-20 h-16 transition-all duration-500 ease-out",
-          "hidden md:flex",
+          "hidden xl:flex", // Only show on xl+ screens where there's room for separate logo
           "top-6 left-1/2 transform -translate-x-1/2",
-          // Increased max-width to accommodate navigation items properly
           "w-auto max-w-4xl min-w-fit",
           "rounded-full border dark:border-slate-700/70",
           isScrolled
@@ -79,62 +80,68 @@ const Navbar = (): JSX.Element => {
         )}
       >
         <div className="h-full flex items-center justify-center px-6">
-          {/* 
-            Navigation Menu - Now has adequate space to display all items
-            The removal of individual social media icons eliminates horizontal competition
-          */}
           <div className="flex items-center justify-center whitespace-nowrap">
             <NavMenu className="mx-auto" />
           </div>
-
-          {/* 
-            Compact Actions Panel
-            
-            Strategic space optimization: Instead of 5 individual social media buttons
-            taking up ~250px of space, we now use just ~150px for essential controls:
-            - Language switcher (essential for bilingual portfolio)
-            - Social media dropdown (space-efficient access to all platforms)
-          */}
           <div className="right-4 flex items-center gap-3">
             <LanguageSwitcher />
-
-            {/* 
-              Social Media Dropdown - Replaces 5 individual icons with 1 compact dropdown
-              This is the key innovation that solves the space competition problem
-            */}
             <SocialMediaDropdown />
           </div>
         </div>
-
         <ScrollProgress />
       </nav>
 
       {/* 
-        Mobile Navigation System
-        Maintains separate, touch-optimized experience for mobile devices
+        Mobile Navigation - Logo + Sheet controls in one bar
+        Used on small screens with sheet-based navigation
       */}
       <nav
         className={cn(
-          "fixed z-20 h-14 transition-all duration-300",
-          "md:hidden", // Only visible on mobile
-          "top-4 right-4 left-24", // Provides space for visible logo
+          "fixed z-20 h-16 transition-all duration-300",
+          "md:hidden", // Only on mobile
+          "top-4 left-4 right-4",
           "rounded-full border dark:border-slate-700/70",
           isScrolled
-            ? "bg-background/90 backdrop-blur-xl professional-shadow-lg"
-            : "bg-background/95 border-border/50"
+            ? ["bg-background/90 backdrop-blur-xl professional-shadow-lg border-primary/30 shadow-xl shadow-primary/20"]
+            : ["bg-background/95 backdrop-blur-lg border-border/50 professional-shadow"]
         )}
       >
-        <div className="h-full flex items-center justify-end px-3 gap-2">
-          <LanguageSwitcher />
-
-          {/* 
-            Mobile uses sheet-based interactions for optimal touch experience
-            Social media sheet provides full-screen access to social platforms
-            Navigation sheet provides full-screen access to portfolio sections
-          */}
-          <SocialMediaSheet />
-          <NavigationSheet />
+        <div className="h-full flex items-center justify-between px-4">
+          <Logo variant="mobile" />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <SocialMediaSheet />
+            <NavigationSheet />
+          </div>
         </div>
+      </nav>
+
+      {/* 
+        Medium/Large Screen Unified Navigation - Logo + Menu items in one bar
+        Used when screen isn't wide enough for separate logo and navbar
+      */}
+      <nav
+        className={cn(
+          "fixed z-20 h-16 transition-all duration-300",
+          "hidden md:flex xl:hidden", // Show on md/lg, hide on xl+ where they're separate
+          "top-6 left-6 right-6",
+          "rounded-full border dark:border-slate-700/70",
+          isScrolled
+            ? ["bg-background/90 backdrop-blur-xl professional-shadow-lg border-primary/30 shadow-xl shadow-primary/20"]
+            : ["bg-background/95 backdrop-blur-lg border-border/50 professional-shadow"]
+        )}
+      >
+        <div className="h-full flex items-center justify-between px-6">
+          <Logo variant="mobile" />
+          <div className="flex-1 flex items-center justify-center">
+            <NavMenu className="mx-4" />
+          </div>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <SocialMediaDropdown />
+          </div>
+        </div>
+        <ScrollProgress />
       </nav>
 
       <CircularScrollProgress />
