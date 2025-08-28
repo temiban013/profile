@@ -292,6 +292,25 @@ const Experience = () => {
     en: {
       experience: [
         {
+          title: "Independent Technical Consultant",
+          company: "Self-Employed",
+          location: "Puerto Rico / Remote",
+          period: "2022 - Present",
+          description:
+            "Led complete digital transformation initiatives for cultural organizations and small businesses across Puerto Rico and the Caribbean. Successfully delivered 6 major web development projects including museum digitization, artist community platforms, and tourism/hospitality websites. Specialized in Next.js 15, TypeScript, and modern web technologies while maintaining cultural sensitivity in design. Achieved 95+ Lighthouse scores across all projects with comprehensive SEO optimization. Notable projects include Puerto Rico's Humacao Sports Hall of Fame official website, Caribbean poets organization platform JAYEI, and luxury vacation rental websites with multi-language support.",
+          technologies: [
+            "Next.js 15",
+            "TypeScript",
+            "Tailwind CSS",
+            "React 19",
+            "Vercel",
+            "SEO Optimization",
+            "Cultural Heritage Tech",
+            "Multi-language Support",
+            "Digital Transformation",
+          ],
+        },
+        {
           title: "Digital Transformation Program Designer",
           company: "MPA Consultants",
           location: "Las Marías, Puerto Rico",
@@ -305,23 +324,6 @@ const Experience = () => {
             "Cloud Collaboration",
             "Data Analysis",
             "Automated Workflows",
-          ],
-        },
-        {
-          title: "Independent Technology Consultant",
-          company: "Self-Employed",
-          location: "Mayagüez, Puerto Rico",
-          period: "September 2021 - Present",
-          description:
-            "Created and continues maintaining the website for Café Papamín in San Sebastian. Developed and deployed blockchain applications including an NFT marketplace prototype using Solidity and React. Conducted technology workshops educating professionals and students on blockchain fundamentals and smart contract development. Built custom web applications for small businesses using Next.js and TypeScript, implementing modern UI/UX practices.",
-          technologies: [
-            "Next.js",
-            "TypeScript",
-            "Solidity",
-            "React",
-            "Blockchain Development",
-            "Smart Contracts",
-            "UI/UX Design",
           ],
         },
         {
@@ -451,6 +453,26 @@ const Experience = () => {
     es: {
       experience: [
         {
+          title: "Consultor Tecnológico Independiente",
+          company: "Trabajo Independiente",
+          location: "Puerto Rico / Remoto",
+          period: "Septiembre 2021 - Presente",
+          description:
+            "Dirigí iniciativas de transformación digital completas para organizaciones culturales y empresas en Puerto Rico y el Caribe, entregando 6 proyectos principales de desarrollo web. Lancé exitosamente el sitio web oficial del Pabellón de la Fama del Deporte de Humacao, digitalizando 81+ leyendas deportivas y creando su primera experiencia de museo digital con sistemas avanzados de búsqueda y filtrado. Desarrollé la plataforma JAYEI para poetas y escritores caribeños con carga progresiva de imágenes, soporte multiidioma y diseño responsivo optimizado para engagement móvil. Creé sitios web de alquileres vacacionales de lujo para Yukayeke Playa con listados completos de propiedades, optimización SEO y tours virtuales inmersivos. Construí sitios web modernos de restaurantes incluyendo Café Papamín con servicios de ubicación e integración de contacto. Me especialicé en Next.js 15, TypeScript y tecnología de patrimonio cultural mientras mantenía enfoque en impacto empresarial y puntuaciones Lighthouse 95+ en todos los proyectos.",
+          technologies: [
+            "Next.js 15",
+            "TypeScript",
+            "React 19",
+            "Tailwind CSS",
+            "Vercel",
+            "Optimización SEO",
+            "Tecnología Patrimonio Cultural",
+            "Transformación Digital",
+            "Soporte Multi-idioma",
+            "Optimización Rendimiento",
+          ],
+        },
+        {
           title: "Diseñador de Programa de Transformación Digital",
           company: "MPA Consultants",
           location: "Las Marías, Puerto Rico",
@@ -464,23 +486,6 @@ const Experience = () => {
             "Colaboración en la Nube",
             "Análisis de Datos",
             "Flujos Automatizados",
-          ],
-        },
-        {
-          title: "Consultor Tecnológico Independiente",
-          company: "Trabajador Independiente",
-          location: "Mayagüez, Puerto Rico",
-          period: "Septiembre 2021 - Presente",
-          description:
-            "Creé y mantengo el sitio web de Café Papamín en San Sebastián. Desarrollé aplicaciones blockchain incluyendo prototipo de marketplace NFT usando Solidity y React. Impartí talleres tecnológicos educando profesionales y estudiantes en fundamentos blockchain y desarrollo de contratos inteligentes. Construí aplicaciones web personalizadas para pequeños negocios usando Next.js y TypeScript.",
-          technologies: [
-            "Next.js",
-            "TypeScript",
-            "Solidity",
-            "React",
-            "Desarrollo Blockchain",
-            "Contratos Inteligentes",
-            "Diseño UI/UX",
           ],
         },
         {
@@ -501,7 +506,71 @@ const Experience = () => {
             "Integración Sistemas",
           ],
         },
-        // More entries would follow the same pattern...
+        {
+          title: "Desarrollador Senior .NET",
+          company: "AVM L.P.",
+          location: "Boca Raton, Florida",
+          period: "Abril 2011 - Junio 2012",
+          description:
+            "Arquitecté e implementé sistemas críticos de reportes financieros para el comercio de derivados, logrando 100% de precisión en la validación de transacciones OTC a través de verificación robusta de datos en tiempo real. Diseñé y desarrollé frameworks seguros de exportación de datos para productos derivados OTC y no-OTC, asegurando cumplimiento con estándares de la industria mientras mantenía la integridad de datos. Lideré la re-arquitectura de sistemas de nivel medio en ASP.NET y C# para instrumentos financieros relacionados con swaps.",
+          technologies: [
+            ".NET",
+            "C#",
+            "SQL",
+            "Sistemas Financieros",
+            "Trading OTC",
+            "Verificación de Datos",
+            "Moq Framework",
+          ],
+        },
+        {
+          title: "Desarrollador de Software Senior",
+          company: "ABB Concise",
+          location: "Coral Springs, Florida",
+          period: "Junio 2007 - Febrero 2011",
+          description:
+            "Desarrollé y mantuve aplicaciones de comercio electrónico ASP.NET para el cuidado ocular usando C#, SQL Server, Progress DB y Visual Studio 2010. Implementé WCF Services, controles AJAX con JQuery y JavaScript para comunicación con bases de datos y del lado del cliente. Creé nuevas características de comercio electrónico como precios por niveles, cupones, descuentos de envío y re-ordenamiento automático.",
+          technologies: [
+            "ASP.NET",
+            "C#",
+            "SQL Server",
+            "WCF",
+            "AJAX",
+            "JQuery",
+            "JavaScript",
+          ],
+        },
+        {
+          title: "Líder Técnico Senior / Desarrollador III",
+          company: "Office Depot",
+          location: "Delray Beach, Florida",
+          period: "Noviembre 1998 - Enero 2005",
+          description:
+            "Lideré la arquitectura e implementación de la plataforma Oracle Retail MFP, integrando análisis predictivo con sistemas financieros empresariales. Diseñé framework automatizado de integración de datos conectando bases de datos empresariales dispares (SQL Server, Oracle, DB2, Teradata). Desarrollé sistema de monitoreo de procesos UNIX en tiempo real utilizando implementación temprana de AJAX. Arquitecté integración basada en ASP entre sistemas de telefonía Rockwell y aplicaciones de intranet.",
+          technologies: [
+            "Oracle",
+            "XML",
+            "ASP",
+            "UNIX",
+            "Integración B2B",
+            "Arquitectura Empresarial",
+            "Análisis Predictivo",
+          ],
+        },
+        {
+          title: "Oficial de Seguridad de Información (RM2/E5)",
+          company: "Marina de Estados Unidos",
+          location: "Costa Este, USA",
+          period: "Junio 2007 - Febrero 2011",
+          description:
+            "Desarrollé programas para automatizar la resolución de problemas y fallas del sistema que mejoraron la eficiencia y ahorraron tiempo y recursos. Fui responsable de la seguridad informática a través de la instalación y configuración de software de seguridad y el desarrollo de políticas.",
+          technologies: [
+            "DBase IV",
+            "Seguridad de Sistemas",
+            "Automatización de Procesos",
+            "Gestión de Infraestructura",
+          ],
+        },
       ],
       education: [
         {
