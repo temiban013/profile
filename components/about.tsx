@@ -338,9 +338,12 @@ const About = () => {
               <Button
                 variant="outline"
                 className="rounded-full professional-shadow hover:professional-shadow-lg transition-all duration-300"
+                asChild
               >
-                <Target className="w-4 h-4 mr-2" />
-                {language === "en" ? "View Projects" : "Ver Proyectos"}
+                <a href="#projects">
+                  <Target className="w-4 h-4 mr-2" />
+                  {language === "en" ? "View Projects" : "Ver Proyectos"}
+                </a>
               </Button>
             </div>
           </div>

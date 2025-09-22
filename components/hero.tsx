@@ -139,6 +139,7 @@ const Hero = () => {
           <Button
             size="lg"
             className="rounded-full text-base font-medium professional-shadow-lg hover:scale-105 transition-all duration-300 bg-primary hover:bg-primary/90"
+            asChild
           >
             <Link href="#about" className="flex items-center gap-2">
               {t.inSummary}
@@ -150,6 +151,7 @@ const Hero = () => {
             variant="outline"
             size="lg"
             className="rounded-full text-base font-medium professional-shadow hover:scale-105 transition-all duration-300 border-primary/20 hover:border-primary/40 hover:bg-secondary/80"
+            asChild
           >
             <Link href="#projects">
               {language === "en" ? "View Projects" : "Ver Proyectos"}

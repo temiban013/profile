@@ -26,6 +26,34 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
   const pdfDocRef = useRef<any>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderPage = async (pdf: any, pageNum: number) => {
+      if (!canvasRef.current) return;
+
+      try {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale });
+
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+
+        if (!context) return;
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+
+        await page.render(renderContext).promise;
+      } catch (err) {
+        console.error('Error rendering page:', err);
+        setError(true);
+      }
+    };
+
     const loadPDFAsync = async () => {
       try {
         setIsLoading(true);
@@ -74,9 +102,9 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, pdfUrl]);
+  }, [isOpen, pdfUrl, scale]);
 
-
+  // Render page function for navigation and zoom controls
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderPage = async (pdf: any, pageNum: number) => {
     if (!canvasRef.current) return;
