@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PDFViewer } from "@/components/pdf-viewer";
 import {
   Code,
   Database,
@@ -143,6 +144,7 @@ const TechBadge = ({ tech, delay = 0 }: { tech: string; delay?: number }) => {
 const About = () => {
   const { language } = useLanguage();
   const t = translations[language];
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
 
   const skills = {
     en: [
@@ -326,7 +328,10 @@ const About = () => {
 
             {/* Call to Action */}
             <div className="flex flex-wrap gap-4 pt-6">
-              <Button className="rounded-full professional-shadow hover:professional-shadow-lg transition-all duration-300">
+              <Button
+                className="rounded-full professional-shadow hover:professional-shadow-lg transition-all duration-300"
+                onClick={() => setShowPDFViewer(true)}
+              >
                 <Download className="w-4 h-4 mr-2" />
                 {language === "en" ? "Download Resume" : "Descargar CV"}
               </Button>
@@ -407,6 +412,22 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      {/* PDF Viewer Modal */}
+      <PDFViewer
+        isOpen={showPDFViewer}
+        onClose={() => setShowPDFViewer(false)}
+        pdfUrl={
+          language === "en"
+            ? "/Mario-R-Ayala-Resume-EN.pdf"
+            : "/Mario-R-Ayala-Resume-ES.pdf"
+        }
+        title={
+          language === "en"
+            ? "Mario R. Ayala - Resume"
+            : "Mario R. Ayala - Curriculum Vitae"
+        }
+      />
     </section>
   );
 };

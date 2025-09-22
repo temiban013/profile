@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PDFViewer } from "@/components/pdf-viewer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -189,6 +190,7 @@ const Contact: React.FC = () => {
   const t = translations[language];
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<ContactFormData>({
@@ -599,24 +601,13 @@ const Contact: React.FC = () => {
                   {t.scheduleCall}
                 </Link>
               </Button>
-              <Button variant="outline" className="w-full rounded-full" asChild>
-                <Link
-                  href={
-                    language === "en"
-                      ? `/${
-                          process.env.NEXT_PUBLIC_ENGLISH_RESUME ||
-                          "Mario-R-Ayala-Resume-EN.pdf"
-                        }`
-                      : `/${
-                          process.env.NEXT_PUBLIC_SPANISH_RESUME ||
-                          "Mario-R-Ayala-Resume-ES.pdf"
-                        }`
-                  }
-                  target="_blank"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  {t.downloadResume}
-                </Link>
+              <Button
+                variant="outline"
+                className="w-full rounded-full"
+                onClick={() => setShowPDFViewer(true)}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                {t.downloadResume}
               </Button>
             </div>
 
@@ -661,6 +652,28 @@ const Contact: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* PDF Viewer Modal */}
+      <PDFViewer
+        isOpen={showPDFViewer}
+        onClose={() => setShowPDFViewer(false)}
+        pdfUrl={
+          language === "en"
+            ? `/${
+                process.env.NEXT_PUBLIC_ENGLISH_RESUME ||
+                "Mario-R-Ayala-Resume-EN.pdf"
+              }`
+            : `/${
+                process.env.NEXT_PUBLIC_SPANISH_RESUME ||
+                "Mario-R-Ayala-Resume-ES.pdf"
+              }`
+        }
+        title={
+          language === "en"
+            ? "Mario R. Ayala - Resume"
+            : "Mario R. Ayala - Curriculum Vitae"
+        }
+      />
     </section>
   );
 };
