@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/blog-data";
 import { formatDate } from "@/lib/utils";
 import { parseMarkdownContent } from "@/lib/content-parser";
+import { BlogPostStructuredData } from "@/components/seo/structured-data";
 
 interface BlogPostPageProps {
   readonly params: Promise<{ slug: string }>;
@@ -27,10 +28,35 @@ export async function generateMetadata({
     };
   }
 
+  // Find the corresponding post in the other language for hreflang
+  const allPosts = getAllBlogPosts();
+  const otherLanguagePost = allPosts.find(p =>
+    p.language !== post.language &&
+    (p.id.includes(post.id.split('-').slice(0, -1).join('-')) ||
+     post.id.includes(p.id.split('-').slice(0, -1).join('-')))
+  );
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mariorafaelayala.com';
+
   return {
     title: `${post.title} | Blog`,
     description: post.excerpt,
     keywords: Array.from(post.tags),
+
+    // Language and region targeting
+    other: {
+      'Content-Language': post.language,
+    },
+
+    // Canonical URL
+    alternates: {
+      canonical: `${baseUrl}/blog/${post.slug}`,
+      languages: otherLanguagePost ? {
+        [post.language === 'en' ? 'es' : 'en']: `${baseUrl}/blog/${otherLanguagePost.slug}`,
+        [post.language]: `${baseUrl}/blog/${post.slug}`,
+      } : undefined,
+    },
+
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -40,11 +66,28 @@ export async function generateMetadata({
       authors: ["Mario Rafael Ayala"],
       tags: Array.from(post.tags),
       url: `/blog/${post.slug}`,
+      locale: post.language === 'en' ? 'en_US' : 'es_ES',
+      siteName: 'Mario Rafael Ayala - Software Engineer',
     },
+
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
+      creator: '@marioayala', // Add your Twitter handle if you have one
+    },
+
+    // Additional metadata for better SEO
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large' as const,
+        'max-snippet': -1,
+      },
     },
   };
 }
@@ -81,6 +124,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Structured Data for SEO */}
+      <BlogPostStructuredData post={post} />
       {/* Breadcrumb Navigation */}
       <nav className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto pt-30 px-4 py-3 max-w-4xl">

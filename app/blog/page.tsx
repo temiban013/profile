@@ -7,6 +7,7 @@ import { BlogPostCard } from "@/components/blog/blog-post-card";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { getTranslation } from "@/lib/i18n";
 import type { BlogPost } from "@/types/blog";
+import { BlogSectionStructuredData } from "@/components/seo/structured-data";
 
 /**
  * Blog Listing Page Component
@@ -33,13 +34,17 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Structured Data for SEO */}
+      <BlogSectionStructuredData posts={allPosts} language={language} />
       {/* Hero section for the blog */}
       <section className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto pt-25 px-4 py-16 max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            {getTranslation("blogTitle", language)}
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
+            <span className="text-gradient">
+              {getTranslation("blogTitle", language)}
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl">
+          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl text-center mx-auto">
             {getTranslation("blogSubtitle", language)}
           </p>
         </div>

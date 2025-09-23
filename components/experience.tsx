@@ -763,10 +763,8 @@ const Experience = () => {
           </Badge>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
             <span className="text-gradient">
-              {language === "en" ? "Professional" : "Trayectoria"}
+              {language === "en" ? "Professional Journey" : "Trayectoria Profesional"}
             </span>
-            <br />
-            {language === "en" ? "Journey" : "Profesional"}
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {language === "en"
