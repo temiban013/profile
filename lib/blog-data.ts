@@ -1577,7 +1577,7 @@ The paradigm has shifted, but the magic remains. We're still turning ideas into 
     ] as const,
     category: "Technology Reflections",
     readingTime: 8,
-    featured: false,
+    featured: true,
     language: "en",
   },
 
@@ -2028,7 +2028,7 @@ But that's what makes it wonderful. Every day brings new challenges, new learnin
     ] as const,
     category: "Career",
     readingTime: 15,
-    featured: false,
+    featured: true,
     language: "en",
   },
 ] as const;

@@ -1,51 +1,35 @@
 // app/blog/page.tsx
-import { Metadata } from "next";
+"use client";
+
+import { useEffect, useState } from "react";
 import { getAllBlogPosts } from "@/lib/blog-data";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-
-/**
- * SEO metadata for the blog listing page
- * This demonstrates how Next.js App Router handles metadata generation
- */
-export const metadata: Metadata = {
-  title: "Blog | Software Engineering Insights",
-  description:
-    "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
-  keywords: [
-    "software engineering",
-    "programming",
-    "web development",
-    "Next.js",
-    "TypeScript",
-    "career insights",
-  ],
-  openGraph: {
-    title: "Blog | Software Engineering Insights",
-    description:
-      "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
-    type: "website",
-    url: "/blog",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Blog | Software Engineering Insights",
-    description:
-      "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
-  },
-};
+import { useLanguage } from "@/lib/contexts/language-context";
+import { getTranslation } from "@/lib/i18n";
+import type { BlogPost } from "@/types/blog";
 
 /**
  * Blog Listing Page Component
  *
- * This is a Server Component that fetches blog posts and renders them.
- * In Next.js App Router, components are Server Components by default,
- * which means they run on the server and can directly access data sources.
+ * Now a Client Component to access language context for bilingual filtering.
+ * Filters blog posts based on the current language selection.
  */
 export default function BlogPage() {
-  // Fetch all blog posts - in a real application, this might include pagination
-  const allPosts = getAllBlogPosts();
-  const featuredPosts = getAllBlogPosts({ featured: true });
-  const recentPosts = getAllBlogPosts({ limit: 6, featured: false });
+  const { language } = useLanguage();
+  const [allPosts, setAllPosts] = useState<readonly BlogPost[]>([]);
+  const [featuredPosts, setFeaturedPosts] = useState<readonly BlogPost[]>([]);
+  const [recentPosts, setRecentPosts] = useState<readonly BlogPost[]>([]);
+
+  useEffect(() => {
+    // Filter posts by current language
+    const languageFilteredPosts = getAllBlogPosts({ language });
+    const languageFeatured = getAllBlogPosts({ featured: true, language });
+    const languageRecent = getAllBlogPosts({ limit: 6, featured: false, language });
+
+    setAllPosts(languageFilteredPosts);
+    setFeaturedPosts(languageFeatured);
+    setRecentPosts(languageRecent);
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -53,12 +37,10 @@ export default function BlogPage() {
       <section className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto pt-25 px-4 py-16 max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Software Engineering Insights
+            {getTranslation("blogTitle", language)}
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl">
-            Sharing knowledge gained from 25+ years of professional software
-            development, covering everything from enterprise architecture to
-            modern web technologies.
+            {getTranslation("blogSubtitle", language)}
           </p>
         </div>
       </section>
@@ -68,7 +50,7 @@ export default function BlogPage() {
         {featuredPosts.length > 0 && (
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-              Featured Articles
+              {getTranslation("featuredArticles", language)}
             </h2>
             <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
               {featuredPosts.map((post) => (
@@ -81,7 +63,7 @@ export default function BlogPage() {
         {/* Recent posts section */}
         <section>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-            Recent Articles
+            {getTranslation("recentArticles", language)}
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {recentPosts.map((post) => (
@@ -93,7 +75,7 @@ export default function BlogPage() {
         {/* Blog statistics - demonstrates data processing */}
         <section className="mt-16 bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Blog Statistics
+            {getTranslation("blogStats", language)}
           </h3>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center">
@@ -101,18 +83,18 @@ export default function BlogPage() {
                 {allPosts.length}
               </div>
               <div className="text-gray-600 dark:text-gray-300">
-                Total Articles
+                {getTranslation("totalArticles", language)}
               </div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                {Math.round(
+                {allPosts.length > 0 ? Math.round(
                   allPosts.reduce((sum, post) => sum + post.readingTime, 0) /
                     allPosts.length
-                )}
+                ) : 0}
               </div>
               <div className="text-gray-600 dark:text-gray-300">
-                Avg. Reading Time
+                {getTranslation("avgReadingTime", language)}
               </div>
             </div>
             <div className="text-center">
@@ -120,7 +102,7 @@ export default function BlogPage() {
                 {new Set(allPosts.flatMap((post) => post.tags)).size}
               </div>
               <div className="text-gray-600 dark:text-gray-300">
-                Unique Topics
+                {getTranslation("uniqueTopics", language)}
               </div>
             </div>
           </div>

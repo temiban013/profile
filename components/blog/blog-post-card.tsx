@@ -1,7 +1,11 @@
 // components/blog/blog-post-card.tsx
+"use client";
+
 import Link from "next/link";
 import { BlogPost } from "@/types/blog";
 import { formatDate } from "@/lib/utils";
+import { useLanguage } from "@/lib/contexts/language-context";
+import { getTranslation } from "@/lib/i18n";
 
 interface BlogPostCardProps {
   readonly post: BlogPost;
@@ -17,6 +21,8 @@ interface BlogPostCardProps {
  * underlying data structure.
  */
 export function BlogPostCard({ post, variant = "default" }: BlogPostCardProps) {
+  const { language } = useLanguage();
+
   // Determine styling based on variant - this pattern allows for easy extension
   const cardClasses = {
     default:
@@ -41,7 +47,7 @@ export function BlogPostCard({ post, variant = "default" }: BlogPostCardProps) {
           <time dateTime={post.publishedAt.toISOString()}>
             {formatDate(post.publishedAt)}
           </time>
-          <span>{post.readingTime} min read</span>
+          <span>{post.readingTime} {getTranslation("readingTime", language)}</span>
         </div>
 
         {/* Post title - using semantic heading hierarchy */}
@@ -79,7 +85,7 @@ export function BlogPostCard({ post, variant = "default" }: BlogPostCardProps) {
           ))}
           {post.tags.length > 3 && (
             <span className="text-gray-500 text-xs">
-              +{post.tags.length - 3} more
+              +{post.tags.length - 3} {getTranslation("moreTopics", language)}
             </span>
           )}
         </div>
@@ -89,7 +95,7 @@ export function BlogPostCard({ post, variant = "default" }: BlogPostCardProps) {
           href={`/blog/${post.slug}`}
           className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
         >
-          Read full article
+          {getTranslation("readFullArticle", language)}
           <svg
             className="ml-1 w-4 h-4"
             fill="none"

@@ -20,6 +20,19 @@ export type TranslationLabels = {
   myTools: string;
   inSummary: string;
   blog: string;
+  // Blog section
+  blogTitle: string;
+  blogSubtitle: string;
+  featuredArticles: string;
+  recentArticles: string;
+  blogStats: string;
+  totalArticles: string;
+  avgReadingTime: string;
+  uniqueTopics: string;
+  readingTime: string;
+  publishedOn: string;
+  readFullArticle: string;
+  moreTopics: string;
   // Hero section
   heroTitle: string;
   heroSubtitle: string;
@@ -63,6 +76,19 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     myTools: "My Tools",
     inSummary: "In summary...",
     blog: "Blog",
+    // Blog section
+    blogTitle: "Software Engineering Insights",
+    blogSubtitle: "Sharing knowledge gained from 25+ years of professional software development, covering everything from enterprise architecture to modern web technologies.",
+    featuredArticles: "Featured Articles",
+    recentArticles: "Recent Articles",
+    blogStats: "Blog Statistics",
+    totalArticles: "Total Articles",
+    avgReadingTime: "Avg. Reading Time",
+    uniqueTopics: "Unique Topics",
+    readingTime: "min read",
+    publishedOn: "Published on",
+    readFullArticle: "Read full article",
+    moreTopics: "more",
     heroTitle: "Developing Scalable and Efficient Web Solutions",
     heroSubtitle:
       "Greetings! I'm Mario Ayala, a Software Engineer with over 20 years of experience in enterprise application development. With a background in Computer Science and extensive experience at companies like Disney, I specialize in creating robust and scalable digital solutions that transform ideas into functional realities. My approach combines technical precision with intuitive design to deliver exceptional digital experiences. Shall we collaborate on your next project? 🚀",
@@ -105,6 +131,19 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     myTools: "Mis herramientas",
     inSummary: "En resumen...",
     blog: "Blog",
+    // Blog section
+    blogTitle: "Perspectivas de Ingeniería de Software",
+    blogSubtitle: "Compartiendo conocimiento adquirido durante 25+ años de desarrollo profesional de software, cubriendo desde arquitectura empresarial hasta tecnologías web modernas.",
+    featuredArticles: "Artículos Destacados",
+    recentArticles: "Artículos Recientes",
+    blogStats: "Estadísticas del Blog",
+    totalArticles: "Artículos Totales",
+    avgReadingTime: "Tiempo Promedio de Lectura",
+    uniqueTopics: "Temas Únicos",
+    readingTime: "min de lectura",
+    publishedOn: "Publicado el",
+    readFullArticle: "Leer artículo completo",
+    moreTopics: "más",
     heroTitle: "Desarrollando Soluciones Web Escalables y Eficientes",
     heroSubtitle:
       "¡Saludos! Soy Mario Ayala, un Ingeniero de Software con más de 20 años de experiencia en desarrollo de aplicaciones empresariales. Con formación académica en Ciencias de la Computación y amplia experiencia en empresas de renombre como Disney, me especializo en crear soluciones digitales robustas y escalables que transforman ideas en realidades funcionales. Mi enfoque combina precisión técnica con diseño intuitivo para ofrecer experiencias digitales excepcionales. ¿Colaboramos en su próximo proyecto? 🚀",
