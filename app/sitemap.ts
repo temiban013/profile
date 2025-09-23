@@ -1,5 +1,6 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
+import { getAllBlogPosts } from "@/lib/blog-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Base URL for your site
@@ -32,13 +33,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   ];
 
-  // Blog entries (if they exist)
-  const blogRoutes = ["/blog"];
-  const blogEntries = blogRoutes.map((route) => ({
-    url: `${baseUrl}${route}`,
+  // Blog main page
+  const blogMainEntry = {
+    url: `${baseUrl}/blog`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
+  };
+
+  // Individual blog post entries for SEO
+  const allPosts = getAllBlogPosts();
+  const blogPostEntries = allPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: post.updatedAt || post.publishedAt,
+    changeFrequency: "monthly" as const,
+    priority: post.featured ? 0.8 : 0.6,
   }));
 
   // Language-specific entries for better international SEO
@@ -61,7 +70,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...routeEntries,
     ...resumeEntries,
-    ...blogEntries,
+    blogMainEntry,
+    ...blogPostEntries,
     ...languageEntries
   ];
 }
