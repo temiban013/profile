@@ -1019,40 +1019,64 @@ Recuerda: este es el beginning, no el final. Tu dominio propio es una plataforma
     content: `
 # Por Qué Linux Me Hizo Mejor Desarrollador: Un Viaje Hacia el Dominio Open Source
 
-*De la Zona de Comfort de Windows a la Iluminación Ubuntu*
+_De la Zona de Comfort de Windows a la Iluminación Ubuntu: Un Viaje Boricua en el Mundo del Open Source_
 
-Después de décadas de desarrollo en Windows – desde los primeros días de Visual Basic hasta el moderno C# y Blazor – tomé una decisión que cambió fundamentalmente cómo pienso sobre la programación: cambié a Linux como mi ambiente de desarrollo primario. No como opción de dual-boot, no como un OS de "a veces", sino como mi sistema diario. Aquí explico por qué esta decisión me hizo mejor programador, y por qué podría hacerte lo mismo a ti.
+Después de décadas brégando con Windows – desde los primeros días de Visual Basic hasta el moderno C# y Blazor – tomé una decisión que cambió fundamentalmente el cómo pienso sobre la programación: me mudé a Linux como mi ambiente de desarrollo primario. No como opción de dual-boot, no como un OS de "a veces", sino como mi sistema del día a día. Aquí te explico por qué esta decisión me ha hecho mejor programador, y por qué podría hacerte lo mismo a ti, mi llave.
 
 ## La Prisión de la Zona de Comfort: Por Qué Windows Me Mantuvo Limitado
 
-Por 24 años, Windows fue mi hogar de programación. Era cómodo, familiar, y soportaba todo lo que necesitaba. Visual Studio era mi IDE preferido, SQL Server Management Studio manejaba mis bases de datos, y todo "simplemente funcionaba." Pero la comodidad, aprendí, puede ser enemiga del crecimiento.
+Por 24 años, Windows fue mi casa en la programación. Era cómodo, familiar, y soportaba todo lo que necesitaba. Empecé con Visual Basic seguido por Visual Studio que fue y es el IDE de uso para equipos, SQL Server Management Studio manejaba las bases de datos, y todo "simplemente funcionaba." Pero mira, la comodidad, aprendí por las malas, puede ser enemiga del crecimiento.
 
 El desarrollo en Windows, especialmente en el ecosistema Microsoft, crea lo que llamo "adicción a la abstracción." Herramientas como Visual Studio son tan poderosas y fáciles de usar que puedes construir aplicaciones complejas sin realmente entender qué está pasando por debajo. Arrastras, sueltas, configuras por GUIs, y pasa magia.
 
 Esto no es necesariamente malo – la productividad importa. Pero crea una dependencia sutil: te vuelves muy bueno usando herramientas en lugar de entender sistemas.
 
-## El Despertar Linux: Cuando la Terminal Se Vuelve Tu Amiga
+## Mi Historia con Unix: De la Marina a Miami
 
-Mi transición a Ubuntu 24.04 LTS no fue suave. De repente, todo lo que daba por sentado requería aprendizaje intencional. ¿Quieres instalar Node.js? Estás aprendiendo sobre manejadores de paquetes, variables PATH, y manejo de versiones con NVM. ¿Necesitas configurar tu ambiente de desarrollo? Bienvenido a dotfiles, scripting de shell, y entender cómo funcionan realmente los sistemas Unix.
+Mi cuento con Unix comenzó mucho antes de mi transición reciente a Ubuntu. Después de descubrir la programación durante mi servicio en la Marina de los Estados Unidos, tomé la decisión de dejar el servicio militar para meterme de lleno en el mundo de la computación. Me matriculé en FIU (Florida International University) con unas ganas de aprender todo sobre programación.
 
-Pero aquí está la magia: cada "inconveniencia" era en realidad una oportunidad de aprendizaje.
+Aunque no me gradué de FIU en ese momento – me fui sin el diploma pero con todo el conocimiento – completé todos los requisitos de la concentración en Ciencias de la Computación. Años después, eso sí, conseguí mi bachillerato y luego mi maestría, pero ese no es el punto. En esas clases de FIU aprendí lógica, Prolog, y más importante: Unix. Era un mundo completamente diferente, uno donde el poder real estaba en entender el sistema, no solo usarlo.
 
-### La Terminal: Del Miedo al Superpoder
+### El Hospital y la Bicicleta: Mi Primera Aventura Unix
 
-Windows me había entrenado a temer la línea de comandos – era algo que usabas cuando las GUIs fallaban. Linux volteó completamente esta relación. La terminal se convirtió en mi interfaz primaria, y de repente entendí por qué los desarrolladores hablan sobre "productividad en terminal."
+Mientras estudiaba, trabajaba como Administrador Unix en el Jackson Memorial Hospital (JMH), pedaleando en bicicleta todos los días bajo el sol de Miami. Fue ahí donde Unix pasó de ser un concepto académico a una herramienta transformadora. Mi arsenal principal era shell scripting, sed y awk – las herramientas de los guerreros Unix de verdad. Mi filosofía era simple: si algo tenía que hacerse más de una vez, lo automatizaba con cron.
 
 \`\`\`bash
-# Este comando simple me enseñó sobre manejo de procesos
-ps aux | grep node
-
-# Este me abrió los ojos al monitoreo de sistema
-htop
-
-# Y este cambió cómo pienso sobre operaciones de archivo
-find /Development -name "*.ts" -exec grep -l "useState" {} \\;
+# Un ejemplo de los scripts que creaba
+0 2 * * * /usr/local/bin/backup_patient_records.sh
+*/30 * * * * /usr/local/bin/check_system_health.sh
+0 */4 * * * /usr/local/bin/rotate_logs.sh
 \`\`\`
 
-Cada comando fue una lección sobre cómo funcionan realmente las computadoras, no solo cómo se presentan las aplicaciones.
+Después de algunos años, tomé la decisión de dejar JMH para trabajar como programador en plataformas Microsoft. ¿Por qué? Siendo claro: pagaban mucho más. Pero lo que pasó después me confirmó el poder de Unix: cuando los visité mucho tiempo después, descubrí que habían tenido que contratar a **cuatro personas** para hacer el trabajo que yo había programado. No era porque yo fuera Superman – era porque Unix con shell, sed y awk es extraordinariamente poderoso cuando sabes usarlo.
+
+## El Despertar Linux Moderno: De Windows de Vuelta a Mis Raíces
+
+Mi transición reciente a Ubuntu 24.04 LTS no fue realmente una transición – fue volver a mi casa, como cuando regresas a PR después de años de exhilio afuera y sientes ese aire de la montaña. Después de décadas en el ecosistema Microsoft (recuerda, el billete hablaba más alto), volver a Unix/Linux fue como pasar de guiar un barquito a pilotear un cohete espacial. La diferencia ahora es que tengo VS Code, Next.js, TypeScript, y algo que no existía en mis días de JMH: Claude Code.
+
+La combinación de scripting Linux con herramientas modernas de desarrollo es transformadora. Lo que antes tomaba horas de configuración manual ahora se puede automatizar con precisión. Cada "inconveniencia" que otros ven en Linux es en realidad una oportunidad de aprendizaje que ya había abrazado hace décadas.
+
+### La Terminal: Del Miedo al Superpoder Redescubierto
+
+Para muchos, Windows entrena a temer la línea de comandos. Para mí, volver a Linux fue como reencontrarme con un pana de la infancia que ahora es millonario y te sigue apreciando. La terminal no era nueva – era familiar, pero ahora con superpoderes modernos, brutal.
+
+\`\`\`bash
+# En JMH automatizaba con shell, sed y awk
+0 2 * * * backup.sh
+find /logs -name "*.log" | xargs sed -i 's/ERROR/RESUELTO/g' | awk '{print $1}'
+
+# Ahora con Next.js y Claude Code, la automatización es espacial
+npm run build && npm test && git add . && git commit -m "feat: auto-deploy" && vercel --prod
+
+# Monitoreo moderno con las mismas raíces Unix
+ps aux | grep node | awk '{print $2, $11}' | while read pid cmd; do
+  echo "Process $pid: $(node -p "process.memoryUsage($pid)")"
+done
+\`\`\`
+
+La diferencia entre mi experiencia en JMH y ahora es tremenda, como comparar una pisicorre con un Tesla. Los principios Unix son los mismos, pero las herramientas modernas – VS Code con extensiones, Next.js con hot reload, TypeScript con type checking, y especialmente Claude Code como copiloto – transforman esa base sólida de shell, sed y awk en algo extraordinariamente poderoso.
+
+Cada comando sigue siendo una lección sobre cómo funcionan realmente las computadoras, pero ahora con la velocidad y precisión de herramientas del siglo 21.
 
 ## Aprendizaje del Mundo Real: El Ambiente de Desarrollo como Maestro
 
@@ -1118,7 +1142,7 @@ Quizás el cambio más grande no fue técnico – fue filosófico. Linux me sume
 
 \`\`\`bash
 # Mi rutina actual de inicio de desarrollo
-cd /Development/gespervis-school
+cd /Development/online-school
 code .
 pnpm dev
 \`\`\`
@@ -1156,6 +1180,7 @@ Cuando algo se rompe en Windows, reinicias o reinstalar. Cuando algo se rompe en
 ### Entendimiento de Administración de Sistemas
 
 Manejar tu propio ambiente de desarrollo te enseña sobre:
+
 - Manejo de servicios con systemd
 - Configuración de red
 - Políticas de seguridad y permisos de usuario
@@ -1165,7 +1190,7 @@ Estas habilidades se traducen directamente a entender ambientes de producción, 
 
 ### Consciencia de Costos
 
-Cuando cada pieza de software es gratis (en libertad y cerveza), empiezas a tomar decisiones basadas en mérito técnico en lugar de costos de licencias. Esto cambia cómo evalúas herramientas y tecnologías.
+Cuando cada pieza de software es gratis, empiezas a tomar decisiones basadas en mérito técnico en lugar de costos de licencias. Esto cambia cómo evalúas herramientas y tecnologías.
 
 ## El Stack Moderno de Desarrollo Linux
 
@@ -1211,6 +1236,7 @@ Steam Proton ha hecho gaming en Linux viable. Para todo lo demás, para eso est�
 El cambio más grande no fue técnico – fue psicológico. En Windows, era usuario del sistema. En Linux, soy dueño del sistema. Lo entiendo, lo controlo, y puedo modificarlo para que se ajuste a mis necesidades.
 
 Esta mentalidad de propiedad se extiende a cómo escribo código:
+
 - Pienso más sobre recursos del sistema
 - Diseño con ambientes de deployment en mente
 - Escojo herramientas basado en entendimiento, no marketing
@@ -1230,15 +1256,19 @@ Si estás considerando la transición:
 
 5. **Documenta Tu Setup**: Mantén notas sobre configuraciones y customizaciones. Te lo agradecerás después.
 
-## La Línea Final: Inversión en Entendimiento
+## La Línea Final: El Círculo Completo de Unix
 
-Cambiar a Linux no es sobre ser contrario o unirse a un culto. Es sobre invertir en entender los sistemas con los que trabajas todos los días. Ese entendimiento te hace más efectivo, más versátil, y más valioso como desarrollador.
+Mi viaje con Unix/Linux es un círculo completo, como dar la vuelta a la isla: desde aquellos días en FIU aprendiendo lógica y Prolog (sin graduarme en ese momento, pero luego completé bachillerato y maestría, que conste), pasando por las noches automatizando todo en JMH con shell, sed, awk y cron mientras pedaleaba en bicicleta por Miami, hasta el desvío de décadas por el mundo Microsoft (el billete llamaba en aquella época, qué te puedo decir), y finalmente el regreso a casa con Ubuntu.
 
-El viaje desde ese cómodo ambiente de desarrollo Windows a esta estación de trabajo Ubuntu no fue solo sobre cambiar sistemas operativos. Fue sobre cambiar mi relación con la tecnología de consumidor a creador, de usuario a dueño, de dependiente a independiente.
+La lección más importante que aprendí en JMH se confirmó cuando necesitaron cuatro personas para reemplazarme: no era sobre ser indispensable, era sobre el poder de la automatización con shell, sed y awk, y el entendimiento profundo del sistema. Unix no es solo un sistema operativo, es una filosofía de eficiencia y control, como el pitirre: pequeño pero poderoso.
 
-Y esa transformación me ha hecho no solo mejor programador, sino mejor solucionador de problemas en cada aspecto de mi trabajo.
+Hoy, con VS Code, Next.js, TypeScript, y especialmente Claude Code como copiloto, esa filosofía Unix se amplifica exponencialmente. Es literalmente como pasar de un barco a un cohete espacial. Los principios fundamentales que aprendí hace décadas – automatización con cron, scripting, pipes, y procesos – siguen siendo la base, pero ahora con herramientas que habrían parecido magia en mis días de JMH.
 
-*¿Estás listo para hacer el cambio? ¿Qué te está frenando de tratar Linux como tu ambiente de desarrollo primario? Comparte tus experiencias – ya seas veterano Linux, desarrollador Windows curioso, o en algún punto intermedio.*
+Cambiar a Linux no fue realmente un cambio para mí – fue volver a casa, pero a una casa remodelada con tecnología del futuro, como esas casas en Palmas del Mar pero con mejor WiFi. Y esa combinación de sabiduría Unix clásica (shell, sed, awk, los clásicos) con herramientas modernas me ha hecho no solo mejor programador, sino un arquitecto de sistemas que entiende tanto el pasado como el futuro del desarrollo de software.
+
+---
+
+_¿Estás ready para hacer el cambio? ¿Qué te está aguantando de tratar Linux como tu ambiente de desarrollo primario? Dale, comparte tus experiencias – ya seas veterano Linux, desarrollador Windows curioso, o en algún punto intermedio. ¡Pa'lante!_
     `,
     publishedAt: new Date("2024-12-18"),
     tags: [
@@ -1590,51 +1620,75 @@ The paradigm has shifted, but the magic remains. We're still turning ideas into 
     excerpt:
       "My transition from 24 years on Windows to Ubuntu 24.04 LTS as my primary development environment, and how this change fundamentally transformed how I program and understand systems.",
     content: `
-# Why Linux Made Me a Better Developer: A Journey to Open Source Mastery
+# Why Linux Made Me a Better Developer: A Journey Toward Open Source Mastery
 
-*From Windows Comfort Zone to Ubuntu Enlightenment*
+_From the Windows Comfort Zone to Ubuntu Enlightenment: A Caribbean Developer's Journey in the Open Source World_
 
-After decades of development on Windows – from the early days of Visual Basic to modern C# and Blazor – I made a decision that fundamentally changed how I think about programming: I switched to Linux as my primary development environment. Not as a dual-boot option, not as a "sometimes" OS, but as my daily driver. Here's why this decision made me a better programmer, and why it might do the same for you.
+Let me tell you something. After decades working with Windows – from the early days of Visual Basic to modern C# and Blazor – I made a decision that fundamentally changed how I think about programming: I switched to Linux as my primary development environment. Not as a dual-boot option, not as a "sometimes" OS, but as my daily driver. Here's why this decision made me a better programmer, and why it might do the same for you.
 
 ## The Comfort Zone Prison: Why Windows Kept Me Limited
 
-For 24 years, Windows was my programming home. It was comfortable, familiar, and supported everything I needed. Visual Studio was my preferred IDE, SQL Server Management Studio handled my databases, and everything "just worked." But comfort, I learned, can be the enemy of growth.
+For 24 years, Windows was my programming home. It was comfortable, familiar, and supported everything I needed. I started with Visual Basic followed by Visual Studio which was and is the go-to IDE for teams, SQL Server Management Studio handled databases, and everything "just worked." But comfort, I learned the hard way, can be the enemy of growth.
 
 Windows development, especially in the Microsoft ecosystem, creates what I call "abstraction addiction." Tools like Visual Studio are so powerful and easy to use that you can build complex applications without really understanding what's happening underneath. You drag, drop, configure through GUIs, and magic happens.
 
 This isn't necessarily bad – productivity matters. But it creates a subtle dependency: you become very good at using tools instead of understanding systems.
 
-## The Linux Awakening: When Terminal Becomes Your Friend
+## My Unix Story: From the Navy to Miami
 
-My transition to Ubuntu 24.04 LTS wasn't smooth. Suddenly, everything I took for granted required intentional learning. Want to install Node.js? You're learning about package managers, PATH variables, and version management with NVM. Need to configure your development environment? Welcome to dotfiles, shell scripting, and understanding how Unix systems actually work.
+My story with Unix began long before my recent transition to Ubuntu. After discovering programming during my service in the United States Navy, I made the decision to leave military service to fully immerse myself in the world of computing. I enrolled at FIU (Florida International University) with a desire to learn everything about programming.
 
-But here's the magic: every "inconvenience" was actually a learning opportunity.
+Although I didn't graduate from FIU at that time – I left without the diploma but with all the knowledge – I completed all the requirements for the Computer Science concentration. Years later, I did earn my bachelor's degree and then my master's, but that's not the point. In those FIU classes I learned logic, Prolog, and most importantly: Unix. It was a completely different world, one where real power came from understanding the system, not just using it.
 
-### The Terminal: From Fear to Superpower
+### The Hospital and the Bicycle: My First Unix Adventure
 
-Windows had trained me to fear the command line – it was something you used when GUIs failed. Linux completely flipped this relationship. The terminal became my primary interface, and suddenly I understood why developers talk about "terminal productivity."
+While studying, I worked as a Unix Administrator at Jackson Memorial Hospital (JMH), biking every day under the Miami sun. That's where Unix went from being an academic concept to a transformative tool. My main arsenal was shell scripting, sed, and awk – the tools of true Unix warriors. My philosophy was simple: if something had to be done more than once, I automated it with cron.
 
 \`\`\`bash
-# This simple command taught me about process management
-ps aux | grep node
-
-# This opened my eyes to system monitoring
-htop
-
-# And this changed how I think about file operations
-find /Development -name "*.ts" -exec grep -l "useState" {} \\;
+# Example of the scripts I created
+0 2 * * * /usr/local/bin/backup_patient_records.sh
+*/30 * * * * /usr/local/bin/check_system_health.sh
+0 */4 * * * /usr/local/bin/rotate_logs.sh
 \`\`\`
 
-Each command was a lesson in how computers actually work, not just how applications present themselves.
+After a few years, I decided to leave JMH to work as a programmer on Microsoft platforms. Why? Being clear: they paid much more. But what happened later confirmed the power of Unix: when I visited them much later, I discovered they had to hire **four people** to do the work I had programmed. It wasn't because I was Superman – it was because Unix with shell, sed, and awk is extraordinarily powerful when you know how to use it.
 
-## Real-World Learning: Development Environment as Teacher
+## The Modern Linux Awakening: From Windows Back to My Roots
+
+My recent transition to Ubuntu 24.04 LTS wasn't really a transition – it was coming home, like when you return to PR after years of exile away and feel that mountain air. After decades in the Microsoft ecosystem (remember, the paycheck was calling), returning to Unix/Linux was like going from sailing a small boat to piloting a spaceship. The difference now is that I have VS Code, Next.js, TypeScript, and something that didn't exist in my JMH days: Claude Code.
+
+The combination of Linux scripting with modern development tools is transformative. What used to take hours of manual configuration can now be automated with precision. Every "inconvenience" others see in Linux is actually a learning opportunity I had already embraced decades ago.
+
+### The Terminal: From Fear to Rediscovered Superpower
+
+For many, Windows trains you to fear the command line. For me, returning to Linux was like reuniting with a childhood friend who's now a millionaire and still appreciates you. The terminal wasn't new – it was familiar, but now with modern superpowers.
+
+\`\`\`bash
+# At JMH I automated with shell, sed and awk
+0 2 * * * backup.sh
+find /logs -name "*.log" | xargs sed -i 's/ERROR/RESOLVED/g' | awk '{print $1}'
+
+# Now with Next.js and Claude Code, automation is stellar
+npm run build && npm test && git add . && git commit -m "feat: auto-deploy" && vercel --prod
+
+# Modern monitoring with the same Unix roots
+ps aux | grep node | awk '{print $2, $11}' | while read pid cmd; do
+  echo "Process $pid: $(node -p "process.memoryUsage($pid)")"
+done
+\`\`\`
+
+The difference between my JMH experience and now is tremendous, like comparing a pisicorre to a Tesla. The Unix principles are the same, but modern tools – VS Code with extensions, Next.js with hot reload, TypeScript with type checking, and especially Claude Code as copilot – transform that solid foundation of shell, sed, and awk into something extraordinarily powerful.
+
+Every command remains a lesson about how computers really work, but now with 21st-century speed and precision.
+
+## Real-World Learning: The Development Environment as Teacher
 
 ### Package Management: Understanding Dependencies
 
 Windows developers often install things by downloading executables from websites. Linux taught me about proper dependency management:
 
 \`\`\`bash
-# Instead of hunting for downloads
+# Instead of searching for downloads
 sudo apt install nodejs npm
 nvm install --lts
 pnpm install -g @next/cli
@@ -1642,14 +1696,14 @@ pnpm install -g @next/cli
 # Everything is versioned, tracked, and manageable
 \`\`\`
 
-This isn't just convenience – it's understanding how software ecosystems work. When you manage dependencies at the system level, you start thinking differently about your application dependencies too.
+This isn't just convenience – it's understanding how software ecosystems work. When you manage dependencies at the system level, you start thinking differently about your application's dependencies too.
 
 ### File System Understanding: No More Mystery Directories
 
 Windows abstracts the file system in ways that can be helpful but limiting. Linux forced me to understand:
 
 - Why \`/usr/local/bin\` matters for globally installed tools
-- How environment variables actually control program behavior
+- How environment variables really control program behavior
 - What symlinks are and why they're powerful
 - How permissions work and why they matter for security
 
@@ -1673,15 +1727,15 @@ nethogs
 
 This visibility changes how you write code. When you can see exactly how your Node.js process is consuming resources, you start caring about memory leaks and CPU optimization in ways you never did when those details were hidden.
 
-## The Open Source Mindset: From Consumer to Collaborator
+## The Open Source Mindset: From Consumer to Contributor
 
 Perhaps the biggest change wasn't technical – it was philosophical. Linux immersed me in open source culture, where:
 
-1. **Problems Are Solved Collectively**: Instead of waiting for Microsoft to fix something, you learn to investigate, understand, and often contribute to solutions.
+1. **Problems are Solved Collectively**: Instead of waiting for Microsoft to fix something, you learn to investigate, understand, and often contribute to solutions.
 
-2. **Documentation Is Sacred**: Open source projects live or die by their documentation. This made me a better documenter of my own code.
+2. **Documentation is Sacred**: Open source projects live or die by their documentation. This made me a better documenter of my own code.
 
-3. **Configuration Is Code**: Everything is a file, everything is configurable, and everything can be version controlled. This mindset flows into how you architect applications.
+3. **Configuration is Code**: Everything is a file, everything is configurable, and everything can be version controlled. This mindset flows into how you architect applications.
 
 4. **Understanding Beats Convenience**: Linux rewards understanding over convenience, which makes you a more intentional developer.
 
@@ -1691,7 +1745,7 @@ Perhaps the biggest change wasn't technical – it was philosophical. Linux imme
 
 \`\`\`bash
 # My current development startup routine
-cd /Development/gespervis-school
+cd /Development/online-school
 code .
 pnpm dev
 \`\`\`
@@ -1700,7 +1754,7 @@ Three commands, and I'm developing. No waiting for Visual Studio to load, no lic
 
 ### Better Docker Understanding
 
-Docker makes so much more sense when you understand Linux containers natively:
+Docker makes much more sense when you understand Linux containers natively:
 
 \`\`\`bash
 # This command means something different when you understand Linux
@@ -1724,11 +1778,12 @@ ssh-keygen -t ed25519 -C "your_email@example.com"
 
 ### Problem-Solving Skills
 
-When something breaks on Windows, you restart or reinstall. When something breaks on Linux, you investigate. This investigative mindset has made me a better debugger of my own applications.
+When something breaks in Windows, you restart or reinstall. When something breaks in Linux, you investigate. This investigative mindset has made me a better debugger of my own applications.
 
-### Systems Administration Understanding
+### System Administration Understanding
 
 Managing your own development environment teaches you about:
+
 - Service management with systemd
 - Network configuration
 - Security policies and user permissions
@@ -1736,9 +1791,9 @@ Managing your own development environment teaches you about:
 
 These skills translate directly to understanding production environments, DevOps practices, and cloud deployments.
 
-### Cost Consciousness
+### Cost Awareness
 
-When every piece of software is free (in freedom and beer), you start making decisions based on technical merit instead of licensing costs. This changes how you evaluate tools and technologies.
+When every piece of software is free, you start making decisions based on technical merit rather than licensing costs. This changes how you evaluate tools and technologies.
 
 ## The Modern Linux Development Stack
 
@@ -1777,13 +1832,14 @@ VS Code runs natively on Linux. Modern web development rarely requires Windows-s
 
 ### "Gaming and Entertainment?"
 
-Steam Proton has made gaming on Linux viable. For everything else, that's what dual-boot or Windows VMs are for.
+Steam Proton has made Linux gaming viable. For everything else, that's what dual-boot or Windows VMs are for.
 
 ## The Transformation: From Tool User to System Owner
 
-The biggest change wasn't technical – it was psychological. On Windows, I was a user of the system. On Linux, I'm an owner of the system. I understand it, control it, and can modify it to fit my needs.
+The biggest change wasn't technical – it was psychological. On Windows, I was a system user. On Linux, I'm a system owner. I understand it, control it, and can modify it to fit my needs.
 
-This ownership mentality extends to how I write code:
+This ownership mindset extends to how I write code:
+
 - I think more about system resources
 - I design with deployment environments in mind
 - I choose tools based on understanding, not marketing
@@ -1801,17 +1857,19 @@ If you're considering the transition:
 
 4. **Join the Community**: r/linux4noobs, Ubuntu forums, and Stack Overflow are incredibly helpful.
 
-5. **Document Your Setup**: Keep notes on configurations and customizations. You'll thank yourself later.
+5. **Document Your Setup**: Keep notes about configurations and customizations. You'll thank yourself later.
 
-## The Bottom Line: Investment in Understanding
+## The Bottom Line: Full Circle with Unix
 
-Switching to Linux isn't about being contrarian or joining a cult. It's about investing in understanding the systems you work with every day. That understanding makes you more effective, more versatile, and more valuable as a developer.
+My journey with Unix/Linux is a full circle, like going around the island: from those days at FIU learning logic and Prolog (didn't graduate then, but later completed bachelor's and master's, for the record), through nights automating everything at JMH with shell, sed, awk, and cron while biking through Miami, to the decades-long detour through the Microsoft world (the paycheck was calling back then, what can I say), and finally coming home to Ubuntu.
 
-The journey from that comfortable Windows development environment to this Ubuntu workstation wasn't just about changing operating systems. It was about changing my relationship with technology from consumer to creator, from user to owner, from dependent to independent.
+The most important lesson I learned at JMH was confirmed when they needed four people to replace me: it wasn't about being indispensable, it was about the power of automation with shell, sed, and awk, and deep system understanding. Unix isn't just an operating system – it's a philosophy of efficiency and control, like the pitirre: small but powerful.
 
-And that transformation has made me not just a better programmer, but a better problem solver in every aspect of my work.
+Switching to Linux wasn't really a switch for me – it was coming home, but to a home renovated with future technology, like those houses in Palmas del Mar but with better WiFi. And that combination of classic Unix wisdom (shell, sed, awk, the classics) with modern tools has made me not just a better programmer, but a systems architect who understands both the past and future of software development.
 
-*Are you ready to make the switch? What's holding you back from trying Linux as your primary development environment? Share your experiences – whether you're a Linux veteran, curious Windows developer, or somewhere in between.*
+---
+
+_Are you ready to make the switch? What's holding you back from trying Linux as your primary development environment? Share your experiences – whether you're a Linux veteran, curious Windows developer, or somewhere in between. Let's move forward!_
     `,
     publishedAt: new Date("2024-12-18"),
     tags: [
