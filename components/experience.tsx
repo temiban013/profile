@@ -107,8 +107,10 @@ const ExperienceItem = ({
   const mainDescription = hasFormatting ? descriptionParts[0] : description;
   const bulletPoints = hasFormatting ? descriptionParts.slice(1) : [];
 
-  // Check if content needs expanding
-  const needsExpansion = description.length > 300 || bulletPoints.length > 0;
+  // Check if content needs expanding - more nuanced logic
+  const hasLongDescription = !hasFormatting && description.length > 400;
+  const hasManyBulletPoints = hasFormatting && bulletPoints.length > 2;
+  const needsExpansion = hasLongDescription || hasManyBulletPoints;
 
   return (
     <TimelineItem index={index} icon={Briefcase}>
@@ -212,7 +214,7 @@ const ExperienceItem = ({
             </p>
           )}
 
-          {needsExpansion && bulletPoints.length > 2 && (
+          {needsExpansion && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors duration-300 text-sm font-medium"
@@ -359,6 +361,8 @@ const CertificationItem = ({
 const Experience = () => {
   const { language } = useLanguage();
   const t = translations[language];
+  const [showAllExperiences, setShowAllExperiences] = useState(false);
+  const [showAllEducation, setShowAllEducation] = useState(false);
 
   // Updated experiences data from latest resumes
   const experiences = {
@@ -540,18 +544,18 @@ const Experience = () => {
       ],
       certifications: [
         {
-          title: "Founding Member",
-          organization: "Florida Interscholastic Cycling League",
-          location: "Florida",
-          period: "Present",
-          url: "http://FloridaMTB.org",
-        },
-        {
           title: "American Sign Language (ASL) with Puerto Rican dialect",
           organization: "Ideality group",
           location: "Las Marías, Puerto Rico",
           period: "2024",
           url: "",
+        },
+        {
+          title: "Founding Member",
+          organization: "Florida Interscholastic Cycling League",
+          location: "Florida",
+          period: "March 2018 - January 2020",
+          url: "http://FloridaMTB.org",
         },
       ],
     },
@@ -733,13 +737,6 @@ const Experience = () => {
       ],
       certifications: [
         {
-          title: "Miembro Fundador",
-          organization: "Florida Interscholastic Cycling League",
-          location: "Florida",
-          period: "Presente",
-          url: "http://FloridaMTB.org",
-        },
-        {
           title:
             "Lenguaje de Señas Americano (ASL) con dialecto puertorriqueño",
           organization: "Grupo Ideality",
@@ -747,11 +744,31 @@ const Experience = () => {
           period: "2024",
           url: "",
         },
+        {
+          title: "Miembro Fundador",
+          organization: "Florida Interscholastic Cycling League",
+          location: "Florida",
+          period: "Marzo 2018 - Enero 2020",
+          url: "http://FloridaMTB.org",
+        },
       ],
     },
   };
 
   const currentLanguageData = experiences[language];
+
+  // Disney is at index 4 (5th position), so we'll show up to Disney (inclusive) initially
+  const disneyIndex = currentLanguageData.experience.findIndex(item =>
+    item.company.toLowerCase().includes("disney")
+  );
+  const experiencesToShow = showAllExperiences
+    ? currentLanguageData.experience
+    : currentLanguageData.experience.slice(0, disneyIndex + 1);
+
+  // Show only Ellis University degree initially for education
+  const educationToShow = showAllEducation
+    ? currentLanguageData.education
+    : currentLanguageData.education.slice(0, 1);
 
   return (
     <section id="experience" className="py-20 scroll-mt-16 bg-muted/30">
@@ -774,13 +791,26 @@ const Experience = () => {
         </div>
 
         <div className="relative mb-20">
-          {currentLanguageData.experience.map((item, index) => (
+          {experiencesToShow.map((item, index) => (
             <ExperienceItem
               key={`${item.company}-${item.title}-${index}`}
               {...item}
               index={index}
             />
           ))}
+
+          {/* Read More Button for Experience List */}
+          {!showAllExperiences && disneyIndex !== -1 && disneyIndex < currentLanguageData.experience.length - 1 && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowAllExperiences(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+              >
+                {language === "en" ? "Read More Experiences" : "Ver Más Experiencias"}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Education Section */}
@@ -799,13 +829,26 @@ const Experience = () => {
         </div>
 
         <div className="relative mb-20">
-          {currentLanguageData.education.map((item, index) => (
+          {educationToShow.map((item, index) => (
             <EducationItem
               key={`${item.institution}-${item.degree}-${index}`}
               {...item}
               index={index}
             />
           ))}
+
+          {/* Read More Button for Education */}
+          {!showAllEducation && currentLanguageData.education.length > 1 && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowAllEducation(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+              >
+                {language === "en" ? "Read More Education" : "Ver Más Educación"}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Certifications Section */}

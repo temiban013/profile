@@ -5,10 +5,13 @@ import About from "@/components/about";
 import Experience from "@/components/experience";
 import Hero from "@/components/hero";
 import Projects from "@/components/projects";
+import Testimonials from "@/components/testimonials";
 import Contact from "@/components/contact";
 import StructuredData from "@/components/structured-data";
 
 export default function Home() {
+  // Check if testimonials should be shown
+  const showTestimonials = process.env.NEXT_PUBLIC_SHOW_TESTIMONIALS === 'true';
   // Comprehensive PersonSchema for maximum employer discovery
   const personSchema = {
     "@context": "https://schema.org",
@@ -180,6 +183,7 @@ export default function Home() {
         <About />
         <Experience />
         <Projects />
+        {showTestimonials && <Testimonials />}
         <Contact />
       </div>
     </>

@@ -14,10 +14,15 @@ import {
   Coffee,
   Target,
   Brain,
+  Award,
+  GraduationCap,
+  Medal,
+  Star,
 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 import { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
 
 // Animated Statistics Component
 const AnimatedStat = ({
@@ -145,6 +150,9 @@ const About = () => {
   const { language } = useLanguage();
   const t = translations[language];
   const [showPDFViewer, setShowPDFViewer] = useState(false);
+  const [showAllSkills, setShowAllSkills] = useState(false);
+  const [showAllCredentials, setShowAllCredentials] = useState(false);
+  const [showAllAchievements, setShowAllAchievements] = useState(false);
 
   const skills = {
     en: [
@@ -243,7 +251,128 @@ const About = () => {
     "Git",
   ];
 
+  const certifications = {
+    en: [
+      {
+        icon: GraduationCap,
+        title: "MS Computer Science",
+        issuer: "Ellis University",
+        year: "Magna Cum Laude",
+        description: "Advanced studies in software engineering, algorithms, and system architecture",
+      },
+      {
+        icon: Medal,
+        title: "Enterprise Architecture",
+        issuer: "Disney Parks & Resorts",
+        year: "2010-2018",
+        description: "Led enterprise-level system architecture and integration projects",
+      },
+      {
+        icon: GraduationCap,
+        title: "BS Computer Science",
+        issuer: "NY Institute of Technology",
+        year: "Cum Laude",
+        description: "Foundation in computer science with focus on software development",
+      },
+      {
+        icon: Award,
+        title: "Enterprise Software Development",
+        issuer: "Office Depot Corporate",
+        year: "2005-2015",
+        description: "Led enterprise-level .NET Framework and SQL Server development projects",
+      },
+    ],
+    es: [
+      {
+        icon: GraduationCap,
+        title: "MS Ciencias de la Computación",
+        issuer: "Ellis University",
+        year: "Magna Cum Laude",
+        description: "Estudios avanzados en ingeniería de software, algoritmos y arquitectura de sistemas",
+      },
+      {
+        icon: Medal,
+        title: "Arquitectura Empresarial",
+        issuer: "Disney Parks & Resorts",
+        year: "2010-2018",
+        description: "Lideré proyectos de arquitectura de sistemas e integración de nivel empresarial",
+      },
+      {
+        icon: GraduationCap,
+        title: "BS Ciencias de la Computación",
+        issuer: "NY Institute of Technology",
+        year: "Cum Laude",
+        description: "Base en ciencias de la computación con enfoque en desarrollo de software",
+      },
+      {
+        icon: Award,
+        title: "Desarrollo de Software Empresarial",
+        issuer: "Office Depot Corporate",
+        year: "2005-2015",
+        description: "Lideré proyectos de desarrollo empresarial con .NET Framework y SQL Server",
+      },
+    ],
+  };
+
+  const achievements = {
+    en: [
+      {
+        icon: Medal,
+        title: "Office Depot Financial Systems",
+        metric: "Cross-Platform Architecture Leadership",
+        description: "Delivered solutions spanning Oracle, XML/XSLT, UNIX, telephony integration, and e-commerce platforms",
+      },
+      {
+        icon: Star,
+        title: "Modern Web Development Excellence",
+        metric: "Next.js 15 + TypeScript Mastery",
+        description: "Leading digital transformation with cutting-edge web technologies and modern development practices",
+      },
+      {
+        icon: Award,
+        title: "Disney Enterprise Systems",
+        metric: "Global Executive BI Portal",
+        description: "Architected comprehensive Business Intelligence platform unifying SharePoint, Tableau, and SQL Server for Disney executives worldwide",
+      },
+      {
+        icon: Star,
+        title: "Modern Stack Transition",
+        metric: "Legacy to Modern Migration",
+        description: "Successfully transitioned from Microsoft ecosystem to cutting-edge web technologies",
+      },
+    ],
+    es: [
+      {
+        icon: Medal,
+        title: "Sistemas Financieros Office Depot",
+        metric: "Liderazgo Arquitectura Multi-Plataforma",
+        description: "Entregué soluciones abarcando Oracle, XML/XSLT, UNIX, integración telefónica y plataformas e-commerce",
+      },
+      {
+        icon: Star,
+        title: "Excelencia Desarrollo Web Moderno",
+        metric: "Maestría Next.js 15 + TypeScript",
+        description: "Liderando transformación digital con tecnologías web de vanguardia y prácticas de desarrollo modernas",
+      },
+      {
+        icon: Award,
+        title: "Sistemas Empresariales Disney",
+        metric: "Portal BI Ejecutivo Global",
+        description: "Arquitecté plataforma integral de Business Intelligence unificando SharePoint, Tableau y SQL Server para ejecutivos Disney mundialmente",
+      },
+      {
+        icon: Star,
+        title: "Transición Stack Moderno",
+        metric: "Migración Legacy a Moderno",
+        description: "Transicioné exitosamente del ecosistema Microsoft a tecnologías web de vanguardia",
+      },
+    ],
+  };
+
   const currentSkills = skills[language];
+  const skillsToShow = showAllSkills ? currentSkills : currentSkills.slice(0, 3);
+  const credentialsToShow = showAllCredentials ? certifications[language] : certifications[language].slice(0, 2);
+  const achievementsToShow = showAllAchievements ? achievements[language] : achievements[language].slice(0, 2);
 
   return (
     <section id="about" className="py-20 scroll-mt-16">
@@ -389,7 +518,7 @@ const About = () => {
               : "Competencias Principales"}
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentSkills.map((skill, index) => (
+            {skillsToShow.map((skill, index) => (
               <SkillItem
                 key={skill.title}
                 icon={skill.icon}
@@ -399,6 +528,120 @@ const About = () => {
               />
             ))}
           </div>
+
+          {/* Read More Button for Skills */}
+          {!showAllSkills && currentSkills.length > 3 && (
+            <div className="text-center mt-8">
+              <button
+                onClick={() => setShowAllSkills(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+              >
+                {language === "en" ? "Show More Competencies" : "Ver Más Competencias"}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Professional Certifications */}
+        <div className="mb-20">
+          <h3 className="text-3xl font-bold text-center mb-12 text-gradient block">
+            {language === "en"
+              ? "Professional Credentials"
+              : "Credenciales Profesionales"}
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {credentialsToShow.map((cert) => (
+              <div
+                key={cert.title}
+                className="group relative transition-all duration-700 opacity-100 translate-y-0"
+              >
+                <div className="flex items-start gap-4 p-6 rounded-2xl bg-card border border-border hover:border-primary/20 transition-all duration-300 hover:professional-shadow-lg">
+                  <div className="flex-shrink-0 w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                    <cert.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-bold text-lg group-hover:text-primary transition-colors duration-300">
+                        {cert.title}
+                      </h4>
+                      <Badge variant="secondary" className="ml-2 text-xs">
+                        {cert.year}
+                      </Badge>
+                    </div>
+                    <p className="text-primary font-medium text-sm mb-2">
+                      {cert.issuer}
+                    </p>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {cert.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Read More Button for Credentials */}
+          {!showAllCredentials && certifications[language].length > 2 && (
+            <div className="text-center mt-8">
+              <button
+                onClick={() => setShowAllCredentials(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+              >
+                {language === "en" ? "Show More Credentials" : "Ver Más Credenciales"}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Key Achievements */}
+        <div className="mb-20">
+          <h3 className="text-3xl font-bold text-center mb-12 text-gradient block">
+            {language === "en"
+              ? "Notable Achievements"
+              : "Logros Destacados"}
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {achievementsToShow.map((achievement) => (
+              <div
+                key={achievement.title}
+                className="group relative transition-all duration-700 opacity-100 translate-y-0"
+              >
+                <div className="p-6 rounded-2xl bg-card border border-border hover:border-primary/20 transition-all duration-300 hover:professional-shadow-lg">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                      <achievement.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors duration-300">
+                        {achievement.title}
+                      </h4>
+                      <div className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full inline-block mb-3">
+                        {achievement.metric}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {achievement.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Read More Button for Achievements */}
+          {!showAllAchievements && achievements[language].length > 2 && (
+            <div className="text-center mt-8">
+              <button
+                onClick={() => setShowAllAchievements(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+              >
+                {language === "en" ? "Show More Achievements" : "Ver Más Logros"}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Technologies */}

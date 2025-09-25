@@ -92,7 +92,7 @@ const Footer = () => {
 
         <div className="py-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6 xl:px-0">
           <span className="text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} Mario R. Ayala. {t.rightsreserved}
+            &copy; 2025 Mario R. Ayala. {t.rightsreserved}
             .
           </span>
 

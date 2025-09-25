@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { CircleArrowDown, Zap, Code, Briefcase, Award } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
-import { useEffect, useState } from "react";
 
 const FloatingElement = ({
   children,
@@ -33,24 +32,6 @@ const FloatingElement = ({
 const Hero = () => {
   const { language } = useLanguage();
   const t = translations[language];
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
-        <div className="relative z-[1] text-center max-w-screen-md mt-12 md:mt-0">
-          <div className="h-8 w-64 bg-muted rounded-full animate-pulse mx-auto mb-6"></div>
-          <div className="h-16 w-full bg-muted rounded-lg animate-pulse mb-6"></div>
-          <div className="h-6 w-3/4 bg-muted rounded animate-pulse mx-auto mb-12"></div>
-          <div className="h-12 w-40 bg-muted rounded-full animate-pulse mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">

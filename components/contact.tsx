@@ -59,6 +59,10 @@ const contactInfo = {
   github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "#",
   linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "#",
   youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "#",
+  businessHours: "Monday - Friday, 9:00 AM - 6:00 PM EST",
+  responseTime: "Within 24 hours for business inquiries",
+  preferredContact: "LinkedIn for initial business discussions",
+  timezone: "Eastern Time (EST/EDT)",
 };
 
 // Project type options
@@ -144,6 +148,10 @@ const translations = {
     errorMessage:
       "Failed to send message. Please try again or contact me directly.",
     directContact: "Direct Contact",
+    businessHours: "Business Hours",
+    responseTime: "Response Time",
+    preferredContact: "Preferred Contact",
+    availability: "Professional Availability",
     scheduleCall: "Schedule a Call",
     downloadResume: "Download Resume",
     socialMedia: "Connect With Me",
@@ -176,6 +184,10 @@ const translations = {
     errorMessage:
       "Error al enviar mensaje. Inténtalo de nuevo o contáctame directamente.",
     directContact: "Contacto Directo",
+    businessHours: "Horario Comercial",
+    responseTime: "Tiempo de Respuesta",
+    preferredContact: "Contacto Preferido",
+    availability: "Disponibilidad Profesional",
     scheduleCall: "Agendar Llamada",
     downloadResume: "Descargar CV",
     socialMedia: "Conéctate Conmigo",
@@ -559,6 +571,38 @@ const Contact: React.FC = () => {
                 : "opacity-0 translate-y-8"
             }`}
           >
+            {/* Professional Availability */}
+            <div className="glass-effect rounded-2xl p-6 professional-shadow">
+              <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <Calendar className="mr-3 h-5 w-5 text-primary" />
+                {t.availability}
+              </h3>
+              <div className="space-y-4">
+                <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></div>
+                      <span className="text-sm font-medium">{t.businessHours}</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1 ml-5">
+                    {contactInfo.businessHours}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm">
+                    <span className="font-medium text-primary mr-2">{t.responseTime}:</span>
+                    <span className="text-muted-foreground">{contactInfo.responseTime}</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <span className="font-medium text-primary mr-2">{t.preferredContact}:</span>
+                    <span className="text-muted-foreground">{contactInfo.preferredContact}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Direct Contact */}
             <div className="glass-effect rounded-2xl p-6 professional-shadow">
               <h3 className="text-xl font-semibold mb-4 flex items-center">
@@ -582,7 +626,7 @@ const Contact: React.FC = () => {
                 </Link>
                 <div className="flex items-center p-3 rounded-lg">
                   <MapPin className="h-4 w-4 text-muted-foreground mr-3" />
-                  <span className="text-sm">{contactInfo.location}</span>
+                  <span className="text-sm">{contactInfo.location} ({contactInfo.timezone})</span>
                 </div>
               </div>
             </div>
