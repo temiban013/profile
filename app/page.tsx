@@ -18,23 +18,24 @@ export default function Home() {
     "@type": "Person",
     name: "Mario Rafael Ayala",
     alternateName: "Mario R. Ayala",
-    description: "Senior Software Engineer with 25+ years of enterprise experience at Disney Parks and Office Depot. Expert in Next.js, TypeScript, React, and enterprise architecture.",
-    jobTitle: "Senior Software Engineer",
+    description: "20+ years software engineering, specializing in AI and full-stack development. Architected multi-agent system with Claude Code managing 7 concurrent projects. Expert in Next.js, TypeScript, .NET Core with teaching experience across diverse learners. US Navy veteran.",
+    jobTitle: "Independent Technology Consultant",
     hasOccupation: {
       "@type": "Occupation",
-      name: "Senior Software Engineer",
+      name: "Independent Technology Consultant",
       occupationLocation: {
         "@type": "Place",
         name: "Puerto Rico"
       },
       skills: [
+        "AI-Assisted Development", "Multi-Agent Orchestration", "Claude Code",
         "Next.js", "TypeScript", "React", "JavaScript", "Node.js",
-        ".NET Core", "C#", "SQL Server", "Enterprise Architecture",
+        ".NET Core", "C#", "SQL Server", "PostgreSQL", "Enterprise Architecture",
         "Digital Transformation", "Systems Integration", "Cloud Computing",
-        "Full Stack Development", "Database Design", "Performance Optimization"
+        "Full Stack Development", "Blockchain", "Solidity", "Educational Technology"
       ],
-      experienceRequirements: "25+ years",
-      qualifications: "Master's Computer Science"
+      experienceRequirements: "20+ years",
+      qualifications: "Master's Computer Science - Magna Cum Laude"
     },
     url: "https://www.mariorafaelayala.com",
     image: "https://www.mariorafaelayala.com/mra-profile.jpg",
@@ -75,12 +76,14 @@ export default function Home() {
       }
     ],
     knowsAbout: [
+      "AI-Assisted Development", "Multi-Agent Orchestration", "Claude Code",
       "Software Engineering", "Enterprise Architecture", "Next.js Development",
       "TypeScript Programming", "React Development", "JavaScript Programming",
       "Full Stack Development", "Database Architecture", "Cloud Computing",
       "Digital Transformation", "Systems Integration", "Performance Optimization",
-      "Team Leadership", "Software Project Management", "Agile Development",
-      "Microsoft .NET", "SQL Server", "Node.js", "Web Applications"
+      "Educational Technology", "Curriculum Development", "Blockchain Development",
+      "Smart Contracts", "Solidity", "Team Leadership", "Software Project Management",
+      "Microsoft .NET", "SQL Server", "PostgreSQL", "Node.js", "Web Applications"
     ],
     memberOf: [
       {
@@ -94,8 +97,8 @@ export default function Home() {
     ],
     seeks: {
       "@type": "Demand",
-      name: "Senior Software Engineer Position",
-      description: "Seeking senior software engineering roles, technical leadership positions, or consulting opportunities in enterprise software development"
+      name: "Technology Consulting & Software Engineering",
+      description: "Providing independent technology consulting, AI-assisted development, digital transformation services, and educational technology solutions"
     },
     workLocation: "Remote",
     availableLanguage: ["English", "Spanish"],
@@ -107,9 +110,9 @@ export default function Home() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Mario Rafael Ayala | Senior Software Engineer Portfolio",
+    name: "Mario Rafael Ayala | Independent Technology Consultant Portfolio",
     url: "https://www.mariorafaelayala.com",
-    description: "Professional portfolio of Mario Rafael Ayala, Senior Software Engineer with 25+ years experience at Disney Parks and Office Depot",
+    description: "Professional portfolio of Mario Rafael Ayala, Independent Technology Consultant with 20+ years experience specializing in AI-assisted development, full-stack solutions, and educational technology",
     author: {
       "@id": "https://www.mariorafaelayala.com#person"
     },

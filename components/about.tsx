@@ -234,21 +234,21 @@ const About = () => {
   };
 
   const technologies = [
+    "Claude Code",
+    "AI-Assisted Dev",
+    "Multi-Agent",
     "Next.js",
     "TypeScript",
     "React",
     "Node.js",
     "PostgreSQL",
-    "Rust",
     "C#",
     ".NET",
     "SQL Server",
-    "Azure",
-    "Docker",
     "Blockchain",
     "Solidity",
     "Tailwind CSS",
-    "Git",
+    "Vercel",
   ];
 
   const certifications = {
@@ -391,15 +391,15 @@ const About = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {language === "en"
-              ? "With over 25 years of enterprise software development experience, I specialize in creating robust, scalable solutions that bridge business objectives with cutting-edge technology."
-              : "Con más de 25 años de experiencia en desarrollo de software empresarial, me especializo en crear soluciones robustas y escalables que conectan objetivos de negocio con tecnología de vanguardia."}
+              ? "With over 20 years of software engineering experience, I specialize in AI-assisted development and full-stack solutions. Architected multi-agent orchestration systems with Claude Code, managing concurrent projects while delivering innovative educational technology and digital transformation solutions."
+              : "Con más de 20 años de experiencia en ingeniería de software, me especializo en desarrollo asistido por IA y soluciones full-stack. Arquitecté sistemas de orquestación multi-agente con Claude Code, gestionando proyectos concurrentes mientras entrego soluciones innovadoras de tecnología educativa y transformación digital."}
           </p>
         </div>
 
         {/* Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
           <AnimatedStat
-            value={25}
+            value={20}
             label={
               language === "en" ? "Years Experience" : "Años de Experiencia"
             }
