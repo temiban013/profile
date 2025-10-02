@@ -1,10 +1,18 @@
 // types/blog.ts
+export interface BlogAuthor {
+  readonly name: string;
+  readonly avatar?: string;
+  readonly bio?: string;
+  readonly url?: string;
+}
+
 export interface BlogPost {
   readonly id: string;
   readonly title: string;
   readonly slug: string;
   readonly excerpt: string;
   readonly content: string;
+  readonly author?: BlogAuthor;
   readonly publishedAt: Date;
   readonly updatedAt?: Date;
   readonly tags: readonly string[];
