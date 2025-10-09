@@ -25,6 +25,8 @@ interface ExperienceItemProps {
   description: string;
   technologies: string[];
   index: number;
+  isNewlyAdded?: boolean;
+  skipStagger?: boolean;
 }
 
 interface EducationItemProps {
@@ -50,20 +52,27 @@ const TimelineItem = ({
   children,
   index,
   icon,
+  skipStagger = false,
 }: {
   children: React.ReactNode;
   index: number;
   icon: React.ComponentType<{ className?: string }>;
+  skipStagger?: boolean;
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(skipStagger);
 
   useEffect(() => {
+    if (skipStagger) {
+      setIsVisible(true);
+      return;
+    }
+
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, index * 200);
+    }, index * 100); // Reduced from 200ms to 100ms for snappier feel
 
     return () => clearTimeout(timer);
-  }, [index]);
+  }, [index, skipStagger]);
 
   const IconComponent = icon;
 
@@ -97,6 +106,7 @@ const ExperienceItem = ({
   description,
   technologies,
   index,
+  skipStagger = false,
 }: ExperienceItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { language } = useLanguage();
@@ -108,12 +118,12 @@ const ExperienceItem = ({
   const bulletPoints = hasFormatting ? descriptionParts.slice(1) : [];
 
   // Check if content needs expanding - more nuanced logic
-  const hasLongDescription = !hasFormatting && description.length > 400;
+  const hasLongDescription = !hasFormatting && description.length > 450;
   const hasManyBulletPoints = hasFormatting && bulletPoints.length > 2;
   const needsExpansion = hasLongDescription || hasManyBulletPoints;
 
   return (
-    <TimelineItem index={index} icon={Briefcase}>
+    <TimelineItem index={index} icon={Briefcase} skipStagger={skipStagger}>
       <div className="bg-card border border-border rounded-2xl p-6 professional-shadow hover:professional-shadow-lg transition-all duration-300 hover:border-primary/20 group">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -364,6 +374,12 @@ const Experience = () => {
   const [showAllExperiences, setShowAllExperiences] = useState(false);
   const [showAllEducation, setShowAllEducation] = useState(false);
 
+  // Inline expansion states for newly added experiences
+  const [showAfterDisney, setShowAfterDisney] = useState(false); // Ibeza + Jíbaro
+  const [showAfterAVM, setShowAfterAVM] = useState(false); // TradeStation
+  const [showAfterABB, setShowAfterABB] = useState(false); // Primerica
+  const [showAfterOfficeDepot, setShowAfterOfficeDepot] = useState(false); // Asurity, AmEx, Broker, JMH, VA
+
   // Updated experiences data from latest resumes
   const experiences = {
     en: {
@@ -508,6 +524,154 @@ const Experience = () => {
           ],
         },
         {
+          title: "Senior .NET Developer",
+          company: "TradeStation Technologies",
+          location: "Florida",
+          period: "February 2011 - April 2011",
+          description:
+            "Delivered rapid-turnaround enhancements to trading strategy platform. • **Web Application Development**: Added functionality to .NET 4.0 web application for online trading strategies using Model-View-Presenter (MVP) pattern. • **UI/UX Enhancement**: Styled the View using CSS and removed all tables, replacing them with div tags for modern responsive design. • **Data Layer**: Used Entity Framework for the model, implementing LINQ and lambda expressions to create resulting data. • **Quality Assurance**: Developed unit tests using MSTest and Moq libraries for mocking objects and intercepting method calls. Began producing results within three days of gaining access to TFS source code.",
+          technologies: [
+            ".NET 4.0",
+            "MVP Pattern",
+            "Entity Framework",
+            "LINQ",
+            "CSS",
+            "MSTest",
+            "Moq",
+            "TFS",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Senior Software Engineer",
+          company: "Ibeza, LLC",
+          location: "Coral Gables, Florida",
+          period: "December 2013 - November 2015",
+          description:
+            "Led development initiatives for healthcare technology solutions. • **EHR Certification**: Key player in helping achieve Electronic Health Records (EHR) certification from the Office of the National Coordinator (ONC) for Health Information Technology (HIT) in 2014. Led the development and implementation of Clinical Quality Measures (CQM) reporting tools for ONC HIT Certification. • **Electronic Ophthalmology Forms**: Designed, developed, and implemented digital forms for use with tablets and stylus. Developed PDF service for creation, editing, and merging of digital forms using Aspose libraries. • **Laboratory Integration**: Implemented electronic communication of diagnostic laboratory results from third parties such as Aurora Diagnostics and Quest Diagnostics using Mirth Connect server. • **Performance Optimization**: Optimized application for speed-up, particularly in problem areas such as digital form creation and editing.",
+          technologies: [
+            "EHR Systems",
+            "ONC HIT Certification",
+            ".NET",
+            "Aspose",
+            "Mirth Connect",
+            "Healthcare Technology",
+            "Digital Forms",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Vice President",
+          company: "Jíbaro Media Group",
+          location: "Puerto Rico",
+          period: "June 2012 - December 2013",
+          description:
+            "Led production of award-winning documentary combining technical expertise with creative direction. • **Executive Producer**: Executive Producer of the award-winning Spanish documentary 'La Gran Falacia' (The Great Lie), which won the 2013 Sunscreen Film Festival Award for Best Spanish Language Film. • **Technical Production**: Served as sound engineer, camera operator, and composer for the film. Co-edited the film using Adobe Premiere Pro CS5.5. • **Project Management**: Demonstrated proven ability to produce and manage film projects from conception to completion, with strong technical skills in sound engineering, camera operation, and editing.",
+          technologies: [
+            "Adobe Premiere Pro",
+            "Sound Engineering",
+            "Film Production",
+            "Video Editing",
+            "Project Management",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Personal Financial Analyst",
+          company: "Primerica",
+          location: "Miami/Fort Lauderdale Area",
+          period: "July 2006 - June 2007",
+          description:
+            "Provided comprehensive financial planning and wealth management solutions. • **Financial Advisory Services**: Developed and implemented personalized financial strategies for families, focusing on debt elimination, wealth protection, and long-term investment planning. Provided licensed advisory services across multiple financial products including securities, mortgage solutions, and insurance products. • **Client Analysis**: Conducted detailed financial needs analyses to create tailored protection and investment recommendations. Built and maintained client relationships through ongoing financial education and portfolio reviews. • **Regulatory Qualifications**: FINRA Series 6 Investment Company Products/Variable Contracts Limited Representative, Florida State Life, Health, and Long-Term Care Insurance License, Florida State Mortgage Loan Originator License.",
+          technologies: [
+            "Financial Planning",
+            "Investment Analysis",
+            "FINRA Series 6",
+            "Insurance Products",
+            "Mortgage Solutions",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Team Lead",
+          company: "Asurity (formerly MRG Document Technologies)",
+          location: "Boca Raton, Florida",
+          period: "January 2005 - July 2006",
+          description:
+            "Led technical team for mortgage processing application maintenance and enhancement. • **Technical Leadership**: Served as Technical Lead for a mortgage processing application during its maintenance phase using Web Services in .NET. • **Compliance Engineering**: Created a compliance rule engine for managers to generate warning flags during the processing of all loans in C#. • **Performance Optimization**: Successfully tuned and sped up many SQL Server stored procedures that were locking up the system, improving overall application performance.",
+          technologies: [
+            "Web Services",
+            ".NET",
+            "C#",
+            "SQL Server",
+            "Mortgage Processing",
+            "Team Leadership",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Programmer/Analyst",
+          company: "American Express",
+          location: "Florida",
+          period: "January 1998 - October 1998",
+          description:
+            "Developed critical data management systems for sensitive cardholder information. • **Sensitive Card Holder Data Provider**: Provided technical support for a variety of applications that processed sensitive card holder information. Resolved issues related to data entry, data validation, and printing of billing statements. Maintained a high level of confidentiality and security for all sensitive data. • **Data Loader**: Developed a VB 5 application that used ActiveX components to upload data from different sources to a SQL 6.5 server. The application was designed to be scalable and efficient, processing large amounts of data quickly from spreadsheets, text files, and legacy systems.",
+          technologies: [
+            "Visual Basic 5",
+            "SQL Server 6.5",
+            "ActiveX",
+            "Data Security",
+            "ETL",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Programmer/Analyst",
+          company: "Broker Dealer Systems",
+          location: "Margate, Florida",
+          period: "March 1997 - January 1998",
+          description:
+            "Modernized financial application using object-oriented programming principles. • **System Re-architecture**: Upgraded an existing procedural financial application for a brokerage house using object-oriented programming in VB. • **OOP Implementation**: Used object-oriented programming (OOP) to make code more reusable, maintainable, and scalable. The upgraded application was more efficient and easier to use than the original application.",
+          technologies: [
+            "Visual Basic",
+            "OOP",
+            "Financial Systems",
+            "Brokerage Applications",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Programmer/Analyst II",
+          company: "JMH Health Plan (CSC's Managed Health Care)",
+          location: "Florida",
+          period: "January 1995 - March 1997",
+          description:
+            "Implemented enterprise healthcare management system and managed critical infrastructure. • **Healthcare Application Implementation**: Worked as part of a team to implement CSC's Managed Health Care application, a software application used by HMOs to store electronic medical member history. The application was implemented across a large enterprise with multiple sites and users. • **Unix Administration**: Installed, configured, and maintained AIX Unix systems and backup of all databases. Used sed, awk, and Cron to automate every aspect of system maintenance.",
+          technologies: [
+            "Healthcare IT",
+            "HMO Systems",
+            "AIX Unix",
+            "sed/awk",
+            "Cron",
+            "Database Administration",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Radiology File Assistant",
+          company: "VA Hospital",
+          location: "Florida",
+          period: "March 1993 - January 1995",
+          description:
+            "Balanced full-time healthcare administration with full-time academic workload. • **Time Management**: Demonstrated strong time management and organizational skills by balancing a full-time job with a full-time academic workload. • **Professional Development**: Developed strong work ethic and ability to work independently and as part of a team. Gained valuable experience in the workforce and learned how to apply classroom knowledge in a real-world setting. Developed strong communication and interpersonal skills by interacting with customers, co-workers, and supervisors.",
+          technologies: [
+            "Healthcare Administration",
+            "Records Management",
+            "Customer Service",
+          ],
+          isNewlyAdded: true,
+        },
+        {
           title: "Information Systems Specialist (RM2/E5)",
           company: "United States Navy",
           location: "East Coast, USA",
@@ -525,7 +689,7 @@ const Experience = () => {
       education: [
         {
           degree: "Master's in Computer Science",
-          institution: "Ellis University",
+          institution: "Ellis University (formerly affiliated with New York Tech)",
           location: "Online",
           period: "2009 - 2010",
           honors: "Magna Cum Laude",
@@ -704,6 +868,154 @@ const Experience = () => {
           ],
         },
         {
+          title: "Desarrollador Senior .NET",
+          company: "TradeStation Technologies",
+          location: "Florida",
+          period: "Febrero 2011 - Abril 2011",
+          description:
+            "Entregué mejoras de rápido desarrollo para plataforma de estrategias de trading. • **Desarrollo de Aplicación Web**: Agregué funcionalidad a aplicación web .NET 4.0 para estrategias de trading en línea usando patrón Model-View-Presenter (MVP). • **Mejora UI/UX**: Diseñé la Vista usando CSS y eliminé todas las tablas, reemplazándolas con etiquetas div para diseño responsivo moderno. • **Capa de Datos**: Utilicé Entity Framework para el modelo, implementando expresiones LINQ y lambda para crear los datos resultantes. • **Aseguramiento de Calidad**: Desarrollé pruebas unitarias usando MSTest y librerías Moq para simular objetos e interceptar llamadas de métodos. Comencé a producir resultados dentro de tres días de obtener acceso al código fuente TFS.",
+          technologies: [
+            ".NET 4.0",
+            "Patrón MVP",
+            "Entity Framework",
+            "LINQ",
+            "CSS",
+            "MSTest",
+            "Moq",
+            "TFS",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Ingeniero de Software Senior",
+          company: "Ibeza, LLC",
+          location: "Coral Gables, Florida",
+          period: "Diciembre 2013 - Noviembre 2015",
+          description:
+            "Lideré iniciativas de desarrollo para soluciones de tecnología de salud. • **Certificación EHR**: Jugador clave en lograr certificación de Registros Electrónicos de Salud (EHR) de la Oficina del Coordinador Nacional (ONC) para Tecnología de Información de Salud (HIT) en 2014. Lideré desarrollo e implementación de herramientas de reportes de Medidas de Calidad Clínica (CQM) para Certificación ONC HIT. • **Formularios Electrónicos de Oftalmología**: Diseñé, desarrollé e implementé formularios digitales para uso con tabletas y stylus. Desarrollé servicio PDF para creación, edición y fusión de formularios digitales usando librerías Aspose. • **Integración de Laboratorio**: Implementé comunicación electrónica de resultados de laboratorio diagnóstico de terceros como Aurora Diagnostics y Quest Diagnostics usando servidor Mirth Connect. • **Optimización de Rendimiento**: Optimicé aplicación para aceleración, particularmente en áreas problemáticas como creación y edición de formularios digitales.",
+          technologies: [
+            "Sistemas EHR",
+            "Certificación ONC HIT",
+            ".NET",
+            "Aspose",
+            "Mirth Connect",
+            "Tecnología de Salud",
+            "Formularios Digitales",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Vicepresidente",
+          company: "Jíbaro Media Group",
+          location: "Puerto Rico",
+          period: "Junio 2012 - Diciembre 2013",
+          description:
+            "Lideré producción de documental premiado combinando experiencia técnica con dirección creativa. • **Productor Ejecutivo**: Productor Ejecutivo del documental en español premiado 'La Gran Falacia', que ganó el Premio del Festival de Cine Sunscreen 2013 a Mejor Película en Idioma Español. • **Producción Técnica**: Serví como ingeniero de sonido, operador de cámara y compositor para la película. Co-edité la película usando Adobe Premiere Pro CS5.5. • **Gestión de Proyectos**: Demostré capacidad comprobada para producir y gestionar proyectos de cine desde la concepción hasta la finalización, con sólidas habilidades técnicas en ingeniería de sonido, operación de cámara y edición.",
+          technologies: [
+            "Adobe Premiere Pro",
+            "Ingeniería de Sonido",
+            "Producción Cinematográfica",
+            "Edición de Video",
+            "Gestión de Proyectos",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Analista Financiero Personal",
+          company: "Primerica",
+          location: "Área Miami/Fort Lauderdale",
+          period: "Julio 2006 - Junio 2007",
+          description:
+            "Proporcioné planificación financiera integral y soluciones de gestión de patrimonio. • **Servicios de Asesoría Financiera**: Desarrollé e implementé estrategias financieras personalizadas para familias, enfocándome en eliminación de deudas, protección de patrimonio y planificación de inversiones a largo plazo. Proporcioné servicios de asesoría con licencia en múltiples productos financieros incluyendo valores, soluciones hipotecarias y productos de seguros. • **Análisis de Clientes**: Realicé análisis detallados de necesidades financieras para crear recomendaciones de protección e inversión personalizadas. Construí y mantuve relaciones con clientes a través de educación financiera continua y revisiones de portafolios. • **Calificaciones Regulatorias**: Representante Limitado de Productos de Compañías de Inversión/Contratos Variables FINRA Serie 6, Licencia de Seguros de Vida, Salud y Cuidado a Largo Plazo del Estado de Florida, Licencia de Originador de Préstamos Hipotecarios del Estado de Florida.",
+          technologies: [
+            "Planificación Financiera",
+            "Análisis de Inversiones",
+            "FINRA Serie 6",
+            "Productos de Seguros",
+            "Soluciones Hipotecarias",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Líder de Equipo",
+          company: "Asurity (anteriormente MRG Document Technologies)",
+          location: "Boca Raton, Florida",
+          period: "Enero 2005 - Julio 2006",
+          description:
+            "Lideré equipo técnico para mantenimiento y mejora de aplicación de procesamiento hipotecario. • **Liderazgo Técnico**: Serví como Líder Técnico para aplicación de procesamiento hipotecario durante su fase de mantenimiento usando Servicios Web en .NET. • **Ingeniería de Cumplimiento**: Creé motor de reglas de cumplimiento para que gerentes generen señales de advertencia durante el procesamiento de todos los préstamos en C#. • **Optimización de Rendimiento**: Ajusté exitosamente y aceleré muchos procedimientos almacenados de SQL Server que estaban bloqueando el sistema, mejorando el rendimiento general de la aplicación.",
+          technologies: [
+            "Servicios Web",
+            ".NET",
+            "C#",
+            "SQL Server",
+            "Procesamiento Hipotecario",
+            "Liderazgo de Equipo",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Programador/Analista",
+          company: "American Express",
+          location: "Florida",
+          period: "Enero 1998 - Octubre 1998",
+          description:
+            "Desarrollé sistemas críticos de gestión de datos para información sensible de tarjetahabientes. • **Proveedor de Datos Sensibles de Tarjetahabientes**: Proporcioné soporte técnico para variedad de aplicaciones que procesaban información sensible de tarjetahabientes. Resolví problemas relacionados con entrada de datos, validación de datos e impresión de estados de facturación. Mantuve alto nivel de confidencialidad y seguridad para todos los datos sensibles. • **Cargador de Datos**: Desarrollé aplicación VB 5 que usaba componentes ActiveX para cargar datos desde diferentes fuentes a servidor SQL 6.5. La aplicación fue diseñada para ser escalable y eficiente, procesando grandes cantidades de datos rápidamente desde hojas de cálculo, archivos de texto y sistemas heredados.",
+          technologies: [
+            "Visual Basic 5",
+            "SQL Server 6.5",
+            "ActiveX",
+            "Seguridad de Datos",
+            "ETL",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Programador/Analista",
+          company: "Broker Dealer Systems",
+          location: "Margate, Florida",
+          period: "Marzo 1997 - Enero 1998",
+          description:
+            "Modernicé aplicación financiera usando principios de programación orientada a objetos. • **Re-arquitectura de Sistema**: Actualicé aplicación financiera procedural existente para casa de corretaje usando programación orientada a objetos en VB. • **Implementación OOP**: Usé programación orientada a objetos (OOP) para hacer código más reutilizable, mantenible y escalable. La aplicación actualizada fue más eficiente y más fácil de usar que la aplicación original.",
+          technologies: [
+            "Visual Basic",
+            "OOP",
+            "Sistemas Financieros",
+            "Aplicaciones de Corretaje",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Programador/Analista II",
+          company: "JMH Health Plan (CSC's Managed Health Care)",
+          location: "Florida",
+          period: "Enero 1995 - Marzo 1997",
+          description:
+            "Implementé sistema empresarial de gestión de salud y gestioné infraestructura crítica. • **Implementación de Aplicación de Salud**: Trabajé como parte de equipo para implementar aplicación de Cuidado de Salud Gestionado de CSC, una aplicación de software usada por HMOs para almacenar historial médico electrónico de miembros. La aplicación fue implementada en una gran empresa con múltiples sitios y usuarios. • **Administración Unix**: Instalé, configuré y mantuve sistemas AIX Unix y respaldo de todas las bases de datos. Usé sed, awk y Cron para automatizar cada aspecto del mantenimiento del sistema.",
+          technologies: [
+            "TI de Salud",
+            "Sistemas HMO",
+            "AIX Unix",
+            "sed/awk",
+            "Cron",
+            "Administración de Bases de Datos",
+          ],
+          isNewlyAdded: true,
+        },
+        {
+          title: "Asistente de Archivo de Radiología",
+          company: "Hospital VA",
+          location: "Florida",
+          period: "Marzo 1993 - Enero 1995",
+          description:
+            "Balanceé administración de salud a tiempo completo con carga académica a tiempo completo. • **Gestión del Tiempo**: Demostré sólidas habilidades de gestión del tiempo y organización al balancear trabajo a tiempo completo con carga académica a tiempo completo. • **Desarrollo Profesional**: Desarrollé fuerte ética de trabajo y capacidad para trabajar independientemente y como parte de un equipo. Obtuve experiencia valiosa en la fuerza laboral y aprendí cómo aplicar conocimientos del aula en un entorno del mundo real. Desarrollé sólidas habilidades de comunicación e interpersonales al interactuar con clientes, compañeros de trabajo y supervisores.",
+          technologies: [
+            "Administración de Salud",
+            "Gestión de Registros",
+            "Servicio al Cliente",
+          ],
+          isNewlyAdded: true,
+        },
+        {
           title: "Oficial de Seguridad de la Información (RM2/E5)",
           company: "Armada Naval de los Estados Unidos",
           location: "Costa Este, USA",
@@ -721,7 +1033,7 @@ const Experience = () => {
       education: [
         {
           degree: "Maestría en Ciencias de la Computación",
-          institution: "Ellis University",
+          institution: "Ellis University (anteriormente afiliada a New York Tech)",
           location: "En línea",
           period: "2009 - 2010",
           honors: "Magna Cum Laude",
@@ -763,18 +1075,180 @@ const Experience = () => {
 
   const currentLanguageData = experiences[language];
 
-  // Disney is at index 4 (5th position), so we'll show up to Disney (inclusive) initially
-  const disneyIndex = currentLanguageData.experience.findIndex(item =>
-    item.company.toLowerCase().includes("disney")
-  );
-  const experiencesToShow = showAllExperiences
-    ? currentLanguageData.experience
-    : currentLanguageData.experience.slice(0, disneyIndex + 1);
+  // Get original experiences (without isNewlyAdded flag)
+  const originalExperiences = currentLanguageData.experience.filter(item => !item.isNewlyAdded);
+
+  // Map newly added experiences to their insertion points
+  const newExperiencesByPosition = {
+    afterDisney: currentLanguageData.experience.filter(exp =>
+      exp.isNewlyAdded && (exp.company === "Ibeza, LLC" || exp.company === "Jíbaro Media Group")
+    ),
+    afterAVM: currentLanguageData.experience.filter(exp =>
+      exp.isNewlyAdded && exp.company === "TradeStation Technologies"
+    ),
+    afterABB: currentLanguageData.experience.filter(exp =>
+      exp.isNewlyAdded && exp.company === "Primerica"
+    ),
+    afterOfficeDepot: currentLanguageData.experience.filter(exp =>
+      exp.isNewlyAdded && [
+        "Asurity (formerly MRG Document Technologies)",
+        "American Express",
+        "Broker Dealer Systems",
+        "JMH Health Plan (CSC's Managed Health Care)",
+        "VA Hospital"
+      ].includes(exp.company)
+    ),
+  };
+
+  // Check if there are hidden experiences to show the button
+  const hasHiddenExperiences = currentLanguageData.experience.some(item => item.isNewlyAdded);
 
   // Show only Ellis University degree initially for education
   const educationToShow = showAllEducation
     ? currentLanguageData.education
     : currentLanguageData.education.slice(0, 1);
+
+  // Helper component for inline "Show More" buttons
+  const InlineShowMoreButton = ({
+    onClick,
+    label
+  }: {
+    onClick: () => void;
+    label: string;
+  }) => (
+    <div className="text-center my-8">
+      <button
+        onClick={onClick}
+        className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/5 hover:bg-primary/10 text-primary border border-primary/10 hover:border-primary/30 rounded-full font-medium transition-all duration-300 hover:scale-105 text-sm"
+      >
+        {label}
+        <ChevronDown className="w-4 h-4" />
+      </button>
+    </div>
+  );
+
+  // Build the experience list with inline expansion buttons
+  const renderExperiences = () => {
+    const experiences: React.ReactElement[] = [];
+    let currentIndex = 0;
+
+    // Stage 1: Show first 5 original experiences (up to Disney)
+    const initialCount = showAllExperiences ? originalExperiences.length : 5;
+
+    for (let i = 0; i < initialCount; i++) {
+      const exp = originalExperiences[i];
+
+      // Skip stagger for experiences revealed after clicking "Show More" (indices 5+)
+      const skipStagger = showAllExperiences && i >= 5;
+
+      experiences.push(
+        <ExperienceItem
+          key={`${exp.company}-${exp.title}-${i}`}
+          {...exp}
+          index={currentIndex++}
+          skipStagger={skipStagger}
+        />
+      );
+
+      // After Disney (index 4), add inline button for Ibeza + Jíbaro
+      if (i === 4 && showAllExperiences) {
+        if (!showAfterDisney && newExperiencesByPosition.afterDisney.length > 0) {
+          experiences.push(
+            <InlineShowMoreButton
+              key="btn-after-disney"
+              onClick={() => setShowAfterDisney(true)}
+              label={language === "en" ? "Show More Experiences" : "Ver Más Experiencias"}
+            />
+          );
+        } else if (showAfterDisney) {
+          newExperiencesByPosition.afterDisney.forEach((exp, idx) => {
+            experiences.push(
+              <ExperienceItem
+                key={`${exp.company}-${exp.title}-${idx}`}
+                {...exp}
+                index={currentIndex++}
+                skipStagger={true}
+              />
+            );
+          });
+        }
+      }
+
+      // After AVM (index 5), add inline button for TradeStation
+      if (i === 5 && showAllExperiences) {
+        if (!showAfterAVM && newExperiencesByPosition.afterAVM.length > 0) {
+          experiences.push(
+            <InlineShowMoreButton
+              key="btn-after-avm"
+              onClick={() => setShowAfterAVM(true)}
+              label={language === "en" ? "Show More Experiences" : "Ver Más Experiencias"}
+            />
+          );
+        } else if (showAfterAVM) {
+          newExperiencesByPosition.afterAVM.forEach((exp, idx) => {
+            experiences.push(
+              <ExperienceItem
+                key={`${exp.company}-${exp.title}-${idx}`}
+                {...exp}
+                index={currentIndex++}
+                skipStagger={true}
+              />
+            );
+          });
+        }
+      }
+
+      // After ABB (index 6), add inline button for Primerica
+      if (i === 6 && showAllExperiences) {
+        if (!showAfterABB && newExperiencesByPosition.afterABB.length > 0) {
+          experiences.push(
+            <InlineShowMoreButton
+              key="btn-after-abb"
+              onClick={() => setShowAfterABB(true)}
+              label={language === "en" ? "Show More Experiences" : "Ver Más Experiencias"}
+            />
+          );
+        } else if (showAfterABB) {
+          newExperiencesByPosition.afterABB.forEach((exp, idx) => {
+            experiences.push(
+              <ExperienceItem
+                key={`${exp.company}-${exp.title}-${idx}`}
+                {...exp}
+                index={currentIndex++}
+                skipStagger={true}
+              />
+            );
+          });
+        }
+      }
+
+      // After Office Depot (index 7), add inline button for remaining experiences
+      if (i === 7 && showAllExperiences) {
+        if (!showAfterOfficeDepot && newExperiencesByPosition.afterOfficeDepot.length > 0) {
+          experiences.push(
+            <InlineShowMoreButton
+              key="btn-after-office-depot"
+              onClick={() => setShowAfterOfficeDepot(true)}
+              label={language === "en" ? "Show More Experiences" : "Ver Más Experiencias"}
+            />
+          );
+        } else if (showAfterOfficeDepot) {
+          newExperiencesByPosition.afterOfficeDepot.forEach((exp, idx) => {
+            experiences.push(
+              <ExperienceItem
+                key={`${exp.company}-${exp.title}-${idx}`}
+                {...exp}
+                index={currentIndex++}
+                skipStagger={true}
+              />
+            );
+          });
+        }
+      }
+    }
+
+    return experiences;
+  };
 
   return (
     <section id="experience" className="py-20 scroll-mt-16 bg-muted/30">
@@ -797,22 +1271,16 @@ const Experience = () => {
         </div>
 
         <div className="relative mb-20">
-          {experiencesToShow.map((item, index) => (
-            <ExperienceItem
-              key={`${item.company}-${item.title}-${index}`}
-              {...item}
-              index={index}
-            />
-          ))}
+          {renderExperiences()}
 
-          {/* Read More Button for Experience List */}
-          {!showAllExperiences && disneyIndex !== -1 && disneyIndex < currentLanguageData.experience.length - 1 && (
+          {/* Main "Show More" Button - shows first time to reveal all 9 original experiences */}
+          {!showAllExperiences && hasHiddenExperiences && (
             <div className="text-center mt-12">
               <button
                 onClick={() => setShowAllExperiences(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
               >
-                {language === "en" ? "Read More Experiences" : "Ver Más Experiencias"}
+                {language === "en" ? "Show More Experiences" : "Ver Más Experiencias"}
                 <ChevronDown className="w-4 h-4" />
               </button>
             </div>

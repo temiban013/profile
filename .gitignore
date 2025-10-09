@@ -49,6 +49,9 @@ next-env.d.ts
 # Claude
 .claude
 CLAUDE.md
+status/
+docs/
+business/
 
 # Sripts
 /scripts

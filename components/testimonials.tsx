@@ -35,14 +35,14 @@ const testimonials: Record<string, Testimonial[]> = {
   en: [
     {
       id: "1",
-      name: "Sarah Chen",
-      title: "Director of Technology",
-      company: "Healthcare Innovation Labs",
-      content: "Mario's expertise in enterprise architecture transformed our legacy system into a modern, scalable platform. His deep understanding of both technical and business requirements made him an invaluable partner.",
+      name: "Café Papamín LLC",
+      title: "Business Owner",
+      company: "Café Papamín",
+      content: "If I had to define your work in one word, it would be professionalism. The attention and work is worthy of 100% recommendation.",
       rating: 5,
-      project: "Healthcare Management System",
-      results: "Reduced processing time by 60% and increased system reliability to 99.8%",
-      location: "California, USA"
+      project: "E-commerce Platform with WhatsApp Integration",
+      results: "Achieved 24/7 customer engagement at $620 total cost vs. $3,000+ from traditional platforms",
+      location: "Puerto Rico"
     },
     {
       id: "2",
@@ -70,14 +70,14 @@ const testimonials: Record<string, Testimonial[]> = {
   es: [
     {
       id: "1",
-      name: "Sarah Chen",
-      title: "Directora de Tecnología",
-      company: "Healthcare Innovation Labs",
-      content: "La experiencia de Mario en arquitectura empresarial transformó nuestro sistema legado en una plataforma moderna y escalable. Su profundo conocimiento de los requisitos técnicos y comerciales lo convirtió en un socio invaluable.",
+      name: "Café Papamín LLC",
+      title: "Dueño del Negocio",
+      company: "Café Papamín",
+      content: "Si tuviera que definir su labor en una palabra, sería profesionalismo. La atención y el trabajo es digno de recomendar al 100%.",
       rating: 5,
-      project: "Sistema de Gestión de Salud",
-      results: "Redujo el tiempo de procesamiento en 60% y aumentó la confiabilidad del sistema al 99.8%",
-      location: "California, EE.UU."
+      project: "Plataforma E-commerce con Integración WhatsApp",
+      results: "Logró participación de clientes 24/7 con costo total de $620 vs. $3,000+ de plataformas tradicionales",
+      location: "Puerto Rico"
     },
     {
       id: "2",

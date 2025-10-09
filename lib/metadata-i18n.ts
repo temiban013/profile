@@ -9,7 +9,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       template: "%s | Mario Rafael Ayala - Senior Software Engineer",
     },
     description:
-      "Senior Software Engineer with 25+ years enterprise experience at Disney Parks, Office Depot. Expert in Next.js 15, TypeScript, React 19, PostgreSQL, enterprise architecture. Available for remote work, consulting. Specialized in ROI-focused digital transformation, cross-platform integration, and scalable business solutions. MS Computer Science (Magna Cum Laude).",
+      "Senior Software Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in Next.js 15, TypeScript, React 19, PostgreSQL, enterprise architecture. Available for remote work, consulting. Specialized in ROI-focused digital transformation, cross-platform integration, and scalable business solutions. MS Computer Science (Magna Cum Laude).",
     keywords: [
       "mario rafael ayala",
       "senior software engineer",
@@ -70,7 +70,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       type: "website",
       title: "Mario Rafael Ayala | Senior Software Engineer | Disney Alumni | Available for Hire",
       description:
-        "Senior Software Engineer with 25+ years at Disney Parks, Office Depot. Expert in Next.js 15, React 19, PostgreSQL, Enterprise Architecture. ROI-focused portfolio: Café Papamín e-commerce, PFDH.org platform, modern web development excellence. Available for remote work & consulting.",
+        "Senior Software Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in Next.js 15, React 19, PostgreSQL, Enterprise Architecture. ROI-focused portfolio: Café Papamín e-commerce, PFDH.org platform, modern web development excellence. Available for remote work & consulting.",
       locale: "en-US",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
     },
@@ -79,7 +79,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       title: "Mario Rafael Ayala | Senior Software Engineer | Disney Alumni | Hiring",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
       description:
-        "25+ years enterprise experience at Disney & Office Depot. Next.js 15/React 19/PostgreSQL expert. MS Computer Science. Available for remote work. ROI-focused portfolio: modern e-commerce, web platforms, enterprise systems.",
+        "25+ years enterprise experience including Disney & Office Depot. Next.js 15/React 19/PostgreSQL expert. MS Computer Science. Available for remote work. ROI-focused portfolio: modern e-commerce, web platforms, enterprise systems.",
     },
   },
   es: {
@@ -88,7 +88,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       template: "%s | Mario Rafael Ayala - Ingeniero de Software Senior",
     },
     description:
-      "Ingeniero de Software Senior con 25+ años de experiencia empresarial en Disney Parks, Office Depot. Experto en Next.js 15, TypeScript, React 19, PostgreSQL, arquitectura empresarial. Disponible para trabajo remoto, consultoría. Especializado en transformación digital enfocada en ROI, integración multi-plataforma y soluciones empresariales escalables. MS Ciencias de la Computación (Magna Cum Laude).",
+      "Ingeniero de Software Senior con 25+ años de experiencia empresarial incluyendo Disney Parks, Office Depot. Experto en Next.js 15, TypeScript, React 19, PostgreSQL, arquitectura empresarial. Disponible para trabajo remoto, consultoría. Especializado en transformación digital enfocada en ROI, integración multi-plataforma y soluciones empresariales escalables. MS Ciencias de la Computación (Magna Cum Laude).",
     keywords: [
       "mario rafael ayala",
       "ingeniero de software senior",
@@ -148,7 +148,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       type: "website",
       title: "Mario Rafael Ayala | Ingeniero de Software Senior | Ex Disney | Disponible para Contratar",
       description:
-        "Ingeniero de Software Senior con 25+ años en Disney Parks, Office Depot. Experto en Next.js 15, React 19, PostgreSQL, Arquitectura Empresarial. Portfolio enfocado en ROI: Café Papamín e-commerce, plataforma PFDH.org, desarrollo web moderno. Disponible para trabajo remoto y consultoría.",
+        "Ingeniero de Software Senior con 25+ años incluyendo Disney Parks, Office Depot. Experto en Next.js 15, React 19, PostgreSQL, Arquitectura Empresarial. Portfolio enfocado en ROI: Café Papamín e-commerce, plataforma PFDH.org, desarrollo web moderno. Disponible para trabajo remoto y consultoría.",
       locale: "es-PR",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
     },
@@ -157,7 +157,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       title: "Mario Rafael Ayala | Ingeniero de Software Senior | Ex Disney | Contratación",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
       description:
-        "25+ años experiencia empresarial en Disney y Office Depot. Experto Next.js 15/React 19/PostgreSQL. MS Ciencias Computación. Disponible trabajo remoto. Portfolio enfocado en ROI: e-commerce moderno, plataformas web, sistemas empresariales.",
+        "25+ años experiencia empresarial incluyendo Disney y Office Depot. Experto Next.js 15/React 19/PostgreSQL. MS Ciencias Computación. Disponible trabajo remoto. Portfolio enfocado en ROI: e-commerce moderno, plataformas web, sistemas empresariales.",
     },
   },
 };

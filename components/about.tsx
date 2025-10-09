@@ -445,8 +445,8 @@ const About = () => {
             <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed space-y-4">
               <p>
                 {language === "en"
-                  ? "My journey began in 1998 with dBASE IV programming, evolving through the Microsoft ecosystem at companies like Office Depot and Disney. From Visual Basic and ASP to modern Next.js and TypeScript, I've continuously adapted to emerging technologies while maintaining a focus on practical, business-driven solutions."
-                  : "Mi viaje comenzó en 1998 con programación en dBASE IV, evolucionando a través del ecosistema Microsoft en empresas como Office Depot y Disney. Desde Visual Basic y ASP hasta Next.js y TypeScript modernos, me he adaptado continuamente a tecnologías emergentes manteniendo un enfoque en soluciones prácticas y orientadas al negocio."}
+                  ? "My journey began in 1987 with dBASE IV programming during my service in the U.S. Navy, evolving through the Microsoft ecosystem at companies like Office Depot and Disney. From Visual Basic and ASP to modern Next.js and TypeScript, I've continuously adapted to emerging technologies while maintaining a focus on practical, business-driven solutions."
+                  : "Mi viaje comenzó en 1987 con programación en dBASE IV durante mi servicio en la Marina de EE.UU., evolucionando a través del ecosistema Microsoft en empresas como Office Depot y Disney. Desde Visual Basic y ASP hasta Next.js y TypeScript modernos, me he adaptado continuamente a tecnologías emergentes manteniendo un enfoque en soluciones prácticas y orientadas al negocio."}
               </p>
               <p>
                 {language === "en"
