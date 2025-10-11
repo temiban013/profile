@@ -398,6 +398,14 @@ const EnhancedProjects = () => {
         urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_JIBAROEATS_REPO}`,
         destacado: false,
         anio: 2023,
+        businessImpact: {
+          metric: "Client Engagement",
+          result: "Professional portfolio showcasing 50+ projects",
+          efficiency: "Fast-loading galleries with optimized images",
+          timeline: "Full-featured portfolio in 3 weeks",
+        },
+        clientType: "Photography Business",
+        industry: "Food & Event Photography",
       },
       {
         id: "yukayeke-playa",
@@ -573,6 +581,14 @@ const EnhancedProjects = () => {
         urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_JIBAROEATS_REPO}`,
         destacado: false,
         anio: 2023,
+        businessImpact: {
+          metric: "Engagement de Clientes",
+          result: "Portafolio profesional con 50+ proyectos",
+          efficiency: "Galerías de carga rápida con imágenes optimizadas",
+          timeline: "Portafolio completo en 3 semanas",
+        },
+        clientType: "Negocio de Fotografía",
+        industry: "Fotografía de Alimentos y Eventos",
       },
       {
         id: "yukayeke-playa",

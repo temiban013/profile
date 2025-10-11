@@ -12,11 +12,83 @@ import {
   ChevronDown,
   Building,
   Globe,
+  Smartphone,
+  Network,
+  Store,
+  Shield,
+  Monitor,
+  Wifi,
+  MessageSquare,
+  Lightbulb,
+  Layout,
+  TrendingUp,
+  Search,
+  ShieldCheck,
+  FileText,
+  User,
+  CheckCircle,
+  BarChart3,
+  Database,
+  Cpu,
+  Presentation,
+  Layers,
+  Users,
 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 
+// Helper function to get icon for presentation based on title
+const getPresentationIcon = (title: string) => {
+  const titleLower = title.toLowerCase();
+
+  // Las Marías presentations
+  if (titleLower.includes('revolución') || titleLower.includes('bolsillo')) return Smartphone;
+  if (titleLower.includes('enlace de datos') || titleLower.includes('osi')) return Network;
+  if (titleLower.includes('alfabetización') || titleLower.includes('negocio en línea')) return Store;
+  if (titleLower.includes('datos') && titleLower.includes('tesoro')) return Shield;
+  if (titleLower.includes('sistemas operativos') || titleLower.includes('windows')) return Monitor;
+  if (titleLower.includes('conectividad')) return Wifi;
+  if (titleLower.includes('información inteligente')) return Lightbulb;
+  if (titleLower.includes('centro de comando')) return Layout;
+  if (titleLower.includes('transformación digital') || titleLower.includes('principiantes')) return TrendingUp;
+  if (titleLower.includes('detectives digitales')) return Search;
+  if (titleLower.includes('guardianes')) return ShieldCheck;
+  if (titleLower.includes('seguridad de redes') || titleLower.includes('identidad')) return Shield;
+  if (titleLower.includes('consolidación') && titleLower.includes('seguridad')) return ShieldCheck;
+  if (titleLower.includes('presentación osi') || titleLower.includes('documentación')) return FileText;
+  if (titleLower.includes('cv ejecutivo') && titleLower.includes('parte 1')) return User;
+  if (titleLower.includes('cv ejecutivo') && titleLower.includes('finalización')) return CheckCircle;
+  if (titleLower.includes('análisis financiero')) return BarChart3;
+  if (titleLower.includes('detectives de datos')) return Database;
+  if (titleLower.includes('arquitectos') || titleLower.includes('sistemas inteligentes')) return Cpu;
+  if (titleLower.includes('maestría') && titleLower.includes('presentaciones')) return Presentation;
+  if (titleLower.includes('presentaciones empresariales avanzadas')) return Monitor;
+  if (titleLower.includes('plan de negocio')) return Briefcase;
+  if (titleLower.includes('liderando') || titleLower.includes('revolución')) return Users;
+
+  // Santurce presentations
+  if (titleLower.includes('gestión del tiempo') || titleLower.includes('planificación')) return Calendar;
+  if (titleLower.includes('ética') || titleLower.includes('integridad')) return ShieldCheck;
+  if (titleLower.includes('trabajo en equipo') || titleLower.includes('colaboración')) return Users;
+  if (titleLower.includes('servicio al cliente') || titleLower.includes('conflictos')) return MessageSquare;
+  if (titleLower.includes('toma de decisiones') || titleLower.includes('pensamiento crítico')) return Lightbulb;
+  if (titleLower.includes('comunicación efectiva') || titleLower.includes('imagen profesional')) return MessageSquare;
+  if (titleLower.includes('gestión de recursos') || titleLower.includes('éxito laboral')) return TrendingUp;
+  if (titleLower.includes('curriculum') || titleLower.includes('vitae')) return FileText;
+  if (titleLower.includes('búsqueda de empleo') || titleLower.includes('estrategias')) return Search;
+  if (titleLower.includes('entrevista laboral') || titleLower.includes('preparación')) return User;
+  if (titleLower.includes('inteligencia artificial')) return Cpu;
+
+  return FileText; // Default icon
+};
+
 // Type definitions
+interface Presentation {
+  title: string;
+  url: string;
+  program: 'lasMarias' | 'santurce';
+}
+
 interface ExperienceItemProps {
   title: string;
   company: string;
@@ -24,6 +96,7 @@ interface ExperienceItemProps {
   period: string;
   description: string;
   technologies: string[];
+  presentations?: Presentation[];
   index: number;
   isNewlyAdded?: boolean;
   skipStagger?: boolean;
@@ -105,11 +178,19 @@ const ExperienceItem = ({
   period,
   description,
   technologies,
+  presentations,
   index,
   skipStagger = false,
 }: ExperienceItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showPresentations, setShowPresentations] = useState(false);
+  const [showAllLasMarias, setShowAllLasMarias] = useState(false);
+  const [showAllSanturce, setShowAllSanturce] = useState(false);
   const { language } = useLanguage();
+
+  // Filter presentations by program
+  const lasMariasPresents = presentations?.filter(p => p.program === 'lasMarias') || [];
+  const santurcePresents = presentations?.filter(p => p.program === 'santurce') || [];
 
   // Parse description to extract bullet points
   const hasFormatting = description.includes('•');
@@ -119,7 +200,7 @@ const ExperienceItem = ({
 
   // Check if content needs expanding - more nuanced logic
   const hasLongDescription = !hasFormatting && description.length > 450;
-  const hasManyBulletPoints = hasFormatting && bulletPoints.length > 2;
+  const hasManyBulletPoints = hasFormatting && bulletPoints.length > 1;
   const needsExpansion = hasLongDescription || hasManyBulletPoints;
 
   return (
@@ -161,7 +242,7 @@ const ExperienceItem = ({
               <p className="text-muted-foreground leading-relaxed">
                 {mainDescription.trim()}
               </p>
-              {(isExpanded || bulletPoints.length <= 2) && (
+              {(isExpanded || bulletPoints.length <= 1) && (
                 <ul className="space-y-3">
                   {bulletPoints.map((point, idx) => {
                     // Extract bold text patterns (text between **)
@@ -187,9 +268,9 @@ const ExperienceItem = ({
                   })}
                 </ul>
               )}
-              {!isExpanded && bulletPoints.length > 2 && (
+              {!isExpanded && bulletPoints.length > 1 && (
                 <ul className="space-y-3">
-                  {bulletPoints.slice(0, 2).map((point, idx) => {
+                  {bulletPoints.slice(0, 1).map((point, idx) => {
                     const formattedPoint = point.trim();
                     const parts = formattedPoint.split(/\*\*(.*?)\*\*/g);
 
@@ -210,7 +291,6 @@ const ExperienceItem = ({
                       </li>
                     );
                   })}
-                  <li className="text-muted-foreground/60 italic pl-6">...</li>
                 </ul>
               )}
             </div>
@@ -240,7 +320,130 @@ const ExperienceItem = ({
               />
             </button>
           )}
+
+          {/* Read More button for presentations */}
+          {presentations && presentations.length > 0 && (
+            <button
+              onClick={() => setShowPresentations(!showPresentations)}
+              className="mt-4 flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-300 text-sm font-semibold bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-lg border border-primary/20 hover:border-primary/40"
+            >
+              <Presentation className="w-4 h-4" />
+              {showPresentations
+                ? (language === "es" ? "Ocultar Presentaciones" : "Hide Presentations")
+                : (language === "es" ? "Ver Presentaciones del Curso" : "View Course Presentations")
+              }
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-300 ${
+                  showPresentations ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+          )}
         </div>
+
+        {/* Las Marías Presentations Gallery */}
+        {showPresentations && lasMariasPresents.length > 0 && (
+          <div className="mt-6">
+            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <Layers className="w-4 h-4 text-primary" />
+              {language === "en" ? "Las Marías Course Presentations" : "Presentaciones del Curso Las Marías"}
+              <span className="text-xs text-muted-foreground font-normal">({lasMariasPresents.length})</span>
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {(showAllLasMarias ? lasMariasPresents : lasMariasPresents.slice(0, 6)).map((presentation, idx) => {
+                const IconComponent = getPresentationIcon(presentation.title);
+                return (
+                  <a
+                    key={idx}
+                    href={presentation.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-4 hover:border-primary/40 hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-start gap-3"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                      <IconComponent className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                        {presentation.title}
+                      </p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-300 flex-shrink-0" />
+                  </a>
+                );
+              })}
+            </div>
+
+            {lasMariasPresents.length > 6 && (
+              <div className="text-center mt-4">
+                <button
+                  onClick={() => setShowAllLasMarias(!showAllLasMarias)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
+                >
+                  {showAllLasMarias
+                    ? (language === "en" ? "Show Less" : "Ver Menos")
+                    : (language === "en"
+                        ? `View All ${lasMariasPresents.length} Presentations`
+                        : `Ver las ${lasMariasPresents.length} Presentaciones`)
+                  }
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllLasMarias ? "rotate-180" : ""}`} />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Santurce Presentations Gallery */}
+        {showPresentations && santurcePresents.length > 0 && (
+          <div className="mt-6">
+            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <Layers className="w-4 h-4 text-primary" />
+              {language === "en" ? "Santurce Course Presentations" : "Presentaciones del Curso Santurce"}
+              <span className="text-xs text-muted-foreground font-normal">({santurcePresents.length})</span>
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {(showAllSanturce ? santurcePresents : santurcePresents.slice(0, 6)).map((presentation, idx) => {
+                const IconComponent = getPresentationIcon(presentation.title);
+                return (
+                  <a
+                    key={idx}
+                    href={presentation.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-4 hover:border-primary/40 hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-start gap-3"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                      <IconComponent className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                        {presentation.title}
+                      </p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-300 flex-shrink-0" />
+                  </a>
+                );
+              })}
+            </div>
+
+            {santurcePresents.length > 6 && (
+              <div className="text-center mt-4">
+                <button
+                  onClick={() => setShowAllSanturce(!showAllSanturce)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
+                >
+                  {showAllSanturce
+                    ? (language === "en" ? "Show Less" : "Ver Menos")
+                    : (language === "en"
+                        ? `View All ${santurcePresents.length} Presentations`
+                        : `Ver las ${santurcePresents.length} Presentaciones`)
+                  }
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllSanturce ? "rotate-180" : ""}`} />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-wrap gap-2 mt-6">
           {technologies.map((tech, techIndex) => (
@@ -372,7 +575,7 @@ const Experience = () => {
   const { language } = useLanguage();
   const t = translations[language];
   const [showAllExperiences, setShowAllExperiences] = useState(false);
-  const [showAllEducation, setShowAllEducation] = useState(false);
+  const [showAllCertifications, setShowAllCertifications] = useState(false);
 
   // Inline expansion states for newly added experiences
   const [showAfterDisney, setShowAfterDisney] = useState(false); // Ibeza + Jíbaro
@@ -421,6 +624,45 @@ const Experience = () => {
             "Blockchain Education",
             "Professional Development",
           ],
+          presentations: [
+            // Las Marías Program Presentations
+            { title: "La Revolución Que Llevamos en el Bolsillo", url: "https://gamma.app/docs/La-Revolucion-Que-Llevamos-en-el-Bolsillo-t3whf6odaxberc4", program: 'lasMarias' as const },
+            { title: "Nivel de Enlace de Datos OSI", url: "https://gamma.app/docs/Nivel-de-Enlace-de-Datos-OSI-i9d0s21vbmme178", program: 'lasMarias' as const },
+            { title: "Destrezas de Alfabetización Digital - Mi Negocio en Línea", url: "https://gamma.app/docs/Destrezas-de-Alfabetizacion-Digital-Mi-Negocio-en-Linea-951zhm9nyfaumd7", program: 'lasMarias' as const },
+            { title: "Sus Datos Son Su Tesoro Empresarial", url: "https://gamma.app/docs/Sus-Datos-Son-Su-Tesoro-Empresarial-uv9ec19eko7qg9o", program: 'lasMarias' as const },
+            { title: "Sistemas Operativos - La Fundación de Su Imperio Digital", url: "https://gamma.app/docs/Sistemas-Operativos-La-Fundacion-de-Su-Imperio-Digital-cjcoftu2ui7jlse", program: 'lasMarias' as const },
+            { title: "Conectividad Avanzada - El Salto a la Profesionalización Digital", url: "https://gamma.app/docs/Conectividad-Avanzada-El-Salto-a-la-Profesionalizacion-Digital-3zar97r2naw4yh4", program: 'lasMarias' as const },
+            { title: "Comunicación Digital Profesional - Tu Superpoder Empresarial", url: "https://gamma.app/docs/Comunicacion-Digital-Profesional-Tu-Superpoder-Empresarial-dbetll7j5n18g41", program: 'lasMarias' as const },
+            { title: "La Era de la Información Inteligente", url: "https://gamma.app/docs/La-Era-de-la-Informacion-Inteligente-2vcr6071bfj2boe", program: 'lasMarias' as const },
+            { title: "Windows - Tu Centro de Comando Empresarial", url: "https://gamma.app/docs/Windows-Tu-Centro-de-Comando-Empresarial-wcnsgnwp2er7hzw", program: 'lasMarias' as const },
+            { title: "Transformación Digital - De Principiantes a Emprendedores", url: "https://gamma.app/docs/Transformacion-Digital-De-Principiantes-a-Emprendedores-yns4utog80ysphk", program: 'lasMarias' as const },
+            { title: "Detectives Digitales - Protegiendo Nuestros Sueños Empresariales", url: "https://gamma.app/docs/DETECTIVES-DIGITALES-PROTEGIENDO-NUESTROS-SUENOS-EMPRESARIALES-c2iqzh2d6nf35ly", program: 'lasMarias' as const },
+            { title: "Academia de Guardianes Digitales", url: "https://gamma.app/docs/Academia-de-Guardianes-Digitales-yx3rf9gnt1859ww", program: 'lasMarias' as const },
+            { title: "Seguridad de Redes y Gestión de Identidad", url: "https://gamma.app/docs/SEGURIDAD-DE-REDES-Y-GESTION-DE-IDENTIDAD-mcehnbdhsoprq9n", program: 'lasMarias' as const },
+            { title: "Consolidación de Seguridad Cibernética", url: "https://gamma.app/docs/Consolidacion-de-Seguridad-Cibernetica-Transformando-Empresarios--y95s0nsjcl3orib", program: 'lasMarias' as const },
+            { title: "Nivel de Presentación OSI y Documentación Profesional", url: "https://gamma.app/docs/NIVEL-DE-PRESENTACION-OSI-Y-DOCUMENTACION-PROFESIONAL-jjwsqkf9t706sop", program: 'lasMarias' as const },
+            { title: "Construcción de CV Ejecutivo - Parte 1", url: "https://gamma.app/docs/CONSTRUCCION-DE-CV-EJECUTIVO-PARTE-1-yo8vqokdfbtn46v", program: 'lasMarias' as const },
+            { title: "Finalización de CV Ejecutivo y Aplicaciones Empresariales Avanzadas", url: "https://gamma.app/docs/FINALIZACION-DE-CV-EJECUTIVO-Y-APLICACIONES-EMPRESARIALES-AVANZAD-sp4tt4c5z3harz1", program: 'lasMarias' as const },
+            { title: "Análisis Financiero Empresarial", url: "https://gamma.app/docs/ANALISIS-FINANCIERO-EMPRESARIAL-8bdryeejw2o5mk1", program: 'lasMarias' as const },
+            { title: "Detectives de Datos Empresariales", url: "https://gamma.app/docs/Detectives-de-Datos-Empresariales-niga6ieeqrp8tms", program: 'lasMarias' as const },
+            { title: "Arquitectos de Sistemas Inteligentes - Gestión de Datos y Automatización", url: "https://gamma.app/docs/Arquitectos-de-Sistemas-Inteligentes-Gestion-de-Datos-y-Automatiz-e7bjwhbl6zbju22", program: 'lasMarias' as const },
+            { title: "Maestría en Presentaciones Empresariales", url: "https://gamma.app/docs/Maestria-en-Presentaciones-Empresariales-jz8dqdcgh5jlc9p", program: 'lasMarias' as const },
+            { title: "Presentaciones Empresariales Avanzadas", url: "https://gamma.app/docs/Presentaciones-Empresariales-Avanzadas-y8gvl1nwekergmi", program: 'lasMarias' as const },
+            { title: "Plan de Negocio - Estructura y Desarrollo Integral", url: "https://gamma.app/docs/PLAN-DE-NEGOCIO-ESTRUCTURA-Y-DESARROLLO-INTEGRAL-53fnie417hcorhq", program: 'lasMarias' as const },
+            { title: "Liderando la Revolución Digital Empresarial", url: "https://gamma.app/docs/Liderando-la-Revolucion-Digital-Empresarial-43pbpoes8tdjv2u", program: 'lasMarias' as const },
+            // Santurce Program Presentations
+            { title: "Gestión del Tiempo y Planificación", url: "https://gamma.app/docs/Gestion-del-Tiempo-y-Planificacion-4hv1c68ym1rduai", program: 'santurce' as const },
+            { title: "Ética laboral e Integridad", url: "https://gamma.app/docs/Etica-laboral-e-Integridad-m8grxwnrcw9uaph", program: 'santurce' as const },
+            { title: "Trabajo en Equipo - Colaboración Efectiva en Entornos Laborales", url: "https://gamma.app/docs/Trabajo-en-Equipo-Colaboracion-Efectiva-en-Entornos-Laborales-mwxgq2ur6sdihtf", program: 'santurce' as const },
+            { title: "Servicio al Cliente y Resolución de Conflictos", url: "https://gamma.app/docs/Servicio-al-Cliente-y-Resolucion-de-Conflictos-l3jkaahoanfi3k5", program: 'santurce' as const },
+            { title: "Toma de Decisiones y Pensamiento Crítico", url: "https://gamma.app/docs/Toma-de-Decisiones-y-Pensamiento-Critico-229cdvuwwuu4swi", program: 'santurce' as const },
+            { title: "Comunicación Efectiva e Imagen Profesional", url: "https://gamma.app/docs/Comunicacion-Efectiva-e-Imagen-Profesional-ujvi551t6tx2u6g", program: 'santurce' as const },
+            { title: "Gestión de Recursos para el Éxito Laboral", url: "https://gamma.app/docs/Gestion-de-Recursos-para-el-Exito-Laboral-pyra04fwl95zmmq", program: 'santurce' as const },
+            { title: "Elaboración del Curriculum Vitae Efectivo", url: "https://gamma.app/docs/Elaboracion-del-Curriculum-Vitae-Efectivo-ackia30xxnq7c3t", program: 'santurce' as const },
+            { title: "Estrategias para búsqueda de empleo", url: "https://gamma.app/docs/Estrategias-para-busqueda-de-empleo-umpe4jlpmruf9jl", program: 'santurce' as const },
+            { title: "Preparación para Entrevista Laboral", url: "https://gamma.app/docs/Preparacion-para-Entrevista-Laboral-duxvm6ne57oqz78", program: 'santurce' as const },
+            { title: "Inteligencia Artificial", url: "https://gamma.app/docs/Inteligencia-Artificial-xy191kncjols7d2", program: 'santurce' as const },
+          ] satisfies Presentation[],
         },
         {
           title: "Digital Transformation Director",
@@ -718,11 +960,46 @@ const Experience = () => {
           url: "",
         },
         {
+          title: "Blockchain Developer",
+          organization: "Cryptomonedas Pal Pueblo",
+          location: "Puerto Rico",
+          period: "August 2021 - March 2022",
+          url: "",
+        },
+        {
           title: "Founding Member",
           organization: "Florida Interscholastic Cycling League",
           location: "Florida",
           period: "March 2018 - January 2020",
           url: "http://FloridaMTB.org",
+        },
+        {
+          title: "Program Development Volunteer",
+          organization: "Boys & Girls Club",
+          location: "Osceola County, Florida",
+          period: "May 2017 - August 2017",
+          url: "",
+        },
+        {
+          title: "Aspire to Inspire STEAM Presenter",
+          organization: "ALPFA, Inc - Association of Latino Professionals For America",
+          location: "Florida",
+          period: "April 2017",
+          url: "",
+        },
+        {
+          title: "Volunteer Videographer",
+          organization: "Swamp Club",
+          location: "Alafia State Park, Lithia, Florida",
+          period: "January 2017 - March 2017",
+          url: "https://www.youtube.com/playlist?list=PLEMQ9VFlh91rmIRl7VrJxduYUd6-W37CQ",
+        },
+        {
+          title: "Tax Preparer",
+          organization: "Volunteer Income Tax Assistance",
+          location: "Florida",
+          period: "July 2006 - July 2007",
+          url: "",
         },
       ],
     },
@@ -765,6 +1042,46 @@ const Experience = () => {
             "Educación Blockchain",
             "Desarrollo Profesional",
           ],
+          presentations: [
+            // Las Marías Program Presentations
+            { title: "La Revolución Que Llevamos en el Bolsillo", url: "https://gamma.app/docs/La-Revolucion-Que-Llevamos-en-el-Bolsillo-t3whf6odaxberc4", program: 'lasMarias' as const },
+            { title: "Nivel de Enlace de Datos OSI", url: "https://gamma.app/docs/Nivel-de-Enlace-de-Datos-OSI-i9d0s21vbmme178", program: 'lasMarias' as const },
+            { title: "Destrezas de Alfabetización Digital - Mi Negocio en Línea", url: "https://gamma.app/docs/Destrezas-de-Alfabetizacion-Digital-Mi-Negocio-en-Linea-951zhm9nyfaumd7", program: 'lasMarias' as const },
+            { title: "Sus Datos Son Su Tesoro Empresarial", url: "https://gamma.app/docs/Sus-Datos-Son-Su-Tesoro-Empresarial-uv9ec19eko7qg9o", program: 'lasMarias' as const },
+            { title: "Sistemas Operativos - La Fundación de Su Imperio Digital", url: "https://gamma.app/docs/Sistemas-Operativos-La-Fundacion-de-Su-Imperio-Digital-cjcoftu2ui7jlse", program: 'lasMarias' as const },
+            { title: "Conectividad Avanzada - El Salto a la Profesionalización Digital", url: "https://gamma.app/docs/Conectividad-Avanzada-El-Salto-a-la-Profesionalizacion-Digital-3zar97r2naw4yh4", program: 'lasMarias' as const },
+            { title: "Comunicación Digital Profesional - Tu Superpoder Empresarial", url: "https://gamma.app/docs/Comunicacion-Digital-Profesional-Tu-Superpoder-Empresarial-dbetll7j5n18g41", program: 'lasMarias' as const },
+            { title: "La Era de la Información Inteligente", url: "https://gamma.app/docs/La-Era-de-la-Informacion-Inteligente-2vcr6071bfj2boe", program: 'lasMarias' as const },
+            { title: "Windows - Tu Centro de Comando Empresarial", url: "https://gamma.app/docs/Windows-Tu-Centro-de-Comando-Empresarial-wcnsgnwp2er7hzw", program: 'lasMarias' as const },
+            { title: "Transformación Digital - De Principiantes a Emprendedores", url: "https://gamma.app/docs/Transformacion-Digital-De-Principiantes-a-Emprendedores-yns4utog80ysphk", program: 'lasMarias' as const },
+            { title: "Detectives Digitales - Protegiendo Nuestros Sueños Empresariales", url: "https://gamma.app/docs/DETECTIVES-DIGITALES-PROTEGIENDO-NUESTROS-SUENOS-EMPRESARIALES-c2iqzh2d6nf35ly", program: 'lasMarias' as const },
+            { title: "Academia de Guardianes Digitales", url: "https://gamma.app/docs/Academia-de-Guardianes-Digitales-yx3rf9gnt1859ww", program: 'lasMarias' as const },
+            { title: "Seguridad de Redes y Gestión de Identidad", url: "https://gamma.app/docs/SEGURIDAD-DE-REDES-Y-GESTION-DE-IDENTIDAD-mcehnbdhsoprq9n", program: 'lasMarias' as const },
+            { title: "Consolidación de Seguridad Cibernética", url: "https://gamma.app/docs/Consolidacion-de-Seguridad-Cibernetica-Transformando-Empresarios--y95s0nsjcl3orib", program: 'lasMarias' as const },
+            { title: "Nivel de Presentación OSI y Documentación Profesional", url: "https://gamma.app/docs/NIVEL-DE-PRESENTACION-OSI-Y-DOCUMENTACION-PROFESIONAL-jjwsqkf9t706sop", program: 'lasMarias' as const },
+            { title: "Construcción de CV Ejecutivo - Parte 1", url: "https://gamma.app/docs/CONSTRUCCION-DE-CV-EJECUTIVO-PARTE-1-yo8vqokdfbtn46v", program: 'lasMarias' as const },
+            { title: "Finalización de CV Ejecutivo y Aplicaciones Empresariales Avanzadas", url: "https://gamma.app/docs/FINALIZACION-DE-CV-EJECUTIVO-Y-APLICACIONES-EMPRESARIALES-AVANZAD-sp4tt4c5z3harz1", program: 'lasMarias' as const },
+            { title: "Análisis Financiero Empresarial", url: "https://gamma.app/docs/ANALISIS-FINANCIERO-EMPRESARIAL-8bdryeejw2o5mk1", program: 'lasMarias' as const },
+            { title: "Detectives de Datos Empresariales", url: "https://gamma.app/docs/Detectives-de-Datos-Empresariales-niga6ieeqrp8tms", program: 'lasMarias' as const },
+            { title: "Arquitectos de Sistemas Inteligentes - Gestión de Datos y Automatización", url: "https://gamma.app/docs/Arquitectos-de-Sistemas-Inteligentes-Gestion-de-Datos-y-Automatiz-e7bjwhbl6zbju22", program: 'lasMarias' as const },
+            { title: "Maestría en Presentaciones Empresariales", url: "https://gamma.app/docs/Maestria-en-Presentaciones-Empresariales-jz8dqdcgh5jlc9p", program: 'lasMarias' as const },
+            { title: "Presentaciones Empresariales Avanzadas", url: "https://gamma.app/docs/Presentaciones-Empresariales-Avanzadas-y8gvl1nwekergmi", program: 'lasMarias' as const },
+            { title: "Plan de Negocio - Estructura y Desarrollo Integral", url: "https://gamma.app/docs/PLAN-DE-NEGOCIO-ESTRUCTURA-Y-DESARROLLO-INTEGRAL-53fnie417hcorhq", program: 'lasMarias' as const },
+            { title: "Liderando la Revolución Digital Empresarial", url: "https://gamma.app/docs/Liderando-la-Revolucion-Digital-Empresarial-43pbpoes8tdjv2u", program: 'lasMarias' as const },
+
+            // Santurce Program Presentations
+            { title: "Gestión del Tiempo y Planificación", url: "https://gamma.app/docs/Gestion-del-Tiempo-y-Planificacion-4hv1c68ym1rduai", program: 'santurce' as const },
+            { title: "Ética laboral e Integridad", url: "https://gamma.app/docs/Etica-laboral-e-Integridad-m8grxwnrcw9uaph", program: 'santurce' as const },
+            { title: "Comunicación Efectiva", url: "https://gamma.app/docs/Comunicacion-Efectiva-zw5d5x7d0koxb8g", program: 'santurce' as const },
+            { title: "Adaptabilidad y Resiliencia", url: "https://gamma.app/docs/Adaptabilidad-y-Resiliencia-j8pqo2jmhxz3l61", program: 'santurce' as const },
+            { title: "Trabajo en Equipo y Colaboración", url: "https://gamma.app/docs/Trabajo-en-Equipo-y-Colaboracion-iucz81njjnwq45v", program: 'santurce' as const },
+            { title: "Inteligencia Artificial Para Búsqueda de Empleo", url: "https://gamma.app/docs/Inteligencia-Artificial-Para-Busqueda-de-Empleo-o7m8fwj7d4fktmc", program: 'santurce' as const },
+            { title: "Preparación de Currículum con IA", url: "https://gamma.app/docs/Preparacion-de-Curriculum-con-IA-ik6n0k2yy8hyfbv", program: 'santurce' as const },
+            { title: "Preparación de Entrevistas con IA", url: "https://gamma.app/docs/Preparacion-de-Entrevistas-con-IA-yuw3ynm6dzlumny", program: 'santurce' as const },
+            { title: "Marca Personal y Redes Profesionales con IA", url: "https://gamma.app/docs/Marca-Personal-y-Redes-Profesionales-con-IA-0gkyp14s1njnazl", program: 'santurce' as const },
+            { title: "Preparación para Pruebas de Empleo con IA", url: "https://gamma.app/docs/Preparacion-para-Pruebas-de-Empleo-con-IA-vw93wrnpc0rlxqn", program: 'santurce' as const },
+            { title: "Estrategias de Negociación Salarial con IA", url: "https://gamma.app/docs/Estrategias-de-Negociacion-Salarial-con-IA-83j7ywscv29t3zm", program: 'santurce' as const },
+          ] satisfies Presentation[],
         },
         {
           title: "Director de Transformación Digital",
@@ -1063,11 +1380,46 @@ const Experience = () => {
           url: "",
         },
         {
+          title: "Desarrollador Blockchain",
+          organization: "Cryptomonedas Pal Pueblo",
+          location: "Puerto Rico",
+          period: "Agosto 2021 - Marzo 2022",
+          url: "",
+        },
+        {
           title: "Miembro Fundador",
           organization: "Florida Interscholastic Cycling League",
           location: "Florida",
           period: "Marzo 2018 - Enero 2020",
           url: "http://FloridaMTB.org",
+        },
+        {
+          title: "Voluntario de Desarrollo de Programas",
+          organization: "Boys & Girls Club",
+          location: "Condado de Osceola, Florida",
+          period: "Mayo 2017 - Agosto 2017",
+          url: "",
+        },
+        {
+          title: "Presentador STEAM Aspire to Inspire",
+          organization: "ALPFA, Inc - Asociación de Profesionales Latinos Para América",
+          location: "Florida",
+          period: "Abril 2017",
+          url: "",
+        },
+        {
+          title: "Videógrafo Voluntario",
+          organization: "Swamp Club",
+          location: "Parque Estatal Alafia, Lithia, Florida",
+          period: "Enero 2017 - Marzo 2017",
+          url: "https://www.youtube.com/playlist?list=PLEMQ9VFlh91rmIRl7VrJxduYUd6-W37CQ",
+        },
+        {
+          title: "Preparador de Impuestos",
+          organization: "Asistencia Voluntaria de Impuestos sobre la Renta",
+          location: "Florida",
+          period: "Julio 2006 - Julio 2007",
+          url: "",
         },
       ],
     },
@@ -1103,10 +1455,10 @@ const Experience = () => {
   // Check if there are hidden experiences to show the button
   const hasHiddenExperiences = currentLanguageData.experience.some(item => item.isNewlyAdded);
 
-  // Show only Ellis University degree initially for education
-  const educationToShow = showAllEducation
-    ? currentLanguageData.education
-    : currentLanguageData.education.slice(0, 1);
+  // Show top 3 certifications initially
+  const certificationsToShow = showAllCertifications
+    ? currentLanguageData.certifications
+    : currentLanguageData.certifications.slice(0, 3);
 
   // Helper component for inline "Show More" buttons
   const InlineShowMoreButton = ({
@@ -1303,26 +1655,13 @@ const Experience = () => {
         </div>
 
         <div className="relative mb-20">
-          {educationToShow.map((item, index) => (
+          {currentLanguageData.education.map((item, index) => (
             <EducationItem
               key={`${item.institution}-${item.degree}-${index}`}
               {...item}
               index={index}
             />
           ))}
-
-          {/* Read More Button for Education */}
-          {!showAllEducation && currentLanguageData.education.length > 1 && (
-            <div className="text-center mt-12">
-              <button
-                onClick={() => setShowAllEducation(true)}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
-              >
-                {language === "en" ? "Read More Education" : "Ver Más Educación"}
-                <ChevronDown className="w-4 h-4" />
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Certifications Section */}
@@ -1343,13 +1682,26 @@ const Experience = () => {
         </div>
 
         <div className="relative">
-          {currentLanguageData.certifications.map((item, index) => (
+          {certificationsToShow.map((item, index) => (
             <CertificationItem
               key={`${item.organization}-${item.title}-${index}`}
               {...item}
               index={index}
             />
           ))}
+
+          {/* Show More Button for Certifications */}
+          {!showAllCertifications && currentLanguageData.certifications.length > 3 && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowAllCertifications(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+              >
+                {language === "en" ? "Show More Recognition" : "Ver Más Reconocimientos"}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>
