@@ -25,7 +25,7 @@ export default function BlogPage() {
     // Filter posts by current language
     const languageFilteredPosts = getAllBlogPosts({ language });
     const languageFeatured = getAllBlogPosts({ featured: true, language });
-    const languageRecent = getAllBlogPosts({ limit: 6, featured: false, language });
+    const languageRecent = getAllBlogPosts({ featured: false, language });
 
     setAllPosts(languageFilteredPosts);
     setFeaturedPosts(languageFeatured);

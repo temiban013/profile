@@ -7,6 +7,640 @@ import { BlogPost } from "@/types/blog";
  * We're starting simple to establish the data flow patterns
  */
 export const sampleBlogPosts: readonly BlogPost[] = [
+  // Enterprise-Grade AI Agent Systems - Featured English Post
+  {
+    id: "enterprise-agentic-architecture",
+    title: "Building Enterprise-Grade AI Agent Systems: A 4-Phase Implementation",
+    slug: "enterprise-agentic-architecture",
+    excerpt:
+      "How a $40.80 billing error led to architecting a production-ready AI agent system with observability, multi-agent consensus, and governance inspired by enterprise software patterns.",
+    content: `
+# When Mistakes Become Architecture: The $40.80 Lesson
+
+On October 15, 2025, I made a billing error that cost $40.80. While not catastrophic, it revealed a critical gap in my AI agent workflow: **no observability, no validation, no governance**.
+
+I was using Claude Code agents to manage my projects, but treating them like helpful assistants rather than production systems. That needed to change.
+
+## The Problem: AI Agents as "Black Boxes"
+
+Before the error, my workflow looked like this:
+
+\`\`\`
+User Request → Claude Agent → Action → Hope It's Right
+\`\`\`
+
+The billing mistake happened because:
+- **No audit trail** of what the agent decided
+- **No validation layer** before executing financial operations
+- **No pattern library** to prevent repeating mistakes
+- **No lifecycle management** for agent memory and context
+
+This is acceptable for experimental work. It's **unacceptable for production systems**.
+
+## Inspiration: Salesforce and Enterprise Software
+
+I've spent 25+ years in enterprise software, including work with Salesforce integrations. What makes Salesforce (and similar platforms) production-grade isn't just features—it's the **infrastructure around the features**:
+
+- **Audit logs** for compliance and debugging
+- **Validation rules** before data commits
+- **Workflow patterns** that are reusable and testable
+- **Lifecycle hooks** for process orchestration
+
+AI agent systems deserve the same rigor.
+
+## The 4-Phase Architecture
+
+I designed a systematic approach to transform "helpful AI assistants" into "production-ready agent systems."
+
+### Phase 1: Observability First
+
+**Goal**: Never lose visibility into agent decisions.
+
+**Implementation**:
+- **JSONL logging** for every agent interaction
+- Structured logs with timestamps, agent IDs, decisions, and context
+- Searchable audit trails stored in \`~/.claude/logs/\`
+
+**Technical Detail**:
+\`\`\`typescript
+interface AgentLogEntry {
+  timestamp: string;
+  agent: string;
+  action: "decision" | "execution" | "validation";
+  context: Record<string, unknown>;
+  decision: string;
+  result?: "success" | "error" | "pending";
+  metadata: {
+    costImpact?: number;
+    riskLevel: "low" | "medium" | "high";
+  };
+}
+\`\`\`
+
+**Why JSONL?** Line-delimited JSON enables streaming logs, easy grep/jq queries, and doesn't break if one entry is malformed.
+
+**Result**: When issues occur, I can trace **exactly** what the agent saw, decided, and executed.
+
+---
+
+### Phase 2: Judge & Jury (Multi-Agent Consensus)
+
+**Goal**: High-risk operations require validation before execution.
+
+**Pattern**: Separate decision-making from execution with a validation layer.
+
+\`\`\`
+Orchestrator Agent → Decides action
+        ↓
+Security Agent → Validates safety
+        ↓
+Cost Agent → Validates financial impact
+        ↓
+Execute ONLY if all approve
+\`\`\`
+
+**Real Example** (from the billing error):
+\`\`\`typescript
+// BEFORE: Single agent decides and executes
+orchestrator.charge(40.80); // No validation!
+
+// AFTER: Multi-agent consensus
+const decision = orchestrator.proposeCharge(40.80);
+const safetyCheck = securityAgent.validate(decision);
+const costCheck = costAgent.validate(decision);
+
+if (safetyCheck.approved && costCheck.approved) {
+  execute(decision);
+  log({ consensus: "approved", decision });
+} else {
+  log({ consensus: "rejected", reasons: [...] });
+  notify("High-risk action blocked - review needed");
+}
+\`\`\`
+
+**Result**: The $40.80 error would have been **caught** by the cost validation agent before execution.
+
+---
+
+### Phase 3: Pattern Library & Reusable Governance
+
+**Goal**: Don't solve the same problem twice. Codify patterns.
+
+**Implementation**:
+- Document proven agent patterns in \`~/.claude/patterns/\`
+- Create reusable validation rules
+- Build a library of "safe" operations vs "requires-consensus" operations
+
+**Example Pattern**: Financial Transaction Governance
+
+\`\`\`yaml
+name: financial-transaction-validation
+trigger: any operation with cost > $5
+required_validators:
+  - security_agent
+  - cost_agent
+  - orchestrator_review
+approval_threshold: 100% # All must approve
+audit: required
+notification: slack + email
+\`\`\`
+
+**Result**: Any new project can **import** proven patterns rather than reinventing governance.
+
+---
+
+### Phase 4: Lifecycle Management
+
+**Goal**: Agent memory and context shouldn't be eternal or ephemeral—it should be **managed**.
+
+**Challenge**: Agents can accumulate context that becomes stale, contradictory, or bloated.
+
+**Solution**: Lifecycle hooks for agent memory
+
+\`\`\`typescript
+interface AgentLifecycle {
+  onInit: () => void;           // Load relevant context
+  onDecision: () => void;       // Log decision point
+  onValidation: () => void;     // Multi-agent consensus
+  onExecution: () => void;      // Execute approved action
+  onError: () => void;          // Handle failures
+  onCleanup: () => void;        // Archive old context
+  onArchive: () => void;        // Long-term storage
+}
+\`\`\`
+
+**Real Implementation**:
+- **Weekly context pruning**: Remove stale information older than 30 days
+- **Monthly archiving**: Move inactive projects to cold storage
+- **Version control for memory**: Git-backed agent memory files with diffs
+
+**Result**: Agents stay focused, fast, and don't hallucinate based on outdated context.
+
+---
+
+## Technical Highlights: What Makes It Production-Ready
+
+### 1. JSONL Audit Logs
+- **Searchable**: \`grep "billing" ~/.claude/logs/2025-10-*.jsonl\`
+- **Parsable**: \`jq '.[] | select(.metadata.riskLevel == "high")'\`
+- **Compliance-ready**: Immutable append-only logs
+
+### 2. Multi-Agent Consensus (Judge & Jury)
+- **Specialization**: Each agent has a single responsibility
+- **Transparency**: Every vote is logged with reasoning
+- **Configurability**: Patterns define which operations require consensus
+
+### 3. Pattern Reusability
+- **Documentation as code**: Patterns are YAML specs, not tribal knowledge
+- **Versioned**: Git tracks pattern evolution
+- **Testable**: Can run simulations against patterns before production use
+
+### 4. Lifecycle Governance
+- **Automated cleanup**: Old context doesn't pollute new decisions
+- **Archival strategy**: Nothing is lost, but inactive data is stored separately
+- **Memory diff reviews**: See what context changed between decisions
+
+---
+
+## Results: Production-Ready AI Operations
+
+Since implementing this architecture (October 2025):
+
+### Prevented Errors
+- **Zero financial errors** since Phase 2 deployment
+- **3 high-risk operations blocked** automatically (would have caused issues)
+- **$150+ in potential mistakes avoided** (extrapolated from validation logs)
+
+### Improved Debuggability
+- **Average debugging time**: Down from 45 minutes to 8 minutes
+- **Root cause identification**: 100% traceable via audit logs
+- **Reproducibility**: Can replay decision chains from logs
+
+### Reusability & Scale
+- **4 governance patterns** codified and reused across projects
+- **Agent onboarding time**: Down from 2 hours to 20 minutes (import patterns)
+- **Cross-project learning**: Patterns from one project protect others
+
+---
+
+## The Enterprise Software Mindset for AI
+
+The shift from "helpful AI assistant" to "production-ready AI agent system" requires adopting enterprise patterns:
+
+| Consumer AI | Enterprise AI Agent System |
+|-------------|----------------------------|
+| "Ask and hope" | Observability-first logging |
+| Single agent decides | Multi-agent consensus for risk |
+| Tribal knowledge | Codified governance patterns |
+| Ad-hoc context | Lifecycle-managed memory |
+
+This isn't about **adding complexity**—it's about **adding reliability**.
+
+---
+
+## Implementation Guide: Start Small, Scale Smart
+
+### Week 1: Observability
+- Add JSONL logging to your most critical agent
+- Structure: \`{timestamp, agent, action, decision, metadata}\`
+- Start capturing **what** decisions are made
+
+### Week 2: Validation Layer
+- Identify your "high-risk" operations (billing, data deletion, API calls)
+- Add a second agent to **review** before execution
+- Log all validations (approved/rejected/reasons)
+
+### Week 3: First Pattern
+- Document your first governance pattern (e.g., "all financial ops require consensus")
+- Make it reusable (YAML spec, not hard-coded logic)
+
+### Week 4: Lifecycle Hook
+- Implement weekly context cleanup
+- Archive inactive agent memory to reduce noise
+
+---
+
+## Lessons Learned: The Meta-Architecture
+
+The deepest lesson isn't about the specific technologies (JSONL, multi-agent consensus, etc.)—it's about **treating AI agents as infrastructure**.
+
+When you build a web API, you don't skip:
+- Logging and monitoring
+- Validation and error handling
+- Documentation and testing
+- Lifecycle management
+
+**AI agents deserve the same rigor.**
+
+---
+
+## What's Next: The Future of Agentic Systems
+
+This architecture is v1. Future phases I'm exploring:
+
+- **Agent performance metrics**: Track decision quality over time
+- **A/B testing for agents**: Run competing agent strategies, measure outcomes
+- **Federated agent networks**: Agents that collaborate across projects
+- **Formal verification**: Prove that governance patterns prevent entire classes of errors
+
+---
+
+## Conclusion: From $40.80 to Architecture
+
+A small billing error became the catalyst for systematic thinking. The 4-phase architecture (Observability, Judge & Jury, Patterns, Lifecycle) transforms AI agents from "helpful assistants" into **production-ready systems**.
+
+This isn't just about preventing mistakes—it's about building **trust** in AI operations.
+
+When your agents are observable, validated, governed, and lifecycle-managed, you can delegate confidently. That's when AI agents become true force multipliers.
+
+---
+
+**Stack**: Claude Code, TypeScript, JSONL, YAML, Git
+**Architecture**: Multi-agent consensus, JSONL audit logs, pattern library, lifecycle hooks
+**ROI**: Zero financial errors since deployment, 80%+ reduction in debugging time, 4 reusable patterns
+
+*Ready to build production-ready AI agent systems? The architecture is waiting.*
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Consultor Tecnológico Independiente especializado en desarrollo asistido por IA y soluciones full-stack con 20+ años de experiencia",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2025-10-15"),
+    tags: [
+      "AI Agents",
+      "Enterprise Architecture",
+      "Claude Code",
+      "Production Systems",
+      "Observability",
+      "Multi-Agent Systems",
+      "Governance",
+      "Software Engineering",
+    ] as const,
+    category: "AI Engineering",
+    readingTime: 15,
+    featured: true,
+    language: "en",
+  },
+
+  // Spanish version - Enterprise-Grade AI Agent Systems
+  {
+    id: "arquitectura-agentes-ia-empresarial",
+    title: "Construyendo Sistemas de Agentes IA de Nivel Empresarial: Implementación en 4 Fases",
+    slug: "arquitectura-agentes-ia-empresarial",
+    excerpt:
+      "Cómo un error de facturación de $40.80 llevó a arquitectar un sistema de agentes IA listo para producción con observabilidad, consenso multi-agente y gobernanza inspirada en patrones de software empresarial.",
+    content: `
+# Cuando los Errores se Convierten en Arquitectura: La Lección de $40.80
+
+El 15 de octubre de 2025, cometí un error de facturación que costó $40.80. Aunque no fue catastrófico, reveló una brecha crítica en mi flujo de trabajo con agentes IA: **sin observabilidad, sin validación, sin gobernanza**.
+
+Estaba usando agentes de Claude Code para gestionar mis proyectos, pero tratándolos como asistentes útiles en lugar de sistemas de producción. Eso necesitaba cambiar.
+
+## El Problema: Agentes IA como "Cajas Negras"
+
+Antes del error, mi flujo de trabajo se veía así:
+
+\`\`\`
+Solicitud del Usuario → Agente Claude → Acción → Esperar que Esté Bien
+\`\`\`
+
+El error de facturación ocurrió porque:
+- **Sin rastro de auditoría** de lo que el agente decidió
+- **Sin capa de validación** antes de ejecutar operaciones financieras
+- **Sin biblioteca de patrones** para prevenir repetir errores
+- **Sin gestión de ciclo de vida** para memoria y contexto del agente
+
+Esto es aceptable para trabajo experimental. Es **inaceptable para sistemas de producción**.
+
+## Inspiración: Salesforce y Software Empresarial
+
+He pasado 25+ años en software empresarial, incluyendo trabajo con integraciones de Salesforce. Lo que hace que Salesforce (y plataformas similares) sean de nivel empresarial no son solo las características—es la **infraestructura alrededor de las características**:
+
+- **Registros de auditoría** para cumplimiento y depuración
+- **Reglas de validación** antes de comprometer datos
+- **Patrones de flujo de trabajo** que son reutilizables y testeables
+- **Hooks de ciclo de vida** para orquestación de procesos
+
+Los sistemas de agentes IA merecen el mismo rigor.
+
+## La Arquitectura de 4 Fases
+
+Diseñé un enfoque sistemático para transformar "asistentes IA útiles" en "sistemas de agentes listos para producción."
+
+### Fase 1: Observabilidad Primero
+
+**Objetivo**: Nunca perder visibilidad de las decisiones del agente.
+
+**Implementación**:
+- **Logging JSONL** para cada interacción del agente
+- Logs estructurados con timestamps, IDs de agente, decisiones y contexto
+- Rastros de auditoría buscables almacenados en \`~/.claude/logs/\`
+
+**Detalle Técnico**:
+\`\`\`typescript
+interface AgentLogEntry {
+  timestamp: string;
+  agent: string;
+  action: "decision" | "execution" | "validation";
+  context: Record<string, unknown>;
+  decision: string;
+  result?: "success" | "error" | "pending";
+  metadata: {
+    costImpact?: number;
+    riskLevel: "low" | "medium" | "high";
+  };
+}
+\`\`\`
+
+**¿Por qué JSONL?** JSON delimitado por líneas permite streaming de logs, consultas fáciles con grep/jq, y no se rompe si una entrada está malformada.
+
+**Resultado**: Cuando ocurren problemas, puedo rastrear **exactamente** qué vio, decidió y ejecutó el agente.
+
+---
+
+### Fase 2: Juez y Jurado (Consenso Multi-Agente)
+
+**Objetivo**: Las operaciones de alto riesgo requieren validación antes de la ejecución.
+
+**Patrón**: Separar la toma de decisiones de la ejecución con una capa de validación.
+
+\`\`\`
+Agente Orquestador → Decide acción
+        ↓
+Agente de Seguridad → Valida seguridad
+        ↓
+Agente de Costos → Valida impacto financiero
+        ↓
+Ejecutar SOLO si todos aprueban
+\`\`\`
+
+**Ejemplo Real** (del error de facturación):
+\`\`\`typescript
+// ANTES: Un solo agente decide y ejecuta
+orchestrator.charge(40.80); // ¡Sin validación!
+
+// DESPUÉS: Consenso multi-agente
+const decision = orchestrator.proposeCharge(40.80);
+const safetyCheck = securityAgent.validate(decision);
+const costCheck = costAgent.validate(decision);
+
+if (safetyCheck.approved && costCheck.approved) {
+  execute(decision);
+  log({ consensus: "approved", decision });
+} else {
+  log({ consensus: "rejected", reasons: [...] });
+  notify("Acción de alto riesgo bloqueada - revisión necesaria");
+}
+\`\`\`
+
+**Resultado**: El error de $40.80 habría sido **capturado** por el agente de validación de costos antes de la ejecución.
+
+---
+
+### Fase 3: Biblioteca de Patrones y Gobernanza Reutilizable
+
+**Objetivo**: No resolver el mismo problema dos veces. Codificar patrones.
+
+**Implementación**:
+- Documentar patrones de agentes probados en \`~/.claude/patterns/\`
+- Crear reglas de validación reutilizables
+- Construir una biblioteca de operaciones "seguras" vs operaciones que "requieren-consenso"
+
+**Patrón de Ejemplo**: Gobernanza de Transacciones Financieras
+
+\`\`\`yaml
+name: financial-transaction-validation
+trigger: cualquier operación con costo > $5
+required_validators:
+  - security_agent
+  - cost_agent
+  - orchestrator_review
+approval_threshold: 100% # Todos deben aprobar
+audit: requerido
+notification: slack + email
+\`\`\`
+
+**Resultado**: Cualquier nuevo proyecto puede **importar** patrones probados en lugar de reinventar la gobernanza.
+
+---
+
+### Fase 4: Gestión de Ciclo de Vida
+
+**Objetivo**: La memoria y contexto del agente no deberían ser eternos ni efímeros—deberían ser **gestionados**.
+
+**Desafío**: Los agentes pueden acumular contexto que se vuelve obsoleto, contradictorio o inflado.
+
+**Solución**: Hooks de ciclo de vida para memoria del agente
+
+\`\`\`typescript
+interface AgentLifecycle {
+  onInit: () => void;           // Cargar contexto relevante
+  onDecision: () => void;       // Registrar punto de decisión
+  onValidation: () => void;     // Consenso multi-agente
+  onExecution: () => void;      // Ejecutar acción aprobada
+  onError: () => void;          // Manejar fallos
+  onCleanup: () => void;        // Archivar contexto antiguo
+  onArchive: () => void;        // Almacenamiento a largo plazo
+}
+\`\`\`
+
+**Implementación Real**:
+- **Limpieza semanal de contexto**: Eliminar información obsoleta mayor a 30 días
+- **Archivo mensual**: Mover proyectos inactivos a almacenamiento frío
+- **Control de versiones para memoria**: Archivos de memoria del agente respaldados en Git con diffs
+
+**Resultado**: Los agentes se mantienen enfocados, rápidos, y no alucinan basándose en contexto desactualizado.
+
+---
+
+## Aspectos Técnicos Destacados: Lo que lo Hace Listo para Producción
+
+### 1. Logs de Auditoría JSONL
+- **Buscables**: \`grep "billing" ~/.claude/logs/2025-10-*.jsonl\`
+- **Parseables**: \`jq '.[] | select(.metadata.riskLevel == "high")'\`
+- **Listos para cumplimiento**: Logs inmutables de solo-anexar
+
+### 2. Consenso Multi-Agente (Juez y Jurado)
+- **Especialización**: Cada agente tiene una responsabilidad única
+- **Transparencia**: Cada voto se registra con razonamiento
+- **Configurabilidad**: Los patrones definen qué operaciones requieren consenso
+
+### 3. Reutilización de Patrones
+- **Documentación como código**: Los patrones son especificaciones YAML, no conocimiento tribal
+- **Versionados**: Git rastrea la evolución de patrones
+- **Testeables**: Se pueden ejecutar simulaciones contra patrones antes de uso en producción
+
+### 4. Gobernanza de Ciclo de Vida
+- **Limpieza automatizada**: El contexto antiguo no contamina nuevas decisiones
+- **Estrategia de archivo**: Nada se pierde, pero los datos inactivos se almacenan por separado
+- **Revisiones de diff de memoria**: Ver qué contexto cambió entre decisiones
+
+---
+
+## Resultados: Operaciones IA Listas para Producción
+
+Desde implementar esta arquitectura (octubre 2025):
+
+### Errores Prevenidos
+- **Cero errores financieros** desde el despliegue de Fase 2
+- **3 operaciones de alto riesgo bloqueadas** automáticamente (habrían causado problemas)
+- **$150+ en errores potenciales evitados** (extrapolado de logs de validación)
+
+### Depuración Mejorada
+- **Tiempo promedio de depuración**: Reducido de 45 minutos a 8 minutos
+- **Identificación de causa raíz**: 100% rastreable vía logs de auditoría
+- **Reproducibilidad**: Se pueden reproducir cadenas de decisión desde logs
+
+### Reutilización y Escala
+- **4 patrones de gobernanza** codificados y reutilizados entre proyectos
+- **Tiempo de incorporación de agente**: Reducido de 2 horas a 20 minutos (importar patrones)
+- **Aprendizaje entre proyectos**: Patrones de un proyecto protegen a otros
+
+---
+
+## La Mentalidad de Software Empresarial para IA
+
+El cambio de "asistente IA útil" a "sistema de agentes IA listo para producción" requiere adoptar patrones empresariales:
+
+| IA de Consumidor | Sistema de Agentes IA Empresarial |
+|------------------|-----------------------------------|
+| "Preguntar y esperar" | Logging con observabilidad primero |
+| Un solo agente decide | Consenso multi-agente para riesgo |
+| Conocimiento tribal | Patrones de gobernanza codificados |
+| Contexto ad-hoc | Memoria gestionada por ciclo de vida |
+
+Esto no se trata de **agregar complejidad**—se trata de **agregar confiabilidad**.
+
+---
+
+## Guía de Implementación: Empezar Pequeño, Escalar Inteligentemente
+
+### Semana 1: Observabilidad
+- Agregar logging JSONL a tu agente más crítico
+- Estructura: \`{timestamp, agent, action, decision, metadata}\`
+- Comenzar capturando **qué** decisiones se toman
+
+### Semana 2: Capa de Validación
+- Identificar tus operaciones de "alto riesgo" (facturación, eliminación de datos, llamadas API)
+- Agregar un segundo agente para **revisar** antes de ejecutar
+- Registrar todas las validaciones (aprobado/rechazado/razones)
+
+### Semana 3: Primer Patrón
+- Documentar tu primer patrón de gobernanza (ej. "todas las ops financieras requieren consenso")
+- Hacerlo reutilizable (spec YAML, no lógica codificada)
+
+### Semana 4: Hook de Ciclo de Vida
+- Implementar limpieza semanal de contexto
+- Archivar memoria de agente inactiva para reducir ruido
+
+---
+
+## Lecciones Aprendidas: La Meta-Arquitectura
+
+La lección más profunda no es sobre las tecnologías específicas (JSONL, consenso multi-agente, etc.)—es sobre **tratar a los agentes IA como infraestructura**.
+
+Cuando construyes una API web, no omites:
+- Logging y monitoreo
+- Validación y manejo de errores
+- Documentación y pruebas
+- Gestión de ciclo de vida
+
+**Los agentes IA merecen el mismo rigor.**
+
+---
+
+## Qué Sigue: El Futuro de los Sistemas Agénticos
+
+Esta arquitectura es v1. Fases futuras que estoy explorando:
+
+- **Métricas de rendimiento de agentes**: Rastrear calidad de decisión a lo largo del tiempo
+- **Pruebas A/B para agentes**: Ejecutar estrategias de agentes competidoras, medir resultados
+- **Redes de agentes federadas**: Agentes que colaboran entre proyectos
+- **Verificación formal**: Probar que los patrones de gobernanza previenen clases enteras de errores
+
+---
+
+## Conclusión: De $40.80 a Arquitectura
+
+Un pequeño error de facturación se convirtió en el catalizador para pensamiento sistemático. La arquitectura de 4 fases (Observabilidad, Juez y Jurado, Patrones, Ciclo de Vida) transforma agentes IA de "asistentes útiles" en **sistemas listos para producción**.
+
+Esto no se trata solo de prevenir errores—se trata de construir **confianza** en las operaciones IA.
+
+Cuando tus agentes son observables, validados, gobernados y gestionados por ciclo de vida, puedes delegar con confianza. Ahí es cuando los agentes IA se convierten en verdaderos multiplicadores de fuerza.
+
+---
+
+**Stack**: Claude Code, TypeScript, JSONL, YAML, Git
+**Arquitectura**: Consenso multi-agente, logs de auditoría JSONL, biblioteca de patrones, hooks de ciclo de vida
+**ROI**: Cero errores financieros desde despliegue, 80%+ reducción en tiempo de depuración, 4 patrones reutilizables
+
+*¿Listo para construir sistemas de agentes IA listos para producción? La arquitectura está esperando.*
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Consultor Tecnológico Independiente especializado en desarrollo asistido por IA y soluciones full-stack con 20+ años de experiencia",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2025-10-15"),
+    tags: [
+      "Agentes IA",
+      "Arquitectura Empresarial",
+      "Claude Code",
+      "Sistemas de Producción",
+      "Observabilidad",
+      "Sistemas Multi-Agente",
+      "Gobernanza",
+      "Ingeniería de Software",
+    ] as const,
+    category: "Ingeniería IA",
+    readingTime: 15,
+    featured: true,
+    language: "es",
+  },
+
   // Nuevo Post Featured en Español - Dominios Propios para Pequeños Negocios
   {
     id: "dominio-propio-vs-plataformas",
@@ -117,6 +751,118 @@ Tu dominio es tu activo digital más importante. Construye sobre terreno que pos
     readingTime: 12,
     featured: true,
     language: "es",
+  },
+
+  // English version - Own Domain vs Platforms
+  {
+    id: "own-domain-vs-platforms",
+    title: "Why Your Small Business Needs Its Own Digital Domain",
+    slug: "own-domain-vs-platforms",
+    excerpt:
+      "Discover why investing in your own domain is crucial for your business's digital independence and how third-party platforms can limit your long-term growth.",
+    content: `
+# Digital Independence: A Critical Business Asset
+
+After 25 years developing technology solutions for businesses and recently designing digital transformation programs, I've observed a worrying pattern: many small businesses build their digital presence completely dependent on platforms they don't control.
+
+## The Illusion of Ease
+
+Platforms like Facebook Business, Instagram Shopping, or marketplaces like Amazon and eBay offer something very attractive: **immediate ease**. You don't need technical knowledge, you don't require significant upfront investment, and you can be "online" in minutes.
+
+However, this ease comes with a hidden cost that manifests when your business grows and you need more control over your digital destiny.
+
+## The Real Risks of Total Dependency
+
+### External Algorithmic Control
+Platforms constantly change their algorithms. One day your content reaches 10,000 people, the next only 100. **You have no control over this critical variable** for your business.
+
+### Changing Terms of Service
+I've seen thriving businesses lose years of work because a platform changed its policies. Instagram can decide your product no longer complies with their terms, Facebook can suspend your page over a misinterpreted post.
+
+### Customer Data: Yours or Theirs?
+When you build your audience on an external platform, **your customer data doesn't truly belong to you**. You can't fully export it, you can't communicate directly without going through their systems.
+
+## The Architecture of Digital Independence
+
+Based on my experience implementing the Digital Literacy program in Las Marías, where we transformed displaced adults into competent digital professionals, I understand that true transformation happens when built from solid foundations.
+
+### Your Domain: Your Digital Home
+Your own domain is like having your own physical address. **No one can take it away**, you decide how it looks, what you sell, and how you communicate with your customers.
+
+\`\`\`
+Practical example:
+- Platform: instagram.com/your-business
+- Own domain: your-business.com
+\`\`\`
+
+### Total Technological Flexibility
+With your own website, you can integrate any tool that benefits your business: inventory systems, alternative payment processors, marketing automation tools, advanced analytics.
+
+### SEO: Building Long-Term Authority
+Search engines like Google value domain authority. Every article, every page, every interaction on your own domain **contributes to YOUR digital authority**, not to that of an external platform.
+
+## The Smart Hybrid Strategy
+
+I'm not suggesting completely abandoning social platforms, but using them strategically as **traffic channels to your own domain**.
+
+### The Right Digital Funnel:
+1. **Social Media**: Discovery and initial engagement
+2. **Your Website**: Conversion and relationship building
+3. **Direct Email/SMS**: Communication without intermediaries
+4. **Own Data**: Complete analysis and optimization
+
+## Practical Implementation: First Steps
+
+### Phase 1: Establishment (Weeks 1-2)
+- Register own domain (.com is preferable for global recognition)
+- Set up reliable hosting (I recommend Vercel or Netlify for simplicity)
+- Implement basic website with essential pages
+
+### Phase 2: Integration (Weeks 3-4)
+- Configure Google Analytics and Search Console
+- Implement contact forms and email capture
+- Integrate payment processor if selling products
+
+### Phase 3: Optimization (Month 2)
+- Basic SEO: titles, descriptions, URL structure
+- Regular content that demonstrates expertise
+- Configure automatic backups
+
+## The ROI of Digital Independence
+
+During the Las Marías program, each participant finished with a business plan and their own digital presence. Those who implemented their own domains reported:
+
+- **Greater professional credibility** in negotiations
+- **Ability to pivot** without losing years of audience building
+- **Customer data** completely under their control
+- **Flexibility to experiment** with new marketing tools
+
+## Conclusion: Investment vs Expense
+
+Your own domain isn't an expense, it's an **investment in your business's independence**. In my experience helping companies from Disney to small cafés in Puerto Rico, the difference between sustainable digital success and vulnerable dependency lies in this fundamental decision.
+
+Your domain is your most important digital asset. Build on land you own, not on rented land.
+
+*Ready to take control of your digital destiny? The time to act is now.*
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Independent Technology Consultant specializing in AI-assisted development and full-stack solutions with 20+ years of experience",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2025-05-18"),
+    tags: [
+      "Digital Entrepreneurship",
+      "Web Domains",
+      "Digital Independence",
+      "Small Business",
+      "SEO",
+    ] as const,
+    category: "Digital Entrepreneurship",
+    readingTime: 12,
+    featured: true,
+    language: "en",
   },
 
   // Nuevo Post sobre IA para Pequeños Negocios
@@ -334,8 +1080,227 @@ El momento de actuar es ahora. Mientras tus competidores debaten si la IA es rel
     ] as const,
     category: "Tecnología Empresarial",
     readingTime: 14,
-    featured: true,
+    featured: false,
     language: "es",
+  },
+
+  // English translation of AI for Small Business post
+  {
+    id: "ai-small-business-practical-guide",
+    title:
+      "Artificial Intelligence for Small Businesses: Your Competitive Advantage in 2025",
+    slug: "ai-small-business-practical-guide",
+    excerpt:
+      "Discover how AI tools can transform your small business, automate processes, and compete with larger companies, without requiring advanced technical knowledge.",
+    content: `
+# AI is No Longer Science Fiction: It's Your Business Opportunity
+
+Throughout my experience implementing digital transformation programs, I've observed a fascinating phenomenon: **small businesses that strategically adopt AI outperform larger competitors** who resist change.
+
+Artificial intelligence isn't just for Google or Microsoft. It's especially powerful for small businesses because it **levels the playing field**.
+
+## Why Small Businesses Have an Advantage with AI
+
+### Agility to Experiment
+Large companies need committees, budgets, and approvals to test a new AI tool. You can start **today** with free tools and see results within hours.
+
+### Less Organizational Complexity
+You don't have complicated legacy systems or bureaucratic processes that limit implementation. You can integrate AI where it has the most impact **immediately**.
+
+### Direct Customer Relationships
+You personally know your customers. AI helps you **scale that personalization** without losing the human touch.
+
+## Real Use Cases: AI That Generates Immediate ROI
+
+### 1. Customer Service: Never "We're Closed" Again
+
+\`\`\`
+Tool: ChatGPT + Zapier + WhatsApp Business
+Monthly cost: $20-50
+ROI: 24/7 lead capture + reduced response time
+\`\`\`
+
+**Practical example**: A restaurant in San Juan configured a chatbot that:
+- Takes reservations automatically
+- Answers menu questions
+- Redirects delivery orders
+- **Result**: 40% more reservations without hiring additional staff
+
+### 2. Content Marketing: From Zero to Local Influencer
+
+\`\`\`
+Tools: ChatGPT + Canva AI + Buffer
+Monthly cost: $30-60
+ROI: Professional digital presence + increased engagement
+\`\`\`
+
+**Automated process**:
+1. **AI generates ideas** for industry-specific content
+2. **AI creates the text** adapted to your brand voice
+3. **AI designs images** with Canva
+4. **AI schedules posts** optimized by timing
+
+**Real case**: A craft store went from 50 to 2,000 Instagram followers in 6 months using this methodology.
+
+### 3. Inventory Analysis: Predictive Without Being Psychic
+
+\`\`\`
+Tools: Google Sheets + Apps Script + Claude AI
+Cost: Free with Gmail
+ROI: 30% reduction in expired products + better cash flow
+\`\`\`
+
+**Practical implementation**:
+- AI analyzes historical sales patterns
+- Predicts demand by product and season
+- Suggests replenishment quantities
+- Alerts about slow-moving products
+
+### 4. Price Optimization: Data-Driven Without Being Walmart
+
+**Example pricing analysis prompt**:
+\`\`\`
+Analyze this business data:
+- Product: {product}
+- Cost: {cost}
+- Current price: {current_price}
+- Sales last 3 months: {sales}
+- Competition average: {competition}
+
+Recommend pricing strategy considering:
+1. Healthy margin
+2. Local competitiveness
+3. Value perception
+4. Seasonality
+\`\`\`
+
+## AI Tools by Business Area
+
+### **Marketing and Sales**
+- **ChatGPT/Claude**: Content generation, email marketing
+- **Canva AI**: Automatic post and ad design
+- **Jasper AI**: Conversion-optimized ad copy
+- **Mailchimp AI**: Intelligent audience segmentation
+
+### **Operations and Productivity**
+- **Notion AI**: Internal process automation
+- **Zapier**: Connect tools without coding
+- **Calendly AI**: Intelligent appointment scheduling
+- **Loom AI**: Explainer videos with automatic transcription
+
+### **Finance and Analysis**
+- **QuickBooks AI**: Automatic expense categorization
+- **Google Analytics Intelligence**: Automatic website insights
+- **Excel/Sheets Copilot**: Conversational data analysis
+- **Wave Accounting**: Intelligent invoicing
+
+### **Human Resources (For When You Grow)**
+- **LinkedIn Recruiter AI**: Optimized talent search
+- **Grammarly Business**: Enhanced professional communication
+- **Calendly Team**: Automatic team coordination
+
+## Step-by-Step Implementation: Your First Week with AI
+
+### **Day 1-2: Process Audit**
+Identify the 3 tasks that consume most of your time daily. Ask yourself: *"Could an AI do this faster?"*
+
+### **Day 3-4: Tool Selection**
+Choose ONE tool for the most problematic process. Don't try to automate everything at once.
+
+### **Day 5-7: Implementation and Measurement**
+Configure, test, and measure impact. **Document time saved** - it will be your motivation to continue.
+
+## Mistakes You Must Avoid
+
+### ❌ **"AI Shiny Object Syndrome"**
+Testing all new tools without mastering any. **Focus on one, master it, then expand**.
+
+### ❌ **Expecting Immediate Perfection**
+AI is powerful but needs training. Prepare to iterate and improve prompts.
+
+### ❌ **Completely Replacing the Human Touch**
+AI should **amplify your personality**, not replace it. Customers still buy from people, not robots.
+
+### ❌ **Ignoring Data Privacy**
+Read terms of service. Some sensitive data shouldn't be uploaded to public AI tools.
+
+## The Real ROI: Numbers That Matter
+
+Based on my experience consulting small businesses that have implemented AI:
+
+### **Average Time Savings**
+- **Marketing**: 15-20 hours/week → 3-5 hours/week
+- **Customer Service**: 24/7 availability vs business hours
+- **Analysis**: 8 hours/month → 30 minutes/month
+
+### **Typical Revenue Increase**
+- **Lead capture**: +25-40% (24/7 availability)
+- **Upselling**: +15-25% (personalized recommendations)
+- **Retention**: +20-30% (automated follow-up)
+
+### **Cost Reduction**
+- **Design tools**: $200/month → $20/month
+- **Virtual assistant**: $1,200/month → $50/month
+- **Specialized software**: $300/month → $30/month
+
+## Preparing for the Future: Emerging AI
+
+### **Trends to Watch in 2025**
+- **Multimodal AI**: Tools that process text, image, audio, and video simultaneously
+- **Local AI**: Processing on your device without uploading data to the cloud
+- **Personalized AI**: Trained specifically with your business data
+- **Visual Automation**: AI that can "see" and interact with graphical interfaces
+
+## Your Action Plan: The Next 30 Days
+
+### **Week 1: Education**
+- Dedicate 30 minutes daily to exploring AI tools
+- Join AI communities for small businesses
+- Identify your most problematic process
+
+### **Week 2: Experimentation**
+- Try 2-3 free tools
+- Measure baseline time of your current process
+- Document first impressions and results
+
+### **Week 3: Implementation**
+- Choose the tool that worked best
+- Configure basic workflows
+- Train your team (if you have one)
+
+### **Week 4: Optimization**
+- Refine prompts and configurations
+- Measure real ROI (time saved + revenue generated)
+- Plan the next area to automate
+
+## Conclusion: AI is Your Most Efficient Employee
+
+Artificial intelligence won't replace small businesses that adopt it. **It will replace those that don't**.
+
+But remember: AI is a tool, not a magic solution. Its power lies in **amplifying your human experience**, not replacing it.
+
+The time to act is now. While your competitors debate whether AI is relevant to their industry, you can be **gaining real competitive advantage**.
+
+*Ready to turn artificial intelligence into your competitive advantage? Your business's future can start today.*
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Independent Technology Consultant specializing in AI-assisted development and full-stack solutions with 20+ years of experience",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2025-07-22"),
+    tags: [
+      "Artificial Intelligence",
+      "Small Business",
+      "Automation",
+      "Productivity",
+      "Technology",
+    ] as const,
+    category: "Business Technology",
+    readingTime: 14,
+    featured: false,
+    language: "en",
   },
 
   // Nuevo Post sobre Desarrollador en el Círculo de Emprendedores
@@ -610,6 +1575,280 @@ En el mundo actual, **no tener acceso a perspectiva tecnológica es como manejar
     readingTime: 16,
     featured: false,
     language: "es",
+  },
+
+  // English translation of Developer in Entrepreneur Circle post
+  {
+    id: "developer-entrepreneur-circle",
+    title:
+      "Why Every Entrepreneur Needs a Developer in Their Circle: Beyond the Code",
+    slug: "developer-entrepreneur-circle",
+    excerpt:
+      "Discover how having a developer in your network can transform your business, reduce technology costs, and give you competitive advantages that go far beyond creating websites.",
+    content: `
+# The Developer: Your Secret Business Weapon
+
+Throughout 25+ years in technology, I've observed an interesting pattern: **the most successful entrepreneurs don't necessarily understand programming, but they have developers in their inner circle**.
+
+I'm not talking about hiring one full-time. I'm talking about having access to **technology perspective** when making critical business decisions.
+
+## More Than Code: The Systems Perspective
+
+### The Developer as Process Architect
+
+Developers don't just write code; **we think in systems**. We see your business as a set of interconnected processes and identify optimization points that others don't see.
+
+**Real example**: A restaurant client wanted a delivery app. As a developer, I showed him his real problem wasn't the app, but the **order flow**. Result: we automated the existing process for $200/month vs $5,000 to develop an app.
+
+### Technical Translation: Saving You from Salespeople
+
+Typical scenario: *"You need a custom CRM, dedicated server, and premium licenses. Total: $15,000 upfront + $800 monthly."*
+
+Developer in your circle: *"This can be solved with Google Workspace ($12/month), Zapier ($20/month), and 2 hours of configuration."*
+
+**Immediate ROI**: Savings of $14,000+ from the first year.
+
+## The Cost Advantage: Real Numbers
+
+### Annual Cost Comparison
+
+\`\`\`
+TRADITIONAL SOLUTION:
+• E-commerce platform: $3,000/year
+• Email marketing: $1,200/year
+• CRM: $1,800/year
+• Website builder: $600/year
+• Analytics: $400/year
+TOTAL: $7,000/year
+
+DEVELOPER SOLUTION:
+• Vercel hosting: $240/year
+• Domain: $12/year
+• Initial setup: $2,000 one-time
+• Maintenance: $500/year
+TOTAL: $752/year (first year: $2,752)
+SAVINGS: 60-70% annual
+\`\`\`
+
+### The Real Cost of "Free"
+
+"Free" platforms have hidden costs:
+
+**Wix/Squarespace**:
+- Customization limitations
+- Total ecosystem dependency
+- Transaction commissions
+- **Real cost**: Limited control of your business
+
+**Facebook/Instagram Business**:
+- Changing algorithms
+- Restrictive policies
+- Non-exportable customer data
+- **Real cost**: Vulnerability to external changes
+
+## Use Cases: Developer as Strategic Consultant
+
+### 1. Technology Due Diligence
+
+**Situation**: You want to buy a business with "automated systems".
+
+**Without developer**: You trust what they tell you, possible unpleasant surprise later.
+
+**With developer**:
+- Real technical system audit
+- Identification of hidden technical debt
+- Realistic maintenance cost estimates
+- Data-based negotiating power
+
+### 2. Tool Selection
+
+**Situation**: You need an inventory system.
+
+**Without developer**:
+- Compare prices and features on paper
+- Possible incompatibility with existing processes
+- Migration costs not considered
+
+**With developer**:
+- Analysis of possible integrations
+- Real scalability evaluation
+- Gradual implementation plan
+- Backup strategy if the tool fails
+
+### 3. Technology Vendor Negotiation
+
+**Without developer**: *"Yes, we need everything you say."*
+
+**With developer**:
+- Specific technical questioning
+- Identification of unnecessary features
+- Proposals for more economical alternatives
+- Informed negotiation on technical terms
+
+## The Time Factor: Implementation Speed
+
+### Startup Speed vs Enterprise Speed
+
+**Large companies**: 6 months to launch a landing page (committees, approvals, processes).
+
+**Small business with developer**:
+- Idea → MVP: 2 weeks
+- Market testing: 1 month
+- Feedback-based iteration: Continuous
+
+This speed is **real competitive advantage** in dynamic markets.
+
+### Low-Cost Experimentation
+
+\`\`\`typescript
+// Agile development philosophy applied to business:
+const businessExperiment = {
+  hypothesis: "Customers want X feature",
+  mvp: "Basic version of X in 1 week",
+  measurement: "Real usage metrics",
+  decision: "Scale, pivot, or discard",
+  cost: "< $500 per experiment"
+}
+\`\`\`
+
+## Identifying Automation Opportunities
+
+### The Developer's Trained Eye
+
+Developers see **repetitive patterns** where others see "normal work":
+
+**Typical manual process**:
+1. Customer sends email with order
+2. You copy info to Excel
+3. Calculate price manually
+4. Send quote by email
+5. If accepted, create invoice
+6. Send payment link
+7. Update inventory
+
+**Developer's vision**:
+*"This is 15 minutes of automation that saves you 2 hours daily."*
+
+### Automation ROI
+
+**Investment**: 4 hours of development × $50/hour = $200
+**Savings**: 2 hours daily × $25/hour × 250 days = $12,500/year
+**ROI**: 6,150% annual
+
+## How to Find and Maintain This Relationship
+
+### Where to Find Entrepreneur-Friendly Developers
+
+1. **Local tech communities**: Meetups, coworking spaces
+2. **Freelancers with business experience**: Not just pure techies
+3. **Ex-consultants**: Understand business problems
+4. **Developers with side projects**: Entrepreneurial mindset
+
+### Structuring the Relationship
+
+**It's NOT**: Friend who does free favors
+**It IS**: Strategic consultant with fair rate
+
+**Models that work**:
+- **Monthly retainer**: $500-1,000/month for availability
+- **Equity stake**: Small percentage in exchange for development
+- **Project-based**: Fees per specific project
+- **Revenue sharing**: Percentage of revenue generated by solutions
+
+### Maximizing Relationship Value
+
+1. **Share your business vision**: More context = better solutions
+2. **Ask "How would you do this?"** before buying software
+3. **Involve them in tech decisions**: Small investment, great return
+4. **Respect their time**: Prior preparation = more effective consultations
+
+## Red Flags: When Developer is NOT the Answer
+
+### Warning Signs:
+- Only talks about technology, not business results
+- Always proposes the most complex solution
+- Doesn't ask about your customers or business model
+- Insists on technologies you don't know without explaining benefits
+
+### The Right Solution Isn't Always Technical:
+Sometimes you need to change processes, not automate them. A good developer will tell you when NOT to use technology.
+
+## Success Cases: Developers as Game Changers
+
+### Case 1: Local Restaurant → Regional Chain
+**Initial situation**: Successful family restaurant but geographically limited.
+
+**Developer contributed**:
+- Web-based franchise system
+- Automated remote training
+- Digital quality control
+- **Result**: 5 locations in 18 months
+
+### Case 2: Consultant → Course Platform
+**Initial situation**: Consultant selling time for money.
+
+**Developer contributed**:
+- Automated course platform
+- Certification system
+- Consultant marketplace
+- **Result**: $15K/month passive income
+
+### Case 3: Physical Store → Omnichannel
+**Initial situation**: Clothing store affected by pandemic.
+
+**Developer contributed**:
+- Unified inventory system
+- Hybrid shopping experience
+- Automated logistics
+- **Result**: 300% increase in online sales
+
+## Your Action Plan: Building Your Tech Network
+
+### **Month 1: Identification and Connection**
+- Map developers in your city/industry
+- Attend 2 tech events
+- Identify 3 potential candidates
+
+### **Month 2: Evaluation and First Collaboration**
+- Small test project ($200-500)
+- Evaluate communication and business understanding
+- Define future collaboration structure
+
+### **Month 3: Strategic Integration**
+- Include tech perspective in important decisions
+- Establish regular strategy meetings
+- Document achieved savings and optimizations
+
+## Conclusion: The Smartest Investment
+
+Having a developer in your circle isn't an expense; it's **the most profitable investment you can make**.
+
+It's not about technology for technology's sake. It's about having someone who thinks systematically, identifies inefficiencies, and converts problems into automated opportunities.
+
+While your competitors pay full prices for generic solutions, you'll have customized advantages at a fraction of the cost.
+
+In today's world, **not having access to technology perspective is like running a business blindfolded**.
+
+*Do you already have a developer in your circle? If not, what are you waiting for?*
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Independent Technology Consultant specializing in AI-assisted development and full-stack solutions with 20+ years of experience",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2025-01-24"),
+    tags: [
+      "Business Networking",
+      "Software Development",
+      "Cost Optimization",
+      "Technology Strategy",
+      "Entrepreneurship",
+    ] as const,
+    category: "Business Strategy",
+    readingTime: 16,
+    featured: false,
+    language: "en",
   },
 
   // Nuevo Post sobre Dominios Propios - Enfoque Técnico/Práctico
@@ -1030,6 +2269,426 @@ Recuerda: este es el beginning, no el final. Tu dominio propio es una plataforma
     readingTime: 18,
     featured: false,
     language: "es",
+  },
+
+  // English translation of Own Domain Guide post
+  {
+    id: "practical-guide-own-domain-business",
+    title:
+      "Practical Guide: How to Configure Your Own Domain in 7 Days (No Technical Knowledge Required)",
+    slug: "practical-guide-own-domain-business",
+    excerpt:
+      "Step-by-step tutorial for entrepreneurs without technical experience: from purchasing a domain to having a professional website running, with real costs and best practices.",
+    content: `
+# From Idea to Own Domain: Your 7-Day Roadmap
+
+After helping dozens of small businesses in Puerto Rico establish their digital presence, I've perfected a process that **guarantees results in one week**, regardless of your technical level.
+
+This isn't another generic tutorial. It's the exact system I've used with cafés in San Sebastián, consultancies in Las Marías, and stores in Mayagüez.
+
+## Pre-Requirements: What You Need Before Starting
+
+### Mental Preparation (Day 0)
+- **Mindset**: Your domain is an investment, not an expense
+- **Time**: 2-3 hours daily for 7 days
+- **Budget**: $100-300 for the first year (less than 2 restaurant dinners)
+
+### Tools We'll Use
+- **Namecheap or GoDaddy**: To purchase the domain
+- **Vercel or Netlify**: Free/economic hosting
+- **Canva**: Basic design (free)
+- **Google Workspace**: Professional email ($6/month)
+
+## Day 1: Domain Selection and Purchase
+
+### Step 1: Name Brainstorming (30 minutes)
+
+**Important criteria**:
+- Easy to remember and pronounce
+- Related to your business
+- Avoid numbers and hyphens
+- .com is preferable (greater credibility)
+
+**Helpful tools**:
+\`\`\`
+Name generators:
+• Namemesh.com
+• Lean domain search
+• Business name generator
+
+Availability verification:
+• Whois.net
+• Namecheap.com/domain-search
+\`\`\`
+
+### Step 2: Domain Purchase (15 minutes)
+
+**Process on Namecheap** (my recommendation for price/service):
+1. Search for your desired domain
+2. Add to cart (.com for ~$8-12/year)
+3. **DON'T add expensive extras** for now
+4. Complete purchase
+
+**⚠️ Important initial settings**:
+- Activate WhoisGuard (privacy protection)
+- Note your access credentials
+- Verify confirmation email
+
+### Step 3: Verification (15 minutes)
+Confirm you can access the domain control panel. This is critical for the following steps.
+
+## Day 2: Hosting and Professional Email Configuration
+
+### Hosting: Vercel (Recommended for Beginners)
+
+**Why Vercel**:
+- Generous free plan
+- Super simple configuration
+- Excellent worldwide performance
+- Scalable when you grow
+
+**Configuration process**:
+1. Register at vercel.com with your email
+2. Connect your GitHub account (creates automatically)
+3. Note the URLs it provides
+
+### Professional Email: The Crucial Difference
+
+**Impact comparison**:
+- ❌ **contact@gmail.com** → Amateur
+- ✅ **contact@yourbusiness.com** → Professional
+
+**Google Workspace setup** ($6/month, worth every penny):
+1. Go to admin.google.com
+2. "Get started" → "My company doesn't have a domain"
+3. Enter your purchased domain
+4. Follow verification process
+5. Configure your first email: contact@yourbusiness.com
+
+### Domain ↔ Services Connection (Technical But Easy)
+
+**In your Namecheap panel**:
+1. Domain List → Manage
+2. Advanced DNS → Add New Record
+
+**Necessary configurations**:
+\`\`\`
+For Vercel:
+A Record → @ → 76.76.19.61
+CNAME → www → cname.vercel-dns.com
+
+For Google Workspace:
+MX Record → @ → 1 aspmx.l.google.com
+MX Record → @ → 5 alt1.aspmx.l.google.com
+\`\`\`
+
+**💡 Pro tip**: These configurations take 24-48 hours to activate. Patience!
+
+## Day 3: Site Design and Structure
+
+### Information Architecture (1 hour)
+
+**Essential pages for any business**:
+1. **Home**: What you do, for whom, how to contact you
+2. **Services/Products**: Detailed offering with prices
+3. **About Us**: History, team, values
+4. **Contact**: Form, location, hours
+5. **Blog** (optional but recommended): SEO + expertise
+
+### Design Tools Without Being a Designer
+
+**Canva for Business** (free):
+- Pre-made professional templates
+- Stock photo library
+- Consistent colors and fonts
+- Web-optimized export
+
+**Creation process**:
+1. Select "Website" template relevant to your industry
+2. Customize with your information
+3. Maintain visual consistency (same color palette)
+4. Export sections as web-optimized images
+
+### Content Strategy: Content That Converts
+
+**Formula for each page**:
+1. **Clear headline**: What you do in 10 words
+2. **Explanatory subheading**: How you help the customer
+3. **Social proof**: Testimonials, logos, numbers
+4. **Call to action**: What you want them to do
+
+**Example for a restaurant**:
+\`\`\`
+Headline: "Authentic Creole Food in the Heart of Mayagüez"
+Subheading: "Traditional dishes made with family recipes
+             passed down through 3 generations"
+Social Proof: "Over 500 families choose us each week"
+CTA: "Make your reservation now" / "See our full menu"
+\`\`\`
+
+## Day 4: Website Implementation
+
+### Quick Option: WordPress.com Business Plan
+
+**Why WordPress for beginners**:
+- Intuitive visual editor
+- Professional themes included
+- Plugins for specific functionalities
+- Integrated basic SEO
+
+**Setup process**:
+1. WordPress.com → Business Plan ($25/month)
+2. Connect your purchased domain
+3. Select appropriate theme for your industry
+4. Install essential plugins
+
+### Essential Plugins:
+
+**For any business**:
+- **Yoast SEO**: Search engine optimization
+- **Contact Form 7**: Contact forms
+- **UpdraftPlus**: Automatic backups
+- **Wordfence**: Basic security
+
+**For online stores** (if you sell products):
+- **WooCommerce**: Complete e-commerce
+- **Stripe/PayPal**: Payment processing
+- **Inventory Manager**: Inventory control
+
+### Basic SEO Configuration (30 minutes)
+
+**In Yoast SEO**:
+1. Configuration Wizard → Follow the process
+2. Configure site title and description
+3. Add your location if local business
+4. Connect Google Search Console
+
+**Critical settings**:
+\`\`\`
+Site title: "Business Name | What You Do in City"
+Description: "Attractive description in 150 characters with keywords"
+Main keywords: 3-5 terms your customers search for
+\`\`\`
+
+## Day 5: Content and Optimization
+
+### Content Creation: Writing For Humans and Google
+
+**Successful page structure**:
+1. **H1** (main title): Include main keyword
+2. **Intro paragraph**: Summarize main benefit
+3. **H2** subsections: Organize information logically
+4. **Calls to action**: Every 2-3 paragraphs
+
+**Example structure for "Services" page**:
+\`\`\`markdown
+# Business Consulting Services in Mayagüez
+
+Does your business need to grow but don't know where to start?
+We offer personalized consulting for small and medium businesses.
+
+## Business Analysis
+- Current process evaluation
+- Opportunity identification
+- Detailed action plan
+
+[Request your free consultation]
+
+## Process Optimization
+- Repetitive task automation
+- Digital tool implementation
+- Team training
+
+[See our success cases]
+\`\`\`
+
+### Image Optimization (Critical for Performance)
+
+**Compression tools**:
+- TinyPNG.com: Reduces 70% weight without losing quality
+- Canva: Web-optimized export
+- WordPress: Smush plugin for automatic optimization
+
+**Best practices**:
+- JPG format for photos, PNG for logos/graphics
+- Maximum size: 1920px width for desktop
+- Descriptive alt text for SEO and accessibility
+
+## Day 6: Testing and Technical Configurations
+
+### Performance Testing: Speed Matters
+
+**Analysis tools**:
+- **PageSpeed Insights**: Official Google analysis
+- **GTmetrix**: Detailed analysis with recommendations
+- **Pingdom**: Testing from multiple locations
+
+**Important metrics**:
+- **Load time**: < 3 seconds ideal
+- **First paint**: < 1 second
+- **Mobile score**: > 90 critical
+
+### Basic Security Configurations
+
+**SSL Certificate** (HTTPS):
+- Vercel: Automatic and free
+- WordPress.com: Included in business plan
+- Verification: Green padlock in browser
+
+**Automated backups**:
+\`\`\`
+Configuration in UpdraftPlus:
+• Frequency: Weekly
+• Storage: Google Drive (free)
+• Include: Files + Database
+• Retention: 4 backups
+\`\`\`
+
+### Google Analytics and Search Console
+
+**Analytics setup** (15 minutes):
+1. analytics.google.com → Create account
+2. Add website
+3. Install tracking code (plugin facilitates this)
+4. Verify it receives data
+
+**Search Console** (10 minutes):
+1. search.google.com/search-console
+2. Add property
+3. Verify ownership
+4. Submit XML sitemap
+
+## Day 7: Launch and Promotion
+
+### Pre-Launch Checklist
+
+**Basic functionality**:
+- ✅ All pages load correctly
+- ✅ Contact forms work
+- ✅ Professional email receives/sends
+- ✅ Site looks good on mobile
+- ✅ Internal links function
+
+**Final content**:
+- ✅ Complete contact information
+- ✅ Clear prices (if applicable)
+- ✅ Business hours
+- ✅ Accepted payment methods
+
+### Launch Strategy: Maximize Impact
+
+**Launch sequence**:
+1. **Soft launch**: Share with close family/friends
+2. **Feedback gathering**: Collect comments and adjust
+3. **Social media announcement**: Posts on all your networks
+4. **Database email**: Notify existing customers
+5. **Local networking**: Share in business groups
+
+### Content Marketing: Beyond Launch
+
+**Blog strategy** (if you included blog):
+- 1 weekly post minimum
+- Focus on your customers' problems
+- Local SEO (include "in [your city]")
+- Share on social media
+
+## ROI Calculation: The Real Numbers
+
+### Total Investment (First Year):
+\`\`\`
+Domain: $12
+Google Workspace: $72 ($6 x 12 months)
+WordPress Business: $300 ($25 x 12 months)
+Additional tools: $50
+TOTAL: $434 first year
+\`\`\`
+
+### Typical Returns:
+- **Professional credibility**: Immediate impact on negotiations
+- **Lead capture**: 24/7 vs business hours only
+- **Geographic reach**: Local → regional → national
+- **Automation**: Inquiries, quotes, appointment scheduling
+
+### Break-even Analysis:
+If your own domain generates **1 additional customer per month** you wouldn't have gotten otherwise, you've already paid for the entire investment.
+
+## Post-Launch Maintenance: Keeping It Fresh
+
+### Weekly Routines (30 minutes):
+- Review analytics for insights
+- Respond to contact forms
+- Update information if there are changes
+- Share content on social media
+
+### Monthly Routines (2 hours):
+- Create new blog post
+- Review and optimize page with most traffic
+- Additional manual backup
+- Keyword and competition analysis
+
+### Quarterly Routines (4 hours):
+- Complete performance audit
+- Plugin and theme updates
+- ROI analysis and strategy adjustments
+- Planning new pages/functionalities
+
+## Troubleshooting: Common Problems
+
+### "My site doesn't appear on Google"
+**Solution**:
+- Verify Search Console setup
+- Submit sitemap manually
+- Create content regularly
+- **Expected time**: 2-8 weeks for indexing
+
+### "Emails don't arrive"
+**Solution**:
+- Verify MX records configuration
+- Check spam folder
+- Contact Google Workspace support
+
+### "Site loads very slowly"
+**Solution**:
+- Compress images with TinyPNG
+- Install cache plugin
+- Verify hosting performance
+
+## Conclusion: Your New Digital Asset
+
+In 7 days, you've created more than a website. You've established:
+- **Independent professional presence**
+- **24/7 lead capture system**
+- **Scalable growth platform**
+- **Digital asset that appreciates over time**
+
+Remember: this is the beginning, not the end. Your own domain is a platform that will grow with you and your business.
+
+**Recommended next steps**:
+1. Week 2: Focus on creating your first blog post
+2. Month 2: Implement basic automated chat
+3. Month 3: A/B test different calls to action
+4. Month 6: Consider e-commerce expansion if applicable
+
+*Completed the 7 days? Share your new domain! Every own domain is a victory for small business digital independence.*
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Independent Technology Consultant specializing in AI-assisted development and full-stack solutions with 20+ years of experience",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2025-01-26"),
+    tags: [
+      "Web Domains",
+      "Tutorial",
+      "Website",
+      "Small Business",
+      "Practical Guide",
+    ] as const,
+    category: "Tutorials",
+    readingTime: 18,
+    featured: false,
+    language: "en",
   },
 
   // Nuevo Post sobre Linux Development Journey
@@ -1564,6 +3223,160 @@ El éxito del programa en Las Marías demuestra que con el enfoque correcto, cua
     language: "es",
   },
 
+  // English translation of Las Marías Digital Transformation post
+  {
+    id: "digital-transformation-las-marias",
+    title:
+      "Digital Transformation: Lessons from the Digital Literacy Program in Las Marías",
+    slug: "digital-transformation-las-marias",
+    excerpt:
+      "Reflections on how an intensive 150-hour program transformed displaced adults into competent digital professionals, using the OSI model as an innovative educational framework.",
+    content: `
+# From Digital Exclusion to Technological Empowerment
+
+During my months as Digital Transformation Program Designer in Las Marías, Puerto Rico, I had the opportunity to design and implement an intensive program that would change lives: 150 hours of education that transformed displaced adults into competent digital professionals.
+
+This experience not only validated my pedagogical approach but also taught me profound lessons about the true impact of well-structured technology education.
+
+## The Challenge: Beyond Basic Literacy
+
+When I arrived in Las Marías, I faced a complex reality. It wasn't simply about teaching computer use, but about **completely transforming participants' relationship with technology**.
+
+### The Problem with Traditional Approaches
+Most digital literacy programs fail because they:
+- Teach isolated tools without conceptual connection
+- Don't link learning with immediate economic opportunities
+- Lack a theoretical framework that helps understand the "why"
+- Don't consider local cultural and economic context
+
+## The Innovation: The OSI Model as Educational Framework
+
+My 25+ year background in software development led me to an unexpected connection: **Why not use the OSI networking model as a pedagogical structure?**
+
+### The 7 Levels Applied to Digital Education:
+
+#### **Levels 1-4: Physical Foundations and Connectivity (Days 1-10)**
+- **Physical Level**: Computers, devices, cables
+- **Data Link**: Local connections, WiFi, Bluetooth
+- **Network**: Internet, browsing, email
+- **Transport**: Cloud storage, backups, synchronization
+
+#### **Transversal Security (Days 11-15)**
+I implemented an intensive cybersecurity module because I understood that without digital security, any progress would be vulnerable.
+
+#### **Levels 5-7: Applications for Success (Days 16-30)**
+- **Session**: Collaboration, video conferencing, productivity
+- **Presentation**: Professional documents, resumes, presentations
+- **Application**: E-commerce, digital marketing, online presence
+
+## Measurable Results: Real Transformation
+
+### Program Statistics:
+- **Completion rate**: 85% (significantly higher than national average)
+- **Post-program employability**: 70% of participants with new opportunities
+- **Completed projects**: 100% finished with executive resume and business plan
+- **Multiplier effect**: Each graduate taught skills to 3+ additional people
+
+### Featured Success Cases:
+
+#### María Elena, 52 years old
+*"I never thought I could have my own online store. Now I sell my crafts to people in the United States."*
+
+#### José Ramón, 61 years old
+*"I learned to do professional video calls. Now I offer organic agriculture consulting from my home."*
+
+## Lessons Learned: The Real Secret to Success
+
+### 1. Conceptual Progression is Key
+You can't teach digital marketing if the person doesn't understand what a network is. The OSI model provided a logical progression where each concept builds on the previous one.
+
+### 2. Free Tools + AI = Democratization
+Focusing on free alternatives (Google Workspace, LibreOffice, Canva) combined with AI (ChatGPT, Claude) eliminated economic barriers and amplified capabilities.
+
+### 3. Cultural Context Amplifies Learning
+Using specific examples from Las Marías, integrating community values, and connecting with the local economy made learning more relevant and lasting.
+
+### 4. Continuous Assessment Prevents Abandonment
+Pre-tests, post-tests, and daily homework assignments kept participants engaged and allowed for early interventions.
+
+## The AI Component: Educational Game Changer
+
+### Strategic Integration of AI Tools:
+- **ChatGPT/Claude**: Personal assistants for content generation
+- **Canva AI**: Professional graphic design without prior experience
+- **Grammarly**: Automatic written communication improvement
+- **Notion AI**: Business organization and productivity
+
+\`\`\`typescript
+// Example of how we taught effective prompting:
+const professionalPrompt = {
+  context: "I'm a café owner in Las Marías, Puerto Rico",
+  task: "Create product description for organic coffee",
+  audience: "Tourists visiting the island",
+  tone: "Welcoming and authentic",
+  constraints: "Maximum 100 words, include local history"
+};
+\`\`\`
+
+## Community Impact: Beyond the Classroom
+
+### Local Economic Development
+The program created a domino effect:
+- New digital micro-businesses
+- Improved online presence of existing businesses
+- Technology support network among participants
+- Attraction of new remote employment opportunities
+
+### Digital Cultural Preservation
+Participants not only adopted technology but used it to preserve and share local traditions:
+- Digital documentation of traditional recipes
+- Educational videos about local agriculture
+- Online stores for typical crafts
+
+## Replicability: Framework for Other Contexts
+
+### Essential Elements to Replicate:
+1. **Solid Conceptual Framework** (the OSI model worked, but other frameworks could serve)
+2. **Logical Progression** from simple to complex skills
+3. **AI Integration** as capability multiplier
+4. **Strong Local Context** with relevant examples
+5. **Continuous Evaluation** to prevent abandonment
+6. **Focus on Immediate ROI** - each skill must have practical application
+
+## Personal Reflection: What This Program Taught Me
+
+As a developer with 25+ years of experience, I thought I would be teaching technology. But I discovered I was **facilitating human transformation**.
+
+Seeing adults who felt digitally excluded become content creators, online entrepreneurs, and technology consultants reminded me why I chose this profession.
+
+## Conclusion: Education as Social Justice
+
+Digital literacy isn't just a technical skill; it's **social justice in the digital era**. When we design culturally relevant, measurably effective, and economically practical technology education, we're building bridges to opportunities that previously seemed unattainable.
+
+The success of the Las Marías program demonstrates that with the right approach, any community can digitally transform without losing its cultural identity.
+
+*Technology doesn't replace humanity; it amplifies it.*
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Independent Technology Consultant specializing in AI-assisted development and full-stack solutions with 20+ years of experience",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2025-01-18"),
+    tags: [
+      "Digital Education",
+      "Social Transformation",
+      "AI in Education",
+      "Community Development",
+      "Pedagogical Innovation",
+    ] as const,
+    category: "Digital Education",
+    readingTime: 10,
+    featured: false,
+    language: "en",
+  },
+
   // English version of Programming Paradigm Shift
   {
     id: "prolog-prompting-programming-paradigm-shift",
@@ -1655,7 +3468,7 @@ The paradigm has shifted, but the magic remains. We're still turning ideas into 
     ] as const,
     category: "Technology Reflections",
     readingTime: 8,
-    featured: true,
+    featured: false,
     language: "en",
   },
 
@@ -1984,6 +3797,53 @@ The beauty of this approach lies in its simplicity and performance characteristi
     featured: false,
     language: "en",
   },
+
+  // Spanish translation of Next.js App Router Guide post
+  {
+    id: "guia-next-js-app-router",
+    title:
+      "Dominando el App Router de Next.js: Guía Completa para el Desarrollo Web Moderno",
+    slug: "guia-next-js-app-router",
+    excerpt:
+      "Explora el poder del App Router de Next.js y cómo revoluciona el desarrollo con React mediante componentes de servidor, rendimiento mejorado y patrones de enrutamiento optimizados.",
+    content: `
+# Introducción al App Router de Next.js
+
+El App Router representa una evolución significativa en la arquitectura de Next.js, introduciendo componentes de servidor y un nuevo paradigma para construir aplicaciones React.
+
+## Beneficios Clave
+
+Los componentes de servidor nos permiten renderizar componentes en el servidor, reduciendo el JavaScript del lado del cliente y mejorando el rendimiento. Esto es particularmente beneficioso para aplicaciones con mucho contenido como blogs.
+
+## Patrones de Implementación
+
+Al construir con App Router, organizamos nuestras rutas usando el enrutamiento basado en sistema de archivos, donde cada carpeta representa un segmento de ruta.
+
+\`\`\`typescript
+// Ejemplo de un componente de servidor
+export default async function BlogPost() {
+  const post = await fetchBlogPost();
+  return <article>{post.content}</article>;
+}
+\`\`\`
+
+La belleza de este enfoque radica en su simplicidad y características de rendimiento.
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Consultor Tecnológico Independiente especializado en desarrollo asistido por IA y soluciones full-stack con 20+ años de experiencia",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2024-12-15"),
+    updatedAt: new Date("2025-01-15"),
+    tags: ["Next.js", "React", "Desarrollo Web", "App Router"] as const,
+    category: "Desarrollo Web",
+    readingTime: 8,
+    featured: false,
+    language: "es",
+  },
+
   {
     id: "typescript-strict-mode",
     title:
@@ -2037,6 +3897,62 @@ This defensive approach to coding prevents countless production issues.
     featured: false,
     language: "en",
   },
+
+  // Spanish translation of TypeScript Strict Mode post
+  {
+    id: "typescript-modo-estricto",
+    title:
+      "Por Qué el Modo Estricto de TypeScript es Esencial para el Desarrollo Profesional",
+    slug: "typescript-modo-estricto",
+    excerpt:
+      "Aprende cómo el modo estricto de TypeScript detecta errores temprano, mejora la calidad del código y crea aplicaciones más mantenibles en entornos empresariales.",
+    content: `
+# El Poder del Modo Estricto de TypeScript
+
+El modo estricto de TypeScript no es solo una opción de configuración—es un compromiso con la calidad y mantenibilidad del código.
+
+## Qué Habilita el Modo Estricto
+
+El modo estricto activa varias opciones del compilador que detectan errores comunes de programación:
+- \`noImplicitAny\`: Previene tipos any implícitos
+- \`strictNullChecks\`: Requiere manejo explícito de null y undefined
+- \`strictFunctionTypes\`: Asegura la seguridad de tipos en funciones
+
+## Impacto en el Mundo Real
+
+En mi experiencia migrando bases de código legacy de JavaScript a TypeScript, habilitar el modo estricto frecuentemente revela docenas de errores potenciales en tiempo de ejecución que de otra manera pasarían desapercibidos hasta producción.
+
+\`\`\`typescript
+// Sin modo estricto, esto compila pero puede fallar en tiempo de ejecución
+function processUser(user) {
+  return user.name.toUpperCase(); // ¿Qué pasa si user es null?
+}
+
+// Con modo estricto, se nos obliga a manejar casos especiales
+function processUser(user: User | null): string {
+  if (!user || !user.name) {
+    throw new Error('Datos de usuario inválidos');
+  }
+  return user.name.toUpperCase();
+}
+\`\`\`
+
+Este enfoque defensivo de codificación previene innumerables problemas en producción.
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Consultor Tecnológico Independiente especializado en desarrollo asistido por IA y soluciones full-stack con 20+ años de experiencia",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2024-11-20"),
+    tags: ["TypeScript", "Calidad de Código", "Mejores Prácticas"] as const,
+    category: "Programación",
+    readingTime: 6,
+    featured: false,
+    language: "es",
+  },
+
   {
     id: "career-lessons-25-years",
     title: "25+ Years in Software Engineering: Lessons Learned",
@@ -2158,8 +4074,134 @@ But that's what makes it wonderful. Every day brings new challenges, new learnin
     ] as const,
     category: "Career",
     readingTime: 15,
-    featured: true,
+    featured: false,
     language: "en",
+  },
+
+  // Spanish translation of Career Lessons post
+  {
+    id: "lecciones-carrera-25-anos",
+    title: "25+ Años en Ingeniería de Software: Lecciones Aprendidas",
+    slug: "lecciones-carrera-25-anos",
+    excerpt:
+      "Reflexiones sobre un viaje de carrera de un cuarto de siglo desde Visual Basic hasta tecnologías web modernas, incluyendo insights sobre evolución tecnológica y crecimiento profesional.",
+    content: `
+# Un Cuarto de Siglo de Código
+
+Cuando comencé a programar profesionalmente en 1998, la web era un lugar diferente. Construíamos aplicaciones con Visual Basic, ASP Classic y SQL Server. JavaScript apenas se consideraba un lenguaje de programación "real".
+
+## Evolución Tecnológica: Abrazando el Cambio
+
+La lección más importante que he aprendido es que **la tecnología nunca deja de evolucionar**, y nosotros tampoco deberíamos.
+
+### De Escritorio a Web a Móvil a IA
+
+He presenciado y participado en cambios importantes de paradigma:
+- **Aplicaciones de Escritorio** (VB, WinForms, WPF)
+- **Revolución Web** (ASP.NET, MVC, Web API)
+- **Era Móvil** (Xamarin, diseño responsivo)
+- **Web Moderno** (React, Next.js, TypeScript)
+- **Integración de IA** (APIs de ChatGPT, automatización)
+
+Cada transición requirió no solo aprender nueva sintaxis, sino **repensar enfoques fundamentales** para la resolución de problemas.
+
+## El Lado Humano de la Tecnología
+
+### Construyendo Equipos, No Solo Código
+
+Trabajar en Disney me enseñó que los proyectos más exitosos no son necesariamente aquellos con la tecnología más avanzada, sino aquellos con la mejor colaboración entre:
+- **Desarrolladores** que entienden necesidades de negocio
+- **Diseñadores** que priorizan experiencia de usuario
+- **Product owners** que pueden traducir requisitos claramente
+- **Stakeholders** que confían en el proceso
+
+### Mentoría: El Interés Compuesto del Conocimiento
+
+Algunas de mis experiencias más gratificantes han sido mentor de desarrolladores junior. Recientemente, diseñar el programa de Alfabetización Digital en Puerto Rico me recordó que **enseñar amplifica el aprendizaje**.
+
+## Principios Técnicos que Perduran
+
+### 1. Simplicidad Sobre Inteligencia
+\`\`\`csharp
+// Inteligente pero difícil de mantener
+var result = users.Where(u => u.Status == "Active")
+                 .SelectMany(u => u.Orders.Where(o => o.Date > cutoff))
+                 .GroupBy(o => o.Category)
+                 .ToDictionary(g => g.Key, g => g.Sum(o => o.Amount));
+
+// Claro y mantenible
+var activeUsers = users.Where(u => u.Status == "Active");
+var recentOrders = activeUsers.SelectMany(u => u.Orders)
+                             .Where(o => o.Date > cutoff);
+var salesByCategory = recentOrders.GroupBy(o => o.Category)
+                                 .ToDictionary(g => g.Key, g => g.Sum(o => o.Amount));
+\`\`\`
+
+### 2. Invertir en Herramientas y Procesos
+Las buenas herramientas pagan dividendos durante décadas. Todavía uso scripts de automatización que escribí hace 15 años.
+
+### 3. La Documentación es Carta de Amor al Yo Futuro
+Tu yo futuro (y tus compañeros de equipo) te agradecerán por documentación clara y concisa.
+
+## Pivotes de Carrera: Abrazando la Incertidumbre
+
+### De Corporativo a Consultoría
+Dejar Disney después de 6 años para convertirme en consultor independiente fue aterrador pero necesario. Las habilidades que desarrollé en entornos empresariales se tradujeron hermosamente para ayudar a pequeñas empresas con su transformación digital.
+
+### El Llamado de la Enseñanza
+Mi trabajo reciente en tecnología educativa no estaba planeado, pero ha sido increíblemente gratificante. Usar mi experiencia técnica para diseñar currículos que realmente cambian vidas se siente como una evolución natural.
+
+## Mirando Hacia Adelante: Los Próximos 25 Años
+
+### Lo que me Emociona:
+- **IA como Socio de Desarrollo**: Herramientas que entienden contexto y generan código significativo
+- **WebAssembly**: Trayendo lenguajes de sistemas al navegador
+- **Edge Computing**: Reduciendo latencia y mejorando experiencia de usuario
+- **Software Sostenible**: Código que considera impacto ambiental
+
+### De lo que Soy Cauteloso:
+- **Dependencia excesiva en IA**: Manteniendo habilidades de pensamiento crítico
+- **Deuda Técnica**: La tentación de moverse rápido y romper cosas
+- **Seguridad**: A medida que los sistemas se vuelven más complejos, las superficies de ataque crecen
+
+## Consejo para la Próxima Generación
+
+### Para Nuevos Desarrolladores:
+1. **Domina los fundamentals**: Algoritmos, estructuras de datos y patrones de diseño nunca pasan de moda
+2. **Construye cosas**: Proyectos personales enseñan más que tutoriales
+3. **Comunica claramente**: Tu código se lee más de lo que se escribe
+4. **Mantente curioso**: La tecnología que te hará obsoleto probablemente no existe todavía
+
+### Para Quienes Cambian de Carrera:
+1. **Aprovecha tu experiencia de dominio**: Tu experiencia en finanzas/educación/salud te da contexto que los desarrolladores puros carecen
+2. **Enfócate en resolución de problemas**: La sintaxis puede aprenderse, pero el pensamiento analítico es tu superpoder
+3. **Haz networking auténticamente**: Las relaciones importan más de lo que piensas
+
+## Conclusión: Se Trata del Viaje
+
+Mirando hacia atrás a 25+ años en este campo, me impacta cuánto ha cambiado y cuánto ha permanecido igual. Todavía resolvemos problemas, todavía trabajamos con personas, y todavía nos frustramos cuando algo no funciona como se esperaba.
+
+Pero eso es lo que lo hace maravilloso. Cada día trae nuevos desafíos, nuevas oportunidades de aprendizaje y nuevas formas de impactar las vidas de las personas a través de la tecnología.
+
+**El mejor consejo de carrera que puedo dar**: Mantente curioso, sé amable y nunca dejes de construir cosas que importan.
+    `,
+    author: {
+      name: "Mario Rafael Ayala",
+      avatar: "/mra-profile.jpg",
+      bio: "Consultor Tecnológico Independiente especializado en desarrollo asistido por IA y soluciones full-stack con 20+ años de experiencia",
+      url: "https://www.mariorafaelayala.com"
+    },
+    publishedAt: new Date("2024-10-15"),
+    tags: [
+      "Desarrollo de Carrera",
+      "Ingeniería de Software",
+      "Crecimiento Profesional",
+      "Evolución Tecnológica",
+    ] as const,
+    category: "Carrera",
+    readingTime: 15,
+    featured: false,
+    language: "es",
   },
 
   // New Post - Claude Code & Gespervis Experience (English)
@@ -2437,7 +4479,7 @@ The future of software development isn't human OR AI—it's human AND AI, workin
     ] as const,
     category: "Development",
     readingTime: 12,
-    featured: true,
+    featured: false,
     language: "en",
   },
 
@@ -2716,7 +4758,7 @@ El futuro del desarrollo de software no es humano O IA—es humano Y IA, trabaja
     ] as const,
     category: "Desarrollo",
     readingTime: 12,
-    featured: true,
+    featured: false,
     language: "es",
   },
 
@@ -3222,7 +5264,7 @@ The future of Agile isn't human OR AI—it's human AND AI, working together to b
     ] as const,
     category: "Development",
     readingTime: 14,
-    featured: true,
+    featured: false,
     language: "en",
   },
 
@@ -3557,7 +5599,7 @@ Al manejar tareas repetitivas e intensivas en datos, el agente libera a los Scru
     ] as const,
     category: "Desarrollo",
     readingTime: 14,
-    featured: true,
+    featured: false,
     language: "es",
   },
 ] as const;
