@@ -1,7 +1,11 @@
 import { Metadata } from "next";
 import { HeroSection } from "./components/hero-section";
 import { ProblemSection } from "./components/problem-section";
+import { SolutionBento } from "./components/solution-bento";
 import { ServicesGrid } from "./components/services-grid";
+import { ComparisonTable } from "./components/comparison-table";
+import { PricingCards } from "./components/pricing-cards";
+import { FAQAccordion } from "./components/faq-accordion";
 import { CTAForm } from "./components/cta-form";
 
 export const metadata: Metadata = {
@@ -40,10 +44,20 @@ export default function ServicesPage() {
       {/* Phase 1 Components */}
       <HeroSection />
       <ProblemSection />
+      <SolutionBento />
       <ServicesGrid />
-      <CTAForm />
 
-      {/* Phase 2-3 components will be added here */}
+      {/* Phase 2 Components */}
+      <ComparisonTable />
+      <PricingCards />
+      <FAQAccordion />
+
+      {/* CTA Form */}
+      <div id="cta-form">
+        <CTAForm />
+      </div>
+
+      {/* Phase 3 components: Testimonials, Process Timeline, Food Industry - Coming next */}
     </main>
   );
 }
