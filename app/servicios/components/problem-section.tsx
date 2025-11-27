@@ -139,9 +139,14 @@ function AnimatedCounter({
   isInView: boolean;
 }) {
   const [displayValue, setDisplayValue] = useState("$0");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isInView) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isInView || !mounted) return;
 
     // Animate from 0 to 4.6 billion
     const duration = 2000; // 2 seconds
@@ -163,6 +168,7 @@ function AnimatedCounter({
     }, duration / steps);
 
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInView, value]);
 
   return (
