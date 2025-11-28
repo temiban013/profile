@@ -1,0 +1,35 @@
+---
+title: "Dominando el App Router de Next.js: Guía Completa para el Desarrollo Web Moderno"
+slug: guia-next-js-app-router
+description: Explora el poder del App Router de Next.js y cómo revoluciona el desarrollo con React mediante componentes de servidor, rendimiento mejorado y patrones de enrutamiento optimizados.
+date: 2024-12-15
+author: mario-ayala
+locale: es
+category: Desarrollo Web
+tags: ["Next.js", "React", "Desarrollo Web", "App Router"]
+featured: false
+draft: false
+translationSlug: next-js-app-router-guide
+---
+
+# Introducción al App Router de Next.js
+
+El App Router representa una evolución significativa en la arquitectura de Next.js, introduciendo componentes de servidor y un nuevo paradigma para construir aplicaciones React.
+
+## Beneficios Clave
+
+Los componentes de servidor nos permiten renderizar componentes en el servidor, reduciendo el JavaScript del lado del cliente y mejorando el rendimiento. Esto es particularmente beneficioso para aplicaciones con mucho contenido como blogs.
+
+## Patrones de Implementación
+
+Al construir con App Router, organizamos nuestras rutas usando el enrutamiento basado en sistema de archivos, donde cada carpeta representa un segmento de ruta.
+
+```typescript
+// Ejemplo de un componente de servidor
+export default async function BlogPost() {
+  const post = await fetchBlogPost();
+  return <article>{post.content}</article>;
+}
+```
+
+La belleza de este enfoque radica en su simplicidad y características de rendimiento.

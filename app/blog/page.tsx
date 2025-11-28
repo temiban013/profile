@@ -2,47 +2,70 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllBlogPosts } from "@/lib/blog-data";
+import { getAllPosts, getPostStats, type Post } from "@/lib/blog/content";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { getTranslation } from "@/lib/i18n";
-import type { BlogPost } from "@/types/blog";
 import { BlogSectionStructuredData } from "@/components/seo/structured-data";
+import type { BlogPost } from "@/types/blog";
+
+/**
+ * Convert Velite Post to legacy BlogPost format for existing components
+ */
+function tolegacyPost(post: Post): BlogPost {
+  return {
+    id: post.slug,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.description,
+    content: post.raw,
+    publishedAt: new Date(post.date),
+    updatedAt: post.updated ? new Date(post.updated) : undefined,
+    tags: post.tags,
+    category: post.category,
+    readingTime: post.readingTime,
+    featured: post.featured,
+    language: post.locale,
+  };
+}
 
 /**
  * Blog Listing Page Component
  *
- * Now a Client Component to access language context for bilingual filtering.
+ * Now using Velite-powered MDX content.
  * Filters blog posts based on the current language selection.
  */
 export default function BlogPage() {
   const { language } = useLanguage();
-  const [allPosts, setAllPosts] = useState<readonly BlogPost[]>([]);
-  const [featuredPosts, setFeaturedPosts] = useState<readonly BlogPost[]>([]);
-  const [recentPosts, setRecentPosts] = useState<readonly BlogPost[]>([]);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
+  const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
+  const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
+  const [stats, setStats] = useState({ totalPosts: 0, avgReadingTime: 0, uniqueTags: 0 });
 
   useEffect(() => {
-    // Filter posts by current language
-    const languageFilteredPosts = getAllBlogPosts({ language });
-    const languageFeatured = getAllBlogPosts({ featured: true, language });
-    const languageRecent = getAllBlogPosts({ featured: false, language });
+    // Get posts from Velite content
+    const locale = language as "en" | "es";
+    const all = getAllPosts({ locale }).map(tolegacyPost);
+    const featured = getAllPosts({ locale, featured: true }).map(tolegacyPost);
+    const recent = getAllPosts({ locale, featured: false }).map(tolegacyPost);
+    const postStats = getPostStats(locale);
 
-    setAllPosts(languageFilteredPosts);
-    setFeaturedPosts(languageFeatured);
-    setRecentPosts(languageRecent);
+    setAllPosts(all);
+    setFeaturedPosts(featured);
+    setRecentPosts(recent);
+    setStats(postStats);
   }, [language]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Structured Data for SEO */}
       <BlogSectionStructuredData posts={allPosts} language={language} />
+
       {/* Hero section for the blog */}
       <section className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto pt-25 px-4 py-16 max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
-            <span className="text-gradient">
-              {getTranslation("blogTitle", language)}
-            </span>
+            <span className="text-gradient">{getTranslation("blogTitle", language)}</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl text-center mx-auto">
             {getTranslation("blogSubtitle", language)}
@@ -77,38 +100,23 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* Blog statistics - demonstrates data processing */}
+        {/* Blog statistics */}
         <section className="mt-16 bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             {getTranslation("blogStats", language)}
           </h3>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                {allPosts.length}
-              </div>
-              <div className="text-gray-600 dark:text-gray-300">
-                {getTranslation("totalArticles", language)}
-              </div>
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.totalPosts}</div>
+              <div className="text-gray-600 dark:text-gray-300">{getTranslation("totalArticles", language)}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                {allPosts.length > 0 ? Math.round(
-                  allPosts.reduce((sum, post) => sum + post.readingTime, 0) /
-                    allPosts.length
-                ) : 0}
-              </div>
-              <div className="text-gray-600 dark:text-gray-300">
-                {getTranslation("avgReadingTime", language)}
-              </div>
+              <div className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.avgReadingTime}</div>
+              <div className="text-gray-600 dark:text-gray-300">{getTranslation("avgReadingTime", language)}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                {new Set(allPosts.flatMap((post) => post.tags)).size}
-              </div>
-              <div className="text-gray-600 dark:text-gray-300">
-                {getTranslation("uniqueTopics", language)}
-              </div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.uniqueTags}</div>
+              <div className="text-gray-600 dark:text-gray-300">{getTranslation("uniqueTopics", language)}</div>
             </div>
           </div>
         </section>

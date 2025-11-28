@@ -1,10 +1,10 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
-import { getAllBlogPosts } from "@/lib/blog-data";
+import { getAllPosts } from "@/lib/blog/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Base URL for your site
-  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mariorafaelayala.com'}`;
+  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com"}`;
 
   // Main site pages and sections
   const routes = ["", "/#about", "/#projects", "/#experience", "/#contact", "/resume"];
@@ -30,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.9, // High priority for resume
-    }
+    },
   ];
 
   // Blog main page
@@ -42,10 +42,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   };
 
   // Individual blog post entries for SEO
-  const allPosts = getAllBlogPosts();
+  const allPosts = getAllPosts();
   const blogPostEntries = allPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post.updatedAt || post.publishedAt,
+    lastModified: post.updated ? new Date(post.updated) : new Date(post.date),
     changeFrequency: "monthly" as const,
     priority: post.featured ? 0.8 : 0.6,
   }));

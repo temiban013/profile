@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "#site/content": ["./.velite"]
     }
   },
   "include": [
@@ -27,6 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    ".velite/**/*.ts",
     "tailwindcss.config.js"
   ],
   "exclude": ["node_modules"]

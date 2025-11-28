@@ -1,0 +1,112 @@
+---
+title: "25+ Years in Software Engineering: Lessons Learned"
+slug: career-lessons-25-years
+description: Reflections on a quarter-century career journey from Visual Basic to modern web technologies, including insights on technology evolution and professional growth.
+date: 2024-10-15
+author: mario-ayala
+locale: en
+category: Career
+tags: ["Career Development", "Software Engineering", "Professional Growth", "Technology Evolution"]
+featured: false
+draft: false
+translationSlug: lecciones-carrera-25-anos
+---
+
+# A Quarter Century of Code
+
+When I started programming professionally in 1998, the web was a different place. We built applications with Visual Basic, ASP Classic, and SQL Server. JavaScript was barely considered a "real" programming language.
+
+## Technology Evolution: Embracing Change
+
+The most important lesson I've learned is that **technology never stops evolving**, and neither should we.
+
+### From Desktop to Web to Mobile to AI
+
+I've witnessed and participated in major paradigm shifts:
+- **Desktop Applications** (VB, WinForms, WPF)
+- **Web Revolution** (ASP.NET, MVC, Web API)
+- **Mobile Era** (Xamarin, responsive design)
+- **Modern Web** (React, Next.js, TypeScript)
+- **AI Integration** (ChatGPT APIs, automation)
+
+Each transition required not just learning new syntax, but **rethinking fundamental approaches** to problem-solving.
+
+## The Human Side of Technology
+
+### Building Teams, Not Just Code
+
+Working at Disney taught me that the most successful projects aren't necessarily those with the most advanced technology, but those with the best collaboration between:
+- **Developers** who understand business needs
+- **Designers** who prioritize user experience
+- **Product owners** who can translate requirements clearly
+- **Stakeholders** who trust the process
+
+### Mentoring: The Compound Interest of Knowledge
+
+Some of my most rewarding experiences have been mentoring junior developers. Recently, designing the Digital Literacy program in Puerto Rico reminded me that **teaching amplifies learning**.
+
+## Technical Principles That Endure
+
+### 1. Simplicity Over Cleverness
+```csharp
+// Clever but hard to maintain
+var result = users.Where(u => u.Status == "Active")
+                 .SelectMany(u => u.Orders.Where(o => o.Date > cutoff))
+                 .GroupBy(o => o.Category)
+                 .ToDictionary(g => g.Key, g => g.Sum(o => o.Amount));
+
+// Clear and maintainable
+var activeUsers = users.Where(u => u.Status == "Active");
+var recentOrders = activeUsers.SelectMany(u => u.Orders)
+                             .Where(o => o.Date > cutoff);
+var salesByCategory = recentOrders.GroupBy(o => o.Category)
+                                 .ToDictionary(g => g.Key, g => g.Sum(o => o.Amount));
+```
+
+### 2. Invest in Tools and Process
+Good tooling pays dividends over decades. I still use automation scripts I wrote 15 years ago.
+
+### 3. Documentation is Love Letter to Future You
+Your future self (and your teammates) will thank you for clear, concise documentation.
+
+## Career Pivots: Embracing Uncertainty
+
+### From Corporate to Consulting
+Leaving Disney after 6 years to become an independent consultant was terrifying but necessary. The skills I'd developed in enterprise environments translated beautifully to helping small businesses with their digital transformation.
+
+### The Teaching Calling
+My recent work in educational technology wasn't planned, but it's been incredibly fulfilling. Using my technical background to design curricula that actually change lives feels like a natural evolution.
+
+## Looking Forward: The Next 25 Years
+
+### What I'm Excited About:
+- **AI as a Development Partner**: Tools that understand context and generate meaningful code
+- **WebAssembly**: Bringing systems languages to the browser
+- **Edge Computing**: Reducing latency and improving user experience
+- **Sustainable Software**: Code that considers environmental impact
+
+### What I'm Cautious About:
+- **Over-reliance on AI**: Maintaining critical thinking skills
+- **Technical Debt**: The temptation to move fast and break things
+- **Security**: As systems become more complex, attack surfaces grow
+
+## Advice for the Next Generation
+
+### For New Developers:
+1. **Master the fundamentals**: Algorithms, data structures, and design patterns never go out of style
+2. **Build things**: Side projects teach you more than tutorials ever will
+3. **Communicate clearly**: Your code is read more than it's written
+4. **Stay curious**: The technology that makes you obsolete probably doesn't exist yet
+
+### For Career Changers:
+1. **Leverage your domain expertise**: Your background in finance/education/healthcare gives you context that pure developers lack
+2. **Focus on problem-solving**: Syntax can be learned, but analytical thinking is your superpower
+3. **Network authentically**: Relationships matter more than you think
+
+## Conclusion: It's About the Journey
+
+Looking back at 25+ years in this field, I'm struck by how much has changed and how much has stayed the same. We still solve problems, we still work with people, and we still get frustrated when something doesn't work as expected.
+
+But that's what makes it wonderful. Every day brings new challenges, new learning opportunities, and new ways to impact people's lives through technology.
+
+**The best career advice I can give**: Stay curious, be kind, and never stop building things that matter.

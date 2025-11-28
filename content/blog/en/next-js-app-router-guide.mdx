@@ -1,0 +1,35 @@
+---
+title: "Mastering Next.js App Router: A Complete Guide for Modern Web Development"
+slug: next-js-app-router-guide
+description: Explore the power of Next.js App Router and how it revolutionizes React development with server components, improved performance, and streamlined routing patterns.
+date: 2024-12-15
+author: mario-ayala
+locale: en
+category: Web Development
+tags: ["Next.js", "React", "Web Development", "App Router"]
+featured: false
+draft: false
+translationSlug: guia-next-js-app-router
+---
+
+# Introduction to Next.js App Router
+
+The App Router represents a significant evolution in Next.js architecture, introducing server components and a new paradigm for building React applications.
+
+## Key Benefits
+
+Server components allow us to render components on the server, reducing client-side JavaScript and improving performance. This is particularly beneficial for content-heavy applications like blogs.
+
+## Implementation Patterns
+
+When building with App Router, we organize our routes using the file-system based routing, where each folder represents a route segment.
+
+```typescript
+// Example of a server component
+export default async function BlogPost() {
+  const post = await fetchBlogPost();
+  return <article>{post.content}</article>;
+}
+```
+
+The beauty of this approach lies in its simplicity and performance characteristics.

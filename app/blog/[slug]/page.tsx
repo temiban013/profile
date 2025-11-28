@@ -2,25 +2,42 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/blog-data";
+import { getAllPosts, getPostBySlug, getRelatedPosts, getPostTranslation } from "@/lib/blog/content";
 import { formatDate } from "@/lib/utils";
-import { parseMarkdownContent } from "@/lib/content-parser";
+import { MdxContent } from "@/components/blog/mdx-content";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
+import type { BlogPost } from "@/types/blog";
 
 interface BlogPostPageProps {
   readonly params: Promise<{ slug: string }>;
 }
 
 /**
- * Generate metadata for individual blog posts
- * This function runs at build time for static generation
- * and at request time for dynamic routes
+ * Convert Velite Post to legacy BlogPost format for structured data
  */
-export async function generateMetadata({
-  params,
-}: BlogPostPageProps): Promise<Metadata> {
+function toLegacyPost(post: NonNullable<ReturnType<typeof getPostBySlug>>): BlogPost {
+  return {
+    id: post.slug,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.description,
+    content: post.raw,
+    publishedAt: new Date(post.date),
+    updatedAt: post.updated ? new Date(post.updated) : undefined,
+    tags: post.tags,
+    category: post.category,
+    readingTime: post.readingTime,
+    featured: post.featured,
+    language: post.locale,
+  };
+}
+
+/**
+ * Generate metadata for individual blog posts
+ */
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  const post = getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -28,65 +45,52 @@ export async function generateMetadata({
     };
   }
 
-  // Find the corresponding post in the other language for hreflang
-  const allPosts = getAllBlogPosts();
-  const otherLanguagePost = allPosts.find(p =>
-    p.language !== post.language &&
-    (p.id.includes(post.id.split('-').slice(0, -1).join('-')) ||
-     post.id.includes(p.id.split('-').slice(0, -1).join('-')))
-  );
-
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mariorafaelayala.com';
+  const translation = getPostTranslation(post);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com";
 
   return {
     title: `${post.title} | Blog`,
-    description: post.excerpt,
-    keywords: Array.from(post.tags),
-
-    // Language and region targeting
+    description: post.description,
+    keywords: post.tags,
     other: {
-      'Content-Language': post.language,
+      "Content-Language": post.locale,
     },
-
-    // Canonical URL
     alternates: {
       canonical: `${baseUrl}/blog/${post.slug}`,
-      languages: otherLanguagePost ? {
-        [post.language === 'en' ? 'es' : 'en']: `${baseUrl}/blog/${otherLanguagePost.slug}`,
-        [post.language]: `${baseUrl}/blog/${post.slug}`,
-      } : undefined,
+      languages: translation
+        ? {
+            [post.locale === "en" ? "es" : "en"]: `${baseUrl}/blog/${translation.slug}`,
+            [post.locale]: `${baseUrl}/blog/${post.slug}`,
+          }
+        : undefined,
     },
-
     openGraph: {
       title: post.title,
-      description: post.excerpt,
+      description: post.description,
       type: "article",
-      publishedTime: post.publishedAt.toISOString(),
-      modifiedTime: post.updatedAt?.toISOString(),
+      publishedTime: post.date,
+      modifiedTime: post.updated,
       authors: ["Mario Rafael Ayala"],
-      tags: Array.from(post.tags),
+      tags: post.tags,
       url: `/blog/${post.slug}`,
-      locale: post.language === 'en' ? 'en_US' : 'es_ES',
-      siteName: 'Mario Rafael Ayala - Software Engineer',
+      locale: post.locale === "en" ? "en_US" : "es_ES",
+      siteName: "Mario Rafael Ayala - Software Engineer",
     },
-
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.excerpt,
-      creator: '@marioayala', // Add your Twitter handle if you have one
+      description: post.description,
+      creator: "@marioayala",
     },
-
-    // Additional metadata for better SEO
     robots: {
       index: true,
       follow: true,
       googleBot: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large' as const,
-        'max-snippet': -1,
+        "max-video-preview": -1,
+        "max-image-preview": "large" as const,
+        "max-snippet": -1,
       },
     },
   };
@@ -94,10 +98,9 @@ export async function generateMetadata({
 
 /**
  * Generate static params for all blog posts
- * This enables static generation at build time for better performance
  */
 export function generateStaticParams() {
-  const posts = getAllBlogPosts();
+  const posts = getAllPosts();
 
   return posts.map((post) => ({
     slug: post.slug,
@@ -106,48 +109,38 @@ export function generateStaticParams() {
 
 /**
  * Individual Blog Post Page Component
- *
- * This component renders a full blog post with proper semantic HTML,
- * structured data for SEO, and navigation elements.
  */
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  const post = getPostBySlug(slug);
 
-  // Handle 404 for non-existent posts
   if (!post) {
     notFound();
   }
 
-  // Parse the markdown content to HTML
-  const parsedContent = parseMarkdownContent(post.content);
+  const relatedPosts = getRelatedPosts(post, 2);
+  const translation = getPostTranslation(post);
+  const legacyPost = toLegacyPost(post);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Structured Data for SEO */}
-      <BlogPostStructuredData post={post} />
+      <BlogPostStructuredData post={legacyPost} />
+
       {/* Breadcrumb Navigation */}
       <nav className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto pt-30 px-4 py-3 max-w-4xl">
           <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-            <Link
-              href="/"
-              className="hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              Inicio
+            <Link href="/" className="hover:text-gray-900 dark:hover:text-white transition-colors">
+              {post.locale === "es" ? "Inicio" : "Home"}
             </Link>
             <span>/</span>
-            <Link
-              href="/blog"
-              className="hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
+            <Link href="/blog" className="hover:text-gray-900 dark:hover:text-white transition-colors">
               Blog
             </Link>
             <span>/</span>
             <span className="text-gray-900 dark:text-white font-medium">
-              {post.title.length > 50
-                ? `${post.title.slice(0, 50)}...`
-                : post.title}
+              {post.title.length > 50 ? `${post.title.slice(0, 50)}...` : post.title}
             </span>
           </div>
         </div>
@@ -157,32 +150,40 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           {/* Category badge */}
-          <div className="mb-4">
+          <div className="mb-4 flex flex-wrap gap-2">
             <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
               {post.category}
             </span>
             {post.featured && (
-              <span className="ml-2 inline-block bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
-                Destacado
+              <span className="inline-block bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
+                {post.locale === "es" ? "Destacado" : "Featured"}
               </span>
+            )}
+            {translation && (
+              <Link
+                href={`/blog/${translation.slug}`}
+                className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                {post.locale === "es" ? "Read in English" : "Leer en Español"}
+              </Link>
             )}
           </div>
 
           {/* Post metadata */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-            <time dateTime={post.publishedAt.toISOString()}>
-              {formatDate(post.publishedAt)}
-            </time>
+            <time dateTime={post.date}>{formatDate(new Date(post.date))}</time>
             <span>•</span>
-            <span>{post.readingTime} min de lectura</span>
-            <span>•</span>
-            <span className="capitalize">
-              {post.language === "es" ? "Español" : "English"}
+            <span>
+              {post.readingTime} {post.locale === "es" ? "min de lectura" : "min read"}
             </span>
-            {post.updatedAt && (
+            <span>•</span>
+            <span className="capitalize">{post.locale === "es" ? "Español" : "English"}</span>
+            {post.updated && (
               <>
                 <span>•</span>
-                <span>Actualizado: {formatDate(post.updatedAt)}</span>
+                <span>
+                  {post.locale === "es" ? "Actualizado" : "Updated"}: {formatDate(new Date(post.updated))}
+                </span>
               </>
             )}
           </div>
@@ -193,9 +194,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </h1>
 
           {/* Post excerpt */}
-          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-            {post.excerpt}
-          </p>
+          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">{post.description}</p>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mt-8">
@@ -211,19 +210,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </header>
 
-      {/* Blog post content */}
+      {/* Blog post content - MDX rendered with syntax highlighting */}
       <main className="container mx-auto px-4 py-12 max-w-4xl">
-        <article className="prose prose-lg dark:prose-invert max-w-none">
-          {/* 
-            Use our enhanced content parser instead of the basic regex approach
-            This provides much better formatting for paragraphs, code blocks, lists, etc.
-          */}
-          <div
-            className="content-area"
-            dangerouslySetInnerHTML={{
-              __html: parsedContent,
-            }}
-          />
+        <article className="prose prose-lg dark:prose-invert max-w-none prose-pre:bg-[#24292e] prose-pre:p-0 prose-code:before:content-none prose-code:after:content-none">
+          <MdxContent code={post.body} />
         </article>
 
         {/* Author bio section */}
@@ -236,27 +226,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  Mario Rafael Ayala
-                </h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Mario Rafael Ayala</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Ingeniero de Software Senior con 25+ años de experiencia.
-                  Especialista en desarrollo web full-stack, transformación
-                  digital y educación tecnológica. Actualmente enfocado en
-                  Next.js, TypeScript y soluciones para pequeños negocios.
+                  {post.locale === "es"
+                    ? "Ingeniero de Software Senior con 25+ años de experiencia. Especialista en desarrollo web full-stack, transformación digital y educación tecnológica. Actualmente enfocado en Next.js, TypeScript y soluciones para pequeños negocios."
+                    : "Senior Software Engineer with 25+ years of experience. Specialist in full-stack web development, digital transformation, and technology education. Currently focused on Next.js, TypeScript, and solutions for small businesses."}
                 </p>
                 <div className="flex space-x-4 mt-4">
-                  <Link
-                    href="/#sobre-mi"
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    Más sobre Mario
+                  <Link href="/#sobre-mi" className="text-blue-600 dark:text-blue-400 hover:underline">
+                    {post.locale === "es" ? "Más sobre Mario" : "About Mario"}
                   </Link>
-                  <Link
-                    href="/blog"
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    Ver todos los artículos
+                  <Link href="/blog" className="text-blue-600 dark:text-blue-400 hover:underline">
+                    {post.locale === "es" ? "Ver todos los artículos" : "All articles"}
                   </Link>
                 </div>
               </div>
@@ -265,21 +246,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </section>
 
         {/* Related posts section */}
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
-            Artículos Relacionados
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Get related posts by category, excluding current post */}
-            {getAllBlogPosts({
-              category: post.category,
-              language: post.language,
-            })
-              .filter((relatedPost) => relatedPost.id !== post.id)
-              .slice(0, 2)
-              .map((relatedPost) => (
+        {relatedPosts.length > 0 && (
+          <section className="mt-16">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+              {post.locale === "es" ? "Artículos Relacionados" : "Related Articles"}
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              {relatedPosts.map((relatedPost) => (
                 <Link
-                  key={relatedPost.id}
+                  key={relatedPost.slug}
                   href={`/blog/${relatedPost.slug}`}
                   className="block bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
                 >
@@ -291,13 +266,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
                     {relatedPost.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
-                    {relatedPost.excerpt}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">{relatedPost.description}</p>
                 </Link>
               ))}
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
