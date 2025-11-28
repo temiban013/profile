@@ -163,6 +163,22 @@ export const servicesContentES: ServicesContent = {
           "Mario nos ayudó a llevar nuestro café más allá de Puerto Rico. Su experiencia en e-commerce fue invaluable.",
         result: "Ventas en línea activas en 3 territorios",
       },
+      {
+        id: "pabellon",
+        name: "Pabellón de la Fama del Deporte",
+        business: "Museo Deportivo",
+        quote:
+          "Trabajar con Mario fue excepcional. Entendió nuestra visión y creó una plataforma que honra nuestros atletas con dignidad y profesionalismo.",
+        result: "Sistema completo de gestión de inmortales",
+      },
+      {
+        id: "gespervis",
+        name: "Kelvin Pérez",
+        business: "Escuela Gespervis",
+        quote:
+          "Mario transformó nuestra presencia digital completamente. La plataforma que desarrolló nos permite gestionar estudiantes, publicar noticias, y comunicarnos con familias de manera profesional.",
+        result: "Portal educativo moderno y funcional",
+      },
     ],
   },
   faq: {
@@ -388,6 +404,22 @@ export const servicesContentEN: ServicesContent = {
         quote:
           "Mario helped us take our coffee beyond Puerto Rico. His e-commerce expertise was invaluable.",
         result: "Active online sales in 3 territories",
+      },
+      {
+        id: "pabellon",
+        name: "Pabellón de la Fama del Deporte",
+        business: "Sports Museum",
+        quote:
+          "Working with Mario was exceptional. He understood our vision and created a platform that honors our athletes with dignity and professionalism.",
+        result: "Complete immortals management system",
+      },
+      {
+        id: "gespervis",
+        name: "Kelvin Pérez",
+        business: "Escuela Gespervis",
+        quote:
+          "Mario completely transformed our digital presence. The platform he developed allows us to manage students, publish news, and communicate with families professionally.",
+        result: "Modern and functional educational portal",
       },
     ],
   },

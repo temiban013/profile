@@ -17,13 +17,13 @@ export function TestimonialsCarousel() {
     setMounted(true);
   }, []);
 
-  // Autoplay carousel every 5 seconds
+  // Autoplay carousel every 8 seconds
   useEffect(() => {
     if (!autoplay || !mounted) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % testimonials.items.length);
-    }, 5000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [autoplay, mounted, testimonials.items.length]);
@@ -46,14 +46,17 @@ export function TestimonialsCarousel() {
     setAutoplay(false);
   };
 
-  if (!mounted) {
-    return null;
-  }
-
   const currentTestimonial = testimonials.items[currentIndex];
 
+  // Always render the section with ref attached to ensure useInView works correctly
+  // Only hide content during hydration, not the section itself
   return (
     <section ref={ref} className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-white to-neutral-50">
+      {!mounted ? (
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
+          <div className="max-w-4xl mx-auto min-h-[600px]" />
+        </div>
+      ) : (
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
         {/* Section Title */}
         <motion.h2
@@ -212,6 +215,7 @@ export function TestimonialsCarousel() {
         {/* Stats Section */}
         <AnimatedStats />
       </div>
+      )}
     </section>
   );
 }

@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { servicesContentES } from "../data/services-content";
 import type { ContactFormData } from "../types";
+import { analytics } from "./analytics";
 
 // Form validation schema
 const contactSchema = z.object({
@@ -24,6 +25,7 @@ export function CTAForm() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [formStarted, setFormStarted] = useState(false);
 
   const {
     register,
@@ -50,6 +52,13 @@ export function CTAForm() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       console.log("Form data:", data);
+
+      // Track successful form submission
+      analytics.formSubmit({
+        business_type: data.businessType,
+        website_status: data.hasWebsite,
+      });
+
       setSubmitStatus("success");
       reset();
 
@@ -57,9 +66,18 @@ export function CTAForm() {
       setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch (error) {
       console.error("Form submission error:", error);
+      analytics.formError(error instanceof Error ? error.message : "Unknown error");
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Track form start on first field focus
+  const handleFormStart = () => {
+    if (!formStarted) {
+      setFormStarted(true);
+      analytics.formStart();
     }
   };
 
@@ -119,6 +137,7 @@ export function CTAForm() {
                   id="name"
                   className="w-full px-4 py-3 rounded-lg border-2 border-neutral-200 focus:border-teal-500 focus:outline-none transition-colors"
                   placeholder="Tu nombre completo"
+                  onFocus={handleFormStart}
                 />
                 {errors.name && (
                   <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>

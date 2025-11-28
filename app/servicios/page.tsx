@@ -12,6 +12,8 @@ import { FoodIndustrySection } from "./components/food-industry-section";
 import { FAQAccordion } from "./components/faq-accordion";
 import { CTAForm } from "./components/cta-form";
 import { servicesContentES } from "./data/services-content";
+import { Analytics } from "./components/analytics";
+import { ScrollTracker } from "./components/scroll-tracker";
 
 // Google Fonts for Services Landing Page
 const playfair = Playfair_Display({
@@ -121,6 +123,12 @@ export default function ServicesPage() {
 
   return (
     <>
+      {/* Google Analytics 4 */}
+      <Analytics />
+
+      {/* Scroll Depth Tracking */}
+      <ScrollTracker />
+
       <main className={`min-h-screen ${playfair.variable} ${sourceSans.variable} ${dmSans.variable}`}>
         {/* Schema.org Structured Data */}
         <script
