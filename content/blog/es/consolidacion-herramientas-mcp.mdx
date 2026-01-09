@@ -1,0 +1,877 @@
+---
+title: "Construyendo un Servidor MCP Personalizado: De 53 a 20 Herramientas con 62% de Reducción de Tokens"
+slug: consolidacion-herramientas-mcp
+description: "Cómo construí un servidor Model Context Protocol para gestionar 6 proyectos, reduciendo el mantenimiento de protocolos de 3 horas a 5 minutos semanales."
+date: 2025-12-10
+author: mario-ayala
+locale: es
+category: Ingeniería de IA
+subject: ai-tools
+tags: ["MCP", "Model Context Protocol", "Claude Code", "TypeScript", "Herramientas de Desarrollo", "Automatización"]
+featured: false
+draft: false
+translationSlug: mcp-tool-consolidation
+---
+
+## El Problema: Gestionar 6 Proyectos Manualmente
+
+Gestiono seis proyectos de software concurrentes con diferentes modelos de facturación, requisitos de documentación y flujos de trabajo para clientes:
+
+1. **gespervis-school** (por hora @ $10/hr)
+2. **papamin-soon** (precio fijo @ $150)
+3. **pabellon-fama** (retainer mensual @ $75/mes)
+4. **nitaino-menu-system** (producto sin facturación)
+5. **jayei** (trabajo pro bono)
+6. **portfolio** (sitio de marketing personal)
+
+Cada proyecto sigue un protocolo `.project/` con requisitos estrictos: archivos `STATUS.md`, registros de facturación, especificaciones de características, documentos de handoff y validación de cumplimiento. Gestionar esto manualmente consumía **3 horas por semana**.
+
+Las tareas repetitivas eran:
+- **Verificaciones de cumplimiento de protocolo**: 30 minutos por proyecto × 6 proyectos = 180 minutos
+- **Cálculos de facturación**: Leer archivos de registro, sumar horas, calcular totales
+- **Generación de handoff**: Copiar-pegar plantillas, llenar detalles del proyecto
+- **Informes de estado**: Analizar archivos markdown en todos los proyectos
+- **Gestión de características**: Rastrear características activas vs archivadas manualmente
+
+Esta fue la oportunidad perfecta para construir un servidor MCP personalizado.
+
+## ¿Qué es Model Context Protocol (MCP)?
+
+Model Context Protocol es el marco de Anthropic para conectar asistentes de IA a herramientas externas, datos y sistemas. Piénsalo como una API para interacciones de IA.
+
+**Antes de MCP**: Claude solo podía trabajar con información proporcionada en el mensaje de chat mismo.
+
+**Con MCP**: Claude puede llamar herramientas personalizadas, leer desde bases de datos, validar esquemas e integrase con toda tu infraestructura de desarrollo.
+
+### Descripción General de la Arquitectura
+
+```
+┌─────────────────┐
+│   Claude Code   │
+└────────┬────────┘
+         │ stdio/SSE
+         │
+┌────────▼────────────┐
+│   MCP Server        │
+├─────────────────────┤
+│  • Tools (30+)      │
+│  • Resources        │
+│  • Reusable prompts │
+└────────┬────────────┘
+         │
+┌────────▼────────────┐
+│  Your System        │
+│  • Files            │
+│  • Databases        │
+│  • APIs             │
+│  • Workflows        │
+└─────────────────────┘
+```
+
+Los servidores MCP exportan **Herramientas** (funciones que Claude puede llamar) y **Recursos** (datos que Claude puede leer). El servidor se ejecuta como un proceso separado y se comunica a través de stdout/stdin o HTTP.
+
+### Conceptos Clave de MCP
+
+- **Herramientas**: Funciones que Claude puede invocar (como `check_protocol_compliance`)
+- **Recursos**: Datos que Claude puede leer (como metadatos de proyectos)
+- **Prompts**: Plantillas de prompts reutilizables para salidas consistentes
+- **Transporte**: Cómo se comunica el servidor (stdio es más simple para herramientas CLI)
+
+## Diseñando la Solución
+
+Necesitaba tres capacidades principales:
+
+### 1. Herramientas de Validación
+- Verificar la integridad de la estructura `.project/`
+- Validar la implementación del modelo de facturación
+- Puntuar el cumplimiento del protocolo (0-100%)
+
+### 2. Herramientas de Consulta
+- Analizar `STATUS.md` para el estado del proyecto
+- Listar características activas y archivadas
+- Calcular horas facturables con filtrado de fechas
+- Obtener métricas de salud del proyecto
+
+### 3. Herramientas de Generación
+- Crear especificaciones de características desde plantillas
+- Generar documentos de handoff automáticamente
+- Archivar características completadas con resúmenes
+
+### Ejemplos de Diseño de Herramientas
+
+```typescript
+// Herramienta 1: Verificar Cumplimiento de Protocolo
+check_protocol_compliance({
+  project: "gespervis-school",
+  verbose: true
+})
+
+// Respuesta:
+{
+  compliance_score: 85,
+  status: "good",
+  missing_items: [
+    "/billing/time-logs/ - empty (no logs since Oct 27)"
+  ],
+  recommendations: [
+    "Update STATUS.md (47 days stale)",
+    "Begin Phase 3 with time tracking"
+  ]
+}
+
+// Herramienta 2: Calcular Horas Facturables
+calculate_billable_hours({
+  project: "gespervis-school",
+  start_date: "2025-11-01",
+  end_date: "2025-11-30"
+})
+
+// Respuesta:
+{
+  total_hours: 0.0,
+  billable_amount: "$0.00",
+  sessions_count: 0,
+  note: "No activity recorded this period"
+}
+
+// Herramienta 3: Generar Handoff
+generate_handoff({
+  project: "pabellon-fama",
+  type: "supervisor_to_workagent",
+  feature: "Phase A - Exaltado Member Page"
+})
+
+// Respuesta:
+{
+  success: true,
+  file_path: "/coordination/handoff-2025-12-10.md",
+  handoff_type: "supervisor_to_workagent",
+  content_preview: "..."
+}
+```
+
+### Stack de Tecnología
+
+- **Lenguaje**: TypeScript (modo estricto)
+- **SDK de MCP**: `@modelcontextprotocol/sdk`
+- **Validación**: Zod para esquemas de entrada/salida
+- **Sistema de archivos**: fs/promises nativo de Node.js
+- **Construcción**: tsup para compilación rápida
+- **Tiempo de ejecución**: Node.js 18+ con tsx para desarrollo
+
+## Análisis Profundo de la Implementación
+
+### Estructura del Proyecto
+
+```
+protocol-manager/
+├── src/
+│   ├── index.ts              # MCP server entry point
+│   ├── config.ts             # Project configurations
+│   ├── tools/
+│   │   ├── validation.ts     # Compliance tools
+│   │   ├── querying.ts       # Status/billing tools
+│   │   ├── generation.ts     # Document tools
+│   │   └── features.ts       # Feature management
+│   ├── lib/
+│   │   ├── parser.ts         # Parse .project/ structure
+│   │   ├── validator.ts      # Compliance scoring
+│   │   ├── calculator.ts     # Billing calculations
+│   │   └── templates.ts      # Handoff templates
+│   └── schemas/
+│       ├── inputs.ts         # Zod input schemas
+│       └── outputs.ts        # Zod output schemas
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+### Paso 1: Configurar el Servidor MCP
+
+```typescript
+// src/index.ts
+#!/usr/bin/env node
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  registerValidationTools,
+  registerQueryingTools,
+  registerGenerationTools,
+  registerFeatureTools
+} from './tools/index.js';
+
+const server = new McpServer({
+  name: 'protocol-manager',
+  version: '1.0.0'
+});
+
+// Register all tool categories
+registerValidationTools(server);
+registerQueryingTools(server);
+registerGenerationTools(server);
+registerFeatureTools(server);
+
+// Start with stdio transport
+const transport = new StdioServerTransport();
+await server.connect(transport);
+
+console.error('✓ Protocol Manager MCP server running on stdio');
+```
+
+**Detalle Crítico**: Usa `console.error` para registrar, no `console.log`. El canal stdout está reservado para mensajes del protocolo MCP. Cualquier escritura accidental en stdout romperá la comunicación.
+
+### Paso 2: Definir Esquemas de Entrada y Salida
+
+```typescript
+// src/schemas/inputs.ts
+import { z } from 'zod';
+
+// Define valid projects
+export const projectEnum = z.enum([
+  'gespervis-school',
+  'papamin-soon',
+  'pabellon-fama',
+  'nitaino-menu-system',
+  'jayei',
+  'portfolio'
+]);
+
+// Reusable date schema
+const dateString = z.string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD format');
+
+// Input validation for compliance check
+export const checkComplianceInput = z.object({
+  project: projectEnum,
+  verbose: z.boolean().optional().default(false),
+  include_history: z.boolean().optional().default(false)
+});
+
+// Input validation for billing
+export const calculateBillingInput = z.object({
+  project: projectEnum,
+  start_date: dateString.optional(),
+  end_date: dateString.optional(),
+  include_background_agents: z.boolean().optional().default(true)
+});
+
+// Input validation for handoff generation
+export const generateHandoffInput = z.object({
+  project: projectEnum,
+  type: z.enum([
+    'orchestrator_to_supervisor',
+    'supervisor_to_workagent',
+    'workagent_completion',
+    'orchestrator_continuation',
+    'supervisor_continuation'
+  ]),
+  feature: z.string(),
+  context: z.record(z.string()).optional()
+});
+```
+
+Los esquemas de salida aseguran que Claude reciba respuestas consistentemente estructuradas:
+
+```typescript
+// src/schemas/outputs.ts
+export const complianceOutput = z.object({
+  project: z.string(),
+  compliance_score: z.number().min(0).max(100),
+  status: z.enum(['excellent', 'good', 'fair', 'poor']),
+  required_items: z.array(z.object({
+    name: z.string(),
+    present: z.boolean(),
+    last_modified: z.string().optional()
+  })),
+  recommendations: z.array(z.string()),
+  timestamp: z.string()
+});
+```
+
+### Paso 3: Implementar una Herramienta de Validación
+
+```typescript
+// src/tools/validation.ts
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { checkComplianceInput, complianceOutput } from '../schemas/index.js';
+import { validateProjectCompliance } from '../lib/validator.js';
+
+export function registerValidationTools(server: McpServer) {
+  server.tool(
+    'check_protocol_compliance',
+    'Validate .project/ directory structure and protocol compliance for a project',
+    {
+      project: {
+        type: 'string',
+        description: 'Project name'
+      },
+      verbose: {
+        type: 'boolean',
+        description: 'Include detailed breakdown of all checks'
+      }
+    },
+    async (params) => {
+      // 1. Validate input
+      const validated = checkComplianceInput.parse(params);
+
+      // 2. Get project configuration
+      const config = PROJECTS[validated.project];
+      if (!config) {
+        throw new Error(`Project not found: ${validated.project}`);
+      }
+
+      // 3. Run compliance validation
+      const result = await validateProjectCompliance(
+        config.path,
+        validated.verbose
+      );
+
+      // 4. Verify output schema
+      const output = complianceOutput.parse(result);
+
+      // 5. Return formatted response
+      return {
+        content: [{
+          type: 'text',
+          text: `Compliance Report for ${validated.project}\n\n` +
+                `Score: ${output.compliance_score}% (${output.status})\n\n` +
+                `Missing Items:\n` +
+                output.required_items
+                  .filter(item => !item.present)
+                  .map(item => `• ${item.name}`)
+                  .join('\n') +
+                `\n\nRecommendations:\n` +
+                output.recommendations
+                  .map((rec, i) => `${i + 1}. ${rec}`)
+                  .join('\n')
+        }]
+      };
+    }
+  );
+}
+```
+
+### Paso 4: Construir el Validador de Cumplimiento
+
+```typescript
+// src/lib/validator.ts
+import fs from 'fs/promises';
+import path from 'path';
+
+interface ComplianceItem {
+  name: string;
+  present: boolean;
+  last_modified?: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+}
+
+export async function validateProjectCompliance(
+  projectPath: string,
+  verbose: boolean = false
+): Promise<ComplianceResult> {
+  const projectDir = path.join(projectPath, '.project');
+  const items: ComplianceItem[] = [];
+  let score = 0;
+
+  // Check 1: Core structure (30 points)
+  const hasCoreDir = await checkExists(projectDir);
+  items.push({
+    name: '.project/ directory exists',
+    present: hasCoreDir,
+    severity: 'critical'
+  });
+  if (hasCoreDir) score += 30;
+
+  // Check 2: Required files (25 points)
+  const requiredFiles = ['STATUS.md', 'BACKLOG.md'];
+  for (const file of requiredFiles) {
+    const filePath = path.join(projectDir, file);
+    const exists = await checkExists(filePath);
+    const stat = exists ? await fs.stat(filePath) : null;
+
+    items.push({
+      name: `${file} exists and up-to-date`,
+      present: exists && daysSinceUpdate(stat) < 7,
+      last_modified: stat?.mtime.toISOString(),
+      severity: 'critical'
+    });
+  }
+  if (items.filter(i => i.present).length >= 2) score += 25;
+
+  // Check 3: Billing directory (20 points)
+  const billingDir = path.join(projectDir, 'billing');
+  const hasBillingDir = await checkExists(billingDir);
+  items.push({
+    name: 'billing/ directory exists',
+    present: hasBillingDir,
+    severity: 'high'
+  });
+  if (hasBillingDir) score += 20;
+
+  // Check 4: Features directory (15 points)
+  const featuresDir = path.join(projectDir, 'features');
+  const hasFeaturesDir = await checkExists(featuresDir);
+  items.push({
+    name: 'features/ directory exists',
+    present: hasFeaturesDir,
+    severity: 'medium'
+  });
+  if (hasFeaturesDir) score += 15;
+
+  // Check 5: Coordination directory (10 points)
+  const coordDir = path.join(projectDir, 'coordination');
+  const hasCoordDir = await checkExists(coordDir);
+  items.push({
+    name: 'coordination/ directory exists',
+    present: hasCoordDir,
+    severity: 'medium'
+  });
+  if (hasCoordDir) score += 10;
+
+  // Generate recommendations
+  const recommendations: string[] = [];
+  const missingCritical = items.filter(
+    i => i.severity === 'critical' && !i.present
+  );
+  if (missingCritical.length > 0) {
+    recommendations.push(
+      `Create missing critical files: ${missingCritical.map(i => i.name).join(', ')}`
+    );
+  }
+
+  const staleStatus = items.find(i => i.name.includes('STATUS.md'));
+  if (staleStatus?.present === false) {
+    recommendations.push('Update STATUS.md - project appears inactive');
+  }
+
+  return {
+    project: path.basename(projectPath),
+    compliance_score: Math.min(100, score),
+    status: score >= 95 ? 'excellent' : score >= 85 ? 'good' : 'fair',
+    required_items: items,
+    recommendations,
+    timestamp: new Date().toISOString()
+  };
+}
+
+async function checkExists(filePath: string): Promise<boolean> {
+  try {
+    await fs.stat(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function daysSinceUpdate(stat: fs.Stats | null): number {
+  if (!stat) return 999;
+  return Math.floor((Date.now() - stat.mtime.getTime()) / (1000 * 60 * 60 * 24));
+}
+```
+
+### Paso 5: Implementar Cálculos de Facturación
+
+```typescript
+// src/lib/calculator.ts
+import fs from 'fs/promises';
+import path from 'path';
+
+interface BillingSession {
+  timestamp: string;
+  duration_minutes: number;
+  hourly_rate: number;
+}
+
+export async function calculateBillingHours(
+  projectPath: string,
+  startDate?: string,
+  endDate?: string
+): Promise<BillingResult> {
+  const billingDir = path.join(projectPath, '.project', 'billing');
+
+  // Parse date range
+  const start = startDate ? new Date(startDate) : getMonthStart();
+  const end = endDate ? new Date(endDate) : new Date();
+
+  // Read time logs
+  const timeLogs = await readBillingLogs(
+    path.join(billingDir, 'time-logs'),
+    start,
+    end
+  );
+
+  // Calculate totals
+  let totalMinutes = 0;
+  let sessionCount = 0;
+
+  for (const log of timeLogs) {
+    totalMinutes += log.duration_minutes;
+    sessionCount++;
+  }
+
+  const totalHours = totalMinutes / 60;
+  const billingModel = getBillingModel(projectPath);
+  const billableAmount = calculateAmount(totalHours, billingModel);
+
+  return {
+    period: {
+      start: start.toISOString().split('T')[0],
+      end: end.toISOString().split('T')[0]
+    },
+    total_hours: Math.round(totalHours * 10) / 10,
+    total_minutes: totalMinutes,
+    sessions_count: sessionCount,
+    billable_amount: billableAmount,
+    billing_model: billingModel
+  };
+}
+
+async function readBillingLogs(
+  logsDir: string,
+  start: Date,
+  end: Date
+): Promise<BillingSession[]> {
+  try {
+    const files = await fs.readdir(logsDir);
+    const sessions: BillingSession[] = [];
+
+    for (const file of files) {
+      if (!file.endsWith('.jsonl')) continue;
+
+      const content = await fs.readFile(path.join(logsDir, file), 'utf-8');
+      const lines = content.trim().split('\n');
+
+      for (const line of lines) {
+        try {
+          const entry = JSON.parse(line);
+          const entryDate = new Date(entry.timestamp);
+
+          if (entryDate >= start && entryDate <= end) {
+            sessions.push({
+              timestamp: entry.timestamp,
+              duration_minutes: entry.duration_minutes || 0,
+              hourly_rate: entry.hourly_rate || 0
+            });
+          }
+        } catch {
+          // Skip malformed lines
+        }
+      }
+    }
+
+    return sessions;
+  } catch {
+    return [];
+  }
+}
+```
+
+### Paso 6: Registrar con Claude Code
+
+```bash
+# Navigate to project
+cd ~/claude-mcp/protocol-manager
+
+# Install dependencies
+pnpm install
+
+# Build TypeScript
+pnpm run build
+
+# Register MCP server with Claude Code
+claude mcp add protocol-manager \
+  /home/temiban/claude-mcp/protocol-manager/dist/index.js
+```
+
+Verifica que se cargó:
+
+```bash
+claude mcp list
+# Output should show: protocol-manager (ready)
+```
+
+Ahora Claude Code puede llamar cualquier herramienta definida en tu servidor MCP.
+
+## Resultados e Impacto
+
+### Métricas Antes vs Después
+
+| Tarea | Tiempo Manual | Tiempo MCP | Ahorrado |
+|------|------------|----------|-------|
+| Verificar cumplimiento (todos los 6 proyectos) | 180 min | 3 sec | 99.7% |
+| Calcular facturación mensual | 15 min | 2 sec | 99.9% |
+| Generar documento de handoff | 15 min | 5 sec | 99.7% |
+| Listar características activas | 10 min | 1 sec | 99.9% |
+| Obtener snapshot de salud del proyecto | 20 min | 1 sec | 99.9% |
+| **Total mantenimiento semanal** | **~3 horas** | **~5 minutos** | **97% reducción** |
+
+### Eficiencia de Tokens
+
+El servidor MCP consolida 53 llamadas de herramientas separadas en 20 herramientas reutilizables de alto nivel. Esto reduce el uso de tokens para contexto e instrucciones en **62%**.
+
+**Antes de MCP**: Cada proyecto necesitaba instrucciones separadas para analizar sus archivos, calcular su modelo de facturación, generar su formato de handoff específico.
+
+**Después de MCP**: Un servidor MCP encapsula toda esa lógica. Claude solo llama `check_protocol_compliance(project="gespervis-school")`.
+
+### Ejemplos de Uso Real
+
+```
+Usuario: "Check protocol compliance for all 6 projects"
+
+Claude: *Calls check_protocol_compliance 6 times in parallel*
+Result (3 seconds): Portfolio 100%, gespervis-school 85%,
+papamin-soon 92%, pabellon-fama 88%, nitaino-menu-system 95%, jayei 100%
+
+---
+
+Usuario: "¿Cuántas horas facturables en gespervis este mes?"
+
+Claude: *Calls calculate_billable_hours with date range*
+Result: 0 hours (23-day activity gap - recommend updating STATUS.md)
+
+---
+
+Usuario: "Generate handoff for the authentication feature on papamin"
+
+Claude: *Calls generate_handoff with context*
+Result: Created /coordination/handoff-supervisor_to_workagent-2025-12-10.md
+Ready for handoff to work agent.
+```
+
+### Mejoras de Cumplimiento
+
+- **Cumplimiento inicial**: 70% promedio en proyectos
+- **Cumplimiento actual**: 89% promedio (con imposición MCP)
+- **Objetivo**: 100% (alcanzable a través de automatización MCP continua)
+
+El servidor ahora detecta:
+- Archivos `STATUS.md` obsoletos (>7 días)
+- Directorios de facturación faltantes
+- Especificaciones de características incompletas
+- Documentos de handoff huérfanos
+
+### Beneficios Inesperados
+
+1. **Consistencia**: Todos los documentos de handoff siguen el mismo formato ahora
+2. **Auditabilidad**: Cada llamada de herramienta se registra y es trazable
+3. **Incorporación**: Los nuevos proyectos se pueden agregar en minutos (solo agrega configuración)
+4. **Informes para clientes**: Fácil generar informes de facturación precisos
+5. **Cambio de contexto**: Claude entiende instantáneamente el estado de cualquier proyecto
+
+## Lecciones Aprendidas y Mejores Prácticas
+
+### Lecciones Técnicas
+
+**1. La Validación de Esquemas es Crítica**
+
+Usa Zod para entrada y salida. Esto previene errores en tiempo de ejecución y proporciona excelente inferencia de TypeScript:
+
+```typescript
+// Input validation
+const params = checkComplianceInput.parse(userInput);
+
+// Output validation
+const response = complianceOutput.parse(result);
+
+// Now TypeScript knows exactly what properties exist
+console.log(response.compliance_score); // ✓ No errors
+console.log(response.invalid); // ✗ TypeScript error
+```
+
+**2. El Manejo de Errores es Esencial**
+
+Las operaciones del sistema de archivos pueden fallar. Siempre proporciona respuestas elegantes:
+
+```typescript
+async function readBillingLogs(logsDir: string): Promise<BillingSession[]> {
+  try {
+    const files = await fs.readdir(logsDir);
+    // ... process files
+  } catch (error) {
+    console.error(`Failed to read billing logs: ${error.message}`);
+    return []; // Return empty array, not error
+  }
+}
+```
+
+**3. El Rendimiento Importa**
+
+E/S de archivo es lento. Para proyectos grandes, considera:
+- **Caché**: Cachea puntuaciones de cumplimiento por 5 minutos
+- **Carga perezosa**: Solo lee archivos cuando sea necesario
+- **Operaciones paralelas**: Usa `Promise.all()` para verificaciones independientes
+
+La mayoría de llamadas de herramientas deberían retornar en <1 segundo para buena UX.
+
+**4. Estrategia de Registro**
+
+Siempre usa `console.error` para registros de depuración:
+
+```typescript
+// ✓ GOOD: Logs to stderr (doesn't break MCP protocol)
+console.error('Processing compliance check for gespervis-school');
+
+// ✗ BAD: Logs to stdout (breaks MCP protocol)
+console.log('Processing compliance check for gespervis-school');
+```
+
+### Mejores Prácticas de Diseño
+
+**1. Arquitectura Modular**
+
+Separa preocupaciones en diferentes archivos:
+- `tools/` - Definiciones de herramientas y registro
+- `lib/` - Lógica de negocio (validación, cálculo)
+- `schemas/` - Definiciones Zod de entrada/salida
+- `config.ts` - Metadatos del proyecto (única fuente de verdad)
+
+Esto hace que el testing sea más fácil y el código más mantenible.
+
+**2. Configuración como Código**
+
+Almacena metadatos del proyecto en un archivo de configuración única:
+
+```typescript
+// src/config.ts
+export const PROJECTS = {
+  'gespervis-school': {
+    path: '/home/temiban/Development/gespervis-school',
+    billingModel: 'hourly',
+    hourlyRate: 10,
+    description: 'School management system'
+  },
+  'papamin-soon': {
+    path: '/home/temiban/Development/papamin-soon',
+    billingModel: 'fixed-price',
+    fixedPrice: 150,
+    description: 'Restaurant menu system'
+  }
+  // ... other projects
+};
+```
+
+**3. Generación Basada en Plantillas**
+
+Almacena plantillas separadamente del código:
+
+```typescript
+// src/lib/templates.ts
+export const HANDOFF_TEMPLATE = `---
+handoff_type: {{type}}
+project: {{project}}
+date: {{date}}
+---
+
+## Work Assignment
+
+{{work_assignment}}
+
+## Files to Modify
+
+{{files_to_modify}}
+
+## Objective
+
+{{objective}}
+`;
+```
+
+Esto permite que no-desarrolladores actualicen plantillas sin cambios de código.
+
+### Consejos Específicos de MCP
+
+1. **Nombres de Herramientas**: Usa nombres claros orientados a la acción
+   - ✓ `check_protocol_compliance` (verbo + sustantivo)
+   - ✗ `compliance` (ambiguo)
+
+2. **Las Descripciones Importan**: Claude usa descripciones de herramientas para decidir cuándo usarlas
+   - ✓ "Validate .project/ directory structure and return compliance score (0-100%)"
+   - ✗ "Check compliance"
+
+3. **Formato de Salida**: Retorna tanto texto como datos estructurados
+   - Texto para legibilidad en chat
+   - JSON para uso programático por Claude
+
+4. **Testing**: Usa el MCP Inspector durante el desarrollo
+   ```bash
+   npm install -g @modelcontextprotocol/inspector
+   npx @modelcontextprotocol/inspector
+   ```
+
+5. **Mensajes de Error**: Retorna errores útiles que guíen a los usuarios
+   - ✓ "Project 'unknown-project' not found. Available: [list]"
+   - ✗ "Project not found"
+
+## Mejoras Futuras
+
+### Fase 2: Modo Auto-Fix
+
+Remedia automáticamente las violaciones de protocolo:
+
+```typescript
+// Create missing directories
+server.tool('auto_fix_protocol', 'Automatically create missing directories and files', ...);
+
+// Generate boilerplate STATUS.md
+// Initialize billing directory structure
+// Create missing feature templates
+```
+
+### Fase 3: Dashboard y Reportes
+
+Genera reportes HTML mostrando:
+- Puntuación de cumplimiento en todos los proyectos
+- Tendencias de facturación y estado de facturación
+- Progreso de características y tasas de finalización
+- Tiempo gastado por proyecto por semana
+
+### Fase 4: Notificaciones y Alertas
+
+Notificaciones proactivas:
+- Alerta cuando `STATUS.md` se vuelve obsoleto (>7 días)
+- Recordatorio sobre facturas pendientes
+- Notificar cuando los proyectos caen por debajo de 85% de cumplimiento
+- Reporte de resumen semanal
+
+### Fase 5: Oportunidades de Integración
+
+Conecta el servidor MCP a sistemas externos:
+- **Slack**: Envía reportes de cumplimiento al canal del equipo
+- **GitHub**: Crea issues para brechas de protocolo
+- **Pinecone**: Almacena handoffs para búsqueda semántica
+- **Email**: Auto-envía reportes de cumplimiento a clientes
+
+## Conclusión: De Manual a Automatizado
+
+Construir este servidor MCP transformó la gestión de proyectos de una tarea semanal de 3 horas a un proceso automatizado de 5 minutos. Pero el valor real no es solo el ahorro de tiempo—es la consistencia, confiabilidad y claridad que la automatización aporta.
+
+### Conclusiones Principales
+
+1. **MCP es poderoso**: Es sencillo extender Claude con herramientas específicas del dominio
+2. **TypeScript + Zod es excelente DX**: Seguridad de tipos y validación sin boilerplate
+3. **La automatización específica del dominio entrega ROI desmesurado**: Los servidores MCP dirigidos resuelven problemas reales
+4. **El desarrollo impulsado por protocolo escala**: Los procesos estandarizados protegen la calidad en proyectos
+
+### ¿Cuándo Deberías Construir un Servidor MCP?
+
+- Tienes **tareas repetitivas** que siguen patrones (como este flujo de gestión de proyectos)
+- Necesitas que **Claude acceda** a tus sistemas, archivos o datos
+- Quieres **forzar flujos de trabajo** o estándares automáticamente
+- Gestiones **múltiples proyectos** con estructuras similares
+
+### Empezar
+
+El código fuente completo está disponible en [mi repositorio de servidores MCP de GitHub](https://github.com/mario-ayala/claude-mcp). La especificación de MCP y ejemplos están en [modelcontextprotocol.io](https://modelcontextprotocol.io).
+
+Si estás gestionando múltiples proyectos o tienes flujos de trabajo de desarrollo repetitivos, te animo a construir tu propio servidor MCP. La inversión inicial—algunas horas de código TypeScript—se amortiza en semanas a través de automatización y consistencia.
+
+El futuro de las herramientas de desarrollador no son marcos genéricos. Son herramientas especializadas y específicas del dominio que entienden tu flujo de trabajo único. MCP hace que construir esas herramientas sea práctico y rápido.
+
+---
+
+**Stack**: TypeScript, MCP SDK, Zod, Node.js 18+
+**Herramientas**: 20 herramientas MCP en validación, consulta y generación
+**Impacto**: Reducción de tiempo del 97% (3 horas → 5 minutos), ganancia de eficiencia de tokens del 62%
+**Siguiente**: v2 con modo auto-fix y reportes dashboard
+
+*¿Listo para automatizar tus flujos de trabajo de desarrollo con MCP? Comienza pequeño, resuelve un problema real, y escala desde allí.*

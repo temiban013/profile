@@ -1,0 +1,1262 @@
+---
+title: "Sistemas de Agentes IA Listos para Producción: Agentes en Segundo Plano, Sesiones Nombradas y Hooks de Permisos"
+slug: sistemas-agentes-ia-produccion
+description: "Patrones avanzados de orquestación de agentes IA: agentes en segundo plano para trabajo paralelo, sesiones nombradas para continuidad, hooks de permisos para seguridad."
+date: 2026-01-05
+author: mario-ayala
+locale: es
+category: Ingeniería de IA
+subject: ai-tools
+tags: ["Agentes IA", "Agentes en Segundo Plano", "Sesiones Nombradas", "Hooks de Permisos", "Orquestación", "Sistemas de Producción"]
+featured: false
+draft: false
+translationSlug: ai-agent-systems-production
+---
+
+## La Evolución de Sistemas Monoagente a Multiagente
+
+Cuando comenzamos a usar agentes IA en producción, partimos de la arquitectura más simple posible: un único agente recibía una tarea, la ejecutaba e informaba los resultados. Esto funciona para problemas acotados—una corrección de código, una revisión de documento, una extracción de datos.
+
+Pero tan pronto como escalas a **múltiples objetivos concurrentes**, el modelo monoagente se quiebra:
+
+- **Las operaciones largas bloquean el nuevo trabajo**. Las pruebas tardan 20 minutos mientras el agente espera, incapaz de manejar nuevas solicitudes
+- **El contexto de la sesión explota**. Mantener todo el estado del proyecto en memoria se vuelve prohibitivamente costoso
+- **La autorización se vuelve opaca**. ¿Cómo sabes si un agente está autorizado para ejecutar una acción particular?
+- **La continuidad es frágil**. Cuando una sesión se bloquea o se alcanzan los límites de contexto, pierdes el hilo
+
+Aquí es donde entra la orquestación de agentes lista para producción.
+
+La arquitectura presentada aquí—construida en patrones probados en batalla del software empresarial—introduce tres capacidades críticas:
+
+1. **Agentes en segundo plano** para ejecución de trabajo paralelo
+2. **Sesiones nombradas** para continuidad y reanudación de flujo de trabajo
+3. **Hooks de permisos** para automatización segura y validada
+
+Juntos, estos patrones transforman los agentes IA de herramientas experimentales en infraestructura confiable.
+
+---
+
+## Agentes en Segundo Plano: Ejecución de Trabajo Paralelo
+
+### El Problema con Operaciones Bloqueantes
+
+Imagina que tu agente orchestrator está gestionando una implementación en producción. Necesita:
+
+1. Ejecutar pruebas de integración (8 minutos)
+2. Reconstruir activos estáticos (5 minutos)
+3. Desplegar a staging (3 minutos)
+4. Ejecutar pruebas de extremo a extremo (12 minutos)
+
+Si estos se ejecutan secuencialmente en la sesión del orchestrator, el agente se bloquea por 28 minutos. Durante ese tiempo, las nuevas solicitudes de usuarios se acumulan. Las interrupciones se multiplican. La ventana de contexto se desperdicia esperando.
+
+**Los agentes en segundo plano resuelven esto** al generar flujos de trabajo paralelos e independientes.
+
+### Arquitectura: Generación y Monitoreo
+
+Un agente en segundo plano es un contexto de ejecución ligero que:
+- Se ejecuta **independientemente** del orchestrator
+- Tiene su **propio estado de sesión** y contexto de facturación
+- Reporta **estado de finalización** cuando termina
+- Permite al orchestrator **continuar con nuevo trabajo** inmediatamente
+
+```typescript
+// Supervisor delega trabajo de larga duración a agente en segundo plano
+async function deployWithBackgroundJobs() {
+  // Inicia trabajo de fondo para pruebas
+  const testJobId = await startBackgroundAgent({
+    agent_id: "integration-tests",
+    task_description: "Run integration test suite for payment module"
+  });
+
+  // Inicia trabajo de fondo para reconstruir activos
+  const assetJobId = await startBackgroundAgent({
+    agent_id: "asset-rebuild",
+    task_description: "Rebuild and optimize static assets"
+  });
+
+  // Continúa con trabajo de orquestación inmediatamente
+  console.log("Tests and assets building in background...");
+  await updateDeploymentStatus("in_progress");
+
+  // Sondea para finalización (o configura webhook)
+  const testResult = await waitForBackgroundAgent(testJobId, {
+    timeout: 600000, // 10 minutes
+    pollInterval: 5000
+  });
+
+  const assetResult = await waitForBackgroundAgent(assetJobId, {
+    timeout: 300000, // 5 minutes
+    pollInterval: 5000
+  });
+
+  if (testResult.status === "completed" && assetResult.status === "completed") {
+    await proceedWithDeployment();
+  }
+}
+```
+
+### Monitoreo y Recopilación de Resultados
+
+Los agentes en segundo plano reportan estado en formatos estructurados:
+
+```typescript
+interface BackgroundAgentResult {
+  agent_id: string;
+  status: "running" | "completed" | "failed" | "timeout";
+  start_time: string;
+  end_time?: string;
+  duration_ms?: number;
+  output: {
+    logs: string[];
+    errors?: string[];
+    metrics?: Record<string, unknown>;
+  };
+  billing: {
+    tokens_used: number;
+    estimated_cost: number;
+    role: "workagent" | "orchestrator";
+  };
+}
+```
+
+Puedes recuperar resultados en cualquier momento:
+
+```typescript
+// Obtén resultados completos del agente en segundo plano
+const results = await getBackgroundAgentResult({
+  agent_id: "integration-tests",
+  include_output: true // Obtén logs completos si es necesario
+});
+
+if (results.status === "completed") {
+  const { logs, metrics } = results.output;
+  const testsPassed = metrics.passed > 0 && metrics.failed === 0;
+
+  if (testsPassed) {
+    logger.info("Tests passed", { metrics });
+  } else {
+    logger.error("Test failures", { metrics, logs });
+    await notifySlack("Tests failed - review logs");
+  }
+}
+```
+
+### Patrón del Mundo Real: Pipeline de Migración de Base de Datos
+
+Los agentes en segundo plano brillan cuando necesitas trabajo paralelo coordinado:
+
+```typescript
+async function migrateDatabase() {
+  logger.info("Starting database migration with parallel validation");
+
+  // Genera tres validadores independientes
+  const validationJobs = [
+    startBackgroundAgent({
+      agent_id: "schema-validator",
+      task_description: "Validate new schema compatibility with existing data"
+    }),
+    startBackgroundAgent({
+      agent_id: "performance-validator",
+      task_description: "Run performance tests on migration scripts"
+    }),
+    startBackgroundAgent({
+      agent_id: "rollback-validator",
+      task_description: "Verify rollback procedures and test them"
+    })
+  ];
+
+  // Espera a que todos los validadores terminen
+  const results = await Promise.all(
+    validationJobs.map(jobId =>
+      waitForBackgroundAgent(jobId, { timeout: 1800000 })
+    )
+  );
+
+  // Verifica que todos pasaron antes de proceder
+  const allPassed = results.every(r =>
+    r.status === "completed" && r.output.metrics.passed
+  );
+
+  if (allPassed) {
+    await executeMigration();
+    logger.info("Migration completed successfully");
+  } else {
+    const failures = results.filter(r => !r.output.metrics.passed);
+    logger.error("Validation failed", { failures });
+    throw new Error("Migration blocked by validation failures");
+  }
+}
+```
+
+---
+
+## Sesiones Nombradas: Continuidad de Flujo de Trabajo
+
+### El Problema de Continuidad de Contexto
+
+Aquí hay un escenario común: Tu agente supervisor está implementando una característica compleja en 12 archivos. Hace buen progreso, pero después de 45 minutos, la ventana de contexto se acerca a su límite.
+
+Sin sesiones nombradas, esto es lo que sucede:
+
+1. Se alcanza el límite de contexto
+2. La sesión termina, perdiendo todo el estado intermedio
+3. Una nueva sesión comienza sin memoria del progreso
+4. Trabajo duplicado, perspectivas perdidas, implementación fragmentada
+
+**Las sesiones nombradas resuelven esto** al crear puntos de control reanudables.
+
+### Creación y Nombrado de Sesiones
+
+```typescript
+// Inicia una nueva sesión para trabajo de características
+const sessionId = await startSession({
+  role: "supervisor",
+  project: "portfolio-redesign"
+});
+
+// Dale un nombre memorable para fácil reanudación
+await nameSession({
+  session_name: "redesign-component-library-phase1",
+  tags: ["feature:redesign", "priority:high", "phase:components"]
+});
+
+// El trabajo progresa...
+// Después de 2 horas de trabajo, guarda un punto de control
+await generateHandoff({
+  type: "supervisor_continuation",
+  context: {
+    work_completed: `
+    - Created base component structure (Button, Card, Layout)
+    - Implemented Tailwind integration for spacing system
+    - Built color token system (semantic naming)
+    `,
+    current_phase: "Type safety & accessibility",
+    next_steps: `
+    1. Add TypeScript strict mode
+    2. Implement ARIA labels
+    3. Create Storybook documentation
+    `,
+    blockers: []
+  }
+});
+```
+
+### Reanudación por Nombre
+
+Días después, el equipo pide continuar este trabajo. No hay necesidad de explicar el contexto—solo reanuda por nombre:
+
+```typescript
+// Reanuda sesión nombrada existente
+const session = await resumeNamedSession({
+  session_name: "redesign-component-library-phase1"
+});
+
+// Estás inmediatamente de vuelta en contexto con:
+// - Handoff anterior cargado
+// - Fase y progreso visible
+// - Próximos pasos documentados
+// - Todos los artefactos disponibles
+
+logger.info("Resumed session", {
+  phase: "Type safety & accessibility",
+  completedSteps: ["Button", "Card", "Layout components"]
+});
+```
+
+### Etiquetado y Filtrado de Sesiones
+
+Las sesiones nombradas soportan etiquetas para organización:
+
+```typescript
+// Lista todo el trabajo de características activas
+const activeSessions = await listNamedSessions({
+  status: "active",
+  tags: ["feature:redesign"]
+});
+
+// Encuentra todo el trabajo relacionado con seguridad
+const securityWork = await listNamedSessions({
+  tags: ["security"],
+  status: "all"
+});
+
+// Fondo: Obtén todas las sesiones obsoletas (>7 días inactivas)
+const staleSessions = activeSessions.filter(s =>
+  Date.now() - new Date(s.last_activity).getTime() > 7 * 24 * 60 * 60 * 1000
+);
+
+logger.warn("Stale sessions detected", {
+  count: staleSessions.length,
+  names: staleSessions.map(s => s.name)
+});
+```
+
+### Visualización del Ciclo de Vida de la Sesión
+
+Una sesión nombrada sigue un ciclo de vida predecible:
+
+```
+[created] → [active] → [paused] → [active] → [continued] → [completed]
+    ↓         ↓         ↓         ↓         ↓           ↓
+  Time:00   Time:45   Time:92   Time:150  Time:210    Time:240
+  Tokens:5K Tokens:45K Tokens:95K Tokens:55K Tokens:30K Tokens:0
+
+Phase 1   Phase 1   Checkpoint  Phase 2    Checkpoint   Archived
+Progress  Complete  Saved       Progress   Saved        in .project/
+~20%      ~40%                  ~85%                    archive/
+```
+
+---
+
+## Hooks de Permisos: Automatización Segura
+
+### El Desafío de Autorización
+
+Generas un agente en segundo plano para "optimizar consultas de base de datos para la tabla de usuarios". Tiene permisos amplios para ejecutar cambios de esquema.
+
+Pero ¿qué pasa si decide:
+- ¿Agregar nuevas columnas sin revisar impacto?
+- ¿Ejecutar declaraciones `DELETE` para eliminar datos "sin usar"?
+- ¿Cambiar estrategias de índices de formas que rompan la lógica de aplicación?
+
+**Los hooks de permisos previenen esto** al validar acciones antes de la ejecución.
+
+### Arquitectura de Hook
+
+Un hook de permiso es una puerta de validación que se ejecuta **antes** de que una herramienta se ejecute:
+
+```typescript
+interface PermissionHook {
+  // Cuándo activarse
+  triggers: string[]; // ["execute:database", "execute:file-write"]
+
+  // Lógica de validación
+  validate: (context: {
+    agent_role: string;
+    tool_name: string;
+    parameters: Record<string, unknown>;
+    project: string;
+  }) => Promise<{
+    allowed: boolean;
+    reason?: string;
+    alternatives?: string[];
+  }>;
+
+  // Logging post-ejecución
+  onSuccess?: (context: any) => Promise<void>;
+  onFailure?: (context: any) => Promise<void>;
+}
+```
+
+### Implementación de Hooks de Control de Costo
+
+```typescript
+// Hook: Previene operaciones costosas sin aprobación
+const costControlHook: PermissionHook = {
+  triggers: ["execute:api", "execute:compute"],
+
+  validate: async (context) => {
+    const { tool_name, parameters, agent_role } = context;
+
+    // Estima costo basado en herramienta y parámetros
+    const estimatedCost = estimateOperationCost(tool_name, parameters);
+
+    // Umbrales por rol
+    const thresholds = {
+      workagent: 5.00,      // $5 máximo por operación
+      supervisor: 25.00,    // $25 máximo por operación
+      orchestrator: 100.00  // $100 máximo por operación
+    };
+
+    const threshold = thresholds[agent_role] || 0;
+
+    if (estimatedCost > threshold) {
+      return {
+        allowed: false,
+        reason: `Operation costs $${estimatedCost.toFixed(2)}, exceeds $${threshold.toFixed(2)} limit for ${agent_role}`,
+        alternatives: [
+          "Split operation into smaller subtasks",
+          "Request approval via escalation",
+          "Optimize parameters to reduce cost"
+        ]
+      };
+    }
+
+    return { allowed: true };
+  },
+
+  onSuccess: async (context) => {
+    logger.info("Cost-controlled operation executed", {
+      tool: context.tool_name,
+      cost: context.estimated_cost,
+      agent: context.agent_role
+    });
+  }
+};
+```
+
+### Hooks de Modificación de Datos
+
+```typescript
+// Hook: Requiere confirmación para operaciones destructivas
+const destructiveOperationHook: PermissionHook = {
+  triggers: ["execute:database:delete", "execute:file:delete", "execute:git:force-push"],
+
+  validate: async (context) => {
+    const { tool_name, parameters, agent_role, project } = context;
+
+    // Todos los eliminaciones requieren aprobación humana para todos los roles
+    if (parameters.force || parameters.cascade) {
+      return {
+        allowed: false,
+        reason: "Destructive operations require human approval",
+        alternatives: [
+          "Soft delete: mark records as archived",
+          "Request manual review before deletion",
+          "Create backup before proceeding"
+        ]
+      };
+    }
+
+    return { allowed: true };
+  },
+
+  onFailure: async (context) => {
+    // Notifica a personas relevantes
+    await notifySlack({
+      channel: "#security",
+      message: `Destructive operation blocked in ${context.project}`,
+      details: {
+        tool: context.tool_name,
+        agent_role: context.agent_role,
+        parameters: context.parameters
+      }
+    });
+  }
+};
+```
+
+### Registro y Composición de Hooks
+
+```typescript
+// Registra hooks globalmente
+const permissionSystem = new PermissionHookRegistry();
+
+permissionSystem.register("cost-control", costControlHook);
+permissionSystem.register("destructive-ops", destructiveOperationHook);
+permissionSystem.register("security-audit", securityAuditHook);
+
+// Todas las ejecuciones de herramientas subsecuentes fluyen a través de hooks
+agent.on("beforeToolExecute", async (context) => {
+  const hooks = permissionSystem.getTriggeredHooks(context.tool_name);
+
+  for (const hook of hooks) {
+    const result = await hook.validate(context);
+
+    if (!result.allowed) {
+      logger.warn("Tool execution blocked by permission hook", {
+        hook: hook.name,
+        tool: context.tool_name,
+        reason: result.reason
+      });
+
+      throw new PermissionDeniedError(
+        result.reason,
+        result.alternatives
+      );
+    }
+  }
+});
+```
+
+---
+
+## Arquitectura Basada en Roles: Orchestrator, Supervisor, Workagent
+
+### Los Tres Roles
+
+Los sistemas de agentes listos para producción usan separación de roles para lograr claridad y control:
+
+| Rol | Alcance | Responsabilidad | Tipo de Sesión |
+|------|-------|-----------------|--------------|
+| **Orchestrator** | Proyecto completo | Planificación estratégica, priorización de características, coordinación entre equipos | Larga duración, nombrada |
+| **Supervisor** | Nivel de característica | Coordinación de implementación, desglose de tareas, revisión de calidad, gestión de handoff | Alcance de características, continuación |
+| **Workagent** | Nivel de tarea | Implementación enfocada, característica única, pruebas, reporte | Corta duración, finalización |
+
+### Orchestrator: Planificación Estratégica
+
+El orchestrator gestiona toda la cartera de proyectos:
+
+```typescript
+async function orchestratePortfolioWork() {
+  // Orchestrator analiza estado del proyecto
+  const backlog = await getBacklog();
+  const activeFeatures = await getActiveFeatures();
+  const compliance = await checkProtocolCompliance();
+
+  // Decisiones estratégicas
+  const prioritization = analyzeAndPrioritize({
+    backlog,
+    activeFeatures,
+    compliance,
+    businessGoals: ["reduce technical debt", "improve performance"]
+  });
+
+  // Delega a supervisores a través de sesiones nombradas
+  for (const feature of prioritization.high_priority) {
+    const sessionId = await startSession({
+      role: "supervisor",
+      project: "portfolio"
+    });
+
+    await nameSession({
+      session_name: `implement-${feature.slug}`,
+      tags: [`feature:${feature.slug}`, "priority:high"]
+    });
+
+    // Genera handoff detallado
+    await generateHandoff({
+      type: "orchestrator_to_supervisor",
+      context: {
+        objective: feature.description,
+        requirements: feature.requirements,
+        files_to_modify: feature.files,
+        success_criteria: feature.acceptance_criteria
+      }
+    });
+  }
+
+  // Monitorea progreso
+  const progress = await monitorFeatureProgress();
+  if (progress.blocked.length > 0) {
+    await escalateBlockers(progress.blocked);
+  }
+}
+```
+
+### Supervisor: Coordinación de Características
+
+El supervisor desglosa características y coordina workagents:
+
+```typescript
+async function supervisorFeatureFlow() {
+  // Supervisor recibe handoff del orchestrator
+  const handoff = await loadHandoff("orchestrator_to_supervisor");
+
+  // Desglosa en tareas
+  const tasks = decompose(handoff.objective, handoff.requirements);
+
+  // Genera agentes de trabajo para ejecución paralela
+  const workAgentIds = [];
+
+  for (const task of tasks) {
+    const agentId = await startBackgroundAgent({
+      agent_id: `work-${task.id}`,
+      task_description: task.description
+    });
+
+    workAgentIds.push(agentId);
+
+    // Envía asignación de trabajo detallada
+    await generateHandoff({
+      type: "supervisor_to_workagent",
+      context: {
+        work_assignment: task.steps.join("\n"),
+        files_to_modify: task.files,
+        objective: task.objective,
+        success_criteria: task.criteria
+      }
+    });
+  }
+
+  // Recopila resultados
+  const results = await Promise.all(
+    workAgentIds.map(id => waitForBackgroundAgent(id))
+  );
+
+  // Revisa e integra
+  const integration = await integrateWorkAgentResults(results);
+
+  if (integration.success) {
+    logger.info("Feature implementation complete");
+  } else {
+    logger.error("Integration failed", integration.errors);
+  }
+}
+```
+
+### Workagent: Implementación Enfocada
+
+El workagent ejecuta una única tarea bien delimitada:
+
+```typescript
+async function workagentExecution() {
+  // Carga asignación de trabajo del supervisor
+  const assignment = await loadHandoff("supervisor_to_workagent");
+
+  // Ejecuta pasos
+  for (const step of assignment.work_assignment) {
+    try {
+      await executeStep(step, assignment.files_to_modify);
+    } catch (error) {
+      // Reporta bloqueador al supervisor
+      await generateHandoff({
+        type: "workagent_completion",
+        context: {
+          work_completed: steps.completed.join("\n"),
+          blockers: [error.message],
+          next_steps: "Supervisor intervention required"
+        }
+      });
+      return;
+    }
+  }
+
+  // Reporta éxito
+  await generateHandoff({
+    type: "workagent_completion",
+    context: {
+      work_completed: assignment.work_assignment,
+      blockers: [],
+      next_steps: "Ready for supervisor review"
+    }
+  });
+}
+```
+
+---
+
+## Gestión del Ciclo de Vida de la Sesión
+
+### El Ciclo de Vida Completo
+
+Cada sesión de producción sigue transiciones de estado predecibles:
+
+```typescript
+interface SessionLifecycle {
+  // 1. Inicialización
+  start: (role: "orchestrator" | "supervisor" | "workagent") => Session;
+
+  // 2. Fase de trabajo activo
+  // - Ejecuta tareas
+  // - Rastrea progreso
+  // - Registra decisiones
+
+  // 3. Punto de control (opcional)
+  generateHandoff: (type: HandoffType, context: any) => void;
+  nameSession: (name: string, tags: string[]) => void;
+
+  // 4. Pausa (opcional)
+  pause: (reason: string) => void;
+
+  // 5. Reanudación (desde punto de control)
+  resume: (from: "handoff" | "named_session") => void;
+
+  // 6. Terminación
+  end: (reason: "completed" | "interrupted" | "exit") => void;
+
+  // 7. Archivo (automático)
+  // - Mueve a .project/archive/
+  // - Calcula facturación
+  // - Actualiza métricas de cumplimiento
+}
+```
+
+### Iniciación de una Sesión
+
+```typescript
+// Inicia sesión de primer plano (orchestrator o supervisor)
+const session = await startSession({
+  role: "supervisor",
+  project: "portfolio"
+});
+
+logger.info("Session started", {
+  session_id: session.id,
+  role: session.role,
+  start_time: session.start_time
+});
+
+// La sesión comienza automáticamente la facturación
+```
+
+### Pausa y Reanudación
+
+```typescript
+// Si el contexto se acerca al límite, pausa graciosamente
+if (contextUsagePercent > 85) {
+  await generateHandoff({
+    type: "supervisor_continuation",
+    context: {
+      work_completed: "Completed 3 of 5 components",
+      current_phase: "Building form components",
+      next_steps: "1. TextField\n2. Select\n3. Checkbox"
+    }
+  });
+
+  // La sesión termina automáticamente, la facturación se detiene
+}
+
+// Más tarde (mismo día o semanas después)
+const resumed = await resumeNamedSession({
+  session_name: "component-build-phase2"
+});
+
+// Estás de vuelta en el estado exacto, listo para continuar
+logger.info("Resumed at", { phase: "Building form components" });
+```
+
+### Terminación de Sesión y Facturación
+
+```typescript
+// La sesión termina vía comando /exit o error
+// Hook: SessionEnd se activa automáticamente
+
+interface SessionEndEvent {
+  session_id: string;
+  role: string;
+  start_time: string;
+  end_time: string;
+  duration_ms: number;
+  tokens_used: number;
+  estimated_cost: number;
+  reason: "exit" | "completed" | "interrupted";
+}
+
+// Esto se registra automáticamente en:
+// .project/billing/.tracking-{date}.jsonl
+// Ejemplo de entrada:
+// {
+//   "timestamp": "2026-01-05T14:23:00Z",
+//   "session_id": "sess_abc123",
+//   "role": "supervisor",
+//   "duration_minutes": 67,
+//   "tokens_used": 42000,
+//   "estimated_cost": 12.60,
+//   "reason": "completed"
+// }
+```
+
+---
+
+## Implementación Práctica: Ejemplos de TypeScript
+
+### Plantilla de Orchestrator Completa
+
+```typescript
+import {
+  startSession,
+  startBackgroundAgent,
+  waitForBackgroundAgent,
+  generateHandoff,
+  nameSession,
+  getBacklog,
+  checkProtocolCompliance
+} from "@agent-orchestration/core";
+
+export async function runOrchestratorSession() {
+  // 1. Inicializa
+  const session = await startSession({
+    role: "orchestrator",
+    project: "portfolio"
+  });
+
+  logger.info("Orchestrator session started", { session_id: session.id });
+
+  try {
+    // 2. Analiza estado
+    const state = {
+      backlog: await getBacklog(),
+      compliance: await checkProtocolCompliance(),
+      activeFeatures: await getActiveFeatures(),
+      blockers: await getProjectBlockers()
+    };
+
+    // 3. Toma decisiones estratégicas
+    const plan = orchestrateWork(state);
+
+    // 4. Ejecuta vía supervisores
+    for (const featureTask of plan.prioritized_features) {
+      logger.info("Spawning supervisor for feature", {
+        feature: featureTask.name
+      });
+
+      const supervisorSessionId = await startSession({
+        role: "supervisor",
+        project: "portfolio"
+      });
+
+      await nameSession({
+        session_name: `feature-${featureTask.slug}`,
+        tags: [`feature:${featureTask.slug}`, `priority:${featureTask.priority}`]
+      });
+
+      await generateHandoff({
+        type: "orchestrator_to_supervisor",
+        context: {
+          objective: featureTask.description,
+          requirements: featureTask.requirements,
+          files_to_modify: featureTask.files,
+          success_criteria: featureTask.acceptance_tests
+        }
+      });
+    }
+
+    // 5. Monitorea progreso
+    await monitorAndEscalate();
+
+  } catch (error) {
+    logger.error("Orchestrator error", { error });
+    // Genera handoff antes de que la sesión termine
+    await generateHandoff({
+      type: "orchestrator_continuation",
+      context: {
+        work_completed: "Analyzed state and prioritized features",
+        blockers: [error.message],
+        next_steps: "Resume after reviewing error"
+      }
+    });
+  }
+
+  // 6. La sesión termina automáticamente con hook SessionEnd
+}
+
+async function monitorAndEscalate() {
+  // Sondea progreso del supervisor
+  const supervisorSessions = await listNamedSessions({
+    status: "active",
+    tags: ["role:supervisor"]
+  });
+
+  for (const session of supervisorSessions) {
+    const progress = await getSessionProgress(session.id);
+
+    if (progress.blockers.length > 0) {
+      logger.warn("Feature blocked", {
+        feature: session.name,
+        blockers: progress.blockers
+      });
+
+      // Escalada: Notifica al equipo o ajusta prioridades
+      await notifyTeamOfBlocker(session.name, progress.blockers);
+    }
+  }
+}
+```
+
+### Plantilla de Supervisor Completa
+
+```typescript
+export async function runSupervisorSession() {
+  const session = await startSession({
+    role: "supervisor",
+    project: "portfolio"
+  });
+
+  const handoff = await loadHandoff("orchestrator_to_supervisor");
+
+  logger.info("Supervisor session started", {
+    session_id: session.id,
+    objective: handoff.objective
+  });
+
+  try {
+    // 1. Analiza trabajo
+    const tasks = decomposeFeature(
+      handoff.objective,
+      handoff.requirements,
+      handoff.files_to_modify
+    );
+
+    logger.info("Feature decomposed", { task_count: tasks.length });
+
+    // 2. Genera agentes de trabajo en paralelo
+    const workAgents = tasks.map(task =>
+      startBackgroundAgent({
+        agent_id: `work-${task.id}`,
+        task_description: task.description
+      })
+    );
+
+    // 3. Envía asignaciones detalladas
+    for (let i = 0; i < tasks.length; i++) {
+      const task = tasks[i];
+      await generateHandoff({
+        type: "supervisor_to_workagent",
+        context: {
+          work_assignment: formatTaskSteps(task.steps),
+          files_to_modify: task.files,
+          objective: task.objective,
+          success_criteria: task.acceptance_tests
+        }
+      });
+    }
+
+    // 4. Espera a que todos terminen
+    logger.info("Waiting for work agents", { agent_count: workAgents.length });
+    const results = await Promise.all(
+      workAgents.map(agentId =>
+        waitForBackgroundAgent(agentId, { timeout: 3600000 })
+      )
+    );
+
+    // 5. Revisa e integra resultados
+    const integration = await reviewAndIntegrateResults(results);
+
+    if (integration.success) {
+      logger.info("Feature complete", { metrics: integration.metrics });
+
+      // Notifica al orchestrator
+      await generateHandoff({
+        type: "supervisor_to_orchestrator",
+        context: {
+          feature: handoff.objective,
+          status: "completed",
+          metrics: integration.metrics,
+          next_features: "Ready for next priority"
+        }
+      });
+    } else {
+      throw new Error(`Integration failed: ${integration.error}`);
+    }
+
+  } catch (error) {
+    logger.error("Supervisor error", { error });
+
+    // Reporta trabajo incompleto
+    await generateHandoff({
+      type: "supervisor_continuation",
+      context: {
+        work_completed: "Partial progress on feature",
+        blockers: [error.message],
+        current_phase: "Code review",
+        next_steps: "Resume after fixing blocker"
+      }
+    });
+  }
+}
+
+async function reviewAndIntegrateResults(
+  results: BackgroundAgentResult[]
+): Promise<{ success: boolean; metrics?: any; error?: string }> {
+  const failures = results.filter(r => r.status !== "completed");
+
+  if (failures.length > 0) {
+    return {
+      success: false,
+      error: `${failures.length} work agents failed`
+    };
+  }
+
+  // Fusiona todas las salidas
+  const integrated = await mergeCodeChanges(
+    results.map(r => r.output.code_changes)
+  );
+
+  // Ejecuta pruebas integradas
+  const testResult = await runIntegrationTests(integrated);
+
+  if (!testResult.passed) {
+    return {
+      success: false,
+      error: "Integration tests failed"
+    };
+  }
+
+  return {
+    success: true,
+    metrics: {
+      files_modified: integrated.file_count,
+      tests_passed: testResult.passed_count,
+      tests_total: testResult.total_count
+    }
+  };
+}
+```
+
+---
+
+## Antipatrones a Evitar
+
+### Antipatrón 1: Agentes en Segundo Plano de Dispara y Olvida
+
+**Malo**:
+```typescript
+// Inicia agente, nunca verifica resultado
+startBackgroundAgent({
+  agent_id: "cleanup",
+  task_description: "Clean old files"
+});
+
+// ... procede inmediatamente sin esperar
+logger.info("Cleanup initiated"); // ¿Pero fue exitoso?
+```
+
+**Bueno**:
+```typescript
+// Inicia y monitorea
+const cleanupId = await startBackgroundAgent({
+  agent_id: "cleanup",
+  task_description: "Clean old files"
+});
+
+const result = await waitForBackgroundAgent(cleanupId);
+
+if (result.status === "completed") {
+  logger.info("Cleanup successful", { files_deleted: result.output.metrics.count });
+} else {
+  logger.error("Cleanup failed", { status: result.status });
+  await notifySlack("#infrastructure", "File cleanup failed");
+}
+```
+
+### Antipatrón 2: Sesiones Sin Nombres
+
+**Malo**:
+```typescript
+// Inicia sesión pero olvida nombrarla
+const session = await startSession({ role: "supervisor" });
+// Hace trabajo...
+// Más tarde: ¿Cómo reanudo esto?
+```
+
+**Bueno**:
+```typescript
+// Siempre nombra sesiones para reanudabilidad
+const session = await startSession({ role: "supervisor" });
+
+await nameSession({
+  session_name: "auth-implementation-phase2",
+  tags: ["feature:auth", "priority:high", "phase:two"]
+});
+
+// Ahora puedes reanudar por nombre en cualquier momento
+```
+
+### Antipatrón 3: Hooks de Permiso Demasiado Permisivos
+
+**Malo**:
+```typescript
+// Hook que permite todo
+const permissiveHook: PermissionHook = {
+  triggers: ["execute:*"],
+  validate: async () => ({ allowed: true }) // ¡Sin validación!
+};
+```
+
+**Bueno**:
+```typescript
+// Hooks granulares y específicos
+const costControlHook: PermissionHook = {
+  triggers: ["execute:api", "execute:compute"],
+  validate: async (context) => {
+    const cost = estimateOperationCost(context.tool_name, context.parameters);
+    const limit = getRoleLimit(context.agent_role);
+
+    return {
+      allowed: cost <= limit,
+      reason: cost > limit ? `Exceeds $${limit} limit` : undefined
+    };
+  }
+};
+
+const dataProtectionHook: PermissionHook = {
+  triggers: ["execute:database:delete", "execute:file:delete"],
+  validate: async () => ({
+    allowed: false,
+    reason: "Destructive operations require human approval"
+  })
+};
+```
+
+### Antipatrón 4: Sesiones Largas Sin Puntos de Control
+
+**Malo**:
+```typescript
+// Sesión de 3 horas sin puntos de control
+// Si se bloquea después de 2.5 horas, se pierde todo el progreso
+async function doLongWork() {
+  for (let i = 0; i < 100; i++) {
+    await processItem(i);
+  }
+}
+```
+
+**Bueno**:
+```typescript
+// Punto de control cada 30 minutos
+async function doLongWorkWithCheckpoints() {
+  const checkpointInterval = 30 * 60 * 1000; // 30 minutes
+  let lastCheckpoint = Date.now();
+
+  for (let i = 0; i < 100; i++) {
+    await processItem(i);
+
+    if (Date.now() - lastCheckpoint > checkpointInterval) {
+      await generateHandoff({
+        type: "supervisor_continuation",
+        context: {
+          work_completed: `Processed ${i + 1} of 100 items`,
+          current_phase: `Item ${i + 1}`,
+          next_steps: `Continue from item ${i + 1}`
+        }
+      });
+
+      lastCheckpoint = Date.now();
+    }
+  }
+}
+```
+
+### Antipatrón 5: Ignorar Timeouts de Agentes en Segundo Plano
+
+**Malo**:
+```typescript
+// No establece timeouts
+const result = await waitForBackgroundAgent(agentId);
+// El agente podría colgarse indefinidamente
+```
+
+**Bueno**:
+```typescript
+// Siempre establece timeouts realistas
+try {
+  const result = await waitForBackgroundAgent(agentId, {
+    timeout: 600000 // 10 minutes max
+  });
+
+  if (result.status === "timeout") {
+    logger.error("Agent timeout", { agent_id: agentId });
+    await escalateToHuman("Agent exceeded 10-minute limit");
+  }
+} catch (error) {
+  logger.error("Timeout error", { error });
+}
+```
+
+---
+
+## Métricas y Monitoreo
+
+### Visibilidad de Sesiones
+
+Rastrea sesiones activas en tu proyecto:
+
+```typescript
+// Obtén resumen de sesiones
+const sessionMetrics = {
+  active_foreground: (await listNamedSessions({ status: "active" })).length,
+  active_background: (await listBackgroundAgents({ status_filter: "running" })).length,
+  paused: (await listNamedSessions({ status: "paused" })).length,
+  completed_today: (await listNamedSessions({ status: "completed" }))
+    .filter(s => isToday(new Date(s.completion_time)))
+    .length
+};
+
+logger.info("Session metrics", sessionMetrics);
+// Salida: { active_foreground: 3, active_background: 5, paused: 1, completed_today: 8 }
+```
+
+### Desglose de Facturación
+
+Comprende dónde se gasta el tiempo y dinero:
+
+```typescript
+// Obtén facturación detallada por rol
+const billing = await calculateBillableHours({
+  start_date: "2026-01-01",
+  end_date: "2026-01-05",
+  format: "detailed"
+});
+
+logger.info("Billing summary", {
+  orchestrator: billing.by_role.orchestrator,
+  supervisor: billing.by_role.supervisor,
+  workagent: billing.by_role.workagent,
+  total_cost: billing.total_cost
+});
+
+// Ejemplo de salida:
+// {
+//   orchestrator: { hours: 2.5, cost: 6.25 },
+//   supervisor: { hours: 18.3, cost: 45.75 },
+//   workagent: { hours: 35.2, cost: 35.20 },
+//   total_cost: 87.20
+// }
+
+// Desglose de primer plano vs segundo plano
+const backgroundBreakdown = await getBackgroundBillingBreakdown({
+  start_date: "2026-01-01",
+  end_date: "2026-01-05"
+});
+
+logger.info("Foreground vs background", {
+  foreground_cost: backgroundBreakdown.foreground_cost,
+  background_cost: backgroundBreakdown.background_cost,
+  parallelization_efficiency: backgroundBreakdown.background_cost /
+    backgroundBreakdown.total_cost
+});
+```
+
+### Cumplimiento y Salud
+
+Monitorea la salud del proyecto:
+
+```typescript
+// Puntuación de cumplimiento de protocolo
+const compliance = await checkProtocolCompliance();
+logger.info("Compliance score", { score: compliance.score });
+// Retorna: { score: 92, issues: [...], recommendations: [...] }
+
+// Análisis de tendencias
+const trends = await getComplianceTrends({ days: 30 });
+logger.info("30-day compliance trend", {
+  average_score: trends.average,
+  highest: trends.highest,
+  lowest: trends.lowest,
+  trajectory: trends.improving ? "improving" : "declining"
+});
+
+// Detecta sesiones obsoletas
+const stale = await checkStaleProjects();
+if (stale.length > 0) {
+  logger.warn("Stale sessions detected", {
+    count: stale.length,
+    projects: stale.map(s => s.project)
+  });
+
+  // Ejecuta watchdog para recuperar sesiones huérfanas
+  await runWatchdog();
+}
+```
+
+---
+
+## Conclusión: De Agentes Experimentales a Infraestructura de Producción
+
+Construir sistemas de agentes IA listos para producción requiere tres capacidades clave:
+
+1. **Agentes en segundo plano** permiten trabajo paralelo—pruebas y compilaciones se ejecutan mientras tu orchestrator continúa
+2. **Sesiones nombradas** proporcionan continuidad—puedes pausar, reanudar y continuar exactamente donde lo dejaste
+3. **Hooks de permisos** aplican gobernanza—controles de costo, prevención de operaciones destructivas y puertas de seguridad
+
+Combinados con arquitectura basada en roles (orchestrator → supervisor → workagent), estos patrones transforman agentes IA de herramientas experimentales en infraestructura confiable, observable y escalable.
+
+Los beneficios son concretos:
+
+- **Eficiencia paralela**: 4+ tareas ejecutándose simultáneamente en lugar de secuencialmente
+- **Gestión de contexto**: Las sesiones pueden abarcar días o semanas sin perder estado
+- **Control de costo**: Los hooks de permisos previenen errores costosos
+- **Observabilidad**: Cada decisión se registra, cada costo se rastrea, cada línea de tiempo es clara
+- **Reanudabilidad**: Las sesiones nombradas te permiten cambiar de contexto sin perder progreso
+- **Escalabilidad**: La separación de roles funciona desde proyectos de un único desarrollador hasta iniciativas entre equipos
+
+Los patrones discutidos aquí—agentes en segundo plano, sesiones nombradas, hooks de permisos, separación de roles—no son conceptos novedosos. Se toman prestados de prácticas probadas de software empresarial. Lo nuevo es aplicarlos sistemáticamente a la orquestación de agentes IA.
+
+Comienza con agentes en segundo plano para paralelizar trabajo de larga duración. Avanza a sesiones nombradas para continuidad. Agrega hooks de permisos para gobernanza. La arquitectura crece con tus necesidades.
+
+**Stack**: TypeScript, Claude Code, Protocol Manager MCP
+**Patrones**: Agentes en segundo plano, sesiones nombradas, hooks de permisos, arquitectura basada en roles
+**Resultado**: Sistemas de agentes listos para producción que son observables, confiables y escalables
+
+*¿Listo para escalar tu infraestructura de agentes IA? Los patrones están aquí. Ahora ejecuta.*
