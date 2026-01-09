@@ -33,6 +33,9 @@ export type TranslationLabels = {
   publishedOn: string;
   readFullArticle: string;
   moreTopics: string;
+  article: string;
+  articles: string;
+  noArticlesInCategory: string;
   // Hero section
   heroTitle: string;
   heroSubtitle: string;
@@ -89,6 +92,9 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     publishedOn: "Published on",
     readFullArticle: "Read full article",
     moreTopics: "more",
+    article: "article",
+    articles: "articles",
+    noArticlesInCategory: "No articles found in this category.",
     heroTitle: "Developing Scalable and Efficient Web Solutions",
     heroSubtitle:
       "Greetings! I'm Mario Ayala, a Software Engineer with over 20 years of experience in enterprise application development. With a background in Computer Science and extensive experience at companies like Disney, I specialize in creating robust and scalable digital solutions that transform ideas into functional realities. My approach combines technical precision with intuitive design to deliver exceptional digital experiences. Shall we collaborate on your next project? 🚀",
@@ -144,6 +150,9 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     publishedOn: "Publicado el",
     readFullArticle: "Leer artículo completo",
     moreTopics: "más",
+    article: "artículo",
+    articles: "artículos",
+    noArticlesInCategory: "No se encontraron artículos en esta categoría.",
     heroTitle: "Desarrollando Soluciones Web Escalables y Eficientes",
     heroSubtitle:
       "¡Saludos! Soy Mario Ayala, un Ingeniero de Software con más de 20 años de experiencia en desarrollo de aplicaciones empresariales. Con formación académica en Ciencias de la Computación y amplia experiencia en empresas de renombre como Disney, me especializo en crear soluciones digitales robustas y escalables que transforman ideas en realidades funcionales. Mi enfoque combina precisión técnica con diseño intuitivo para ofrecer experiencias digitales excepcionales. ¿Colaboramos en su próximo proyecto? 🚀",
