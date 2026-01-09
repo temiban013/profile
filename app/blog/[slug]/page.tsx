@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getAllPosts, getPostBySlug, getRelatedPosts, getPostTranslation } from "@/lib/blog/content";
 import { formatDate } from "@/lib/utils";
 import { MdxContent } from "@/components/blog/mdx-content";
+import { SubjectBadge } from "@/components/blog/subject-badge";
 import { BlogPostStructuredData } from "@/components/seo/structured-data";
 import type { BlogPost } from "@/types/blog";
 
@@ -151,9 +152,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           {/* Category badge */}
           <div className="mb-4 flex flex-wrap gap-2">
-            <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
-              {post.category}
-            </span>
+            <SubjectBadge subject={post.subject} locale={post.locale} />
             {post.featured && (
               <span className="inline-block bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
                 {post.locale === "es" ? "Destacado" : "Featured"}

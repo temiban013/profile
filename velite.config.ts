@@ -1,6 +1,7 @@
 import { defineConfig, defineCollection, s } from "velite";
 import rehypeShiki from "@shikijs/rehype";
 import readingTime from "reading-time";
+import { subjectSlugs } from "./config/blog-subjects";
 
 // Compute reading time from raw content
 const computeReadingTime = (content: string): number => {
@@ -21,6 +22,7 @@ const posts = defineCollection({
       author: s.string().default("mario-ayala"),
       locale: s.enum(["en", "es"]),
       category: s.string(),
+      subject: s.enum(subjectSlugs),
       tags: s.array(s.string()).default([]),
       featured: s.boolean().default(false),
       draft: s.boolean().default(false),
