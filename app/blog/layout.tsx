@@ -51,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: 'en_US',
       images: [
         {
-          url: `${baseUrl}/og-blog-image.jpg`, // You may want to create this
+          url: `${baseUrl}/portfolio-preview.png`,
           width: 1200,
           height: 630,
           alt: 'Mario Rafael Ayala Blog - Software Engineering Insights',
@@ -65,7 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
       creator: '@marioayala', // Add your Twitter handle if you have one
-      images: [`${baseUrl}/og-blog-image.jpg`],
+      images: [`${baseUrl}/portfolio-preview.png`],
     },
 
     // Additional SEO enhancements

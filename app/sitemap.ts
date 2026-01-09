@@ -1,6 +1,7 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog/content";
+import { blogSubjects } from "@/config/blog-subjects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Base URL for your site
@@ -41,6 +42,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   };
 
+  // Blog subject pages for better organization and SEO
+  const subjectEntries = blogSubjects.map((subject) => ({
+    url: `${baseUrl}/blog/subjects/${subject.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   // Individual blog post entries for SEO
   const allPosts = getAllPosts();
   const blogPostEntries = allPosts.map((post) => ({
@@ -71,6 +80,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...routeEntries,
     ...resumeEntries,
     blogMainEntry,
+    ...subjectEntries,
     ...blogPostEntries,
     ...languageEntries
   ];

@@ -12,7 +12,7 @@ export const seoConfig = {
     siteName: "Mario Rafael Ayala",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/portfolio-preview.png",
         width: 1200,
         height: 630,
         alt: "Mario Rafael Ayala - Ingeniero de Software",

@@ -15,13 +15,14 @@ export function BlogPostStructuredData({
     "@type": "BlogPosting",
     "headline": post.title,
     "description": post.excerpt,
+    "image": post.image || `${baseUrl}/portfolio-preview.png`,
     "author": {
       "@type": "Person",
       "name": "Mario Rafael Ayala",
       "url": baseUrl,
       "sameAs": [
-        "https://github.com/marioayala", // Update with your actual GitHub
-        "https://linkedin.com/in/marioayala", // Update with your actual LinkedIn
+        "https://github.com/MarioRayala",
+        "https://linkedin.com/in/mariorafaelayala",
       ]
     },
     "publisher": {
@@ -30,7 +31,7 @@ export function BlogPostStructuredData({
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
-        "url": `${baseUrl}/logo.png` // Update with your actual logo
+        "url": `${baseUrl}/mra-logo-sq.png`
       }
     },
     "datePublished": post.publishedAt.toISOString(),
@@ -44,8 +45,8 @@ export function BlogPostStructuredData({
     "keywords": post.tags.join(", "),
     "articleSection": post.category,
     "timeRequired": `PT${post.readingTime}M`,
-    "wordCount": Math.round(post.readingTime * 200), // Estimate based on reading time
-    "articleBody": post.excerpt, // You might want to use the full content here
+    "wordCount": Math.round(post.readingTime * 200),
+    "articleBody": post.excerpt,
   };
 
   return (
@@ -99,6 +100,55 @@ export function BlogSectionStructuredData({
       },
       "keywords": post.tags.join(", "),
     }))
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
+  );
+}
+
+interface BreadcrumbStructuredDataProps {
+  postTitle: string;
+  postSlug: string;
+  language: 'en' | 'es';
+  baseUrl?: string;
+}
+
+export function BreadcrumbStructuredData({
+  postTitle,
+  postSlug,
+  language,
+  baseUrl = "https://www.mariorafaelayala.com"
+}: BreadcrumbStructuredDataProps) {
+  const homeLabel = language === 'en' ? 'Home' : 'Inicio';
+  const blogLabel = language === 'en' ? 'Blog' : 'Blog';
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": homeLabel,
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": blogLabel,
+        "item": `${baseUrl}/blog`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": postTitle,
+        "item": `${baseUrl}/blog/${postSlug}`
+      }
+    ]
   };
 
   return (

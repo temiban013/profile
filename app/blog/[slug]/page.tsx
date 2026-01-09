@@ -6,7 +6,7 @@ import { getAllPosts, getPostBySlug, getRelatedPosts, getPostTranslation } from 
 import { formatDate } from "@/lib/utils";
 import { MdxContent } from "@/components/blog/mdx-content";
 import { SubjectBadge } from "@/components/blog/subject-badge";
-import { BlogPostStructuredData } from "@/components/seo/structured-data";
+import { BlogPostStructuredData, BreadcrumbStructuredData } from "@/components/seo/structured-data";
 import type { BlogPost } from "@/types/blog";
 
 interface BlogPostPageProps {
@@ -30,6 +30,7 @@ function toLegacyPost(post: NonNullable<ReturnType<typeof getPostBySlug>>): Blog
     readingTime: post.readingTime,
     featured: post.featured,
     language: post.locale,
+    image: post.image,
   };
 }
 
@@ -127,6 +128,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Structured Data for SEO */}
       <BlogPostStructuredData post={legacyPost} />
+      <BreadcrumbStructuredData
+        postTitle={post.title}
+        postSlug={post.slug}
+        language={post.locale}
+      />
 
       {/* Breadcrumb Navigation */}
       <nav className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">

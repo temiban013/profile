@@ -20,6 +20,7 @@ export interface BlogPost {
   readonly readingTime: number;
   readonly featured: boolean;
   readonly language: "en" | "es";
+  readonly image?: string;
 }
 
 export interface BlogCategory {
