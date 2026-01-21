@@ -236,9 +236,9 @@ export const projectEnum = z.enum([
   'portfolio'
 ]);
 
-// Reusable date schema
+// Reusable date schema (YYYY-MM-DD format)
 const dateString = z.string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD format');
+  .regex(/^\d\d\d\d-\d\d-\d\d$/, 'Must be YYYY-MM-DD format');
 
 // Input validation for compliance check
 export const checkComplianceInput = z.object({
@@ -701,7 +701,7 @@ File I/O is slow. For large projects, consider:
 - **Lazy loading**: Only read files when needed
 - **Parallel operations**: Use `Promise.all()` for independent checks
 
-Most tool calls should return in <1 second for good UX.
+Most tool calls should return in less than 1 second for good UX.
 
 **4. Logging Strategy**
 
@@ -757,22 +757,22 @@ Store templates separately from code:
 ```typescript
 // src/lib/templates.ts
 export const HANDOFF_TEMPLATE = `---
-handoff_type: {{type}}
-project: {{project}}
-date: {{date}}
+handoff_type: $type
+project: $project
+date: $date
 ---
 
 ## Work Assignment
 
-{{work_assignment}}
+$work_assignment
 
 ## Files to Modify
 
-{{files_to_modify}}
+$files_to_modify
 
 ## Objective
 
-{{objective}}
+$objective
 `;
 ```
 
