@@ -97,7 +97,7 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     noArticlesInCategory: "No articles found in this category.",
     heroTitle: "Developing Scalable and Efficient Web Solutions",
     heroSubtitle:
-      "Greetings! I'm Mario Ayala, a Software Engineer with over 20 years of experience in enterprise application development. With a background in Computer Science and extensive experience at companies like Disney, I specialize in creating robust and scalable digital solutions that transform ideas into functional realities. My approach combines technical precision with intuitive design to deliver exceptional digital experiences. Shall we collaborate on your next project? 🚀",
+      "Greetings! I'm Mario Ayala, a Software Engineer with over 20 years of experience spanning enterprise systems at Disney to modern AI-augmented development. With a foundation in Computer Science and a passion for emerging technologies, I now leverage Claude Code and agentic programming to deliver solutions that traditionally require entire development teams. My approach combines decades of enterprise expertise with cutting-edge AI tools to create exceptional digital experiences. Shall we collaborate on your next project? 🚀",
     contactMe: "Contact Me",
     viewMore: "View More",
     proprietaryCode: "Proprietary Code",
@@ -155,7 +155,7 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     noArticlesInCategory: "No se encontraron artículos en esta categoría.",
     heroTitle: "Desarrollando Soluciones Web Escalables y Eficientes",
     heroSubtitle:
-      "¡Saludos! Soy Mario Ayala, un Ingeniero de Software con más de 20 años de experiencia en desarrollo de aplicaciones empresariales. Con formación académica en Ciencias de la Computación y amplia experiencia en empresas de renombre como Disney, me especializo en crear soluciones digitales robustas y escalables que transforman ideas en realidades funcionales. Mi enfoque combina precisión técnica con diseño intuitivo para ofrecer experiencias digitales excepcionales. ¿Colaboramos en su próximo proyecto? 🚀",
+      "¡Saludos! Soy Mario Ayala, un Ingeniero de Software con más de 20 años de experiencia que abarca desde sistemas empresariales en Disney hasta desarrollo moderno aumentado por IA. Con formación en Ciencias de la Computación y pasión por tecnologías emergentes, ahora aprovecho Claude Code y programación agéntica para entregar soluciones que tradicionalmente requieren equipos de desarrollo completos. Mi enfoque combina décadas de experiencia empresarial con herramientas de IA de vanguardia para crear experiencias digitales excepcionales. ¿Colaboramos en su próximo proyecto? 🚀",
     contactMe: "Contáctame",
     viewMore: "Ver Más",
     proprietaryCode: "Código Propietario",
