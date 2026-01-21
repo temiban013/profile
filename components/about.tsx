@@ -445,13 +445,13 @@ const About = () => {
             <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed space-y-4">
               <p>
                 {language === "en"
-                  ? "My journey began in 1987 with dBASE IV programming during my service in the U.S. Navy, evolving through the Microsoft ecosystem at companies like Office Depot and Disney. From Visual Basic and ASP to modern Next.js and TypeScript, I've continuously adapted to emerging technologies while maintaining a focus on practical, business-driven solutions."
-                  : "Mi viaje comenzó en 1987 con programación en dBASE IV durante mi servicio en la Marina de EE.UU., evolucionando a través del ecosistema Microsoft en empresas como Office Depot y Disney. Desde Visual Basic y ASP hasta Next.js y TypeScript modernos, me he adaptado continuamente a tecnologías emergentes manteniendo un enfoque en soluciones prácticas y orientadas al negocio."}
+                  ? "My journey began in 1987 when I taught myself dBASE IV programming while serving in the U.S. Navy. After my service, I transitioned into Unix system administration at JMH Health Plan while pursuing my computer science education. This dual path of hands-on experience and formal study laid the foundation for two decades in the Microsoft ecosystem—from Visual Basic 6.0 and classic ASP at Office Depot to enterprise C# and .NET architecture at Disney."
+                  : "Mi viaje comenzó en 1987 cuando aprendí programación en dBASE IV de manera autodidacta mientras servía en la Marina de EE.UU. Después de mi servicio, transicioné a administración de sistemas Unix en JMH Health Plan mientras cursaba mi educación en ciencias de la computación. Este camino dual de experiencia práctica y estudios formales sentó las bases para dos décadas en el ecosistema Microsoft—desde Visual Basic 6.0 y ASP clásico en Office Depot hasta arquitectura empresarial C# y .NET en Disney."}
               </p>
               <p>
                 {language === "en"
-                  ? "Today, I'm passionate about functional programming paradigms and cutting-edge technologies like Rust and blockchain development. My approach combines decades of enterprise experience with modern development practices, ensuring solutions that are both innovative and reliable."
-                  : "Hoy en día, me apasionan los paradigmas de programación funcional y tecnologías de vanguardia como Rust y desarrollo blockchain. Mi enfoque combina décadas de experiencia empresarial con prácticas de desarrollo modernas, asegurando soluciones que son innovadoras y confiables."}
+                  ? "Today, as an independent consultant, I leverage Claude Code and agentic programming to deliver solutions that traditionally require entire development teams. Using Next.js, TypeScript, and multi-agent orchestration, I manage multiple concurrent projects while maintaining the quality and reliability that enterprise clients expect."
+                  : "Hoy, como consultor independiente, aprovecho Claude Code y programación agéntica para entregar soluciones que tradicionalmente requieren equipos de desarrollo completos. Usando Next.js, TypeScript y orquestación multi-agente, gestiono múltiples proyectos concurrentes manteniendo la calidad y confiabilidad que los clientes empresariales esperan."}
               </p>
             </div>
 
