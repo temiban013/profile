@@ -4,16 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PDFViewer } from "@/components/pdf-viewer";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Mail,
   MessageSquare,
@@ -22,34 +12,12 @@ import {
   Calendar,
   MapPin,
   Phone,
-  CheckCircle,
-  AlertCircle,
   Github,
   Linkedin,
   Youtube,
 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import Link from "next/link";
-
-// Type definitions for form data
-interface ContactFormData {
-  name: string;
-  email: string;
-  subject: string;
-  projectType: string;
-  budget: string;
-  timeline: string;
-  message: string;
-}
-
-interface FormErrors {
-  [key: string]: string;
-}
-
-interface FormStatus {
-  type: "idle" | "loading" | "success" | "error";
-  message: string;
-}
 
 // Contact information constants
 const contactInfo = {
@@ -65,62 +33,6 @@ const contactInfo = {
   timezone: "Eastern Time (EST/EDT)",
 };
 
-// Project type options
-const projectTypes = {
-  en: [
-    { value: "web-app", label: "Web Application" },
-    { value: "e-commerce", label: "E-commerce Platform" },
-    { value: "portfolio", label: "Portfolio Website" },
-    { value: "landing-page", label: "Landing Page" },
-    { value: "consulting", label: "Technical Consulting" },
-    { value: "other", label: "Other" },
-  ],
-  es: [
-    { value: "web-app", label: "Aplicación Web" },
-    { value: "e-commerce", label: "Plataforma E-commerce" },
-    { value: "portfolio", label: "Sitio Web Portafolio" },
-    { value: "landing-page", label: "Página de Aterrizaje" },
-    { value: "consulting", label: "Consultoría Técnica" },
-    { value: "other", label: "Otro" },
-  ],
-};
-
-// Budget ranges
-const budgetRanges = {
-  en: [
-    { value: "500 - 5K", label: "$500 - $5,000" },
-    { value: "5k-15k", label: "$5,000 - $15,000" },
-    { value: "15k-30k", label: "$15,000 - $30,000" },
-    { value: "30k+", label: "$30,000+" },
-    { value: "discuss", label: "Let's Discuss" },
-  ],
-  es: [
-    { value: "500 - 5K", label: "$500 - $5,000" },
-    { value: "5k-15k", label: "$5,000 - $15,000" },
-    { value: "15k-30k", label: "$15,000 - $30,000" },
-    { value: "30k+", label: "$30,000+" },
-    { value: "discuss", label: "Hablemos" },
-  ],
-};
-
-// Timeline options
-const timelineOptions = {
-  en: [
-    { value: "asap", label: "ASAP" },
-    { value: "1-3months", label: "1-3 Months" },
-    { value: "3-6months", label: "3-6 Months" },
-    { value: "6months+", label: "6+ Months" },
-    { value: "flexible", label: "Flexible" },
-  ],
-  es: [
-    { value: "asap", label: "Lo antes posible" },
-    { value: "1-3months", label: "1-3 Meses" },
-    { value: "3-6months", label: "3-6 Meses" },
-    { value: "6months+", label: "6+ Meses" },
-    { value: "flexible", label: "Flexible" },
-  ],
-};
-
 // Translations
 const translations = {
   en: {
@@ -128,25 +40,6 @@ const translations = {
     getInTouch: "Let's Build Something Amazing Together",
     subtitle:
       "Ready to bring your ideas to life? Let's discuss your next project.",
-    contactForm: "Contact Form",
-    name: "Full Name",
-    email: "Email Address",
-    subject: "Subject",
-    projectType: "Project Type",
-    budget: "Budget Range",
-    timeline: "Timeline",
-    message: "Project Details",
-    namePlaceholder: "Your full name",
-    emailPlaceholder: "your.email@example.com",
-    subjectPlaceholder: "Brief project summary",
-    messagePlaceholder:
-      "Tell me about your project, goals, and any specific requirements...",
-    send: "Send Message",
-    sending: "Sending...",
-    successMessage:
-      "Message sent successfully! I'll get back to you within 24 hours.",
-    errorMessage:
-      "Failed to send message. Please try again or contact me directly.",
     directContact: "Direct Contact",
     businessHours: "Business Hours",
     responseTime: "Response Time",
@@ -155,34 +48,17 @@ const translations = {
     scheduleCall: "Schedule a Call",
     downloadResume: "Download Resume",
     socialMedia: "Connect With Me",
-    required: "This field is required",
-    invalidEmail: "Please enter a valid email address",
-    messageMinLength: "Message must be at least 20 characters long",
+    sendEmail: "Send Email",
+    emailCta: "Get in Touch",
+    emailCtaDescription:
+      "Have a project in mind? Send me an email and I'll get back to you within 24 hours.",
+    orSchedule: "Or schedule a call directly",
   },
   es: {
     contact: "Contacto",
     getInTouch: "Construyamos Algo Increíble Juntos",
     subtitle:
       "¿Listo para dar vida a tus ideas? Hablemos sobre tu próximo proyecto.",
-    contactForm: "Formulario de Contacto",
-    name: "Nombre Completo",
-    email: "Correo Electrónico",
-    subject: "Asunto",
-    projectType: "Tipo de Proyecto",
-    budget: "Rango de Presupuesto",
-    timeline: "Cronograma",
-    message: "Detalles del Proyecto",
-    namePlaceholder: "Tu nombre completo",
-    emailPlaceholder: "tu.correo@ejemplo.com",
-    subjectPlaceholder: "Resumen breve del proyecto",
-    messagePlaceholder:
-      "Cuéntame sobre tu proyecto, objetivos y requisitos específicos...",
-    send: "Enviar Mensaje",
-    sending: "Enviando...",
-    successMessage:
-      "¡Mensaje enviado exitosamente! Te responderé dentro de 24 horas.",
-    errorMessage:
-      "Error al enviar mensaje. Inténtalo de nuevo o contáctame directamente.",
     directContact: "Contacto Directo",
     businessHours: "Horario Comercial",
     responseTime: "Tiempo de Respuesta",
@@ -191,9 +67,11 @@ const translations = {
     scheduleCall: "Agendar Llamada",
     downloadResume: "Descargar CV",
     socialMedia: "Conéctate Conmigo",
-    required: "Este campo es obligatorio",
-    invalidEmail: "Por favor ingresa un correo válido",
-    messageMinLength: "El mensaje debe tener al menos 20 caracteres",
+    sendEmail: "Enviar Correo",
+    emailCta: "Ponte en Contacto",
+    emailCtaDescription:
+      "¿Tienes un proyecto en mente? Envíame un correo y te responderé dentro de 24 horas.",
+    orSchedule: "O agenda una llamada directamente",
   },
 };
 
@@ -203,23 +81,6 @@ const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [showPDFViewer, setShowPDFViewer] = useState(false);
-
-  // Form state
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
-    email: "",
-    subject: "",
-    projectType: "",
-    budget: "",
-    timeline: "",
-    message: "",
-  });
-
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<FormStatus>({
-    type: "idle",
-    message: "",
-  });
 
   // Intersection Observer for animations
   useEffect(() => {
@@ -236,91 +97,6 @@ const Contact: React.FC = () => {
 
     return () => observer.disconnect();
   }, []);
-
-  // Form validation
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = t.required;
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = t.required;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = t.invalidEmail;
-    }
-
-    if (!formData.subject.trim()) {
-      newErrors.subject = t.required;
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = t.required;
-    } else if (formData.message.trim().length < 20) {
-      newErrors.message = t.messageMinLength;
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setStatus({ type: "loading", message: "" });
-
-    try {
-      // Send form data to API
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          language,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        setStatus({ type: "success", message: t.successMessage });
-        setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          projectType: "",
-          budget: "",
-          timeline: "",
-          message: "",
-        });
-      } else {
-        // Handle API errors
-        const errorMessage = result.error || t.errorMessage;
-        setStatus({ type: "error", message: errorMessage });
-      }
-    } catch (error) {
-      console.error("Contact form submission error:", error);
-      setStatus({ type: "error", message: t.errorMessage });
-    }
-  };
-
-  // Handle input changes
-  const handleInputChange = (field: keyof ContactFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
 
   return (
     <section
@@ -354,7 +130,7 @@ const Contact: React.FC = () => {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
-          {/* Contact Form */}
+          {/* Email CTA Card */}
           <div
             className={`lg:col-span-2 transition-all duration-1000 delay-200 ${
               isVisible
@@ -362,204 +138,49 @@ const Contact: React.FC = () => {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            <div className="glass-effect rounded-2xl p-8 professional-shadow">
-              <h3 className="text-2xl font-semibold mb-6 flex items-center">
-                <Mail className="mr-3 h-6 w-6 text-primary" />
-                {t.contactForm}
-              </h3>
-
-              {/* Status Messages */}
-              {status.type === "success" && (
-                <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mr-3 flex-shrink-0" />
-                  <p className="text-green-700 dark:text-green-300">
-                    {status.message}
-                  </p>
+            <div className="glass-effect rounded-2xl p-8 professional-shadow h-full flex flex-col justify-center">
+              <div className="text-center max-w-lg mx-auto">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Mail className="h-8 w-8 text-primary" />
                 </div>
-              )}
+                <h3 className="text-2xl font-semibold mb-4">{t.emailCta}</h3>
+                <p className="text-muted-foreground mb-8">
+                  {t.emailCtaDescription}
+                </p>
 
-              {status.type === "error" && (
-                <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center">
-                  <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-3 flex-shrink-0" />
-                  <p className="text-red-700 dark:text-red-300">
-                    {status.message}
-                  </p>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name and Email Row */}
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">{t.name} *</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder={t.namePlaceholder}
-                      value={formData.name}
-                      onChange={(e) =>
-                        handleInputChange("name", e.target.value)
-                      }
-                      className={`rounded-lg ${
-                        errors.name ? "border-red-500" : ""
-                      }`}
-                      disabled={status.type === "loading"}
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-sm">{errors.name}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">{t.email} *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder={t.emailPlaceholder}
-                      value={formData.email}
-                      onChange={(e) =>
-                        handleInputChange("email", e.target.value)
-                      }
-                      className={`rounded-lg ${
-                        errors.email ? "border-red-500" : ""
-                      }`}
-                      disabled={status.type === "loading"}
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-sm">{errors.email}</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Subject */}
-                <div className="space-y-2">
-                  <Label htmlFor="subject">{t.subject} *</Label>
-                  <Input
-                    id="subject"
-                    type="text"
-                    placeholder={t.subjectPlaceholder}
-                    value={formData.subject}
-                    onChange={(e) =>
-                      handleInputChange("subject", e.target.value)
-                    }
-                    className={`rounded-lg ${
-                      errors.subject ? "border-red-500" : ""
-                    }`}
-                    disabled={status.type === "loading"}
-                  />
-                  {errors.subject && (
-                    <p className="text-red-500 text-sm">{errors.subject}</p>
-                  )}
-                </div>
-
-                {/* Project Details Row */}
-                <div className="grid sm:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="projectType">{t.projectType}</Label>
-                    <Select
-                      value={formData.projectType}
-                      onValueChange={(value) =>
-                        handleInputChange("projectType", value)
-                      }
-                      disabled={status.type === "loading"}
-                    >
-                      <SelectTrigger className="rounded-lg">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {projectTypes[language].map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="budget">{t.budget}</Label>
-                    <Select
-                      value={formData.budget}
-                      onValueChange={(value) =>
-                        handleInputChange("budget", value)
-                      }
-                      disabled={status.type === "loading"}
-                    >
-                      <SelectTrigger className="rounded-lg">
-                        <SelectValue placeholder="Select range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {budgetRanges[language].map((range) => (
-                          <SelectItem key={range.value} value={range.value}>
-                            {range.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="timeline">{t.timeline}</Label>
-                    <Select
-                      value={formData.timeline}
-                      onValueChange={(value) =>
-                        handleInputChange("timeline", value)
-                      }
-                      disabled={status.type === "loading"}
-                    >
-                      <SelectTrigger className="rounded-lg">
-                        <SelectValue placeholder="Select timeline" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timelineOptions[language].map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Message */}
-                <div className="space-y-2">
-                  <Label htmlFor="message">{t.message} *</Label>
-                  <Textarea
-                    id="message"
-                    placeholder={t.messagePlaceholder}
-                    value={formData.message}
-                    onChange={(e) =>
-                      handleInputChange("message", e.target.value)
-                    }
-                    className={`rounded-lg min-h-[120px] resize-none ${
-                      errors.message ? "border-red-500" : ""
-                    }`}
-                    disabled={status.type === "loading"}
-                  />
-                  {errors.message && (
-                    <p className="text-red-500 text-sm">{errors.message}</p>
-                  )}
-                </div>
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  className="w-full rounded-full professional-shadow-lg"
-                  disabled={status.type === "loading"}
-                >
-                  {status.type === "loading" ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      {t.sending}
-                    </>
-                  ) : (
-                    <>
+                <div className="space-y-4">
+                  <Button
+                    className="w-full sm:w-auto rounded-full professional-shadow-lg px-8"
+                    asChild
+                  >
+                    <Link href={`mailto:${contactInfo.email}`}>
                       <Send className="mr-2 h-4 w-4" />
-                      {t.send}
-                    </>
-                  )}
-                </Button>
-              </form>
+                      {t.sendEmail}
+                    </Link>
+                  </Button>
+
+                  <p className="text-sm text-muted-foreground">
+                    {t.orSchedule}
+                  </p>
+
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto rounded-full px-8"
+                    asChild
+                  >
+                    <Link
+                      href={
+                        process.env.NEXT_PUBLIC_CALENDLY_URL ||
+                        "https://calendly.com/temiban013"
+                      }
+                      target="_blank"
+                    >
+                      <Calendar className="mr-2 h-4 w-4" />
+                      {t.scheduleCall}
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -582,7 +203,9 @@ const Contact: React.FC = () => {
                   <div className="flex items-start justify-between">
                     <div className="flex items-center">
                       <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></div>
-                      <span className="text-sm font-medium">{t.businessHours}</span>
+                      <span className="text-sm font-medium">
+                        {t.businessHours}
+                      </span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1 ml-5">
@@ -592,12 +215,20 @@ const Contact: React.FC = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center text-sm">
-                    <span className="font-medium text-primary mr-2">{t.responseTime}:</span>
-                    <span className="text-muted-foreground">{contactInfo.responseTime}</span>
+                    <span className="font-medium text-primary mr-2">
+                      {t.responseTime}:
+                    </span>
+                    <span className="text-muted-foreground">
+                      {contactInfo.responseTime}
+                    </span>
                   </div>
                   <div className="flex items-center text-sm">
-                    <span className="font-medium text-primary mr-2">{t.preferredContact}:</span>
-                    <span className="text-muted-foreground">{contactInfo.preferredContact}</span>
+                    <span className="font-medium text-primary mr-2">
+                      {t.preferredContact}:
+                    </span>
+                    <span className="text-muted-foreground">
+                      {contactInfo.preferredContact}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -626,25 +257,15 @@ const Contact: React.FC = () => {
                 </Link>
                 <div className="flex items-center p-3 rounded-lg">
                   <MapPin className="h-4 w-4 text-muted-foreground mr-3" />
-                  <span className="text-sm">{contactInfo.location} ({contactInfo.timezone})</span>
+                  <span className="text-sm">
+                    {contactInfo.location} ({contactInfo.timezone})
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-4">
-              <Button variant="outline" className="w-full rounded-full" asChild>
-                <Link
-                  href={
-                    process.env.NEXT_PUBLIC_CALENDLY_URL ||
-                    "https://calendly.com/temiban013"
-                  }
-                  target="_blank"
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {t.scheduleCall}
-                </Link>
-              </Button>
               <Button
                 variant="outline"
                 className="w-full rounded-full"
