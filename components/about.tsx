@@ -535,9 +535,11 @@ const About = () => {
               <button
                 onClick={() => setShowAllSkills(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+                aria-expanded={false}
+                aria-label={language === "en" ? "Show all competencies" : "Mostrar todas las competencias"}
               >
                 {language === "en" ? "Show More Competencies" : "Ver Más Competencias"}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           )}
@@ -587,9 +589,11 @@ const About = () => {
               <button
                 onClick={() => setShowAllCredentials(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+                aria-expanded={false}
+                aria-label={language === "en" ? "Show all credentials" : "Mostrar todas las credenciales"}
               >
                 {language === "en" ? "Show More Credentials" : "Ver Más Credenciales"}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           )}
@@ -636,9 +640,11 @@ const About = () => {
               <button
                 onClick={() => setShowAllAchievements(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+                aria-expanded={false}
+                aria-label={language === "en" ? "Show all achievements" : "Mostrar todos los logros"}
               >
                 {language === "en" ? "Show More Achievements" : "Ver Más Logros"}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           )}

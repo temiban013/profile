@@ -23,16 +23,5 @@ export function getExternalLinkProps({
   };
 }
 
-// Check if a URL is external (server-compatible version)
-export function isExternalUrl(
-  url: string,
-  baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}`
-): boolean {
-  // If it's an absolute URL that doesn't match our base URL
-  if (url.startsWith("http")) {
-    return !url.startsWith(baseUrl);
-  }
-
-  // If it starts with a slash, it's internal
-  return !url.startsWith("/");
-}
+// Re-export isExternalUrl from url-utils for backwards compatibility
+export { isExternalUrl } from "./url-utils";
