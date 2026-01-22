@@ -98,7 +98,7 @@ const EnhancedProjectCard = ({
             src={imagen}
             alt={`Screenshot of ${titulo} project`}
             fill
-            className="object-cover transition-all duration-500 group-hover:scale-110"
+            className="object-cover object-top transition-all duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
@@ -319,6 +319,37 @@ const EnhancedProjects = () => {
   const proyectos: Record<"en" | "es", Project[]> = {
     en: [
       {
+        id: "dinamico-menu",
+        titulo: "Dinamico.menu",
+        descripcion:
+          "Multi-tenant SaaS platform for Puerto Rico's food truck industry. Features real-time order management, digital menus with QR codes, Stripe subscription billing, and a comprehensive marketing analytics dashboard. Built as a Turborepo monorepo with three applications (admin, menu, landing) using AI-assisted agentic development.",
+        imagen: "/dinamico-preview.png",
+        tecnologias: [
+          "Next.js 15",
+          "React 19",
+          "TypeScript",
+          "Tailwind CSS 4.0",
+          "Supabase",
+          "Stripe",
+          "Turborepo",
+          "Zustand",
+          "Playwright",
+        ],
+        categoria: "SaaS Platform",
+        urlSitio: "https://dinamico.menu",
+        // No GitHub link (private repo)
+        destacado: true,
+        anio: 2026,
+        businessImpact: {
+          metric: "Food Truck Operations",
+          result: "End-to-end digital transformation",
+          efficiency: "Real-time order & menu management",
+          timeline: "Production-ready in 8 weeks",
+        },
+        clientType: "SaaS Product",
+        industry: "Food & Beverage Technology",
+      },
+      {
         id: "cafe-papamin",
         titulo: "Café Papamin",
         descripcion:
@@ -468,39 +499,71 @@ const EnhancedProjects = () => {
         clientType: "Cultural Organization",
         industry: "Arts & Literature",
       },
-      {
-        id: "mario-portfolio",
-        titulo: "Mario Rafael Ayala Portfolio",
-        descripcion:
-          "Professional portfolio website showcasing 25+ years of software engineering experience. Built with Next.js 15 App Router, featuring bilingual support, professional animations, dark mode, and comprehensive SEO optimization.",
-        imagen: "/portfolio-preview.png",
-        tecnologias: [
-          "Next.js 15",
-          "TypeScript",
-          "Tailwind CSS 4.0",
-          "React Context",
-          "Lucide Icons",
-          "Vercel Analytics",
-          "i18n",
-          "SEO",
-          "PWA",
-        ],
-        categoria: "Portfolio",
-        urlSitio: "https://www.mariorafaelayala.com",
-        urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_PROFILE_REPO}`,
-        destacado: true,
-        anio: 2025,
-        businessImpact: {
-          metric: "Professional Visibility",
-          result: "Enhanced enterprise credibility",
-          efficiency: "Modern tech stack demonstration",
-          timeline: "Continuous improvement & optimization",
-        },
-        clientType: "Personal Brand",
-        industry: "Software Engineering",
-      },
+      // Temporarily hidden to maintain even project count (6 visible projects)
+      // {
+      //   id: "mario-portfolio",
+      //   titulo: "Mario Rafael Ayala Portfolio",
+      //   descripcion:
+      //     "Professional portfolio website showcasing 25+ years of software engineering experience. Built with Next.js 15 App Router, featuring bilingual support, professional animations, dark mode, and comprehensive SEO optimization.",
+      //   imagen: "/portfolio-preview.png",
+      //   tecnologias: [
+      //     "Next.js 15",
+      //     "TypeScript",
+      //     "Tailwind CSS 4.0",
+      //     "React Context",
+      //     "Lucide Icons",
+      //     "Vercel Analytics",
+      //     "i18n",
+      //     "SEO",
+      //     "PWA",
+      //   ],
+      //   categoria: "Portfolio",
+      //   urlSitio: "https://www.mariorafaelayala.com",
+      //   urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_PROFILE_REPO}`,
+      //   destacado: true,
+      //   anio: 2025,
+      //   businessImpact: {
+      //     metric: "Professional Visibility",
+      //     result: "Enhanced enterprise credibility",
+      //     efficiency: "Modern tech stack demonstration",
+      //     timeline: "Continuous improvement & optimization",
+      //   },
+      //   clientType: "Personal Brand",
+      //   industry: "Software Engineering",
+      // },
     ],
     es: [
+      {
+        id: "dinamico-menu",
+        titulo: "Dinamico.menu",
+        descripcion:
+          "Plataforma SaaS multi-tenant para la industria de food trucks de Puerto Rico. Incluye gestión de pedidos en tiempo real, menús digitales con códigos QR, facturación por suscripción con Stripe y un panel de análisis de marketing integral. Construido como monorepo Turborepo con tres aplicaciones (admin, menu, landing) usando desarrollo ágil asistido por IA.",
+        imagen: "/dinamico-preview.png",
+        tecnologias: [
+          "Next.js 15",
+          "React 19",
+          "TypeScript",
+          "Tailwind CSS 4.0",
+          "Supabase",
+          "Stripe",
+          "Turborepo",
+          "Zustand",
+          "Playwright",
+        ],
+        categoria: "Plataforma SaaS",
+        urlSitio: "https://dinamico.menu",
+        // No GitHub link (private repo)
+        destacado: true,
+        anio: 2026,
+        businessImpact: {
+          metric: "Operaciones Food Truck",
+          result: "Transformación digital de punta a punta",
+          efficiency: "Gestión de pedidos y menú en tiempo real",
+          timeline: "Listo para producción en 8 semanas",
+        },
+        clientType: "Producto SaaS",
+        industry: "Tecnología de Alimentos y Bebidas",
+      },
       {
         id: "cafe-papamin",
         titulo: "Café Papamin",
@@ -651,37 +714,38 @@ const EnhancedProjects = () => {
         clientType: "Organización Cultural",
         industry: "Artes y Literatura",
       },
-      {
-        id: "mario-portfolio",
-        titulo: "Portafolio Mario Rafael Ayala",
-        descripcion:
-          "Sitio web de portafolio profesional que muestra más de 25 años de experiencia en ingeniería de software. Construido con Next.js 15 App Router, con soporte bilingüe, animaciones profesionales, modo oscuro y optimización SEO integral.",
-        imagen: "/portfolio-preview.png",
-        tecnologias: [
-          "Next.js 15",
-          "TypeScript",
-          "Tailwind CSS 4.0",
-          "React Context",
-          "Lucide Icons",
-          "Vercel Analytics",
-          "i18n",
-          "SEO",
-          "PWA",
-        ],
-        categoria: "Portafolio",
-        urlSitio: "https://www.mariorafaelayala.com",
-        urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_PROFILE_REPO}`,
-        destacado: true,
-        anio: 2025,
-        businessImpact: {
-          metric: "Visibilidad Profesional",
-          result: "Credibilidad empresarial mejorada",
-          efficiency: "Demostración stack tecnológico moderno",
-          timeline: "Mejora continua y optimización",
-        },
-        clientType: "Marca Personal",
-        industry: "Ingeniería de Software",
-      },
+      // Temporarily hidden to maintain even project count (6 visible projects)
+      // {
+      //   id: "mario-portfolio",
+      //   titulo: "Portafolio Mario Rafael Ayala",
+      //   descripcion:
+      //     "Sitio web de portafolio profesional que muestra más de 25 años de experiencia en ingeniería de software. Construido con Next.js 15 App Router, con soporte bilingüe, animaciones profesionales, modo oscuro y optimización SEO integral.",
+      //   imagen: "/portfolio-preview.png",
+      //   tecnologias: [
+      //     "Next.js 15",
+      //     "TypeScript",
+      //     "Tailwind CSS 4.0",
+      //     "React Context",
+      //     "Lucide Icons",
+      //     "Vercel Analytics",
+      //     "i18n",
+      //     "SEO",
+      //     "PWA",
+      //   ],
+      //   categoria: "Portafolio",
+      //   urlSitio: "https://www.mariorafaelayala.com",
+      //   urlGithub: `${process.env.NEXT_PUBLIC_SOCIAL_GITHUB}/${process.env.NEXT_PUBLIC_PROFILE_REPO}`,
+      //   destacado: true,
+      //   anio: 2025,
+      //   businessImpact: {
+      //     metric: "Visibilidad Profesional",
+      //     result: "Credibilidad empresarial mejorada",
+      //     efficiency: "Demostración stack tecnológico moderno",
+      //     timeline: "Mejora continua y optimización",
+      //   },
+      //   clientType: "Marca Personal",
+      //   industry: "Ingeniería de Software",
+      // },
     ],
   };
 
