@@ -53,13 +53,13 @@ export const metadata: Metadata = {
       "$4.6 mil millones gastados en comida en PR en 2024. Asegura que los turistas te encuentren.",
     type: "website",
     locale: "es_PR",
-    url: "https://marioayala.dev/servicios",
+    url: "https://www.mariorafaelayala.com/servicios",
   },
   alternates: {
-    canonical: "https://marioayala.dev/servicios",
+    canonical: "https://www.mariorafaelayala.com/servicios",
     languages: {
-      "es-PR": "https://marioayala.dev/servicios",
-      "en-US": "https://marioayala.dev/services",
+      "es-PR": "https://www.mariorafaelayala.com/servicios",
+      "en-US": "https://www.mariorafaelayala.com/services",
     },
   },
 };
@@ -73,7 +73,7 @@ export default function ServicesPage() {
     provider: {
       "@type": "LocalBusiness",
       name: "Mario Ayala Dev",
-      url: "https://marioayala.dev",
+      url: "https://www.mariorafaelayala.com",
       telephone: "+1-787-000-0000", // Update with actual number
       areaServed: "PR",
     },
@@ -98,10 +98,10 @@ export default function ServicesPage() {
   const localBusinessSchema = {
     "@type": "LocalBusiness",
     name: "Mario Ayala Dev",
-    image: "https://marioayala.dev/logo.png",
+    image: "https://www.mariorafaelayala.com/logo.png",
     description:
       "Desarrollo web profesional para negocios en Puerto Rico. Sitios web, e-commerce, menús digitales y optimización de Google Business.",
-    url: "https://marioayala.dev",
+    url: "https://www.mariorafaelayala.com",
     telephone: "+1-787-000-0000", // Update with actual number
     address: {
       "@type": "PostalAddress",
@@ -140,8 +140,8 @@ export default function ServicesPage() {
                 {
                   "@type": "Organization",
                   name: "Mario Ayala Dev",
-                  url: "https://marioayala.dev",
-                  logo: "https://marioayala.dev/logo.png",
+                  url: "https://www.mariorafaelayala.com",
+                  logo: "https://www.mariorafaelayala.com/logo.png",
                   description:
                     "Desarrollo web profesional para negocios en Puerto Rico",
                   areaServed: "PR",
@@ -158,20 +158,20 @@ export default function ServicesPage() {
                       "@type": "ListItem",
                       position: 1,
                       name: "Inicio",
-                      item: "https://marioayala.dev",
+                      item: "https://www.mariorafaelayala.com",
                     },
                     {
                       "@type": "ListItem",
                       position: 2,
                       name: "Servicios",
-                      item: "https://marioayala.dev/servicios",
+                      item: "https://www.mariorafaelayala.com/servicios",
                     },
                   ],
                 },
                 ...servicesSchema.map((schema, index) => ({
                   ...schema,
                   "@context": undefined,
-                  url: `https://marioayala.dev/servicios#service-${index}`,
+                  url: `https://www.mariorafaelayala.com/servicios#service-${index}`,
                 })),
                 {
                   "@type": "AggregateOffer",

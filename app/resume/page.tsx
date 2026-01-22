@@ -4,27 +4,8 @@
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, Mail, Phone, MapPin } from "lucide-react";
 import StructuredData from "@/components/structured-data";
-import { useEffect } from "react";
-
 
 export default function ResumePage() {
-  // Set page metadata for SEO
-  useEffect(() => {
-    document.title = "Mario Rafael Ayala Resume | Senior Software Engineer | Disney Alumni | Download CV";
-
-    // Update meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Download resume of Mario Rafael Ayala, Senior Software Engineer with 25+ years experience at Disney Parks and Office Depot. Expert in Next.js, TypeScript, Enterprise Architecture. Available for hire.');
-    }
-
-    // Update meta keywords
-    const metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (metaKeywords) {
-      metaKeywords.setAttribute('content', 'mario rafael ayala resume, mario ayala cv, senior software engineer resume, disney software engineer cv, next.js developer resume, typescript expert cv, puerto rico software engineer resume');
-    }
-  }, []);
-
   // Structured data specifically for the resume page
   const resumeSchema = {
     "@context": "https://schema.org",
