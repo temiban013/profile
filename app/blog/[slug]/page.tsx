@@ -6,6 +6,7 @@ import { getAllPosts, getPostBySlug, getRelatedPosts, getPostTranslation } from 
 import { formatDate } from "@/lib/utils";
 import { MdxContent } from "@/components/blog/mdx-content";
 import { SubjectBadge } from "@/components/blog/subject-badge";
+import { PostLanguageSync } from "@/components/blog/post-language-sync";
 import { BlogPostStructuredData, BreadcrumbStructuredData } from "@/components/seo/structured-data";
 import type { BlogPost } from "@/types/blog";
 
@@ -126,8 +127,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Language sync - redirects to translation when user changes language */}
+      <PostLanguageSync
+        currentLocale={post.locale}
+        translationSlug={translation?.slug ?? null}
+      />
+
       {/* Structured Data for SEO */}
-      <BlogPostStructuredData post={legacyPost} />
+      <BlogPostStructuredData post={legacyPost} translationSlug={translation?.slug} />
       <BreadcrumbStructuredData
         postTitle={post.title}
         postSlug={post.slug}

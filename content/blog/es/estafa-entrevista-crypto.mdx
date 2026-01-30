@@ -102,21 +102,21 @@ El componente malicioso más obvio son credenciales de API expuestas dispersas e
 
 ```javascript
 // .env file (comprometido accidentalmente)
-OPENAI_API_KEY=sk-proj-1234567890abcdef
+OPENAI_API_KEY=sk-xxxx-REDACTED
 DATABASE_URL=postgresql://user:password@db.example.com
 
 // firebaseConfig.js
 const firebaseConfig = {
-  apiKey: "AIzaSyDmANaXCWKcEjxlz8MCeJ_Z82oMMV4lkMS",
-  databaseURL: "https://coinlocator-rtdb.firebaseio.com",
-  projectId: "coinlocator-prod",
+  apiKey: "[FAKE_FIREBASE_KEY]",
+  databaseURL: "https://[SCAM-PROJECT]-rtdb.firebaseio.com",
+  projectId: "[SCAM-PROJECT]-prod",
 };
 
 // src/config/api.js
 export const API_KEYS = {
-  coinMarketCap: "abc123def456ghi789",
-  etherscan: "YH4MEKX9C3D5Z7QPQRSTUV7WX",
-  infura: "projectId_key_abc123"
+  coinMarketCap: "[FAKE_API_KEY]",
+  etherscan: "[FAKE_API_KEY]",
+  infura: "[FAKE_API_KEY]"
 };
 ```
 
@@ -221,7 +221,7 @@ El código incluye un contrato inteligente que realiza transacciones financieras
 
 ```javascript
 // src/blockchain/interact.js
-const CONTRACT_ADDRESS = "0x2E2eC85f95a20FA0ACde32719679Bc3a75D1E918";
+const CONTRACT_ADDRESS = "0x[SCAM_CONTRACT_ADDRESS]";
 const CHAIN_ID = "0x1"; // Ethereum Mainnet - NO TESTNET
 
 const buyTokenFunction = async (provider, amount) => {
@@ -313,7 +313,7 @@ Ninguna aplicación legítima aceptaría o almacenaría claves privadas. Nunca.
 
 ```javascript
 // firebaseConfig en código frontend (siempre visible)
-const db = firebase.database('https://coinlocator-rtdb.firebaseio.com');
+const db = firebase.database('https://[SCAM-PROJECT]-rtdb.firebaseio.com');
 
 // Sin mecanismo de autenticación
 // Cualquiera con la URL de la base de datos puede leer/escribir todos los datos

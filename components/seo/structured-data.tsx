@@ -3,14 +3,16 @@ import { BlogPost } from "@/types/blog";
 
 interface BlogPostStructuredDataProps {
   post: BlogPost;
+  translationSlug?: string | null;
   baseUrl?: string;
 }
 
 export function BlogPostStructuredData({
   post,
+  translationSlug,
   baseUrl = "https://www.mariorafaelayala.com"
 }: BlogPostStructuredDataProps) {
-  const structuredData = {
+  const structuredData: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.title,
@@ -48,6 +50,15 @@ export function BlogPostStructuredData({
     "wordCount": Math.round(post.readingTime * 200),
     "articleBody": post.excerpt,
   };
+
+  // Add translation reference for SEO (Schema.org workTranslation property)
+  if (translationSlug) {
+    structuredData["workTranslation"] = {
+      "@type": "BlogPosting",
+      "url": `${baseUrl}/blog/${translationSlug}`,
+      "inLanguage": post.language === 'en' ? 'es-ES' : 'en-US',
+    };
+  }
 
   return (
     <script

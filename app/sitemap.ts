@@ -1,6 +1,6 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
-import { getAllPosts } from "@/lib/blog/content";
+import { getAllPosts, getPostTranslation } from "@/lib/blog/content";
 import { blogSubjects } from "@/config/blog-subjects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -50,14 +50,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  // Individual blog post entries for SEO
+  // Individual blog post entries for SEO with hreflang alternates
   const allPosts = getAllPosts();
-  const blogPostEntries = allPosts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post.updated ? new Date(post.updated) : new Date(post.date),
-    changeFrequency: "monthly" as const,
-    priority: post.featured ? 0.8 : 0.6,
-  }));
+  const blogPostEntries = allPosts.map((post) => {
+    const translation = getPostTranslation(post);
+    const entry: MetadataRoute.Sitemap[number] = {
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updated ? new Date(post.updated) : new Date(post.date),
+      changeFrequency: "monthly" as const,
+      priority: post.featured ? 0.8 : 0.6,
+    };
+
+    // Add hreflang alternates for posts with translations
+    if (translation) {
+      entry.alternates = {
+        languages: {
+          [post.locale === "en" ? "en-US" : "es-ES"]: `${baseUrl}/blog/${post.slug}`,
+          [translation.locale === "en" ? "en-US" : "es-ES"]: `${baseUrl}/blog/${translation.slug}`,
+        },
+      };
+    }
+
+    return entry;
+  });
 
   // Language-specific entries for better international SEO
   const languageEntries = [
