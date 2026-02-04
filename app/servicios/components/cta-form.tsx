@@ -4,20 +4,15 @@ import { motion, useInView } from "motion/react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { servicesContentES } from "../data/services-content";
-import type { ContactFormData } from "../types";
 import { analytics } from "./analytics";
+import {
+  clientContactSchema,
+  type ClientContactFormInput,
+} from "@/lib/validation/contact-schema";
 
-// Form validation schema
-const contactSchema = z.object({
-  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  email: z.string().email("Email inválido"),
-  phone: z.string().min(10, "Teléfono debe tener al menos 10 dígitos"),
-  businessType: z.string().min(1, "Por favor selecciona un tipo de negocio"),
-  hasWebsite: z.enum(["yes", "no"]),
-  goals: z.string().min(10, "Por favor describe tus objetivos (mínimo 10 caracteres)"),
-});
+// Extended type for form with honeypot
+type FormData = ClientContactFormInput & { website_url?: string };
 
 export function CTAForm() {
   const { cta } = servicesContentES;
@@ -25,6 +20,7 @@ export function CTAForm() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formStarted, setFormStarted] = useState(false);
 
   const {
@@ -32,26 +28,44 @@ export function CTAForm() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+  } = useForm<FormData>({
+    resolver: zodResolver(clientContactSchema),
   });
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    setErrorMessage(null);
 
     try {
-      // TODO: Implement actual API call
-      // const response = await fetch("/api/contact", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // });
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const result = await response.json();
 
-      console.log("Form data:", data);
+      if (!response.ok) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          setErrorMessage(result.error || "Demasiadas solicitudes. Por favor intenta de nuevo más tarde.");
+          analytics.formError("rate_limited");
+          setSubmitStatus("error");
+          return;
+        }
+
+        // Handle validation errors
+        if (response.status === 400) {
+          setErrorMessage(result.error || "Por favor verifica los datos ingresados.");
+          analytics.formError("validation_error");
+          setSubmitStatus("error");
+          return;
+        }
+
+        // Handle other errors
+        throw new Error(result.error || "Error al enviar el formulario");
+      }
 
       // Track successful form submission
       analytics.formSubmit({
@@ -67,6 +81,7 @@ export function CTAForm() {
     } catch (error) {
       console.error("Form submission error:", error);
       analytics.formError(error instanceof Error ? error.message : "Unknown error");
+      setErrorMessage(null); // Use default error message
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -126,6 +141,22 @@ export function CTAForm() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Honeypot field for spam protection - hidden from users */}
+              <input
+                {...register("website_url")}
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                style={{
+                  position: "absolute",
+                  left: "-9999px",
+                  opacity: 0,
+                  height: 0,
+                  width: 0,
+                }}
+                aria-hidden="true"
+              />
+
               {/* Name */}
               <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-ocean-900 mb-2">
@@ -277,7 +308,7 @@ export function CTAForm() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  Hubo un error. Por favor intenta de nuevo o escribe directamente al email.
+                  {errorMessage || "Hubo un error. Por favor intenta de nuevo o escribe directamente al email."}
                 </motion.div>
               )}
             </form>
