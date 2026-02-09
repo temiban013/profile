@@ -26,11 +26,11 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { ChevronDown } from "lucide-react";
 
 // Animated Statistics Component
-const AnimatedStat = ({
+const AnimatedStat = memo(function AnimatedStat({
   value,
   label,
   suffix = "",
@@ -40,7 +40,7 @@ const AnimatedStat = ({
   label: string;
   suffix?: string;
   delay?: number;
-}) => {
+}) {
   const [displayValue, setDisplayValue] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -81,10 +81,10 @@ const AnimatedStat = ({
       <div className="text-sm text-muted-foreground font-medium">{label}</div>
     </div>
   );
-};
+});
 
 // Skill Item Component
-const SkillItem = ({
+const SkillItem = memo(function SkillItem({
   icon: Icon,
   title,
   description,
@@ -94,7 +94,7 @@ const SkillItem = ({
   title: string;
   description: string;
   delay?: number;
-}) => {
+}) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -124,10 +124,10 @@ const SkillItem = ({
       </div>
     </div>
   );
-};
+});
 
 // Technology Badge Component
-const TechBadge = ({ tech, delay = 0 }: { tech: string; delay?: number }) => {
+const TechBadge = memo(function TechBadge({ tech, delay = 0 }: { tech: string; delay?: number }) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ const TechBadge = ({ tech, delay = 0 }: { tech: string; delay?: number }) => {
       {tech}
     </Badge>
   );
-};
+});
 
 const About = () => {
   const { language } = useLanguage();

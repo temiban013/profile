@@ -104,14 +104,14 @@ const Hero = () => {
         <div className="mt-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-            <span className="font-medium">25+ Years Experience</span>
+            <span className="font-medium">{language === "en" ? "25+ Years Experience" : "25+ Años de Experiencia"}</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="w-2 h-2 bg-secondary rounded-full animate-pulse"
               style={{ animationDelay: "1s" }}
             ></div>
-            <span className="font-medium">Enterprise Solutions</span>
+            <span className="font-medium">{language === "en" ? "Enterprise Solutions" : "Soluciones Empresariales"}</span>
           </div>
         </div>
 
@@ -146,7 +146,7 @@ const Hero = () => {
             (tech, index) => (
               <div
                 key={tech}
-                className="px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-primary/5 hover:border-primary/20 transition-all duration-300 cursor-default"
+                className="px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border rounded-full text-xs font-medium text-muted-foreground transition-colors duration-300"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {tech}
