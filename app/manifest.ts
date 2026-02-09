@@ -3,10 +3,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Mario Rafael Ayala | Software Engineer | Ingeniero de Software",
+    name: "Mario Rafael Ayala | Full-Stack AI Engineer | Ingeniero Full-Stack de IA",
     short_name: "Mario Ayala",
     description:
-      "Senior Software Engineer specialized in Next.js, TypeScript, React, and .NET Core | Ingeniero de Software Senior especializado en Next.js, TypeScript, React, y .NET Core",
+      "Full-Stack AI Engineer specialized in AI agent development, Next.js, TypeScript, and multi-agent orchestration | Ingeniero Full-Stack de IA especializado en desarrollo de agentes de IA, Next.js, TypeScript y orquestación multi-agente",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

@@ -80,8 +80,8 @@ const Hero = () => {
           <Zap className="fill-current mr-2 h-4 w-4" />
           <span className="font-medium">
             {language === "en"
-              ? "Full Stack Software Engineer"
-              : "Ingeniero de Software Full Stack"}
+              ? "Full-Stack AI Engineer"
+              : "Ingeniero Full-Stack de IA"}
           </span>
         </Badge>
 

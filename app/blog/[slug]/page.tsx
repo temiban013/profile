@@ -220,8 +220,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Mario Rafael Ayala</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   {post.locale === "es"
-                    ? "Ingeniero de Software Senior con 25+ años de experiencia. Especialista en desarrollo web full-stack, transformación digital y educación tecnológica. Actualmente enfocado en Next.js, TypeScript y soluciones para pequeños negocios."
-                    : "Senior Software Engineer with 25+ years of experience. Specialist in full-stack web development, digital transformation, and technology education. Currently focused on Next.js, TypeScript, and solutions for small businesses."}
+                    ? "Ingeniero Full-Stack de IA con 25+ años de experiencia. Especialista en desarrollo de agentes de IA, orquestación multi-agente y desarrollo web full-stack. Actualmente enfocado en desarrollo asistido por IA con Claude Code, Next.js y TypeScript."
+                    : "Full-Stack AI Engineer with 25+ years of experience. Specialist in AI agent development, multi-agent orchestration, and full-stack web development. Currently focused on AI-assisted development with Claude Code, Next.js, and TypeScript."}
                 </p>
                 <div className="flex space-x-4 mt-4">
                   <Link href="/#sobre-mi" className="text-blue-600 dark:text-blue-400 hover:underline">

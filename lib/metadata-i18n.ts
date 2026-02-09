@@ -5,14 +5,20 @@ import type { LanguageKey } from "./contexts/language-context";
 export const siteMetadata: Record<LanguageKey, Metadata> = {
   en: {
     title: {
-      default: "Mario Rafael Ayala | Senior Software Engineer | 25+ Years Experience | Disney Alumni",
-      template: "%s | Mario Rafael Ayala - Senior Software Engineer",
+      default: "Mario Rafael Ayala | Full-Stack AI Engineer | 25+ Years Experience | Disney Alumni",
+      template: "%s | Mario Rafael Ayala - Full-Stack AI Engineer",
     },
     description:
-      "Senior Software Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in Next.js 15, TypeScript, React 19, PostgreSQL, enterprise architecture. Digital Literacy Instructor with 35+ course presentations. Available for remote work, consulting, training. Specialized in ROI-focused digital transformation, cross-platform integration, and scalable business solutions. MS Computer Science (Magna Cum Laude).",
+      "Full-Stack AI Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in AI agent development, multi-agent orchestration, Next.js 15, TypeScript, React 19, PostgreSQL. Digital Literacy Instructor with 35+ course presentations. Available for remote work, consulting, training. Specialized in AI-assisted development, ROI-focused digital transformation, and scalable business solutions. MS Computer Science (Magna Cum Laude).",
     keywords: [
       "mario rafael ayala",
-      "senior software engineer",
+      "full-stack ai engineer",
+      "ai agent developer",
+      "ai engineer",
+      "ai-assisted development",
+      "multi-agent orchestration",
+      "agentic ai",
+      "claude code developer",
       "disney software engineer",
       "puerto rico software engineer",
       "next.js 15 developer",
@@ -34,7 +40,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "caribbean software engineer",
       "puerto rico tech talent",
       "independent technology consultant",
-      "software engineering consultant",
+      "llm integration developer",
       "enterprise systems expert",
       "web application developer",
       "database architect",
@@ -61,7 +67,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "software engineer disney experience",
       "enterprise software solutions",
       "puerto rico developer remote",
-      "senior engineer available",
+      "ai engineer available",
       "software architect consultant",
       "digital literacy instructor",
       "course designer",
@@ -78,33 +84,39 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "professional development instructor"
     ],
     openGraph: {
-      siteName: "Mario Rafael Ayala - Senior Software Engineer",
+      siteName: "Mario Rafael Ayala - Full-Stack AI Engineer",
       url: "https://www.mariorafaelayala.com/",
       type: "website",
-      title: "Mario Rafael Ayala | Senior Software Engineer | Disney Alumni | Available for Hire",
+      title: "Mario Rafael Ayala | Full-Stack AI Engineer | Disney Alumni | Available for Hire",
       description:
-        "Senior Software Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in Next.js 15, React 19, PostgreSQL, Enterprise Architecture. Digital Literacy Instructor with 35+ course presentations. ROI-focused portfolio: Café Papamín e-commerce, PFDH.org platform, modern web development excellence. Available for remote work, consulting & training.",
+        "Full-Stack AI Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in AI agent development, multi-agent orchestration, Next.js 15, React 19, PostgreSQL. Digital Literacy Instructor with 35+ course presentations. ROI-focused portfolio: Café Papamín e-commerce, PFDH.org platform, modern web development. Available for remote work, consulting & training.",
       locale: "en-US",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
     },
     twitter: {
       card: "summary_large_image",
-      title: "Mario Rafael Ayala | Senior Software Engineer | Disney Alumni | Hiring",
+      title: "Mario Rafael Ayala | Full-Stack AI Engineer | Disney Alumni | Hiring",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
       description:
-        "25+ years enterprise experience including Disney & Office Depot. Next.js 15/React 19/PostgreSQL expert. Digital Literacy Instructor with 35+ course presentations. MS Computer Science. Available for remote work, consulting & training. ROI-focused portfolio: modern e-commerce, web platforms, enterprise systems.",
+        "Full-Stack AI Engineer with 25+ years enterprise experience including Disney & Office Depot. AI agent development, multi-agent orchestration, Next.js 15/React 19/PostgreSQL expert. Digital Literacy Instructor with 35+ course presentations. MS Computer Science. Available for remote work, consulting & training.",
     },
   },
   es: {
     title: {
-      default: "Mario Rafael Ayala | Ingeniero de Software Senior | 25+ Años Experiencia | Ex Disney",
-      template: "%s | Mario Rafael Ayala - Ingeniero de Software Senior",
+      default: "Mario Rafael Ayala | Ingeniero Full-Stack de IA | 25+ Años Experiencia | Ex Disney",
+      template: "%s | Mario Rafael Ayala - Ingeniero Full-Stack de IA",
     },
     description:
-      "Ingeniero de Software Senior con 25+ años de experiencia empresarial incluyendo Disney Parks, Office Depot. Experto en Next.js 15, TypeScript, React 19, PostgreSQL, arquitectura empresarial. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Disponible para trabajo remoto, consultoría, capacitación. Especializado en transformación digital enfocada en ROI, integración multi-plataforma y soluciones empresariales escalables. MS Ciencias de la Computación (Magna Cum Laude).",
+      "Ingeniero Full-Stack de IA con 25+ años de experiencia empresarial incluyendo Disney Parks, Office Depot. Experto en desarrollo de agentes de IA, orquestación multi-agente, Next.js 15, TypeScript, React 19, PostgreSQL, arquitectura empresarial. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Disponible para trabajo remoto, consultoría, capacitación. Especializado en desarrollo asistido por IA, transformación digital enfocada en ROI y soluciones empresariales escalables. MS Ciencias de la Computación (Magna Cum Laude).",
     keywords: [
       "mario rafael ayala",
-      "ingeniero de software senior",
+      "ingeniero full-stack de ia",
+      "desarrollador agentes ia",
+      "ingeniero ia",
+      "desarrollo asistido por ia",
+      "orquestación multi-agente",
+      "ia agéntica",
+      "desarrollador claude code",
       "ingeniero disney",
       "ingeniero software puerto rico",
       "desarrollador next.js 15",
@@ -125,7 +137,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "ingeniero software caribe",
       "talento tech puerto rico",
       "consultor tecnología independiente",
-      "consultor ingeniería software",
+      "desarrollador integración llm",
       "experto sistemas empresariales",
       "desarrollador aplicaciones web",
       "arquitecto base datos",
@@ -152,7 +164,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "ingeniero software experiencia disney",
       "soluciones software empresariales",
       "desarrollador puerto rico remoto",
-      "ingeniero senior disponible",
+      "ingeniero ia disponible",
       "arquitecto software consultor",
       "instructor alfabetización digital",
       "diseñador de cursos",
@@ -169,21 +181,21 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "instructor desarrollo profesional"
     ],
     openGraph: {
-      siteName: "Mario Rafael Ayala - Ingeniero de Software Senior",
+      siteName: "Mario Rafael Ayala - Ingeniero Full-Stack de IA",
       url: "https://www.mariorafaelayala.com/",
       type: "website",
-      title: "Mario Rafael Ayala | Ingeniero de Software Senior | Ex Disney | Disponible para Contratar",
+      title: "Mario Rafael Ayala | Ingeniero Full-Stack de IA | Ex Disney | Disponible para Contratar",
       description:
-        "Ingeniero de Software Senior con 25+ años incluyendo Disney Parks, Office Depot. Experto en Next.js 15, React 19, PostgreSQL, Arquitectura Empresarial. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Portfolio enfocado en ROI: Café Papamín e-commerce, plataforma PFDH.org, desarrollo web moderno. Disponible para trabajo remoto, consultoría y capacitación.",
+        "Ingeniero Full-Stack de IA con 25+ años incluyendo Disney Parks, Office Depot. Experto en desarrollo de agentes de IA, orquestación multi-agente, Next.js 15, React 19, PostgreSQL. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Portfolio enfocado en ROI: Café Papamín e-commerce, plataforma PFDH.org, desarrollo web moderno. Disponible para trabajo remoto, consultoría y capacitación.",
       locale: "es-PR",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
     },
     twitter: {
       card: "summary_large_image",
-      title: "Mario Rafael Ayala | Ingeniero de Software Senior | Ex Disney | Contratación",
+      title: "Mario Rafael Ayala | Ingeniero Full-Stack de IA | Ex Disney | Contratación",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
       description:
-        "25+ años experiencia empresarial incluyendo Disney y Office Depot. Experto Next.js 15/React 19/PostgreSQL. Instructor de Alfabetización Digital con 35+ presentaciones. MS Ciencias Computación. Disponible trabajo remoto, consultoría y capacitación. Portfolio enfocado en ROI: e-commerce moderno, plataformas web, sistemas empresariales.",
+        "Ingeniero Full-Stack de IA con 25+ años experiencia empresarial incluyendo Disney y Office Depot. Desarrollo de agentes de IA, orquestación multi-agente, experto Next.js 15/React 19/PostgreSQL. Instructor de Alfabetización Digital con 35+ presentaciones. MS Ciencias Computación. Disponible trabajo remoto, consultoría y capacitación.",
     },
   },
 };

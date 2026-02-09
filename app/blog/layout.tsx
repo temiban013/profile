@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mariorafaelayala.com';
 
   const baseMetadata = {
-    title: "Blog | Software Engineering Insights",
+    title: "Blog | AI & Software Engineering Insights",
     description:
       "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience. Available in English and Spanish. | Explora perspectivas de ingeniería de software, tutoriales y lecciones profesionales de 25+ años de experiencia en desarrollo.",
     keywords: [
@@ -43,26 +43,26 @@ export async function generateMetadata(): Promise<Metadata> {
     },
 
     openGraph: {
-      title: "Blog | Software Engineering Insights",
+      title: "Blog | AI & Software Engineering Insights",
       description:
         "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
       type: "website",
       url: `${baseUrl}/blog`,
-      siteName: 'Mario Rafael Ayala - Software Engineer',
+      siteName: 'Mario Rafael Ayala - Full-Stack AI Engineer',
       locale: 'en_US',
       images: [
         {
           url: `${baseUrl}/portfolio-preview.png`,
           width: 1200,
           height: 630,
-          alt: 'Mario Rafael Ayala Blog - Software Engineering Insights',
+          alt: 'Mario Rafael Ayala Blog - AI & Software Engineering Insights',
         },
       ],
     },
 
     twitter: {
       card: "summary_large_image",
-      title: "Blog | Software Engineering Insights",
+      title: "Blog | AI & Software Engineering Insights",
       description:
         "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
       creator: '@marioayala', // Add your Twitter handle if you have one

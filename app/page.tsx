@@ -16,21 +16,21 @@ export default function Home() {
     "@type": "Person",
     name: "Mario Rafael Ayala",
     alternateName: "Mario R. Ayala",
-    description: "20+ years software engineering, specializing in AI and full-stack development. Architected multi-agent system with Claude Code managing 7 concurrent projects. Expert in Next.js, TypeScript, .NET Core with teaching experience across diverse learners. US Navy veteran.",
+    description: "Full-Stack AI Engineer with 20+ years enterprise experience. Architected multi-agent orchestration system with Claude Code managing 7 concurrent projects. Expert in AI agent development, Next.js, TypeScript, .NET Core with teaching experience across diverse learners. US Navy veteran.",
     jobTitle: "Independent Technology Consultant",
     hasOccupation: {
       "@type": "Occupation",
-      name: "Independent Technology Consultant",
+      name: "Full-Stack AI Engineer",
       occupationLocation: {
         "@type": "Place",
         name: "Puerto Rico"
       },
       skills: [
-        "AI-Assisted Development", "Multi-Agent Orchestration", "Claude Code",
+        "AI Agent Development", "Multi-Agent Orchestration", "Claude Code", "LLM Integration",
         "Next.js", "TypeScript", "React", "JavaScript", "Node.js",
         ".NET Core", "C#", "SQL Server", "PostgreSQL", "Enterprise Architecture",
         "Digital Transformation", "Systems Integration", "Cloud Computing",
-        "Full Stack Development", "Blockchain", "Solidity", "Educational Technology"
+        "Full Stack Development", "Agentic AI", "Educational Technology"
       ],
       experienceRequirements: "20+ years",
       qualifications: "Master's Computer Science - Magna Cum Laude"
@@ -95,8 +95,8 @@ export default function Home() {
     ],
     seeks: {
       "@type": "Demand",
-      name: "Technology Consulting & Software Engineering",
-      description: "Providing independent technology consulting, AI-assisted development, digital transformation services, and educational technology solutions"
+      name: "AI Engineering & Technology Consulting",
+      description: "Providing AI engineering, multi-agent orchestration, full-stack development, digital transformation services, and educational technology solutions"
     },
     workLocation: "Remote",
     availableLanguage: ["English", "Spanish"],
@@ -108,9 +108,9 @@ export default function Home() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Mario Rafael Ayala | Independent Technology Consultant Portfolio",
+    name: "Mario Rafael Ayala | Full-Stack AI Engineer Portfolio",
     url: "https://www.mariorafaelayala.com",
-    description: "Professional portfolio of Mario Rafael Ayala, Independent Technology Consultant with 20+ years experience specializing in AI-assisted development, full-stack solutions, and educational technology",
+    description: "Professional portfolio of Mario Rafael Ayala, Full-Stack AI Engineer with 20+ years experience specializing in AI agent development, multi-agent orchestration, and full-stack solutions",
     author: {
       "@id": "https://www.mariorafaelayala.com#person"
     },
@@ -125,8 +125,8 @@ export default function Home() {
   const professionalServiceSchema = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    name: "Mario Rafael Ayala - Software Engineering Consulting",
-    description: "Enterprise software engineering and digital transformation consulting services",
+    name: "Mario Rafael Ayala - AI Engineering & Software Consulting",
+    description: "AI engineering, multi-agent orchestration, and enterprise software consulting services",
     provider: {
       "@id": "https://www.mariorafaelayala.com#person"
     },

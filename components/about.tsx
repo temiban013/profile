@@ -506,8 +506,8 @@ const About = () => {
                   <div className="font-semibold">Mario Rafael Ayala</div>
                   <div className="text-sm text-muted-foreground">
                     {language === "en"
-                      ? "Senior Software Engineer"
-                      : "Ingeniero de Software Senior"}
+                      ? "Full-Stack AI Engineer"
+                      : "Ingeniero Full-Stack de IA"}
                   </div>
                 </div>
               </div>

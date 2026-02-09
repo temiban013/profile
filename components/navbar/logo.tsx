@@ -38,7 +38,7 @@ export const Logo = ({
     return (
       <Image
         src="/mra-logo-rc.png"
-        alt="Mario Rafael Ayala - Full Stack Software Engineer"
+        alt="Mario Rafael Ayala - Full-Stack AI Engineer"
         width={config.width}
         height={config.height}
         className={cn(
@@ -66,7 +66,7 @@ export const Logo = ({
     >
       <Image
         src="/mra-logo-rc.png"
-        alt="Mario Rafael Ayala - Full Stack Software Engineer"
+        alt="Mario Rafael Ayala - Full-Stack AI Engineer"
         width={config.width}
         height={config.height}
         className={cn(

@@ -332,7 +332,7 @@ export const NavigationSheet = (): JSX.Element => {
             </p>
           </div>
           <p className="text-sm text-muted-foreground mb-2">
-            Full Stack Software Engineer
+            Full-Stack AI Engineer
           </p>
           <p className="text-xs text-muted-foreground">
             25+ Years Enterprise Experience

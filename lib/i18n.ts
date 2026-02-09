@@ -80,8 +80,8 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     inSummary: "In summary...",
     blog: "Blog",
     // Blog section
-    blogTitle: "Software Engineering Insights",
-    blogSubtitle: "Sharing knowledge gained from 25+ years of professional software development, covering everything from enterprise architecture to modern web technologies.",
+    blogTitle: "AI & Software Engineering Insights",
+    blogSubtitle: "Sharing knowledge gained from 25+ years of professional software development, covering AI-assisted development, enterprise architecture, and modern web technologies.",
     featuredArticles: "Featured Articles",
     recentArticles: "Recent Articles",
     blogStats: "Blog Statistics",
@@ -108,7 +108,7 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     youtubeaccount: "YouTube Channel",
     whatsappaccount: "WhatsApp Contact",
     meta: {
-      title: "Mario Rafael Ayala | Software Engineer",
+      title: "Mario Rafael Ayala | Full-Stack AI Engineer",
       description:
         "With over 20 years of experience in software development, I specialize in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects. My academic background in Computer Science (obtained with honors) and my military experience have provided me with a solid foundation of discipline and methodology that I apply to every project. I'm passionate about finding elegant solutions to complex problems using modern technologies like Next.js, TypeScript, and .NET Core, always maintaining a pragmatic, results-oriented approach.",
       ogDescription:
@@ -138,8 +138,8 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     inSummary: "En resumen...",
     blog: "Blog",
     // Blog section
-    blogTitle: "Perspectivas de Ingeniería de Software",
-    blogSubtitle: "Compartiendo conocimiento adquirido durante 25+ años de desarrollo profesional de software, cubriendo desde arquitectura empresarial hasta tecnologías web modernas.",
+    blogTitle: "Perspectivas de IA e Ingeniería de Software",
+    blogSubtitle: "Compartiendo conocimiento adquirido durante 25+ años de desarrollo profesional de software, cubriendo desarrollo asistido por IA, arquitectura empresarial y tecnologías web modernas.",
     featuredArticles: "Artículos Destacados",
     recentArticles: "Artículos Recientes",
     blogStats: "Estadísticas del Blog",
@@ -166,7 +166,7 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     youtubeaccount: "Canal de YouTube",
     whatsappaccount: "Contactar por WhatsApp",
     meta: {
-      title: "Mario Rafael Ayala | Ingeniero de Software",
+      title: "Mario Rafael Ayala | Ingeniero Full-Stack de IA",
       description:
         "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
       ogDescription:

@@ -237,10 +237,10 @@ export function CTAForm() {
 
               {/* Has Website */}
               <div>
-                <label className="block text-sm font-semibold text-ocean-900 mb-2">
+                <label id="hasWebsite-label" className="block text-sm font-semibold text-ocean-900 mb-2">
                   ¿Tienes sitio web actualmente? *
                 </label>
-                <div className="flex gap-4">
+                <div className="flex gap-4" role="radiogroup" aria-labelledby="hasWebsite-label">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       {...register("hasWebsite")}
@@ -294,6 +294,8 @@ export function CTAForm() {
               {/* Status Messages */}
               {submitStatus === "success" && (
                 <motion.div
+                  role="alert"
+                  aria-live="polite"
                   className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-center"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -304,6 +306,8 @@ export function CTAForm() {
 
               {submitStatus === "error" && (
                 <motion.div
+                  role="alert"
+                  aria-live="assertive"
                   className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-center"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}

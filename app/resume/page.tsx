@@ -12,8 +12,8 @@ export default function ResumePage() {
     "@type": "Person",
     "@id": "https://www.mariorafaelayala.com#person",
     name: "Mario Rafael Ayala",
-    jobTitle: "Senior Software Engineer",
-    description: "Senior Software Engineer with 25+ years of enterprise experience at Disney Parks and Office Depot",
+    jobTitle: "Full-Stack AI Engineer",
+    description: "Full-Stack AI Engineer with 25+ years of enterprise experience at Disney Parks and Office Depot. Specialized in AI agent development and multi-agent orchestration",
     url: "https://www.mariorafaelayala.com",
     email: "marioayaladev@gmail.com",
     telephone: "+1-407-476-7353",
@@ -24,8 +24,9 @@ export default function ResumePage() {
     },
     hasOccupation: {
       "@type": "Occupation",
-      name: "Senior Software Engineer",
+      name: "Full-Stack AI Engineer",
       skills: [
+        "AI Agent Development", "Multi-Agent Orchestration", "Claude Code",
         "Next.js", "TypeScript", "React", "JavaScript", "Node.js",
         ".NET Core", "C#", "SQL Server", "Enterprise Architecture",
         "Digital Transformation", "Systems Integration"
@@ -35,8 +36,8 @@ export default function ResumePage() {
     workLocation: "Remote",
     seeks: {
       "@type": "Demand",
-      name: "Senior Software Engineer Position",
-      description: "Seeking senior software engineering roles, technical leadership positions, or consulting opportunities"
+      name: "Full-Stack AI Engineer Position",
+      description: "Seeking AI engineering roles, technical leadership positions, or consulting opportunities in AI-assisted development"
     },
     hasCredential: [
       {
@@ -83,7 +84,7 @@ export default function ResumePage() {
               <span className="text-gradient">Mario Rafael Ayala</span>
               <br />
               <span className="text-2xl sm:text-3xl text-muted-foreground font-normal">
-                Senior Software Engineer Resume
+                Full-Stack AI Engineer Resume
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
@@ -214,7 +215,7 @@ export default function ResumePage() {
           <div className="text-center bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-2xl p-8 professional-shadow">
             <h2 className="text-3xl font-bold mb-4 text-gradient">Ready to Hire?</h2>
             <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Experienced Senior Software Engineer available for immediate start.
+              Experienced Full-Stack AI Engineer available for immediate start.
               Remote work preferred, consulting opportunities welcome.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
