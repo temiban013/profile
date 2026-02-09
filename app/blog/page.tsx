@@ -1,32 +1,13 @@
 // app/blog/page.tsx
 import { cookies } from "next/headers";
-import { getAllPostsMeta, getPostStatsMeta, type PostMeta } from "@/lib/blog/content";
+import { getAllPostsMeta, getPostStatsMeta } from "@/lib/blog/content";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
 import { getTranslation } from "@/lib/i18n";
 import { BlogSectionStructuredData } from "@/components/seo/structured-data";
 import { SubjectFilterTabs } from "@/components/blog/subject-filter-tabs";
 import { getActiveSubjects, getSubjectCounts, getSubject } from "@/lib/blog/subjects";
 import type { BlogPost } from "@/types/blog";
-
-/**
- * Convert PostMeta to legacy BlogPost format for existing components
- */
-function toLegacyPost(post: PostMeta): BlogPost {
-  return {
-    id: post.slug,
-    title: post.title,
-    slug: post.slug,
-    excerpt: post.description,
-    content: "", // Empty - listing page doesn't need content
-    publishedAt: new Date(post.date),
-    updatedAt: post.updated ? new Date(post.updated) : undefined,
-    tags: post.tags,
-    category: post.category,
-    readingTime: post.readingTime,
-    featured: post.featured,
-    language: post.locale,
-  };
-}
+import { postMetaToLegacyPost } from "@/lib/blog/to-legacy-post";
 
 /**
  * Blog Listing Page Component (Server Component)
@@ -50,9 +31,9 @@ export default async function BlogPage({
 
   // Get posts from Velite content (server-side)
   const allPostsMeta = getAllPostsMeta({ locale });
-  const allPosts = allPostsMeta.map(toLegacyPost);
-  const featuredPosts = getAllPostsMeta({ locale, featured: true }).map(toLegacyPost);
-  const recentPosts = getAllPostsMeta({ locale, featured: false }).map(toLegacyPost);
+  const allPosts = allPostsMeta.map(postMetaToLegacyPost);
+  const featuredPosts = getAllPostsMeta({ locale, featured: true }).map(postMetaToLegacyPost);
+  const recentPosts = getAllPostsMeta({ locale, featured: false }).map(postMetaToLegacyPost);
   const stats = getPostStatsMeta(locale);
 
   // Get subject data
@@ -64,7 +45,7 @@ export default async function BlogPage({
   if (activeSubject) {
     filteredPosts = allPostsMeta
       .filter((p) => p.subject === activeSubject)
-      .map(toLegacyPost);
+      .map(postMetaToLegacyPost);
   }
 
   // Determine if we're showing filtered view or default view

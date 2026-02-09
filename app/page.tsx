@@ -5,7 +5,7 @@ import Hero from "@/components/hero";
 import Projects from "@/components/projects";
 import Testimonials from "@/components/testimonials";
 import Contact from "@/components/contact";
-import StructuredData from "@/components/structured-data";
+import { StructuredData } from "@/components/seo/structured-data";
 
 export default function Home() {
   // Check if testimonials should be shown

@@ -4,28 +4,7 @@ import Link from "next/link";
 import { getPostsBySubject, getSubject, getActiveSubjects } from "@/lib/blog/subjects";
 import { SubjectBadge } from "@/components/blog/subject-badge";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-import type { Post } from "@/lib/blog/content";
-import type { BlogPost } from "@/types/blog";
-
-/**
- * Convert Velite Post to legacy BlogPost format for existing components
- */
-function toLegacyPost(post: Post): BlogPost {
-  return {
-    id: post.slug,
-    title: post.title,
-    slug: post.slug,
-    excerpt: post.description,
-    content: post.raw,
-    publishedAt: new Date(post.date),
-    updatedAt: post.updated ? new Date(post.updated) : undefined,
-    tags: post.tags,
-    category: post.category,
-    readingTime: post.readingTime,
-    featured: post.featured,
-    language: post.locale,
-  };
-}
+import { postToLegacyPost } from "@/lib/blog/to-legacy-post";
 
 interface Props {
   params: Promise<{ subject: string }>;
@@ -95,7 +74,7 @@ export default async function SubjectPage({ params }: Props) {
 
         <div className="grid gap-8">
           {posts.map((post) => (
-            <BlogPostCard key={post.slug} post={toLegacyPost(post)} language="en" />
+            <BlogPostCard key={post.slug} post={postToLegacyPost(post)} language="en" />
           ))}
         </div>
       </div>

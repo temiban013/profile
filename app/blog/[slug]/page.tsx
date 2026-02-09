@@ -8,31 +8,10 @@ import { MdxContent } from "@/components/blog/mdx-content";
 import { SubjectBadge } from "@/components/blog/subject-badge";
 import { PostLanguageSync } from "@/components/blog/post-language-sync";
 import { BlogPostStructuredData, BreadcrumbStructuredData } from "@/components/seo/structured-data";
-import type { BlogPost } from "@/types/blog";
+import { postToLegacyPost } from "@/lib/blog/to-legacy-post";
 
 interface BlogPostPageProps {
   readonly params: Promise<{ slug: string }>;
-}
-
-/**
- * Convert Velite Post to legacy BlogPost format for structured data
- */
-function toLegacyPost(post: NonNullable<ReturnType<typeof getPostBySlug>>): BlogPost {
-  return {
-    id: post.slug,
-    title: post.title,
-    slug: post.slug,
-    excerpt: post.description,
-    content: post.raw,
-    publishedAt: new Date(post.date),
-    updatedAt: post.updated ? new Date(post.updated) : undefined,
-    tags: post.tags,
-    category: post.category,
-    readingTime: post.readingTime,
-    featured: post.featured,
-    language: post.locale,
-    image: post.image,
-  };
 }
 
 /**
@@ -123,7 +102,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const relatedPosts = getRelatedPosts(post, 2);
   const translation = getPostTranslation(post);
-  const legacyPost = toLegacyPost(post);
+  const legacyPost = postToLegacyPost(post);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

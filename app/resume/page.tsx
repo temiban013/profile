@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, Mail, Phone, MapPin } from "lucide-react";
-import StructuredData from "@/components/structured-data";
+import { StructuredData } from "@/components/seo/structured-data";
 
 export default function ResumePage() {
   // Structured data specifically for the resume page

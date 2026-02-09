@@ -2,7 +2,12 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PDFViewer } from "@/components/pdf-viewer";
+import dynamic from 'next/dynamic';
+
+const PDFViewer = dynamic(
+  () => import('@/components/pdf-viewer').then(mod => ({ default: mod.PDFViewer })),
+  { ssr: false }
+);
 import {
   Code,
   Database,

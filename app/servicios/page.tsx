@@ -74,7 +74,7 @@ export default function ServicesPage() {
       "@type": "LocalBusiness",
       name: "Mario Ayala Dev",
       url: "https://www.mariorafaelayala.com",
-      telephone: "+1-787-000-0000", // Update with actual number
+      telephone: "+1-407-476-7353",
       areaServed: "PR",
     },
     offers: {
@@ -102,7 +102,7 @@ export default function ServicesPage() {
     description:
       "Desarrollo web profesional para negocios en Puerto Rico. Sitios web, e-commerce, menús digitales y optimización de Google Business.",
     url: "https://www.mariorafaelayala.com",
-    telephone: "+1-787-000-0000", // Update with actual number
+    telephone: "+1-407-476-7353",
     address: {
       "@type": "PostalAddress",
       addressCountry: "PR",

@@ -1,6 +1,15 @@
 // components/seo/structured-data.tsx
 import { BlogPost } from "@/types/blog";
 
+export function StructuredData({ data }: { data: Record<string, unknown> }) {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
 interface BlogPostStructuredDataProps {
   post: BlogPost;
   translationSlug?: string | null;

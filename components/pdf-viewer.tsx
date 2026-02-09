@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 import { Button } from "@/components/ui/button";
 import { Download, X, Maximize2, Minimize2, Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
@@ -22,12 +23,10 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
   const [scale, setScale] = useState(1.2);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pdfDocRef = useRef<any>(null);
+  const pdfDocRef = useRef<PDFDocumentProxy | null>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const renderPage = async (pdf: any, pageNum: number) => {
+    const renderPage = async (pdf: PDFDocumentProxy, pageNum: number) => {
       if (!canvasRef.current) return;
 
       try {
@@ -43,6 +42,7 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
         canvas.width = viewport.width;
 
         const renderContext = {
+          canvas: null,
           canvasContext: context,
           viewport: viewport
         };
@@ -105,8 +105,7 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
   }, [isOpen, pdfUrl, scale]);
 
   // Render page function for navigation and zoom controls
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const renderPage = async (pdf: any, pageNum: number) => {
+  const renderPage = async (pdf: PDFDocumentProxy, pageNum: number) => {
     if (!canvasRef.current) return;
 
     try {
@@ -122,6 +121,7 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
       canvas.width = viewport.width;
 
       const renderContext = {
+        canvas: null,
         canvasContext: context,
         viewport: viewport
       };
