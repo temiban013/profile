@@ -60,7 +60,7 @@ export default async function SubjectPage({ params }: Props) {
     <main className="min-h-screen bg-white dark:bg-gray-900">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Breadcrumb */}
-        <nav className="mb-8">
+        <nav aria-label="Breadcrumb" className="mb-8">
           <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
             <Link href="/" className="hover:text-gray-900 dark:hover:text-white">
               Home
@@ -95,7 +95,7 @@ export default async function SubjectPage({ params }: Props) {
 
         <div className="grid gap-8">
           {posts.map((post) => (
-            <BlogPostCard key={post.slug} post={toLegacyPost(post)} />
+            <BlogPostCard key={post.slug} post={toLegacyPost(post)} language="en" />
           ))}
         </div>
       </div>

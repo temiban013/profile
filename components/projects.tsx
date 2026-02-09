@@ -21,7 +21,6 @@ import Image from "next/image";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 import { useState, useEffect, useMemo } from "react";
-import type { Metadata } from "next";
 
 // Types
 interface Project {
@@ -956,30 +955,6 @@ const EnhancedProjects = () => {
       </div>
     </section>
   );
-};
-
-// Metadata export for SEO
-export const projectsMetadata = (language: "en" | "es"): Metadata => {
-  const t = translations[language];
-  return {
-    title: t.projects,
-    description: t.innovativeTech,
-    openGraph: {
-      title: `${t.projects} | Mario Rafael Ayala`,
-      description: t.innovativeTech,
-      images: [
-        {
-          url: "/images/projects-og.jpg",
-          width: 1200,
-          height: 630,
-          alt:
-            language === "en"
-              ? `Mario Rafael Ayala's ${t.projects}`
-              : `${t.projects} de Mario Rafael Ayala`,
-        },
-      ],
-    },
-  };
 };
 
 export default EnhancedProjects;

@@ -120,3 +120,31 @@ export function getPostStats(locale?: "en" | "es") {
     categories: getCategories(locale),
   };
 }
+
+/**
+ * Post metadata type without body and raw content
+ */
+export type PostMeta = Omit<Post, "body" | "raw">;
+
+/**
+ * Get all posts metadata (without body and raw content)
+ */
+export function getAllPostsMeta(options: GetPostsOptions = {}): PostMeta[] {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return getAllPosts(options).map(({ body, raw, ...meta }) => meta);
+}
+
+/**
+ * Get post statistics using metadata only
+ */
+export function getPostStatsMeta(locale?: "en" | "es") {
+  const filteredPosts = getAllPostsMeta({ locale });
+  return {
+    totalPosts: filteredPosts.length,
+    avgReadingTime: filteredPosts.length > 0
+      ? Math.round(filteredPosts.reduce((sum, p) => sum + p.readingTime, 0) / filteredPosts.length)
+      : 0,
+    uniqueTags: getTags(locale).length,
+    categories: getCategories(locale),
+  };
+}

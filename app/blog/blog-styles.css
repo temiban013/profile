@@ -1,0 +1,58 @@
+/* Override Shiki syntax highlighting for better contrast */
+.prose pre code span {
+  /* Ensure minimum contrast for all code tokens */
+}
+
+/* Comments - visible gray */
+.prose pre code .comment,
+.prose pre code [style*="color:#6A737D"],
+.prose pre code [style*="color:#6a737d"],
+.prose pre code [style*="color: #6A737D"],
+.prose pre code [style*="color: #6a737d"] {
+  color: oklch(0.65 0.02 220) !important;
+}
+
+/* Strings - bright orange/yellow for visibility */
+.prose pre code .string,
+.prose pre code [style*="color:#9ECBFF"],
+.prose pre code [style*="color:#9ecbff"],
+.prose pre code [style*="color: #9ECBFF"],
+.prose pre code [style*="color: #9ecbff"] {
+  color: oklch(0.82 0.14 80) !important;
+}
+
+/* Keywords - bright purple */
+.prose pre code .keyword,
+.prose pre code [style*="color:#F97583"],
+.prose pre code [style*="color:#f97583"],
+.prose pre code [style*="color: #F97583"],
+.prose pre code [style*="color: #f97583"] {
+  color: oklch(0.75 0.18 320) !important;
+}
+
+/* Variables and property names - bright cyan */
+.prose pre code .variable,
+.prose pre code .property,
+.prose pre code [style*="color:#79B8FF"],
+.prose pre code [style*="color:#79b8ff"],
+.prose pre code [style*="color: #79B8FF"],
+.prose pre code [style*="color: #79b8ff"] {
+  color: oklch(0.80 0.12 200) !important;
+}
+
+/* Functions - bright blue */
+.prose pre code .function,
+.prose pre code [style*="color:#B392F0"],
+.prose pre code [style*="color:#b392f0"],
+.prose pre code [style*="color: #B392F0"],
+.prose pre code [style*="color: #b392f0"] {
+  color: oklch(0.78 0.15 280) !important;
+}
+
+/* Plain text fallback - ensure readable */
+.prose pre code [style*="color:#E1E4E8"],
+.prose pre code [style*="color:#e1e4e8"],
+.prose pre code [style*="color: #E1E4E8"],
+.prose pre code [style*="color: #e1e4e8"] {
+  color: oklch(0.92 0.01 220) !important;
+}

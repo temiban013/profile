@@ -168,16 +168,17 @@ const Contact: React.FC = () => {
                     className="w-full sm:w-auto rounded-full px-8"
                     asChild
                   >
-                    <Link
+                    <a
                       href={
                         process.env.NEXT_PUBLIC_CALENDLY_URL ||
                         "https://calendly.com/temiban013"
                       }
                       target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <Calendar className="mr-2 h-4 w-4" />
                       {t.scheduleCall}
-                    </Link>
+                    </a>
                   </Button>
                 </div>
               </div>
@@ -284,6 +285,7 @@ const Contact: React.FC = () => {
                   href={contactInfo.github}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="GitHub"
                   className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
                 >
                   <Github className="h-5 w-5" />
@@ -292,6 +294,7 @@ const Contact: React.FC = () => {
                   href={contactInfo.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="LinkedIn"
                   className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
                 >
                   <Linkedin className="h-5 w-5" />
@@ -300,6 +303,7 @@ const Contact: React.FC = () => {
                   href={contactInfo.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="YouTube"
                   className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
                 >
                   <Youtube className="h-5 w-5" />
@@ -308,6 +312,7 @@ const Contact: React.FC = () => {
                   href={process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="WhatsApp"
                   className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
                 >
                   <Phone className="h-5 w-5" />

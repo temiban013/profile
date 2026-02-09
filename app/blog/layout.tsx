@@ -1,5 +1,6 @@
 // app/blog/layout.tsx
 import { Metadata } from "next";
+import "./blog-styles.css";
 
 /**
  * Blog layout with bilingual SEO metadata

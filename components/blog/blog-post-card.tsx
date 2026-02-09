@@ -1,15 +1,13 @@
 // components/blog/blog-post-card.tsx
-"use client";
-
 import Link from "next/link";
 import { BlogPost } from "@/types/blog";
 import { formatDate } from "@/lib/utils";
-import { useLanguage } from "@/lib/contexts/language-context";
 import { getTranslation } from "@/lib/i18n";
 
 interface BlogPostCardProps {
   readonly post: BlogPost;
   readonly variant?: "default" | "featured" | "compact";
+  readonly language: "en" | "es";
 }
 
 /**
@@ -20,8 +18,7 @@ interface BlogPostCardProps {
  * visual presentations through the variant prop while maintaining the same
  * underlying data structure.
  */
-export function BlogPostCard({ post, variant = "default" }: BlogPostCardProps) {
-  const { language } = useLanguage();
+export function BlogPostCard({ post, variant = "default", language }: BlogPostCardProps) {
 
   // Determine styling based on variant - this pattern allows for easy extension
   const cardClasses = {

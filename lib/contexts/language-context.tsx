@@ -30,6 +30,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       setLanguageState(newLanguage);
       if (isInitialized && typeof window !== "undefined") {
         localStorage.setItem("language", newLanguage);
+        document.cookie = `lang=${newLanguage};path=/;max-age=31536000;SameSite=Lax`;
       }
     }
   };
@@ -38,15 +39,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedLanguage = localStorage.getItem("language") as LanguageKey;
-      if (
-        storedLanguage &&
-        (storedLanguage === "en" || storedLanguage === "es")
-      ) {
-        setLanguageState(storedLanguage);
-      } else {
-        // Default to Spanish if no valid language is found
-        setLanguageState("es");
-      }
+      const resolvedLang = storedLanguage && (storedLanguage === "en" || storedLanguage === "es")
+        ? storedLanguage
+        : "es";
+
+      setLanguageState(resolvedLang);
+      document.cookie = `lang=${resolvedLang};path=/;max-age=31536000;SameSite=Lax`;
       setIsInitialized(true);
     }
   }, []);

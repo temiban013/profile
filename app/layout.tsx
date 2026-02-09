@@ -32,15 +32,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        {/* Preconnect to Google Fonts for faster loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-      </head>
       <body className={`${geistSans.className} antialiased`}>
         <LanguageProvider>
           <Suspense fallback={null}>

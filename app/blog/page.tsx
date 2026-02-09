@@ -1,11 +1,7 @@
 // app/blog/page.tsx
-"use client";
-
-import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { getAllPosts, getPostStats, type Post } from "@/lib/blog/content";
+import { cookies } from "next/headers";
+import { getAllPostsMeta, getPostStatsMeta, type PostMeta } from "@/lib/blog/content";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-import { useLanguage } from "@/lib/contexts/language-context";
 import { getTranslation } from "@/lib/i18n";
 import { BlogSectionStructuredData } from "@/components/seo/structured-data";
 import { SubjectFilterTabs } from "@/components/blog/subject-filter-tabs";
@@ -13,15 +9,15 @@ import { getActiveSubjects, getSubjectCounts, getSubject } from "@/lib/blog/subj
 import type { BlogPost } from "@/types/blog";
 
 /**
- * Convert Velite Post to legacy BlogPost format for existing components
+ * Convert PostMeta to legacy BlogPost format for existing components
  */
-function tolegacyPost(post: Post): BlogPost {
+function toLegacyPost(post: PostMeta): BlogPost {
   return {
     id: post.slug,
     title: post.title,
     slug: post.slug,
     excerpt: post.description,
-    content: post.raw,
+    content: "", // Empty - listing page doesn't need content
     publishedAt: new Date(post.date),
     updatedAt: post.updated ? new Date(post.updated) : undefined,
     tags: post.tags,
@@ -33,100 +29,60 @@ function tolegacyPost(post: Post): BlogPost {
 }
 
 /**
- * Blog Listing Page Component
+ * Blog Listing Page Component (Server Component)
  *
- * Now using Velite-powered MDX content.
- * Filters blog posts based on the current language selection.
+ * Now using Velite-powered MDX content with server-side rendering.
+ * Filters blog posts based on the current language from cookies.
  * Supports URL-based subject filtering via ?subject= param.
  */
-export default function BlogPage() {
-  return (
-    <Suspense fallback={<BlogPageSkeleton />}>
-      <BlogPageContent />
-    </Suspense>
-  );
-}
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ subject?: string }>;
+}) {
+  // Read language from cookie (default to "es")
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("lang")?.value as "en" | "es") || "es";
 
-function BlogPageContent() {
-  const { language } = useLanguage();
-  const searchParams = useSearchParams();
-  const activeSubject = searchParams.get("subject");
+  // Read subject from searchParams
+  const params = await searchParams;
+  const activeSubject = params.subject || null;
 
-  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
-  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
-  const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
-  const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
-  const [stats, setStats] = useState({ totalPosts: 0, avgReadingTime: 0, uniqueTags: 0 });
-  const [availableSubjects, setAvailableSubjects] = useState<string[]>([]);
-  const [subjectCounts, setSubjectCounts] = useState<Record<string, number>>({});
+  // Get posts from Velite content (server-side)
+  const allPostsMeta = getAllPostsMeta({ locale });
+  const allPosts = allPostsMeta.map(toLegacyPost);
+  const featuredPosts = getAllPostsMeta({ locale, featured: true }).map(toLegacyPost);
+  const recentPosts = getAllPostsMeta({ locale, featured: false }).map(toLegacyPost);
+  const stats = getPostStatsMeta(locale);
 
-  useEffect(() => {
-    // Get posts from Velite content
-    const locale = language as "en" | "es";
-    const all = getAllPosts({ locale }).map(tolegacyPost);
-    const featured = getAllPosts({ locale, featured: true }).map(tolegacyPost);
-    const recent = getAllPosts({ locale, featured: false }).map(tolegacyPost);
-    const postStats = getPostStats(locale);
+  // Get subject data
+  const subjects = getActiveSubjects(locale).map((s) => s.slug);
+  const subjectCounts = Object.fromEntries(getSubjectCounts(locale));
 
-    // Get subject data
-    const subjects = getActiveSubjects(locale).map((s) => s.slug);
-    const counts = Object.fromEntries(getSubjectCounts(locale));
-
-    setAllPosts(all);
-    setFeaturedPosts(featured);
-    setRecentPosts(recent);
-    setStats(postStats);
-    setAvailableSubjects(subjects);
-    setSubjectCounts(counts);
-  }, [language]);
-
-  // Filter posts when subject changes
-  useEffect(() => {
-    if (activeSubject) {
-      // When filtering by subject, show all matching posts (ignore featured/recent split)
-      const locale = language as "en" | "es";
-      const subjectPosts = getAllPosts({ locale })
-        .filter((p) => p.subject === activeSubject)
-        .map(tolegacyPost);
-      setFilteredPosts(subjectPosts);
-    } else {
-      setFilteredPosts([]);
-    }
-  }, [activeSubject, language]);
-
-  // Update document title when filtering
-  useEffect(() => {
-    const baseTitle = "Blog | Mario Ayala";
-    if (activeSubject) {
-      const subjectData = getSubject(activeSubject);
-      const subjectName = subjectData?.name[language as "en" | "es"] || activeSubject;
-      document.title = `${subjectName} | ${baseTitle}`;
-    } else {
-      document.title = baseTitle;
-    }
-    // Cleanup: restore base title on unmount
-    return () => {
-      document.title = baseTitle;
-    };
-  }, [activeSubject, language]);
+  // Filter posts when subject is active
+  let filteredPosts: BlogPost[] = [];
+  if (activeSubject) {
+    filteredPosts = allPostsMeta
+      .filter((p) => p.subject === activeSubject)
+      .map(toLegacyPost);
+  }
 
   // Determine if we're showing filtered view or default view
   const isFiltered = activeSubject !== null;
-  const locale = language as "en" | "es";
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Structured Data for SEO */}
-      <BlogSectionStructuredData posts={allPosts} language={language} />
+      <BlogSectionStructuredData posts={allPosts} language={locale} />
 
       {/* Hero section for the blog */}
       <section className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto pt-25 px-4 py-16 max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
-            <span className="text-gradient">{getTranslation("blogTitle", language)}</span>
+            <span className="text-gradient">{getTranslation("blogTitle", locale)}</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl text-center mx-auto">
-            {getTranslation("blogSubtitle", language)}
+            {getTranslation("blogSubtitle", locale)}
           </p>
         </div>
       </section>
@@ -135,7 +91,7 @@ function BlogPageContent() {
         {/* Subject Filter Tabs */}
         <SubjectFilterTabs
           activeSubject={activeSubject}
-          availableSubjects={availableSubjects}
+          availableSubjects={subjects}
           locale={locale}
           counts={subjectCounts}
           totalCount={allPosts.length}
@@ -153,8 +109,8 @@ function BlogPageContent() {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {filteredPosts.length}{" "}
                   {filteredPosts.length === 1
-                    ? getTranslation("article", language)
-                    : getTranslation("articles", language)}
+                    ? getTranslation("article", locale)
+                    : getTranslation("articles", locale)}
                 </p>
               </div>
             </div>
@@ -162,13 +118,13 @@ function BlogPageContent() {
             {filteredPosts.length > 0 ? (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {filteredPosts.map((post) => (
-                  <BlogPostCard key={post.id} post={post} variant="default" />
+                  <BlogPostCard key={post.id} post={post} variant="default" language={locale} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-12">
                 <p className="text-lg text-gray-600 dark:text-gray-300">
-                  {getTranslation("noArticlesInCategory", language)}
+                  {getTranslation("noArticlesInCategory", locale)}
                 </p>
               </div>
             )}
@@ -179,11 +135,11 @@ function BlogPageContent() {
             {featuredPosts.length > 0 && (
               <section className="mb-16">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-                  {getTranslation("featuredArticles", language)}
+                  {getTranslation("featuredArticles", locale)}
                 </h2>
                 <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
                   {featuredPosts.map((post) => (
-                    <BlogPostCard key={post.id} post={post} variant="featured" />
+                    <BlogPostCard key={post.id} post={post} variant="featured" language={locale} />
                   ))}
                 </div>
               </section>
@@ -192,11 +148,11 @@ function BlogPageContent() {
             {/* Default view: Recent posts section */}
             <section>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-                {getTranslation("recentArticles", language)}
+                {getTranslation("recentArticles", locale)}
               </h2>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {recentPosts.map((post) => (
-                  <BlogPostCard key={post.id} post={post} variant="default" />
+                  <BlogPostCard key={post.id} post={post} variant="default" language={locale} />
                 ))}
               </div>
             </section>
@@ -206,66 +162,23 @@ function BlogPageContent() {
         {/* Blog statistics */}
         <section className="mt-16 bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            {getTranslation("blogStats", language)}
+            {getTranslation("blogStats", locale)}
           </h3>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.totalPosts}</div>
-              <div className="text-gray-600 dark:text-gray-300">{getTranslation("totalArticles", language)}</div>
+              <div className="text-gray-600 dark:text-gray-300">{getTranslation("totalArticles", locale)}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.avgReadingTime}</div>
-              <div className="text-gray-600 dark:text-gray-300">{getTranslation("avgReadingTime", language)}</div>
+              <div className="text-gray-600 dark:text-gray-300">{getTranslation("avgReadingTime", locale)}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.uniqueTags}</div>
-              <div className="text-gray-600 dark:text-gray-300">{getTranslation("uniqueTopics", language)}</div>
+              <div className="text-gray-600 dark:text-gray-300">{getTranslation("uniqueTopics", locale)}</div>
             </div>
           </div>
         </section>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Skeleton loading state for the blog page
- */
-function BlogPageSkeleton() {
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Hero skeleton */}
-      <section className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto pt-25 px-4 py-16 max-w-4xl">
-          <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-lg w-48 mx-auto mb-6 animate-pulse" />
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto animate-pulse" />
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 py-12 max-w-6xl">
-        {/* Filter tabs skeleton */}
-        <div className="flex gap-2 mb-8">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="h-10 w-24 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"
-            />
-          ))}
-        </div>
-
-        {/* Post cards skeleton */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm"
-            >
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4 animate-pulse" />
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2 animate-pulse" />
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse" />
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );

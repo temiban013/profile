@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     // Honeypot check - if filled, likely a bot
     // Return success to not reveal the trap
     if (data.website_url && data.website_url.length > 0) {
-      console.log("Honeypot triggered from IP:", clientIP);
+      // Honeypot triggered - silently accept to not reveal the trap
       return NextResponse.json({ success: true });
     }
 
