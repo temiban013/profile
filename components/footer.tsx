@@ -11,7 +11,6 @@ import {
   GmailLogo,
   YoutubeLogo,
   WhatsappLogo,
-  FiverrLogo,
 } from "./icons";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
@@ -134,15 +133,6 @@ const Footer = () => {
             >
               <WhatsappLogo className="h-5 w-5" />
             </ExternalLink>
-            {socialLinks.fiverr && (
-              <ExternalLink
-                href={socialLinks.fiverr}
-                aria-label={t.fiverraccount}
-                className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
-              >
-                <FiverrLogo className="h-5 w-5" />
-              </ExternalLink>
-            )}
           </div>
         </div>
       </div>

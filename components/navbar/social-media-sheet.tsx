@@ -15,7 +15,6 @@ import {
   GmailLogo,
   YoutubeLogo,
   WhatsappLogo,
-  FiverrLogo,
 } from "../icons";
 import { getFormattedSocialLinks } from "@/lib/social-links";
 
@@ -106,23 +105,6 @@ export const SocialMediaSheet = () => {
               GitHub
             </Link>
           </Button>
-          {socialLinks.fiverr && (
-            <Button
-              variant="outline"
-              className="rounded-full justify-start"
-              asChild
-            >
-              <Link
-                href={socialLinks.fiverr}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Fiverr Profile"
-              >
-                <FiverrLogo className="mr-2" />
-                Fiverr
-              </Link>
-            </Button>
-          )}
         </div>
       </SheetContent>
     </Sheet>

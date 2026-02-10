@@ -139,8 +139,7 @@ export default function Home() {
     sameAs: [
       "https://github.com/temiban013",
       "https://www.linkedin.com/in/marioayalamscs/",
-      "https://youtube.com/@mariorafaelayala8703",
-      "http://www.fiverr.com/s/EgA12V8"
+      "https://youtube.com/@mariorafaelayala8703"
     ]
   };
 
