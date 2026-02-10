@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Web Development for Puerto Rico Businesses | Mario Ayala Dev",
+  title: "Web Development for Puerto Rico Businesses | Nitaíno Digital",
   description:
     "Professional websites for restaurants and businesses in Puerto Rico. 7.5M tourists search on Google. Can they find you? Free consultation.",
   keywords: [
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "Google Business",
   ],
   openGraph: {
-    title: "Your Business Deserves More Than Just Facebook | Mario Ayala Dev",
+    title: "Your Business Deserves More Than Just Facebook | Nitaíno Digital",
     description:
       "$4.6 billion spent on food in PR in 2024. Make sure tourists can find you.",
     type: "website",

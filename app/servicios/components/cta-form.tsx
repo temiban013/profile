@@ -79,7 +79,6 @@ export function CTAForm() {
       // Reset success message after 5 seconds
       setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch (error) {
-      console.error("Form submission error:", error);
       analytics.formError(error instanceof Error ? error.message : "Unknown error");
       setErrorMessage(null); // Use default error message
       setSubmitStatus("error");

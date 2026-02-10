@@ -35,7 +35,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Desarrollo Web para Negocios en Puerto Rico | Mario Ayala Dev",
+  title: "Desarrollo Web para Negocios en Puerto Rico | Nitaíno Digital",
   description:
     "Sitios web profesionales para restaurantes y negocios en Puerto Rico. 7.5M turistas buscan en Google. ¿Pueden encontrarte? Consulta gratis.",
   keywords: [
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     "Google Business",
   ],
   openGraph: {
-    title: "Tu Negocio Merece Más Que Solo Facebook | Mario Ayala Dev",
+    title: "Tu Negocio Merece Más Que Solo Facebook | Nitaíno Digital",
     description:
       "$4.6 mil millones gastados en comida en PR en 2024. Asegura que los turistas te encuentren.",
     type: "website",
@@ -72,7 +72,7 @@ export default function ServicesPage() {
     description: service.description,
     provider: {
       "@type": "LocalBusiness",
-      name: "Mario Ayala Dev",
+      name: "Nitaíno Digital",
       url: "https://www.mariorafaelayala.com",
       telephone: "+1-407-476-7353",
       areaServed: "PR",
@@ -97,7 +97,7 @@ export default function ServicesPage() {
   // Local Business Schema
   const localBusinessSchema = {
     "@type": "LocalBusiness",
-    name: "Mario Ayala Dev",
+    name: "Nitaíno Digital",
     image: "https://www.mariorafaelayala.com/logo.png",
     description:
       "Desarrollo web profesional para negocios en Puerto Rico. Sitios web, e-commerce, menús digitales y optimización de Google Business.",
@@ -139,7 +139,7 @@ export default function ServicesPage() {
               "@graph": [
                 {
                   "@type": "Organization",
-                  name: "Mario Ayala Dev",
+                  name: "Nitaíno Digital",
                   url: "https://www.mariorafaelayala.com",
                   logo: "https://www.mariorafaelayala.com/logo.png",
                   description:

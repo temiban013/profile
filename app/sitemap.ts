@@ -7,8 +7,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Base URL for your site
   const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com"}`;
 
-  // Main site pages and sections
-  const routes = ["", "/#about", "/#projects", "/#experience", "/#contact", "/resume"];
+  // Main site pages (hash fragments excluded - search engines ignore them)
+  const routes = ["", "/resume", "/servicios", "/services"];
 
   // Generate sitemap entries for each route
   const routeEntries = routes.map((route) => ({

@@ -66,6 +66,26 @@ export const WhatsappLogo = (props: IconProps) => (
   />
 );
 
+type SvgIconProps = React.SVGProps<SVGSVGElement> & {
+  className?: string;
+};
+
+export const FiverrLogo = (props: SvgIconProps) => (
+  <svg
+    role="img"
+    viewBox="0 0 24 24"
+    className={`h-5 w-5 ${props.className || ""}`}
+    {...props}
+  >
+    <title>Fiverr</title>
+    <circle cx="12" cy="12" r="12" fill="black" />
+    <path
+      d="M14.5 6.5h-2c-1.4 0-2.5 1.1-2.5 2.5v1H8.5v2.5H10V18h2.5v-5.5H14l.5-2.5h-2V9c0-.3.2-.5.5-.5h1.5V6.5z"
+      fill="white"
+    />
+  </svg>
+);
+
 export const USFlagIcon = (props: IconProps) => (
   <Image
     role="img"

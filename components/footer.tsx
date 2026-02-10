@@ -11,6 +11,7 @@ import {
   GmailLogo,
   YoutubeLogo,
   WhatsappLogo,
+  FiverrLogo,
 } from "./icons";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
@@ -92,7 +93,7 @@ const Footer = () => {
 
         <div className="py-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6 xl:px-0">
           <span className="text-muted-foreground text-sm">
-            &copy; 2025 Mario R. Ayala. {t.rightsreserved}
+            &copy; {new Date().getFullYear()} Nitaíno Digital | Mario R. Ayala. {t.rightsreserved}
             .
           </span>
 
@@ -133,6 +134,15 @@ const Footer = () => {
             >
               <WhatsappLogo className="h-5 w-5" />
             </ExternalLink>
+            {socialLinks.fiverr && (
+              <ExternalLink
+                href={socialLinks.fiverr}
+                aria-label={t.fiverraccount}
+                className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
+              >
+                <FiverrLogo className="h-5 w-5" />
+              </ExternalLink>
+            )}
           </div>
         </div>
       </div>

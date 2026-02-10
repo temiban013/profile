@@ -14,6 +14,7 @@ export default function Home() {
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": "https://www.mariorafaelayala.com#person",
     name: "Mario Rafael Ayala",
     alternateName: "Mario R. Ayala",
     description: "Full-Stack AI Engineer with 20+ years enterprise experience. Architected multi-agent orchestration system with Claude Code managing 7 concurrent projects. Expert in AI agent development, Next.js, TypeScript, .NET Core with teaching experience across diverse learners. US Navy veteran.",
@@ -58,8 +59,8 @@ export default function Home() {
     ],
     worksFor: {
       "@type": "Organization",
-      name: "Independent Technology Consultant",
-      description: "Providing enterprise software engineering and digital transformation consulting services"
+      "@id": "https://www.mariorafaelayala.com#organization",
+      name: "Nitaíno Digital"
     },
     hasCredential: [
       {
@@ -105,6 +106,44 @@ export default function Home() {
     ]
   };
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://www.mariorafaelayala.com#organization",
+    name: "Nitaíno Digital",
+    alternateName: "Nitaino Digital",
+    url: "https://www.mariorafaelayala.com",
+    logo: "https://www.mariorafaelayala.com/mra-logo-sq.png",
+    founder: {
+      "@id": "https://www.mariorafaelayala.com#person"
+    },
+    foundingDate: "2026-01",
+    description: "Full-Stack AI Engineering & Agent Development. Enterprise software consulting, digital transformation, and AI-powered solutions.",
+    areaServed: [
+      {
+        "@type": "Place",
+        name: "Puerto Rico"
+      },
+      {
+        "@type": "Place",
+        name: "United States"
+      }
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+1-407-476-7353",
+      email: "marioayaladev@gmail.com",
+      contactType: "customer service",
+      availableLanguage: ["English", "Spanish"]
+    },
+    sameAs: [
+      "https://github.com/temiban013",
+      "https://www.linkedin.com/in/marioayalamscs/",
+      "https://youtube.com/@mariorafaelayala8703",
+      "http://www.fiverr.com/s/EgA12V8"
+    ]
+  };
+
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -115,17 +154,12 @@ export default function Home() {
       "@id": "https://www.mariorafaelayala.com#person"
     },
     inLanguage: ["en", "es"],
-    potentialAction: {
-      "@type": "SearchAction",
-      target: "https://www.mariorafaelayala.com/?search={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
   };
 
   const professionalServiceSchema = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    name: "Mario Rafael Ayala - AI Engineering & Software Consulting",
+    name: "Nitaíno Digital — AI Engineering & Software Consulting",
     description: "AI engineering, multi-agent orchestration, and enterprise software consulting services",
     provider: {
       "@id": "https://www.mariorafaelayala.com#person"
@@ -176,6 +210,7 @@ export default function Home() {
   return (
     <>
       <StructuredData data={personSchema} />
+      <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
       <StructuredData data={professionalServiceSchema} />
 

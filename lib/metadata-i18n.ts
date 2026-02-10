@@ -5,13 +5,15 @@ import type { LanguageKey } from "./contexts/language-context";
 export const siteMetadata: Record<LanguageKey, Metadata> = {
   en: {
     title: {
-      default: "Mario Rafael Ayala | Full-Stack AI Engineer | 25+ Years Experience | Disney Alumni",
-      template: "%s | Mario Rafael Ayala - Full-Stack AI Engineer",
+      default: "Mario Rafael Ayala | Nitaíno Digital — Full-Stack AI Engineer",
+      template: "%s | Nitaíno Digital — Mario Rafael Ayala",
     },
     description:
       "Full-Stack AI Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in AI agent development, multi-agent orchestration, Next.js 15, TypeScript, React 19, PostgreSQL. Digital Literacy Instructor with 35+ course presentations. Available for remote work, consulting, training. Specialized in AI-assisted development, ROI-focused digital transformation, and scalable business solutions. MS Computer Science (Magna Cum Laude).",
     keywords: [
       "mario rafael ayala",
+      "nitaíno digital",
+      "nitaino digital",
       "full-stack ai engineer",
       "ai agent developer",
       "ai engineer",
@@ -84,10 +86,10 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "professional development instructor"
     ],
     openGraph: {
-      siteName: "Mario Rafael Ayala - Full-Stack AI Engineer",
+      siteName: "Nitaíno Digital — Mario Rafael Ayala",
       url: "https://www.mariorafaelayala.com/",
       type: "website",
-      title: "Mario Rafael Ayala | Full-Stack AI Engineer | Disney Alumni | Available for Hire",
+      title: "Mario Rafael Ayala | Nitaíno Digital — Full-Stack AI Engineer | Available for Hire",
       description:
         "Full-Stack AI Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in AI agent development, multi-agent orchestration, Next.js 15, React 19, PostgreSQL. Digital Literacy Instructor with 35+ course presentations. ROI-focused portfolio: Café Papamín e-commerce, PFDH.org platform, modern web development. Available for remote work, consulting & training.",
       locale: "en-US",
@@ -95,7 +97,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Mario Rafael Ayala | Full-Stack AI Engineer | Disney Alumni | Hiring",
+      title: "Mario Rafael Ayala | Nitaíno Digital — Full-Stack AI Engineer",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
       description:
         "Full-Stack AI Engineer with 25+ years enterprise experience including Disney & Office Depot. AI agent development, multi-agent orchestration, Next.js 15/React 19/PostgreSQL expert. Digital Literacy Instructor with 35+ course presentations. MS Computer Science. Available for remote work, consulting & training.",
@@ -103,13 +105,15 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
   },
   es: {
     title: {
-      default: "Mario Rafael Ayala | Ingeniero Full-Stack de IA | 25+ Años Experiencia | Ex Disney",
-      template: "%s | Mario Rafael Ayala - Ingeniero Full-Stack de IA",
+      default: "Mario Rafael Ayala | Nitaíno Digital — Ingeniero Full-Stack de IA",
+      template: "%s | Nitaíno Digital — Mario Rafael Ayala",
     },
     description:
       "Ingeniero Full-Stack de IA con 25+ años de experiencia empresarial incluyendo Disney Parks, Office Depot. Experto en desarrollo de agentes de IA, orquestación multi-agente, Next.js 15, TypeScript, React 19, PostgreSQL, arquitectura empresarial. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Disponible para trabajo remoto, consultoría, capacitación. Especializado en desarrollo asistido por IA, transformación digital enfocada en ROI y soluciones empresariales escalables. MS Ciencias de la Computación (Magna Cum Laude).",
     keywords: [
       "mario rafael ayala",
+      "nitaíno digital",
+      "nitaino digital",
       "ingeniero full-stack de ia",
       "desarrollador agentes ia",
       "ingeniero ia",
@@ -181,10 +185,10 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "instructor desarrollo profesional"
     ],
     openGraph: {
-      siteName: "Mario Rafael Ayala - Ingeniero Full-Stack de IA",
+      siteName: "Nitaíno Digital — Mario Rafael Ayala",
       url: "https://www.mariorafaelayala.com/",
       type: "website",
-      title: "Mario Rafael Ayala | Ingeniero Full-Stack de IA | Ex Disney | Disponible para Contratar",
+      title: "Mario Rafael Ayala | Nitaíno Digital — Ingeniero Full-Stack de IA | Disponible para Contratar",
       description:
         "Ingeniero Full-Stack de IA con 25+ años incluyendo Disney Parks, Office Depot. Experto en desarrollo de agentes de IA, orquestación multi-agente, Next.js 15, React 19, PostgreSQL. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Portfolio enfocado en ROI: Café Papamín e-commerce, plataforma PFDH.org, desarrollo web moderno. Disponible para trabajo remoto, consultoría y capacitación.",
       locale: "es-PR",
@@ -192,7 +196,7 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Mario Rafael Ayala | Ingeniero Full-Stack de IA | Ex Disney | Contratación",
+      title: "Mario Rafael Ayala | Nitaíno Digital — Ingeniero Full-Stack de IA",
       images: "https://www.mariorafaelayala.com/mra-profile.jpg",
       description:
         "Ingeniero Full-Stack de IA con 25+ años experiencia empresarial incluyendo Disney y Office Depot. Desarrollo de agentes de IA, orquestación multi-agente, experto Next.js 15/React 19/PostgreSQL. Instructor de Alfabetización Digital con 35+ presentaciones. MS Ciencias Computación. Disponible trabajo remoto, consultoría y capacitación.",
@@ -216,7 +220,7 @@ export function generateMetadata(language: LanguageKey): Metadata {
       { name: "Mario R. Ayala", url: "https://www.mariorafaelayala.com" },
     ],
     creator: "Mario R. Ayala",
-    publisher: "Mario R. Ayala",
+    publisher: "Nitaíno Digital",
     formatDetection: {
       email: true,
       address: true,

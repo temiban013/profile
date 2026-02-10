@@ -20,6 +20,7 @@ import {
   Github,
   Linkedin,
   Youtube,
+  Briefcase,
 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import Link from "next/link";
@@ -32,6 +33,7 @@ const contactInfo = {
   github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "#",
   linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "#",
   youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "#",
+  fiverr: process.env.NEXT_PUBLIC_SOCIAL_FIVERR || "http://www.fiverr.com/s/EgA12V8",
   businessHours: "Monday - Friday, 9:00 AM - 6:00 PM EST",
   responseTime: "Within 24 hours for business inquiries",
   preferredContact: "LinkedIn for initial business discussions",
@@ -58,6 +60,7 @@ const translations = {
     emailCtaDescription:
       "Have a project in mind? Send me an email and I'll get back to you within 24 hours.",
     orSchedule: "Or schedule a call directly",
+    fiverrProfile: "Fiverr Profile",
   },
   es: {
     contact: "Contacto",
@@ -77,6 +80,7 @@ const translations = {
     emailCtaDescription:
       "¿Tienes un proyecto en mente? Envíame un correo y te responderé dentro de 24 horas.",
     orSchedule: "O agenda una llamada directamente",
+    fiverrProfile: "Perfil de Fiverr",
   },
 };
 
@@ -321,6 +325,15 @@ const Contact: React.FC = () => {
                   className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
                 >
                   <Phone className="h-5 w-5" />
+                </Link>
+                <Link
+                  href={contactInfo.fiverr}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Fiverr"
+                  className="p-3 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110"
+                >
+                  <Briefcase className="h-5 w-5" />
                 </Link>
               </div>
             </div>

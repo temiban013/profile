@@ -2,7 +2,7 @@ import { getAllPosts } from "@/lib/blog/content";
 
 export async function GET() {
   const posts = getAllPosts({ locale: "en" });
-  const baseUrl = "https://mariorafaelayala.com";
+  const baseUrl = "https://www.mariorafaelayala.com";
 
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

@@ -11,6 +11,7 @@ import {
   GmailLogo,
   YoutubeLogo,
   WhatsappLogo,
+  FiverrLogo,
 } from "../icons";
 import { getFormattedSocialLinks } from "@/lib/social-links";
 import { cn } from "@/lib/utils";
@@ -222,6 +223,14 @@ export const SocialMediaDropdown = (): JSX.Element => {
               label="Email Contact"
               delay={300}
             />
+            {socialLinks.fiverr && (
+              <SocialLink
+                href={socialLinks.fiverr}
+                icon={<FiverrLogo />}
+                label="Fiverr Profile"
+                delay={350}
+              />
+            )}
           </div>
 
           {/* 

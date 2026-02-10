@@ -1,6 +1,6 @@
 // lib/social-links.ts
 export interface SocialLink {
-  platform: "whatsapp" | "youtube" | "gmail" | "linkedin" | "github";
+  platform: "whatsapp" | "youtube" | "gmail" | "linkedin" | "github" | "fiverr";
   value: string;
 }
 
@@ -33,6 +33,7 @@ export function formatSocialUrl(platform: string, value: string): string {
     case "youtube":
     case "linkedin":
     case "github":
+    case "fiverr":
       // For these platforms, ensure it's a full URL
       if (value.startsWith("http://") || value.startsWith("https://")) {
         return value;
@@ -64,6 +65,10 @@ export function getFormattedSocialLinks() {
     github: formatSocialUrl(
       "github",
       process.env.NEXT_PUBLIC_SOCIAL_GITHUB || ""
+    ),
+    fiverr: formatSocialUrl(
+      "fiverr",
+      process.env.NEXT_PUBLIC_SOCIAL_FIVERR || ""
     ),
   };
 }

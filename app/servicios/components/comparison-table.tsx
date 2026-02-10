@@ -95,7 +95,7 @@ export function ComparisonTable() {
                 Agencias Tradicionales
               </div>
               <div className="p-6 font-bold text-lg text-center bg-teal-500/20 border-l border-white/10">
-                Mario Ayala Dev
+                Nitaíno Digital
               </div>
             </div>
 

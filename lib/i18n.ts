@@ -49,6 +49,7 @@ export type TranslationLabels = {
   sendemail: string;
   youtubeaccount: string;
   whatsappaccount: string;
+  fiverraccount: string;
   meta: {
     title: string;
     description: string;
@@ -107,6 +108,7 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     sendemail: "Send Email",
     youtubeaccount: "YouTube Channel",
     whatsappaccount: "WhatsApp Contact",
+    fiverraccount: "Fiverr Profile",
     meta: {
       title: "Mario Rafael Ayala | Full-Stack AI Engineer",
       description:
@@ -165,6 +167,7 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     sendemail: "Enviar Correo",
     youtubeaccount: "Canal de YouTube",
     whatsappaccount: "Contactar por WhatsApp",
+    fiverraccount: "Perfil de Fiverr",
     meta: {
       title: "Mario Rafael Ayala | Ingeniero Full-Stack de IA",
       description:

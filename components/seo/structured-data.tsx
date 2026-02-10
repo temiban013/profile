@@ -38,7 +38,7 @@ export function BlogPostStructuredData({
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Mario Rafael Ayala",
+      "name": "Nitaíno Digital",
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
@@ -106,7 +106,7 @@ export function BlogSectionStructuredData({
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Mario Rafael Ayala",
+      "name": "Nitaíno Digital",
       "url": baseUrl,
     },
     "blogPost": posts.slice(0, 10).map(post => ({
