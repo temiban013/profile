@@ -170,6 +170,71 @@ const TimelineItem = ({
   );
 };
 
+// Pre-compute regex pattern from technology list (avoids re-creation per render)
+const buildTechPattern = (technologies: string[]): string | null => {
+  if (technologies.length === 0) return null;
+  // Sort longest-first to prevent partial matches (.NET Core before .NET)
+  const sorted = [...technologies].sort((a, b) => b.length - a.length);
+  const escaped = sorted.map(t => t.replace(/[.*+?^${}()|[\]\\#]/g, '\\$&'));
+  return escaped.join('|');
+};
+
+// Cache for compiled regex patterns keyed by joined technology string
+const techPatternCache = new Map<string, string | null>();
+
+const getCachedTechPattern = (technologies: string[]): string | null => {
+  const key = technologies.join('\0');
+  if (techPatternCache.has(key)) return techPatternCache.get(key)!;
+  const pattern = buildTechPattern(technologies);
+  techPatternCache.set(key, pattern);
+  return pattern;
+};
+
+// Auto-bold technology keywords in description text
+const renderWithBoldTechnologies = (
+  text: string,
+  technologies: string[],
+  baseKey: string
+): React.ReactNode[] => {
+  const techPattern = getCachedTechPattern(technologies);
+
+  const processPlainSegment = (segment: string, segKey: string): React.ReactNode[] => {
+    if (!techPattern) return [<span key={segKey}>{segment}</span>];
+    const splitRegex = new RegExp(`(${techPattern})`, 'gi');
+    if (!splitRegex.test(segment)) return [<span key={segKey}>{segment}</span>];
+    const parts = segment.split(new RegExp(`(${techPattern})`, 'gi'));
+    const matchRegex = new RegExp(`^(?:${techPattern})$`, 'i');
+    return parts.map((part, i) => {
+      if (matchRegex.test(part)) {
+        return (
+          <strong key={`${segKey}-t${i}`} className="font-medium text-primary/90">
+            {part}
+          </strong>
+        );
+      }
+      return <span key={`${segKey}-p${i}`}>{part}</span>;
+    });
+  };
+
+  // Pass 1: split on **...** markdown
+  const mdParts = text.split(/\*\*(.*?)\*\*/g);
+  const result: React.ReactNode[] = [];
+  mdParts.forEach((part, idx) => {
+    if (idx % 2 === 1) {
+      // Markdown bold header — use text-foreground (existing style)
+      result.push(
+        <strong key={`${baseKey}-md${idx}`} className="font-semibold text-foreground">
+          {part}
+        </strong>
+      );
+    } else {
+      // Plain text — apply technology bolding
+      result.push(...processPlainSegment(part, `${baseKey}-s${idx}`));
+    }
+  });
+  return result;
+};
+
 // Experience item component
 const ExperienceItem = ({
   title,
@@ -240,57 +305,30 @@ const ExperienceItem = ({
           {hasFormatting ? (
             <div className="space-y-3">
               <p className="text-muted-foreground leading-relaxed">
-                {mainDescription.trim()}
+                {renderWithBoldTechnologies(mainDescription.trim(), technologies, `intro-${index}`)}
               </p>
               {(isExpanded || bulletPoints.length <= 1) && (
                 <ul className="space-y-3">
-                  {bulletPoints.map((point, idx) => {
-                    // Extract bold text patterns (text between **)
-                    const formattedPoint = point.trim();
-                    const parts = formattedPoint.split(/\*\*(.*?)\*\*/g);
-
-                    return (
-                      <li key={idx} className="flex items-start gap-2 text-muted-foreground leading-relaxed">
-                        <span className="text-primary mt-1.5 flex-shrink-0">•</span>
-                        <span>
-                          {parts.map((part, partIdx) =>
-                            partIdx % 2 === 1 ? (
-                              <strong key={partIdx} className="font-semibold text-foreground">
-                                {part}
-                              </strong>
-                            ) : (
-                              <span key={partIdx}>{part}</span>
-                            )
-                          )}
-                        </span>
-                      </li>
-                    );
-                  })}
+                  {bulletPoints.map((point, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-muted-foreground leading-relaxed">
+                      <span className="text-primary mt-1.5 flex-shrink-0" aria-hidden="true">•</span>
+                      <span>
+                        {renderWithBoldTechnologies(point.trim(), technologies, `exp-${index}-b${idx}`)}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               )}
               {!isExpanded && bulletPoints.length > 1 && (
                 <ul className="space-y-3">
-                  {bulletPoints.slice(0, 1).map((point, idx) => {
-                    const formattedPoint = point.trim();
-                    const parts = formattedPoint.split(/\*\*(.*?)\*\*/g);
-
-                    return (
-                      <li key={idx} className="flex items-start gap-2 text-muted-foreground leading-relaxed">
-                        <span className="text-primary mt-1.5 flex-shrink-0">•</span>
-                        <span>
-                          {parts.map((part, partIdx) =>
-                            partIdx % 2 === 1 ? (
-                              <strong key={partIdx} className="font-semibold text-foreground">
-                                {part}
-                              </strong>
-                            ) : (
-                              <span key={partIdx}>{part}</span>
-                            )
-                          )}
-                        </span>
-                      </li>
-                    );
-                  })}
+                  {bulletPoints.slice(0, 1).map((point, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-muted-foreground leading-relaxed">
+                      <span className="text-primary mt-1.5 flex-shrink-0" aria-hidden="true">•</span>
+                      <span>
+                        {renderWithBoldTechnologies(point.trim(), technologies, `exp-${index}-c${idx}`)}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>
@@ -300,7 +338,7 @@ const ExperienceItem = ({
                 isExpanded ? "" : "line-clamp-3"
               }`}
             >
-              {description}
+              {renderWithBoldTechnologies(description, technologies, `plain-${index}`)}
             </p>
           )}
 
@@ -308,6 +346,11 @@ const ExperienceItem = ({
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors duration-300 text-sm font-medium"
+              aria-expanded={isExpanded}
+              aria-label={isExpanded
+                ? (language === "es" ? "Ver menos detalles" : "Show less details")
+                : (language === "es" ? "Ver más detalles" : "Read more details")
+              }
             >
               {isExpanded
                 ? (language === "es" ? "Ver menos" : "Show less")
@@ -317,6 +360,7 @@ const ExperienceItem = ({
                 className={`w-4 h-4 transition-transform duration-300 ${
                   isExpanded ? "rotate-180" : ""
                 }`}
+                aria-hidden="true"
               />
             </button>
           )}
@@ -326,8 +370,13 @@ const ExperienceItem = ({
             <button
               onClick={() => setShowPresentations(!showPresentations)}
               className="mt-4 flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-300 text-sm font-semibold bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-lg border border-primary/20 hover:border-primary/40"
+              aria-expanded={showPresentations}
+              aria-label={showPresentations
+                ? (language === "es" ? "Ocultar presentaciones" : "Hide presentations")
+                : (language === "es" ? "Ver presentaciones del curso" : "View course presentations")
+              }
             >
-              <Presentation className="w-4 h-4" />
+              <Presentation className="w-4 h-4" aria-hidden="true" />
               {showPresentations
                 ? (language === "es" ? "Ocultar Presentaciones" : "Hide Presentations")
                 : (language === "es" ? "Ver Presentaciones del Curso" : "View Course Presentations")
@@ -336,6 +385,7 @@ const ExperienceItem = ({
                 className={`w-4 h-4 transition-transform duration-300 ${
                   showPresentations ? "rotate-180" : ""
                 }`}
+                aria-hidden="true"
               />
             </button>
           )}
@@ -379,6 +429,11 @@ const ExperienceItem = ({
                 <button
                   onClick={() => setShowAllLasMarias(!showAllLasMarias)}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
+                  aria-expanded={showAllLasMarias}
+                  aria-label={showAllLasMarias
+                    ? (language === "en" ? "Show fewer Las Marias presentations" : "Ver menos presentaciones Las Marias")
+                    : (language === "en" ? `View all ${lasMariasPresents.length} Las Marias presentations` : `Ver las ${lasMariasPresents.length} presentaciones Las Marias`)
+                  }
                 >
                   {showAllLasMarias
                     ? (language === "en" ? "Show Less" : "Ver Menos")
@@ -386,7 +441,7 @@ const ExperienceItem = ({
                         ? `View All ${lasMariasPresents.length} Presentations`
                         : `Ver las ${lasMariasPresents.length} Presentaciones`)
                   }
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllLasMarias ? "rotate-180" : ""}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllLasMarias ? "rotate-180" : ""}`} aria-hidden="true" />
                 </button>
               </div>
             )}
@@ -431,6 +486,11 @@ const ExperienceItem = ({
                 <button
                   onClick={() => setShowAllSanturce(!showAllSanturce)}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
+                  aria-expanded={showAllSanturce}
+                  aria-label={showAllSanturce
+                    ? (language === "en" ? "Show fewer Santurce presentations" : "Ver menos presentaciones Santurce")
+                    : (language === "en" ? `View all ${santurcePresents.length} Santurce presentations` : `Ver las ${santurcePresents.length} presentaciones Santurce`)
+                  }
                 >
                   {showAllSanturce
                     ? (language === "en" ? "Show Less" : "Ver Menos")
@@ -438,7 +498,7 @@ const ExperienceItem = ({
                         ? `View All ${santurcePresents.length} Presentations`
                         : `Ver las ${santurcePresents.length} Presentaciones`)
                   }
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllSanturce ? "rotate-180" : ""}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllSanturce ? "rotate-180" : ""}`} aria-hidden="true" />
                 </button>
               </div>
             )}
@@ -571,13 +631,34 @@ const CertificationItem = ({
   );
 };
 
+// Helper component for inline "Show More" buttons (extracted to module scope for stable identity)
+const InlineShowMoreButton = ({
+  onClick,
+  label
+}: {
+  onClick: () => void;
+  label: string;
+}) => (
+  <div className="text-center my-8">
+    <button
+      onClick={onClick}
+      className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/5 hover:bg-primary/10 text-primary border border-primary/10 hover:border-primary/30 rounded-full font-medium transition-all duration-300 hover:scale-105 text-sm"
+      aria-label={label}
+    >
+      {label}
+      <ChevronDown className="w-4 h-4" aria-hidden="true" />
+    </button>
+  </div>
+);
+
 const Experience = () => {
   const { language } = useLanguage();
   const t = translations[language];
   const [showAllExperiences, setShowAllExperiences] = useState(false);
   const [showAllCertifications, setShowAllCertifications] = useState(false);
 
-  // Inline expansion states for newly added experiences
+  // Inline expansion states
+  const [showAfterMPA, setShowAfterMPA] = useState(false); // Yukayeke + WOTEC
   const [showAfterDisney, setShowAfterDisney] = useState(false); // Ibeza + Jíbaro
   const [showAfterAVM, setShowAfterAVM] = useState(false); // TradeStation
   const [showAfterABB, setShowAfterABB] = useState(false); // Primerica
@@ -604,6 +685,8 @@ const Experience = () => {
             "PostgreSQL",
             "Tailwind CSS",
             "Solidity",
+            "React",
+            "Playwright",
             "Blockchain",
             "Vercel",
             "SEO",
@@ -702,7 +785,7 @@ const Experience = () => {
           location: "Orlando, Florida",
           period: "November 2015 - September 2021",
           description:
-            "Led enterprise-wide technical initiatives as principal software architect and data engineering specialist, serving as sole software engineer for critical business intelligence projects across Disney's global operations. • **Enterprise Architecture Leadership**: Architected and delivered enterprise-scale Business Intelligence Portal unifying SharePoint, Tableau, and MS SQL data sources, implementing MVC/REST architecture with role-based access and NTLM authentication for executives worldwide. • **Mobile Innovation**: Pioneered cross-platform mobile application with Xamarin utilizing geolocation and barcode scanning technologies, integrating with Tableau dashboards for real-time store analytics and product information retrieval. • **Project Management Solutions**: Designed and implemented comprehensive project portfolio management solution featuring custom Gantt visualizations for financial quarter comparison and gap analysis.",
+            "Led enterprise-wide technical initiatives as principal software architect and data engineering specialist, building enterprise applications with C#, .NET, and .NET Core using MVC and MVVM architectural patterns, serving as sole software engineer for critical business intelligence projects across Disney's global operations. • **Enterprise Architecture Leadership**: Architected and delivered enterprise-scale Business Intelligence Portal unifying SharePoint, Tableau, and MS SQL data sources, implementing MVC/REST architecture with role-based access and NTLM authentication for executives worldwide. • **Mobile Innovation**: Pioneered cross-platform mobile application with Xamarin utilizing geolocation and barcode scanning technologies, integrating with Tableau dashboards for real-time store analytics and product information retrieval. • **Project Management Solutions**: Designed and implemented comprehensive project portfolio management solution featuring custom Gantt visualizations for financial quarter comparison and gap analysis.",
           technologies: [
             ".NET Core",
             "C#",
@@ -711,6 +794,7 @@ const Experience = () => {
             "Tableau",
             "Xamarin",
             "MVC/REST",
+            "MVVM",
             "Business Intelligence",
           ],
         },
@@ -1022,6 +1106,8 @@ const Experience = () => {
             "PostgreSQL",
             "Tailwind CSS",
             "Solidity",
+            "React",
+            "Playwright",
             "Blockchain",
             "Vercel",
             "SEO",
@@ -1121,7 +1207,7 @@ const Experience = () => {
           location: "Orlando, Florida",
           period: "Noviembre 2015 - Septiembre 2021",
           description:
-            "Lideré iniciativas técnicas empresariales como arquitecto principal de software y especialista en ingeniería de datos en operaciones globales de Disney. • **Liderazgo en Arquitectura Empresarial**: Arquitecté y entregué Portal de Inteligencia Empresarial que unificó fuentes de datos de SharePoint, Tableau y MS SQL, permitiendo a ejecutivos acceder a análisis y reportes específicos a través de una única plataforma segura con arquitectura MVC/REST y autenticación NTLM. • **Innovación Móvil**: Desarrollé aplicación móvil piloto que utiliza geolocalización para encontrar la tienda más cercana y escanea códigos UPC para recuperar información de productos en tablero de Tableau. • **Soluciones de Gestión de Proyectos**: Diseñé e implementé solución integral de gestión de portafolio de proyectos con visualizaciones Gantt personalizadas para comparación de trimestres financieros.",
+            "Lideré iniciativas técnicas empresariales como arquitecto principal de software y especialista en ingeniería de datos, desarrollando aplicaciones empresariales con C#, .NET y .NET Core utilizando patrones arquitectónicos MVC y MVVM en operaciones globales de Disney. • **Liderazgo en Arquitectura Empresarial**: Arquitecté y entregué Portal de Inteligencia Empresarial que unificó fuentes de datos de SharePoint, Tableau y MS SQL, permitiendo a ejecutivos acceder a análisis y reportes específicos a través de una única plataforma segura con arquitectura MVC/REST y autenticación NTLM. • **Innovación Móvil**: Desarrollé aplicación móvil piloto que utiliza geolocalización para encontrar la tienda más cercana y escanea códigos UPC para recuperar información de productos en tablero de Tableau. • **Soluciones de Gestión de Proyectos**: Diseñé e implementé solución integral de gestión de portafolio de proyectos con visualizaciones Gantt personalizadas para comparación de trimestres financieros.",
           technologies: [
             ".NET Core",
             "C#",
@@ -1130,6 +1216,7 @@ const Experience = () => {
             "Tableau",
             "Xamarin",
             "MVC/REST",
+            "MVVM",
             "Business Intelligence",
           ],
         },
@@ -1460,25 +1547,6 @@ const Experience = () => {
     ? currentLanguageData.certifications
     : currentLanguageData.certifications.slice(0, 3);
 
-  // Helper component for inline "Show More" buttons
-  const InlineShowMoreButton = ({
-    onClick,
-    label
-  }: {
-    onClick: () => void;
-    label: string;
-  }) => (
-    <div className="text-center my-8">
-      <button
-        onClick={onClick}
-        className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/5 hover:bg-primary/10 text-primary border border-primary/10 hover:border-primary/30 rounded-full font-medium transition-all duration-300 hover:scale-105 text-sm"
-      >
-        {label}
-        <ChevronDown className="w-4 h-4" />
-      </button>
-    </div>
-  );
-
   // Build the experience list with inline expansion buttons
   const renderExperiences = () => {
     const experiences: React.ReactElement[] = [];
@@ -1490,8 +1558,11 @@ const Experience = () => {
     for (let i = 0; i < initialCount; i++) {
       const exp = originalExperiences[i];
 
+      // Skip Yukayeke (2) and WOTEC (3) when collapsed behind MPA button
+      if ((i === 2 || i === 3) && !showAfterMPA) continue;
+
       // Skip stagger for experiences revealed after clicking "Show More" (indices 5+)
-      const skipStagger = showAllExperiences && i >= 5;
+      const skipStagger = (showAllExperiences && i >= 5) || (showAfterMPA && (i === 2 || i === 3));
 
       experiences.push(
         <ExperienceItem
@@ -1501,6 +1572,19 @@ const Experience = () => {
           skipStagger={skipStagger}
         />
       );
+
+      // After MPA (index 1), add inline button for Yukayeke + WOTEC
+      if (i === 1) {
+        if (!showAfterMPA) {
+          experiences.push(
+            <InlineShowMoreButton
+              key="btn-after-mpa"
+              onClick={() => setShowAfterMPA(true)}
+              label={language === "en" ? "Show More Experiences" : "Ver Más Experiencias"}
+            />
+          );
+        }
+      }
 
       // After Disney (index 4), add inline button for Ibeza + Jíbaro
       if (i === 4 && showAllExperiences) {
@@ -1631,9 +1715,11 @@ const Experience = () => {
               <button
                 onClick={() => setShowAllExperiences(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+                aria-expanded={showAllExperiences}
+                aria-label={language === "en" ? "Show all experiences" : "Mostrar todas las experiencias"}
               >
                 {language === "en" ? "Show More Experiences" : "Ver Más Experiencias"}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           )}
@@ -1696,9 +1782,11 @@ const Experience = () => {
               <button
                 onClick={() => setShowAllCertifications(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+                aria-expanded={showAllCertifications}
+                aria-label={language === "en" ? "Show all certifications and recognition" : "Mostrar todas las certificaciones y reconocimientos"}
               >
                 {language === "en" ? "Show More Recognition" : "Ver Más Reconocimientos"}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           )}

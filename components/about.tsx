@@ -163,9 +163,9 @@ const About = () => {
     en: [
       {
         icon: Code,
-        title: "Full-Stack Development",
+        title: "Full-Stack AI Development",
         description:
-          "Expert in modern web technologies including Next.js, TypeScript, React, and Node.js. Building scalable applications from conception to deployment.",
+          "Expert in Next.js, TypeScript, React, and Node.js. Building scalable applications with Claude Code and multi-agent orchestration from conception to deployment.",
       },
       {
         icon: Database,
@@ -189,7 +189,7 @@ const About = () => {
         icon: Globe,
         title: "Modern Web Technologies",
         description:
-          "Passionate about cutting-edge technologies including Rust, blockchain development, and progressive web applications.",
+          "Passionate about cutting-edge technologies including blockchain development and progressive web applications.",
       },
       {
         icon: Lightbulb,
@@ -201,9 +201,9 @@ const About = () => {
     es: [
       {
         icon: Code,
-        title: "Desarrollo Full-Stack",
+        title: "Desarrollo Full-Stack con IA",
         description:
-          "Experto en tecnologías web modernas incluyendo Next.js, TypeScript, React y Node.js. Construyendo aplicaciones escalables desde la concepción hasta el despliegue.",
+          "Experto en Next.js, TypeScript, React y Node.js. Construyendo aplicaciones escalables con Claude Code y orquestación multi-agente desde la concepción hasta el despliegue.",
       },
       {
         icon: Database,
@@ -227,7 +227,7 @@ const About = () => {
         icon: Globe,
         title: "Tecnologías Web Modernas",
         description:
-          "Apasionado por tecnologías de vanguardia incluyendo Rust, desarrollo blockchain y aplicaciones web progresivas.",
+          "Apasionado por tecnologías de vanguardia incluyendo desarrollo blockchain y aplicaciones web progresivas.",
       },
       {
         icon: Lightbulb,
@@ -322,10 +322,10 @@ const About = () => {
   const achievements = {
     en: [
       {
-        icon: Medal,
-        title: "Office Depot Financial Systems",
-        metric: "Cross-Platform Architecture Leadership",
-        description: "Delivered solutions spanning Oracle, XML/XSLT, UNIX, telephony integration, and e-commerce platforms",
+        icon: Star,
+        title: "Microsoft to Agentic Orchestration",
+        metric: "25-Year Evolution",
+        description: "From C#/.NET enterprise systems to Claude Code multi-agent orchestration managing 7 concurrent projects",
       },
       {
         icon: Star,
@@ -340,18 +340,18 @@ const About = () => {
         description: "Architected comprehensive Business Intelligence platform unifying SharePoint, Tableau, and SQL Server for Disney executives worldwide",
       },
       {
-        icon: Star,
-        title: "Modern Stack Transition",
-        metric: "Legacy to Modern Migration",
-        description: "Successfully transitioned from Microsoft ecosystem to cutting-edge web technologies",
+        icon: Medal,
+        title: "Office Depot Financial Systems",
+        metric: "Cross-Platform Architecture Leadership",
+        description: "Delivered solutions spanning Oracle, XML/XSLT, UNIX, telephony integration, and e-commerce platforms",
       },
     ],
     es: [
       {
-        icon: Medal,
-        title: "Sistemas Financieros Office Depot",
-        metric: "Liderazgo Arquitectura Multi-Plataforma",
-        description: "Entregué soluciones abarcando Oracle, XML/XSLT, UNIX, integración telefónica y plataformas e-commerce",
+        icon: Star,
+        title: "De Microsoft a Orquestación Agéntica",
+        metric: "Evolución de 25 Años",
+        description: "De sistemas empresariales C#/.NET a orquestación multi-agente con Claude Code gestionando 7 proyectos concurrentes",
       },
       {
         icon: Star,
@@ -366,10 +366,10 @@ const About = () => {
         description: "Arquitecté plataforma integral de Business Intelligence unificando SharePoint, Tableau y SQL Server para ejecutivos Disney mundialmente",
       },
       {
-        icon: Star,
-        title: "Transición Stack Moderno",
-        metric: "Migración Legacy a Moderno",
-        description: "Transicioné exitosamente del ecosistema Microsoft a tecnologías web de vanguardia",
+        icon: Medal,
+        title: "Sistemas Financieros Office Depot",
+        metric: "Liderazgo Arquitectura Multi-Plataforma",
+        description: "Entregué soluciones abarcando Oracle, XML/XSLT, UNIX, integración telefónica y plataformas e-commerce",
       },
     ],
   };
