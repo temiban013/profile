@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("Resend error:", error);
+      console.error("Resend error:", error.name, error.message);
       return NextResponse.json(
         { error: "Error al enviar el mensaje. Por favor intenta de nuevo." },
         { status: 500 }
@@ -101,7 +101,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Contact form error:", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Contact form error:", message);
     return NextResponse.json(
       { error: "Error interno del servidor" },
       { status: 500 }

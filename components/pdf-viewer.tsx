@@ -48,8 +48,7 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
         };
 
         await page.render(renderContext).promise;
-      } catch (err) {
-        console.error('Error rendering page:', err);
+      } catch {
         setError(true);
       }
     };
@@ -75,8 +74,7 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
         // Render first page
         await renderPage(pdf, 1);
         setIsLoading(false);
-      } catch (err) {
-        console.error('Error loading PDF:', err);
+      } catch {
         setError(true);
         setIsLoading(false);
       }
@@ -104,6 +102,20 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
     };
   }, [isOpen, pdfUrl, scale]);
 
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Render page function for navigation and zoom controls
   const renderPage = async (pdf: PDFDocumentProxy, pageNum: number) => {
     if (!canvasRef.current) return;
@@ -127,8 +139,7 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
       };
 
       await page.render(renderContext).promise;
-    } catch (err) {
-      console.error('Error rendering page:', err);
+    } catch {
       setError(true);
     }
   };
@@ -179,6 +190,9 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
@@ -290,13 +304,13 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, title }: PDFViewerProps) {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={zoomOut}>
+              <Button variant="outline" size="sm" onClick={zoomOut} aria-label={language === "es" ? "Reducir zoom" : "Zoom out"}>
                 -
               </Button>
               <span className="text-sm text-muted-foreground min-w-12 text-center">
                 {Math.round(scale * 100)}%
               </span>
-              <Button variant="outline" size="sm" onClick={zoomIn}>
+              <Button variant="outline" size="sm" onClick={zoomIn} aria-label={language === "es" ? "Aumentar zoom" : "Zoom in"}>
                 +
               </Button>
             </div>

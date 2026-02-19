@@ -371,10 +371,11 @@ const Testimonials: React.FC = () => {
 
           {/* Carousel Indicators */}
           <div className="flex justify-center mt-8 space-x-2">
-            {currentTestimonials.map((_, index) => (
+            {currentTestimonials.map((testimonial, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
+                aria-label={`${language === "en" ? "Go to testimonial" : "Ir al testimonio"} ${index + 1}: ${testimonial.name}`}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   index === currentIndex
                     ? "bg-primary w-8"
