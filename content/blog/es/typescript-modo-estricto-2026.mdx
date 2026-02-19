@@ -1,0 +1,272 @@
+---
+title: "El Modo Estricto de TypeScript Ganó — Así es Como Usarlo Bien"
+slug: typescript-modo-estricto-2026
+description: "TypeScript es ahora el lenguaje #1 en GitHub. Aprende la configuración tsconfig de máxima rigurosidad para 2026, patrones de producción y cómo migrar incrementalmente."
+date: 2026-02-18
+author: mario-ayala
+locale: es
+category: Programación
+subject: web-development
+tags: ["TypeScript", "Modo Estricto", "Mejores Prácticas", "tsconfig", "Calidad de Código"]
+featured: true
+draft: false
+translationSlug: typescript-strict-mode-2026
+---
+
+**La dominancia de TypeScript ya no admite debate: es el lenguaje más utilizado en GitHub, se acerca a representar la mayoría del ecosistema JavaScript, y su compilador pronto vendrá con el strict mode habilitado por defecto.** La encuesta State of JavaScript 2025, publicada en febrero de 2026, encontró que **el 40% de los encuestados ya programa exclusivamente en TypeScript** — una cifra que los organizadores de la encuesta describen como que "sigue aumentando y pronto podría representar una mayoría." Daniel Roe, líder del equipo de Nuxt, declaró en las conclusiones de la encuesta: "TypeScript ha ganado. No como bundler — sino como lenguaje." Un día después, el equipo de TypeScript anunció la **beta de TypeScript 6.0**, el último lanzamiento basado en JavaScript antes de que el TypeScript 7.0, construido en Go, entregue mejoras de velocidad de compilación de 10x. Esta convergencia — dominio del ecosistema, soporte nativo en Node.js, y una revolución de rendimiento — convierte la seguridad de tipos estricta no en un lujo, sino en la práctica definitoria que separa un TypeScript de nivel producción de una falsa sensación de seguridad.
+
+Esta guía combina los datos más recientes de las encuestas, cada flag del compilador que deberías habilitar, patrones probados en producción, y un argumento respaldado por datos de que el ascenso de TypeScript y la seguridad de tipos estricta son inseparables.
+
+---
+
+## Los datos que prueban la dominancia de TypeScript son abrumadores
+
+La evidencia abarca todas las encuestas principales de desarrolladores realizadas en 2024 y 2025. El informe **GitHub Octoverse 2025** registró el cambio de lenguaje más significativo en más de una década: TypeScript se convirtió en el **lenguaje #1 en GitHub por contribuyentes mensuales** en agosto de 2025, con **2.64 millones de contribuyentes mensuales** — un aumento interanual del **66.6%** que superó incluso a Python. La encuesta **State of JavaScript 2024** (~23,500 encuestados) encontró que **el 67% de los desarrolladores escribe más TypeScript que JavaScript** y **el 80% escribe al menos la mitad de su código en TypeScript**. La encuesta **State of JavaScript 2025** (~12,000 encuestados) escaló la tendencia: **el 40% ahora escribe solo TypeScript**, frente al 34% del año anterior.
+
+La encuesta **JetBrains Developer Ecosystem 2024** clasificó a TypeScript como **#1 en su nuevo "Language Promise Index"** — una métrica compuesta de crecimiento a cinco años, intención de adopción y retención de usuarios — por delante de Rust y Python. La encuesta de Stack Overflow de 2024 situó el uso de TypeScript en un **38.5% entre todos los desarrolladores** y **43.4% entre los profesionales**, clasificándolo en quinto lugar a nivel global, pero primero entre los lenguajes que no preceden a la web. Mientras tanto, el compilador de TypeScript registra **más de 60 millones de descargas semanales en npm**, el triple de la cifra de 2021.
+
+La conexión entre esta dominancia y la tipificación estricta es inferencial pero sólida. Las encuestas State of JavaScript han preguntado sobre los mayores puntos de dolor de JavaScript todos los años desde 2020, y la respuesta nunca ha cambiado: **"la falta de un sistema de tipos integrado" es la queja #1 cada año sin excepción**. Un estudio académico de 2025 encontró que **el 94% de los errores de compilación generados por LLMs son fallos de verificación de tipos**, lo que explica directamente por qué el informe Octoverse de GitHub vincula el auge de TypeScript con la programación asistida por IA — los tipos actúan como barandillas que hacen que Copilot y herramientas similares sean dramáticamente más confiables. Todos los frameworks principales generan TypeScript con `strict: true` por defecto: Next.js 15, Angular 18, SvelteKit 2, Astro 3, Remix, SolidStart y Qwik.
+
+**Resumen de datos clave de las encuestas:**
+
+| Fuente | Año | Muestra | Métrica clave de TypeScript |
+|---|---|---|---|
+| State of JS 2025 | 2025 | ~12,000 | 40% programa solo en TS; "TypeScript ha ganado" |
+| State of JS 2024 | 2024 | ~23,500 | 67% escribe más TS que JS; 80%+ al menos la mitad en TS |
+| GitHub Octoverse | 2025 | Toda la plataforma | Lenguaje #1 por contribuyentes (2.64M, +66.6% interanual) |
+| Stack Overflow | 2024 | 65,437 | 38.5% todos los devs; 43.4% profesionales |
+| JetBrains DevEco | 2024 | 23,262 | #1 Language Promise Index; 35% todos los devs |
+
+La encuesta State of JavaScript 2025 también reveló fricciones a nivel de ecosistema relevantes para esta discusión. **Webpack**, utilizado por el 86% de los encuestados, genera **rechazo en el 37%** — calificado como "una pesadilla absoluta para configurar." **Next.js**, utilizado por el 59%, acumula quejas sobre su dependencia de Vercel y su creciente complejidad. **Vite**, en contraste, obtuvo un **56% de sentimiento positivo** con un 84% de uso, y Daniel Roe declaró que 2026 es "el año para pasarse a Vite." Estos cambios del ecosistema refuerzan la centralidad de TypeScript: el debate sobre herramientas se ha desplazado hacia los bundlers y meta-frameworks, mientras que la cuestión del lenguaje está resuelta.
+
+---
+
+## Lo que `strict: true` realmente habilita — y por qué no es suficiente
+
+El flag `strict` en `tsconfig.json` es un atajo para nueve opciones del compilador individuales. A partir de TypeScript 5.6, habilitar `"strict": true` activa lo siguiente:
+
+**`strictNullChecks`** (TS 2.0) trata `null` y `undefined` como tipos distintos, previniendo el "error de los mil millones de dólares" de los errores de referencia nula. **`noImplicitAny`** (TS 1.0) genera un error cuando TypeScript infiere `any` para parámetros sin tipo. **`strictFunctionTypes`** (TS 2.6) impone verificación de parámetros contravariante — una función que espera `MouseEvent` no aceptará silenciosamente una que espera `Event`. **`strictBindCallApply`** (TS 3.2) verifica los tipos de los argumentos de `bind`, `call` y `apply`. **`strictPropertyInitialization`** (TS 2.7) requiere que las propiedades de clase sean inicializadas. **`noImplicitThis`** (TS 2.0) genera un error cuando `this` tiene un tipo `any` implícito. **`useUnknownInCatchVariables`** (TS 4.4) tipifica las variables de las cláusulas catch como `unknown` en lugar de `any`. **`alwaysStrict`** (TS 2.1) emite JavaScript en strict mode. Y la adición más reciente, **`strictBuiltinIteratorReturn`** (TS 5.6), asegura que los iteradores integrados usen `undefined` en lugar de `any` para su tipo de retorno.
+
+Pero `strict: true` deja brechas críticas. Matt Pocock, el educador de TypeScript más destacado y autor de Total TypeScript, lo expresó sin rodeos en un tuit de abril de 2024 que generó más de 102,000 visualizaciones: **"Si no usas `strict: true` en tu tsconfig.json, no estás usando TypeScript."** Luego fue más lejos, argumentando que varios flags excluidos de `strict` deberían considerarse esenciales. Los tres más importantes son:
+
+**`noUncheckedIndexedAccess`** (TS 4.1) es posiblemente el flag más valioso que no está en `strict`. Sin él, `arr[0]` sobre un `string[]` devuelve `string` — incluso si el array está vacío. Con él, el tipo de retorno se convierte en `string | undefined`, obligándote a manejar ese caso. Pocock dice que este flag "debería estar incluido en strict."
+
+```typescript
+// Sin noUncheckedIndexedAccess — INSEGURO
+const users: string[] = [];
+const first = users[0]; // tipo: string — ¡pero es undefined en tiempo de ejecución! 💥
+first.toUpperCase();     // Crash en tiempo de ejecución, sin error del compilador
+
+// Con noUncheckedIndexedAccess — SEGURO
+const first = users[0]; // tipo: string | undefined ✅
+first?.toUpperCase();    // Hay que manejar el caso undefined
+```
+
+**`exactOptionalPropertyTypes`** (TS 4.4) distingue entre una propiedad ausente y una propiedad explícitamente establecida como `undefined`. Esto importa para APIs donde `"key" in obj` y `obj.key !== undefined` deberían comportarse de forma diferente:
+
+```typescript
+interface Settings {
+  colorTheme?: "dark" | "light";
+}
+const s: Settings = { colorTheme: undefined }; // ❌ Error con exactOptionalPropertyTypes
+const s: Settings = {};                        // ✅ La propiedad está correctamente ausente
+```
+
+**`noPropertyAccessFromIndexSignature`** (TS 4.2) obliga a usar notación de corchetes para las propiedades de firmas de índice, dejando visualmente claro cuándo se accede a una propiedad conocida frente a una dinámica.
+
+---
+
+## La tsconfig de máxima rigurosidad para 2026
+
+TypeScript 5.9 actualizó `tsc --init` para generar una configuración más opinada, y el equipo de TypeScript se ha **comprometido** (issue #62333 en GitHub) a hacer que `--strict` sea el comportamiento por defecto en TypeScript 6.0. Los nuevos valores por defecto de `tsc --init` ahora incluyen `noUncheckedIndexedAccess` y `exactOptionalPropertyTypes`. A continuación se presenta la configuración de máxima rigurosidad recomendada, sintetizada a partir de la dirección del equipo de TypeScript, la hoja de referencia de Total TypeScript de Matt Pocock, y el paquete comunitario `@tsconfig/strictest`:
+
+```json
+{
+  "compilerOptions": {
+    // Core strict mode (9 flags)
+    "strict": true,
+
+    // Beyond-strict type safety (the critical extras)
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+
+    // Module safety
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "forceConsistentCasingInFileNames": true,
+
+    // TS 5.8+ (for Node.js native type stripping)
+    "erasableSyntaxOnly": true,
+
+    // Environment
+    "target": "es2022",
+    "module": "nodenext",
+    "skipLibCheck": true
+  }
+}
+```
+
+El flag **`erasableSyntaxOnly`**, introducido en TypeScript 5.8, merece atención especial. Genera un error en construcciones de TypeScript que producen JavaScript en tiempo de ejecución — enums, namespaces y parameter properties. Este flag se alinea con la ejecución nativa de TypeScript en Node.js (estable desde Node.js 25.2.0, noviembre de 2025), que elimina las anotaciones de tipo en tiempo de ejecución pero no puede manejar sintaxis que requiere generación de código. Habilitar `erasableSyntaxOnly` te orienta hacia el futuro de TypeScript: una capa de tipos pura sobre JavaScript con cero huella en tiempo de ejecución.
+
+**`verbatimModuleSyntax`** (TS 5.0) elimina la ambigüedad en las importaciones al requerir `import type` explícito para las importaciones de solo tipos. Esto evita que TypeScript elida silenciosamente importaciones que podrían tener efectos secundarios y produce una salida de compilación predecible en todos los bundlers. **`noUncheckedSideEffectImports`** (TS 5.6) complementa esto generando un error cuando las importaciones de efectos secundarios como `import "module"` no se pueden resolver — capturando errores tipográficos y declaraciones ambientales faltantes.
+
+---
+
+## TypeScript 5.7 y 5.8 elevaron el listón de la rigurosidad
+
+**TypeScript 5.7** (noviembre de 2024) introdujo la detección de variables que se declaran pero **nunca se asignan en ningún lugar** dentro del alcance — anteriormente, solo las variables *posiblemente* no inicializadas generaban errores. También añadió `--rewriteRelativeImportExtensions` para escribir importaciones `.ts` que compilan a `.js`, y **soporte de caché de compilación de V8** que entrega **un inicio 2-3x más rápido** en proyectos grandes.
+
+**TypeScript 5.8** (marzo de 2025) introdujo dos mejoras significativas de rigurosidad. Primero, **verificación granular de ramas en expresiones de retorno**: TypeScript ahora evalúa cada rama de las expresiones ternarias en las sentencias `return` de forma independiente contra el tipo de retorno declarado. Anteriormente, si una rama devolvía `any` (algo común con `Map.get()`), el `any` infectaba la unión y enmascaraba errores en otras ramas:
+
+```typescript
+declare const cache: Map<any, any>;
+
+function getUrl(value: string): URL {
+  return cache.has(value) ? cache.get(value) : value;
+  //                                           ~~~~~
+  // ❌ NUEVO en 5.8: Type 'string' is not assignable to 'URL'
+  // Anteriormente SIN error porque any | string se simplificaba a any
+}
+```
+
+Segundo, TypeScript 5.8 añadió el flag **`erasableSyntaxOnly`** y **`--module node18`** como opción de módulo estable (no deslizante). La versión también habilitó que los módulos CommonJS puedan usar `require()` con ESM bajo `--module nodenext`, igualando el comportamiento de Node.js 22+ y reduciendo la necesidad de publicación dual.
+
+**TypeScript 6.0** (beta el 11 de febrero de 2026) es la versión puente hacia el TypeScript 7.0 basado en Go. Añade tipos de la API Temporal, mejoras de inferencia, soporte del objetivo ES2025, y un flag `--stableTypeOrdering` para alinear la salida con el comportamiento determinista de TypeScript 7.0. De forma crítica, TypeScript 6.0 es el **último lanzamiento basado en JavaScript** — solo seguirán parches de seguridad. TypeScript 7.0, escrito en Go, promete **compilaciones 8-10x más rápidas** y mayor capacidad de respuesta del editor en proyectos reales.
+
+---
+
+## Patrones de producción que el strict mode hace posibles
+
+El strict mode no consiste solo en detectar errores — habilita patrones arquitectónicos que serían inseguros o sin sentido sin él. Estos patrones representan las mejores prácticas actuales en bases de código TypeScript de producción.
+
+**Los discriminated unions reemplazan a los enums** en las bases de código que priorizan el strict mode. A diferencia de los enums, que generan JavaScript en tiempo de ejecución y no pueden llevar datos asociados por variante, los discriminated unions proporcionan coincidencia de patrones exhaustiva con cero costo en tiempo de ejecución:
+
+```typescript
+type ApiState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; error: Error };
+
+function render<T>(state: ApiState<T>) {
+  switch (state.status) {
+    case "success": return state.data;  // TS sabe que `data` existe aquí
+    case "error":   return state.error; // TS sabe que `error` existe aquí
+    // ¿Falta un caso? La verificación de exhaustividad lo detecta en tiempo de compilación
+  }
+}
+```
+
+**Los branded types** resuelven el problema del tipado estructural de TypeScript para identificadores de dominio. Sin ellos, un `UserId` y un `OrderId` son ambos `string` e intercambiables libremente — una clase de error que el strict mode por sí solo no detecta:
+
+```typescript
+type Brand<K, T> = K & { readonly __brand: T };
+type UserId  = Brand<string, "UserId">;
+type OrderId = Brand<string, "OrderId">;
+
+function getUser(id: UserId): User { /* ... */ }
+const orderId = "ord_123" as OrderId;
+getUser(orderId); // ❌ Error de compilación: OrderId is not assignable to UserId
+```
+
+**El operador `satisfies`** (TS 4.9) valida que un valor se ajusta a un tipo sin ampliar el tipo inferido — lo mejor de ambos mundos entre seguridad de tipos y precisión de tipos:
+
+```typescript
+const routes = {
+  home:  { path: "/", component: "Home" },
+  about: { path: "/about", component: "About" },
+} satisfies Record<string, { path: string; component: string }>;
+
+routes.home.path; // tipo: "/" (literal estrecho, no ampliado a string)
+```
+
+**Zod y la validación en tiempo de ejecución** completan la historia del strict mode. Zod, que **requiere `strict: true`** en tsconfig.json, proporciona una única fuente de verdad tanto para los tipos en tiempo de compilación como para la validación en tiempo de ejecución — esencial para los límites de API, entradas de formularios y cualquier dato que entre al sistema desde el exterior:
+
+```typescript
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  role: z.enum(["admin", "editor", "viewer"]),
+});
+type User = z.infer<typeof UserSchema>; // Tipo derivado del esquema — sin duplicación
+
+const result = UserSchema.safeParse(untrustedInput);
+if (result.success) {
+  result.data.email; // Completamente tipado, validado en tiempo de ejecución
+}
+```
+
+---
+
+## Next.js 15 trata el TypeScript estricto como un requisito de primer nivel
+
+Next.js 15 habilita `"strict": true` por defecto en cada nuevo proyecto creado con `create-next-app`. También incluye un **plugin TypeScript personalizado** (`{ "name": "next" }`) que proporciona verificación de tipos para Server Components, Client Components y las convenciones del App Router. Las **rutas tipadas**, estables desde Next.js 15.5, generan props `<Link href>` validadas en tiempo de compilación a partir de la estructura de tu sistema de archivos — un error tipográfico en una cadena de ruta se convierte en un error de TypeScript:
+
+```tsx
+// Con typedRoutes: true en next.config.ts
+<Link href="/dashbord">Dashboard</Link>
+//         ~~~~~~~~~~~ ❌ Error de tipo: no hay ruta que coincida con "/dashbord"
+```
+
+Next.js 15.5 también introdujo **helpers globales de tipos de ruta** (`LayoutProps<'/dashboard'>`, `PageProps<'/users/[id]'>`) que proporcionan slots de rutas paralelas y parámetros dinámicos completamente tipados sin necesidad de importaciones. La integración de TypeScript del framework se extiende a Server Actions con validación Zod, `searchParams` y `params` tipados, y variables de entorno tipadas de forma experimental.
+
+Para máxima rigurosidad en un proyecto Next.js 15, el `tsconfig.json` por defecto debería extenderse con `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitReturns` y `verbatimModuleSyntax`. Los valores por defecto `skipLibCheck: true` y `moduleResolution: "bundler"` deben mantenerse.
+
+---
+
+## Migrar al strict mode sin detener el desarrollo de funcionalidades
+
+La estrategia probada para bases de código grandes es la migración incremental — cada historia de éxito, desde Bloomberg hasta Figma o Airbnb, usó adopción gradual, no una reescritura de golpe.
+
+**La herramienta recomendada es `typescript-strict-plugin`** de Allegro, con más de 132,000 descargas semanales en npm. El enfoque: habilitar `strict: true` globalmente, luego añadir `// @ts-strict-ignore` en la parte superior de cada archivo que todavía no cumple. Los nuevos archivos son estrictos por defecto. Los desarrolladores eliminan el comentario de ignorar a medida que corrigen los archivos, asegurando que la base de código solo avance hacia la rigurosidad:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "plugins": [{ "name": "typescript-strict-plugin" }]
+  }
+}
+```
+
+**La migración de Figma** de su base de código frontend de 1,162 archivos es el caso de estudio más instructivo. Comenzaron con una lista de archivos ya conformes, configuraron VS Code para mostrar errores estrictos en todas partes (incluso en archivos no conformes), y trataron los ciclos de dependencia como unidades atómicas. Su ciclo más grande tenía más de 500 archivos. Una vez que había más archivos conformes que no conformes, cambiaron de una lista de permitidos a una lista de bloqueados, haciendo que los nuevos archivos sean estrictos por defecto. La conclusión clave de los ingenieros de Figma: "El mayor beneficio fue la mayor legibilidad de nuestro código. Las partes donde TypeScript tenía más dificultades para inferir la nulabilidad eran a menudo las que eran difíciles de razonar para los *humanos* — y se beneficiaron más de la refactorización."
+
+Para equipos que prefieren la aplicación a nivel de commit, **`ts-strictify`** se ejecuta como un hook pre-commit, verificando solo los archivos modificados. El paquete **`@betterer/typescript`** adopta un enfoque de trinquete: toma una instantánea del recuento actual de errores y falla en CI si el recuento aumenta. Al habilitar sub-flags de strict de forma incremental sin herramientas, el orden recomendado es: `strictBindCallApply` y `alwaysStrict` primero (victorias fáciles), luego `noImplicitAny` (esfuerzo moderado), y `strictNullChecks` al final (genera la mayor cantidad de errores en bases de código grandes, a menudo miles).
+
+---
+
+## La evidencia sobre el strict mode y los errores es matizada pero convincente
+
+La estadística más citada en la defensa de TypeScript es la afirmación de Airbnb de que **el 38% de los errores de producción podrían haberse prevenido con TypeScript**, presentada por Brie Bunge en JSConf Hawaii 2019 a partir del análisis de post-mortems. AWS citó posteriormente esta cifra en la documentación de su SDK v3. La línea de base académica proviene del estudio de Gao et al. en ICSE 2017 "To Type or Not to Type", que encontró que **~el 15% de los errores de JavaScript podrían ser detectados por el sistema de tipos de TypeScript** — una cifra que los autores calificaron de estimación conservadora, ya que solo contaba los errores que sobrevivían a las pruebas y la revisión de código.
+
+Un estudio de 2022 de Bogner y Merkel analizando **604 proyectos de GitHub** (16 millones de líneas de código) encontró que los proyectos de TypeScript exhibían **significativamente mejor calidad de código** (menos code smells) y **mejor comprensibilidad** (menor complejidad cognitiva), pero — de forma crucial — **la propensión a errores y el tiempo de resolución no eran significativamente menores**. El hallazgo más relevante del estudio para los defensores del strict mode: **reducir el uso de `any` estaba significativamente correlacionado con mejores métricas de calidad de código, comprensibilidad y tiempo de resolución de errores** (rho de Spearman 0.17–0.26). Un estudio de 2025 encontró que **los errores relacionados con tipos cayeron de ~33% en JavaScript a 12.4% en TypeScript**, aunque surgieron nuevas categorías de errores relacionadas con herramientas y configuración.
+
+La historia de adopción de Bloomberg proporciona la evidencia empresarial más sólida: más de 50 millones de líneas de código, más de 2,000 ingenieros, strict mode habilitado por defecto en toda su cadena de herramientas. Su métrica más reveladora: "Más de **200 proyectos optaron por TypeScript en el primer año. Cero proyectos dieron marcha atrás.**" La startup WisdomCircle reportó una "reducción significativa en las tasas de error" tras la migración al modo estricto, con mayor confianza de los desarrolladores para lanzar funcionalidades.
+
+Los contraargumentos merecen ser considerados con rigor. Eric Elliott argumenta que la reducción del 15% en errores está sobredimensionada cuando ya se aplican otras medidas de calidad (TDD, revisión de código, revisión de diseño), señalando que ~78% de los errores son errores de especificación que ningún sistema de tipos puede detectar. La famosa objeción de DHH — "Las cosas que deberían ser fáciles se vuelven difíciles, y las cosas difíciles se convierten en `any`" — llevó a Turbo 8 a abandonar TypeScript completamente en septiembre de 2023, aunque esto sigue siendo una posición minoritaria.
+
+---
+
+## El debate sobre el strict mode tiene un ganador claro
+
+La comunidad ha resuelto en gran medida el debate sobre el strict mode, aunque persisten focos de resistencia. **TypeScript 6.0 habilitará `--strict` por defecto** — el propio encuadre del equipo de TypeScript dice que "para la mayoría de los proyectos nuevos, tener `--strict` desactivado parece generalmente un accidente." La posición de Matt Pocock de que todo el ecosistema TypeScript de código abierto está construido sobre el strict mode — "todas las librerías principales están escritas con el strict mode en mente; optar por no usarlo causará errores de tipo aleatorios" — se ha convertido en el consenso generalizado.
+
+El campo de "el strict mode no es suficientemente estricto" aboga por ir más lejos. Cyrille Tuzi señala que el strict mode todavía permite tipos `any` explícitos y aboga por combinar `strict: true` con la regla de ESLint `@typescript-eslint/no-explicit-any`. El equipo de TypeScript experimentó con un flag `--strictAny` pero lo archivó — Ryan Cavanaugh, el desarrollador principal de TypeScript, reconoció querer un manejo más estricto de `any` "alrededor del 50% de las veces", pero encontró que el otro 50% necesitaba la vía de escape.
+
+La dimensión de la IA fortalece de forma decisiva el argumento del strict mode. El Octoverse 2025 de GitHub vincula explícitamente el auge de contribuyentes de TypeScript con la programación asistida por IA. Con **el 94% de los errores de compilación generados por LLMs siendo fallos de verificación de tipos**, el TypeScript estricto actúa como una capa de verificación para el código generado por IA. Los equipos con tipado sólido y patrones claros reportan las mayores ganancias de fiabilidad al usar herramientas de IA. A medida que la IA escribe más código, el sistema de tipos se convierte menos en una herramienta para detectar errores humanos y más en una restricción para la salida de las máquinas — una propuesta de valor fundamentalmente diferente que favorece la máxima rigurosidad.
+
+---
+
+## Conclusión
+
+El argumento de que la dominancia de TypeScript está ligada a la seguridad de tipos estricta descansa en evidencia convergente: el punto de dolor #1 en las encuestas de JavaScript siempre es la falta de tipos, el lenguaje más usado en GitHub es TypeScript, todos los frameworks principales incluyen strict mode por defecto, las herramientas de codificación con IA dependen de los tipos como barandillas, y el propio equipo de TypeScript está haciendo el strict mode el comportamiento por defecto. La implicación práctica es clara. Habilita `strict: true`. Añade `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` y `verbatimModuleSyntax`. Usa discriminated unions en lugar de enums, branded types para identificadores de dominio, Zod para los límites en tiempo de ejecución, y `satisfies` para los objetos de configuración. Migra de forma incremental con `typescript-strict-plugin`. Las herramientas, el ecosistema y los datos apuntan todos en una dirección: **el TypeScript estricto no es una preferencia de estilo — es la línea de base que le valió la victoria a TypeScript.**

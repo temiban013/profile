@@ -389,9 +389,11 @@ const EnhancedProjects = () => {
             <button
               onClick={() => setShowAllProjects(true)}
               className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 rounded-full font-medium transition-all duration-300 hover:scale-105 professional-shadow"
+              aria-expanded={showAllProjects}
+              aria-label={language === "en" ? "Show all projects" : "Mostrar todos los proyectos"}
             >
               {language === "en" ? "Show More Projects" : "Ver Más Proyectos"}
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         )}

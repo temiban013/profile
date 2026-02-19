@@ -1,8 +1,5 @@
 // components/blog/mdx-content.tsx
-"use client";
-
 import * as runtime from "react/jsx-runtime";
-import { useMemo } from "react";
 
 interface MdxContentProps {
   code: string;
@@ -11,16 +8,12 @@ interface MdxContentProps {
 /**
  * MDX Content Renderer
  *
- * Renders compiled MDX code from Velite.
- * The code is a stringified function that returns React elements.
+ * Renders compiled MDX code from Velite as a server component.
+ * The code is evaluated at build time (SSG), avoiding CSP
+ * 'unsafe-eval' violations on the client.
  */
 export function MdxContent({ code }: MdxContentProps) {
-  const Component = useMemo(() => {
-    // Create a function from the MDX code string
-    const fn = new Function(code);
-    // Execute it with the JSX runtime to get the component
-    return fn(runtime).default;
-  }, [code]);
-
+  const fn = new Function(code);
+  const Component = fn(runtime).default;
   return <Component />;
 }

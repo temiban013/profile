@@ -150,14 +150,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 {post.locale === "es" ? "Destacado" : "Featured"}
               </span>
             )}
-            {translation && (
-              <Link
-                href={`/blog/${translation.slug}`}
-                className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              >
-                {post.locale === "es" ? "Read in English" : "Leer en Español"}
-              </Link>
-            )}
           </div>
 
           {/* Post metadata */}

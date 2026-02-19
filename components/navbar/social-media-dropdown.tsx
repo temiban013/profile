@@ -13,6 +13,7 @@ import {
   WhatsappLogo,
 } from "../icons";
 import { getFormattedSocialLinks } from "@/lib/social-links";
+import { useLanguage } from "@/lib/contexts/language-context";
 import { cn } from "@/lib/utils";
 
 /*
@@ -75,10 +76,27 @@ const SocialLink = ({
   );
 };
 
+const dropdownLabels = {
+  en: {
+    ariaLabel: "Social Media Links",
+    heading: "Connect With Me",
+    subheading: "Professional & Social Profiles",
+    cta: "Let\u2019s discuss your next project",
+  },
+  es: {
+    ariaLabel: "Redes Sociales",
+    heading: "Conéctate Conmigo",
+    subheading: "Perfiles Profesionales y Sociales",
+    cta: "Hablemos sobre tu próximo proyecto",
+  },
+} as const;
+
 export const SocialMediaDropdown = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const socialLinks = getFormattedSocialLinks();
+  const { language } = useLanguage();
+  const labels = dropdownLabels[language];
 
   /*
     Click-outside detection for dropdown closure
@@ -136,7 +154,7 @@ export const SocialMediaDropdown = (): JSX.Element => {
           // Active state provides clear visual feedback
           isOpen && "bg-primary/10 border-primary/30 scale-105"
         )}
-        aria-label="Social Media Links"
+        aria-label={labels.ariaLabel}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -180,10 +198,10 @@ export const SocialMediaDropdown = (): JSX.Element => {
           */}
           <div className="px-3 py-2 border-b border-border/30 mb-2">
             <h3 className="text-sm font-semibold text-foreground">
-              Connect With Me
+              {labels.heading}
             </h3>
             <p className="text-xs text-muted-foreground">
-              Professional & Social Profiles
+              {labels.subheading}
             </p>
           </div>
 
@@ -235,7 +253,7 @@ export const SocialMediaDropdown = (): JSX.Element => {
             )}
           >
             <p className="text-xs text-muted-foreground">
-              Let&apos;s discuss your next project
+              {labels.cta}
             </p>
           </div>
         </div>

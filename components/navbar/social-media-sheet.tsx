@@ -17,9 +17,23 @@ import {
   WhatsappLogo,
 } from "../icons";
 import { getFormattedSocialLinks } from "@/lib/social-links";
+import { useLanguage } from "@/lib/contexts/language-context";
+
+const sheetLabels = {
+  en: {
+    title: "Social Media",
+    description: "Connect with me through these platforms",
+  },
+  es: {
+    title: "Redes Sociales",
+    description: "Conecta conmigo a través de estas plataformas",
+  },
+} as const;
 
 export const SocialMediaSheet = () => {
   const socialLinks = getFormattedSocialLinks();
+  const { language } = useLanguage();
+  const labels = sheetLabels[language];
 
   return (
     <Sheet>
@@ -29,9 +43,9 @@ export const SocialMediaSheet = () => {
         </Button>
       </SheetTrigger>
       <SheetContent className="pt-10 px-6">
-        <SheetTitle>Redes Sociales</SheetTitle>
+        <SheetTitle>{labels.title}</SheetTitle>
         <SheetDescription>
-          Conecta conmigo a través de estas plataformas
+          {labels.description}
         </SheetDescription>
 
         <div className="flex flex-col gap-4 mt-6">
