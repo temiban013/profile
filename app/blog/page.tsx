@@ -8,6 +8,7 @@ import { SubjectFilterTabs } from "@/components/blog/subject-filter-tabs";
 import { getActiveSubjects, getSubjectCounts, getSubject } from "@/lib/blog/subjects";
 import type { BlogPost } from "@/types/blog";
 import { postMetaToLegacyPost } from "@/lib/blog/to-legacy-post";
+import { BlogLanguageSync } from "@/components/blog/blog-language-sync";
 
 /**
  * Blog Listing Page Component (Server Component)
@@ -53,6 +54,7 @@ export default async function BlogPage({
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <BlogLanguageSync />
       {/* Structured Data for SEO */}
       <BlogSectionStructuredData posts={allPosts} language={locale} />
 
