@@ -15,6 +15,7 @@ import {
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 import { getFormattedSocialLinks } from "@/lib/social-links";
+import { NitainoCredit } from "./nitaino-credit";
 
 const Footer = () => {
   const { language } = useLanguage();
@@ -135,6 +136,8 @@ const Footer = () => {
             </ExternalLink>
           </div>
         </div>
+
+        <NitainoCredit lang={language} />
       </div>
     </footer>
   );
