@@ -107,22 +107,16 @@ const NavMenuItem = ({
 
   return (
     <NavigationMenuItem>
-      <NavigationMenuLink asChild={isExternal}>
+      <NavigationMenuLink asChild>
         {isExternal ? (
           <Link href={href}>{linkContent}</Link>
         ) : (
-          <div
+          <a
+            href={`/${href}`}
             onClick={handleClick}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleClick(e);
-              }
-            }}
           >
             {linkContent}
-          </div>
+          </a>
         )}
       </NavigationMenuLink>
     </NavigationMenuItem>

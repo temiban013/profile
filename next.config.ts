@@ -35,16 +35,30 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+              "script-src 'self' 'unsafe-inline' 'strict-dynamic' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
-              "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://vitals.vercel-insights.com",
+              "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://vitals.vercel-insights.com https://va.vercel-scripts.com",
               "frame-src 'self' https://calendly.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
+              "upgrade-insecure-requests",
             ].join("; "),
+          },
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "https://marioayala.dev",
+          },
+        ],
+      },
+      {
+        source: "/feed.xml",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
           },
         ],
       },

@@ -63,7 +63,8 @@ const MobileNavItem = ({
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleClick = (): void => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>): void => {
+    e.preventDefault();
     // Provide immediate visual feedback by closing sheet first
     // This creates the perception of instant response while navigation processes
     setTimeout(() => onNavigate(), 150);
@@ -89,13 +90,14 @@ const MobileNavItem = ({
   };
 
   return (
-    <button
+    <a
+      href={href.startsWith("#") ? `/${href}` : href}
       onClick={handleClick}
       className={cn(
         // Staggered entrance animation creates professional polish
         "animate-in slide-in-from-right-4 fade-in duration-500",
         // Touch-friendly sizing - minimum 44px height for accessibility
-        "w-full p-5 rounded-2xl text-left group",
+        "block w-full p-5 rounded-2xl text-left group",
         // Smooth interaction feedback
         "transition-all duration-300 ease-out",
         "hover:bg-accent/50 active:scale-[0.98]",
@@ -110,7 +112,6 @@ const MobileNavItem = ({
           : "hover:bg-accent/20"
       )}
       style={{ animationDelay: `${delay}ms` }}
-      type="button"
     >
       <div className="flex items-center gap-4">
         {/* 
@@ -165,7 +166,7 @@ const MobileNavItem = ({
           />
         </div>
       </div>
-    </button>
+    </a>
   );
 };
 
@@ -187,6 +188,7 @@ export const NavigationSheet = (): JSX.Element => {
         <Button
           variant="ghost"
           size="icon"
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
           className={cn(
             "relative rounded-full transition-all duration-300",
             "hover:bg-primary/15 hover:scale-110",
