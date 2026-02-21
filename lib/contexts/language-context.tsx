@@ -3,7 +3,10 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
+  useMemo,
+  useRef,
   useState,
   useEffect,
   type ReactNode,
@@ -21,21 +24,19 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // Default to Spanish, but prevent hydration mismatch with useState
   const [language, setLanguageState] = useState<LanguageKey>("es");
-  const [isInitialized, setIsInitialized] = useState(false);
+  const isInitializedRef = useRef(false);
 
-  const setLanguage = (newLanguage: LanguageKey) => {
+  const setLanguage = useCallback((newLanguage: LanguageKey) => {
     if (newLanguage === "en" || newLanguage === "es") {
       setLanguageState(newLanguage);
-      if (isInitialized && typeof window !== "undefined") {
+      if (isInitializedRef.current && typeof window !== "undefined") {
         localStorage.setItem("language", newLanguage);
         document.cookie = `lang=${newLanguage};path=/;max-age=31536000;SameSite=Lax`;
       }
     }
-  };
+  }, []);
 
-  // Effect to handle initialization from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedLanguage = localStorage.getItem("language") as LanguageKey;
@@ -45,12 +46,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
       setLanguageState(resolvedLang);
       document.cookie = `lang=${resolvedLang};path=/;max-age=31536000;SameSite=Lax`;
-      setIsInitialized(true);
+      isInitializedRef.current = true;
     }
   }, []);
 
+  const value = useMemo(() => ({ language, setLanguage }), [language, setLanguage]);
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );

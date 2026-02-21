@@ -4,23 +4,14 @@
 import { useLanguage } from "@/lib/contexts/language-context";
 import { Button } from "@/components/ui/button";
 import { USFlagIcon, PRFlagIcon } from "@/components/icons";
-import { useRouter, usePathname } from "next/navigation";
 
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
-  const router = useRouter();
-  const pathname = usePathname();
 
   const toggleLanguage = () => {
     const newLanguage = language === "en" ? "es" : "en";
     setLanguage(newLanguage);
-
-    // Update HTML lang attribute (for client-side changes)
     document.documentElement.lang = newLanguage;
-
-    // Update URL with the language parameter
-    const newUrl = `${pathname}?lang=${newLanguage}`;
-    router.push(newUrl, { scroll: false });
   };
 
   return (
