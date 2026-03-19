@@ -1,14 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Code, Brain, TrendingUp } from "lucide-react";
 import { getSubject } from "@/config/blog-subjects";
-
-const iconMap = {
-  Code,
-  Brain,
-  TrendingUp,
-} as const;
+import { subjectIconMap } from "@/components/blog/subject-icons";
 
 interface SubjectBadgeProps {
   subject: string;
@@ -26,7 +20,7 @@ export function SubjectBadge({
   const subjectData = getSubject(subject);
   if (!subjectData) return null;
 
-  const Icon = iconMap[subjectData.icon as keyof typeof iconMap];
+  const Icon = subjectIconMap[subjectData.icon as keyof typeof subjectIconMap];
 
   const sizeClasses = {
     sm: "text-xs px-2 py-0.5",

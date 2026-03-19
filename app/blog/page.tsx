@@ -1,4 +1,5 @@
 // app/blog/page.tsx
+import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { getAllPostsMeta, getPostStatsMeta } from "@/lib/blog/content";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
@@ -71,14 +72,16 @@ export default async function BlogPage({
       </section>
 
       <div className="container mx-auto px-4 py-12 max-w-6xl">
-        {/* Subject Filter Tabs */}
-        <SubjectFilterTabs
-          activeSubject={activeSubject}
-          availableSubjects={subjects}
-          locale={locale}
-          counts={subjectCounts}
-          totalCount={allPosts.length}
-        />
+        {/* Subject Filter Tabs - wrapped in Suspense for useSearchParams */}
+        <Suspense fallback={<div className="flex gap-2 mb-8"><div className="h-10 w-20 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse" /><div className="h-10 w-32 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse" /><div className="h-10 w-28 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse" /></div>}>
+          <SubjectFilterTabs
+            activeSubject={activeSubject}
+            availableSubjects={subjects}
+            locale={locale}
+            counts={subjectCounts}
+            totalCount={allPosts.length}
+          />
+        </Suspense>
 
         {/* Filtered view: Show all posts for selected subject */}
         {isFiltered ? (

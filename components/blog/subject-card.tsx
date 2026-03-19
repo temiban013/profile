@@ -1,12 +1,6 @@
 import Link from "next/link";
-import { Code, Brain, TrendingUp } from "lucide-react";
 import type { BlogSubject } from "@/config/blog-subjects";
-
-const iconMap = {
-  Code,
-  Brain,
-  TrendingUp,
-} as const;
+import { subjectIconMap } from "@/components/blog/subject-icons";
 
 interface SubjectCardProps {
   subject: BlogSubject;
@@ -15,7 +9,7 @@ interface SubjectCardProps {
 }
 
 export function SubjectCard({ subject, postCount, locale }: SubjectCardProps) {
-  const Icon = iconMap[subject.icon as keyof typeof iconMap];
+  const Icon = subjectIconMap[subject.icon as keyof typeof subjectIconMap];
 
   return (
     <Link
@@ -34,7 +28,7 @@ export function SubjectCard({ subject, postCount, locale }: SubjectCardProps) {
         {subject.description[locale]}
       </p>
       <p className="text-sm text-gray-500 dark:text-gray-400">
-        {postCount} {locale === "es" ? "articulos" : "articles"}
+        {postCount} {locale === "es" ? "artículos" : "articles"}
       </p>
     </Link>
   );

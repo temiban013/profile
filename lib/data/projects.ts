@@ -29,7 +29,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Gespervis ASL School",
       descripcion:
         "Full-stack ASL education platform for Puerto Rico's deaf community. Features course management with dual enrollment systems, Stripe payments with installments, gamification, real-time messaging, and certificate generation. Built with Claude Code's agentic orchestration—parallel workagents achieving 1,877+ tests with 100% pass rate.",
-      imagen: "/gespervis-preview.png",
+      imagen: "/gespervis-preview.webp",
       tecnologias: [
         "Next.js 15",
         "React 19",
@@ -60,7 +60,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Dinamico.menu",
       descripcion:
         "Multi-tenant SaaS platform for Puerto Rico's food truck industry. Features real-time order management, digital menus with QR codes, Stripe subscription billing, and a comprehensive marketing analytics dashboard. Built as a Turborepo monorepo with three applications (admin, menu, landing) using AI-assisted agentic development.",
-      imagen: "/dinamico-preview.png",
+      imagen: "/dinamico-preview.webp",
       tecnologias: [
         "Next.js 15",
         "React 19",
@@ -91,7 +91,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Café Papamin",
       descripcion:
         "Modern restaurant website for Café Papamín in San Sebastián, Puerto Rico. Features responsive design, location services, menu display, and integrated contact system. Built with Next.js and optimized for mobile-first experience to attract local customers and tourists.",
-      imagen: "/papamin-preview.png",
+      imagen: "/papamin-preview.webp",
       tecnologias: [
         "Next.js 14",
         "TypeScript",
@@ -120,7 +120,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Pabellón de la Fama del Deporte Humacaeño",
       descripcion:
         "Official digital museum for Puerto Rico's Humacao Sports Hall of Fame, honoring 81+ sports legends. Complete digital transformation project featuring advanced search and filtering systems, interactive timeline, virtual museum tours, and bilingual support. Achieved 95+ Lighthouse scores with comprehensive SEO optimization for cultural heritage preservation.",
-      imagen: "/pabellon-preview.png",
+      imagen: "/pabellon-preview.webp",
       tecnologias: [
         "Next.js 15",
         "TypeScript",
@@ -151,7 +151,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Jíbaro Eats Photography",
       descripcion:
         "Visual portfolio website for a professional photographer specializing in gastronomy. Features high-quality image galleries, lazy-loading optimization, and fluid navigation between collections.",
-      imagen: "/jibaroeats-preview.png",
+      imagen: "/jibaroeats-preview.webp",
       tecnologias: [
         "Next.js 13+",
         "TypeScript",
@@ -180,7 +180,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Yukayeke Playa Real Estate",
       descripcion:
         "Modern real estate platform showcasing luxury beachfront properties in Puerto Rico. Features comprehensive property listings, bilingual SEO optimization, and responsive design for optimal mobile experience.",
-      imagen: "/yukayeke-preview.png",
+      imagen: "/yukayeke-preview.webp",
       tecnologias: [
         "Next.js 14",
         "TypeScript",
@@ -211,7 +211,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "JAYEI - Caribbean Writers Platform",
       descripcion:
         "Comprehensive website for Junte de Artistas y Escritores Internacionales, a Caribbean poets and writers organization. Features progressive photo gallery with custom loading algorithms, responsive design, accessibility compliance (WCAG), and mobile-optimized interactions. Designed to showcase literary community and attract younger artists to join the organization.",
-      imagen: "/jayei-preview.png",
+      imagen: "/jayei-preview.webp",
       tecnologias: [
         "Next.js 15.4.3",
         "React 19.1.0",
@@ -241,7 +241,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Mario Rafael Ayala Portfolio",
       descripcion:
         "Professional portfolio website showcasing 25+ years of software engineering experience. Built with Next.js 15 App Router, featuring bilingual support, professional animations, dark mode, and comprehensive SEO optimization.",
-      imagen: "/portfolio-preview.png",
+      imagen: "/portfolio-preview.webp",
       tecnologias: [
         "Next.js 15",
         "TypeScript",
@@ -274,7 +274,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Escuela Gespervis ASL",
       descripcion:
         "Plataforma educativa full-stack de ASL para la comunidad sorda de Puerto Rico. Incluye gestión de cursos con sistemas de inscripción dual, pagos Stripe con planes de pago, gamificación, mensajería en tiempo real y generación de certificados. Construido con orquestación agéntica de Claude Code—workagents paralelos logrando 1,877+ pruebas con 100% de aprobación.",
-      imagen: "/gespervis-preview.png",
+      imagen: "/gespervis-preview.webp",
       tecnologias: [
         "Next.js 15",
         "React 19",
@@ -305,7 +305,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Dinamico.menu",
       descripcion:
         "Plataforma SaaS multi-tenant para la industria de food trucks de Puerto Rico. Incluye gestión de pedidos en tiempo real, menús digitales con códigos QR, facturación por suscripción con Stripe y un panel de análisis de marketing integral. Construido como monorepo Turborepo con tres aplicaciones (admin, menu, landing) usando desarrollo ágil asistido por IA.",
-      imagen: "/dinamico-preview.png",
+      imagen: "/dinamico-preview.webp",
       tecnologias: [
         "Next.js 15",
         "React 19",
@@ -336,7 +336,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Café Papamin",
       descripcion:
         "Sitio web moderno de café y restaurante con una elegante presentación del menú, sistema de pedidos en línea e información de ubicación. Diseñado con una estética cálida y acogedora que refleja la auténtica experiencia del café.",
-      imagen: "/papamin-preview.png",
+      imagen: "/papamin-preview.webp",
       tecnologias: [
         "Next.js 14",
         "TypeScript",
@@ -365,7 +365,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Pabellón de la Fama del Deporte Humacaeño",
       descripcion:
         "Museo digital oficial del Pabellón de la Fama del Deporte de Humacao, Puerto Rico, honrando 81+ leyendas deportivas. Proyecto completo de transformación digital con sistemas avanzados de búsqueda y filtrado, cronología interactiva, tours virtuales del museo y soporte bilingüe. Logró puntuaciones Lighthouse 95+ con optimización SEO integral para preservación del patrimonio cultural.",
-      imagen: "/pabellon-preview.png",
+      imagen: "/pabellon-preview.webp",
       tecnologias: [
         "Next.js 15",
         "TypeScript",
@@ -396,7 +396,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Jíbaro Eats Fotografía",
       descripcion:
         "Sitio web de portafolio visual para un fotógrafo profesional especializado en gastronomía. Presenta galerías de imágenes de alta calidad, optimización lazy-loading y navegación fluida entre colecciones.",
-      imagen: "/jibaroeats-preview.png",
+      imagen: "/jibaroeats-preview.webp",
       tecnologias: [
         "Next.js 13+",
         "TypeScript",
@@ -425,7 +425,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Yukayeke Playa Bienes Raíces",
       descripcion:
         "Plataforma moderna de bienes raíces que muestra propiedades de lujo frente al mar en Puerto Rico. Incluye listados completos de propiedades, optimización SEO bilingüe y diseño responsivo para experiencia móvil óptima.",
-      imagen: "/yukayeke-preview.png",
+      imagen: "/yukayeke-preview.webp",
       tecnologias: [
         "Next.js 14",
         "TypeScript",
@@ -456,7 +456,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "JAYEI - Plataforma Escritores Caribeños",
       descripcion:
         "Sitio web integral para Junte de Artistas y Escritores Internacionales, organización de poetas y escritores caribeños. Presenta galería de fotos progresiva con algoritmos de carga personalizados, diseño responsivo, cumplimiento de accesibilidad (WCAG) e interacciones optimizadas para móviles. Diseñado para mostrar la comunidad literaria y atraer artistas jóvenes a unirse a la organización.",
-      imagen: "/jayei-preview.png",
+      imagen: "/jayei-preview.webp",
       tecnologias: [
         "Next.js 15.4.3",
         "React 19.1.0",
@@ -486,7 +486,7 @@ export const projectData: Record<"en" | "es", Project[]> = {
       titulo: "Portafolio Mario Rafael Ayala",
       descripcion:
         "Sitio web de portafolio profesional que muestra más de 25 años de experiencia en ingeniería de software. Construido con Next.js 15 App Router, con soporte bilingüe, animaciones profesionales, modo oscuro y optimización SEO integral.",
-      imagen: "/portfolio-preview.png",
+      imagen: "/portfolio-preview.webp",
       tecnologias: [
         "Next.js 15",
         "TypeScript",

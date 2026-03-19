@@ -144,7 +144,7 @@ export function BreadcrumbStructuredData({
   baseUrl = "https://www.mariorafaelayala.com"
 }: BreadcrumbStructuredDataProps) {
   const homeLabel = language === 'en' ? 'Home' : 'Inicio';
-  const blogLabel = language === 'en' ? 'Blog' : 'Blog';
+  const blogLabel = 'Blog';
 
   const structuredData = {
     "@context": "https://schema.org",

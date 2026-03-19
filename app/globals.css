@@ -440,6 +440,24 @@
   background-clip: text;
 }
 
+/* CSS-only animated grid pattern */
+@keyframes grid-fade {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: var(--grid-max-opacity, 0.5);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-grid-fade {
+  opacity: 0;
+  animation: grid-fade var(--grid-fade-duration, 3s) ease-in-out infinite;
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }

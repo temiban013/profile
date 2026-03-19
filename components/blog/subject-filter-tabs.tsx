@@ -4,13 +4,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback } from "react";
 import { blogSubjects } from "@/config/blog-subjects";
-import { Code, Brain, TrendingUp } from "lucide-react";
-
-const iconMap = {
-  Code,
-  Brain,
-  TrendingUp,
-} as const;
+import { subjectIconMap } from "@/components/blog/subject-icons";
 
 interface SubjectFilterTabsProps {
   /** Currently active subject slug, or null for "all" */
@@ -78,7 +72,7 @@ export function SubjectFilterTabs({
 
       {/* Subject tabs */}
       {visibleSubjects.map((subject) => {
-        const Icon = iconMap[subject.icon as keyof typeof iconMap];
+        const Icon = subjectIconMap[subject.icon as keyof typeof subjectIconMap];
 
         return (
           <FilterTab

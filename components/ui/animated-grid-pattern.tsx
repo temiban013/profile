@@ -1,8 +1,3 @@
-"use client";
-
-import { motion } from "motion/react";
-import { useEffect, useId, useRef, useState, useCallback } from "react";
-
 import { cn } from "@/lib/utils";
 
 interface AnimatedGridPatternProps {
@@ -15,111 +10,46 @@ interface AnimatedGridPatternProps {
   className?: string;
   maxOpacity?: number;
   duration?: number;
-  repeatDelay?: number;
 }
 
+/**
+ * CSS-only animated grid pattern (server component).
+ * Pre-computes random grid positions at render time and uses
+ * CSS @keyframes for staggered opacity fade — no Framer Motion,
+ * no ResizeObserver, no client JS needed.
+ */
 export default function AnimatedGridPattern({
   width = 40,
   height = 40,
   x = -1,
   y = -1,
   strokeDasharray = 0,
-  numSquares = 50,
+  numSquares = 30,
   className,
   maxOpacity = 0.5,
-  duration = 4,
-  ...props
+  duration = 3,
 }: AnimatedGridPatternProps) {
-  const id = useId();
-  const containerRef = useRef<SVGSVGElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
-  // Memoize getPos function to avoid recreation on every render
-  const getPos = useCallback(() => {
-    return [
-      Math.floor((Math.random() * dimensions.width) / width),
-      Math.floor((Math.random() * dimensions.height) / height),
-    ];
-  }, [dimensions.width, dimensions.height, width, height]);
-
-  // Memoize generateSquares function and include dependencies
-  const generateSquares = useCallback(
-    (count: number) => {
-      return Array.from({ length: count }, (_, i) => ({
-        id: i,
-        pos: getPos(),
-      }));
-    },
-    [getPos]
-  );
-
-  // Initialize squares with the memoized function
-  const [squares, setSquares] = useState(() => generateSquares(numSquares));
-
-  // Function to update a single square's position
-  const updateSquarePosition = useCallback(
-    (id: number) => {
-      setSquares((currentSquares) =>
-        currentSquares.map((sq) =>
-          sq.id === id
-            ? {
-                ...sq,
-                pos: getPos(),
-              }
-            : sq
-        )
-      );
-    },
-    [getPos]
-  );
-
-  // Update squares when dimensions or numSquares change
-  // Now generateSquares is properly included in dependencies
-  useEffect(() => {
-    if (dimensions.width && dimensions.height) {
-      setSquares(generateSquares(numSquares));
-    }
-  }, [dimensions, numSquares, generateSquares]);
-
-  // Resize observer to update container dimensions
-  // Fixed: Capture containerRef.current in a variable for cleanup
-  useEffect(() => {
-    const currentContainer = containerRef.current;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setDimensions({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
-        });
-      }
-    });
-
-    if (currentContainer) {
-      resizeObserver.observe(currentContainer);
-    }
-
-    return () => {
-      // Use the captured reference for cleanup
-      if (currentContainer) {
-        resizeObserver.unobserve(currentContainer);
-      }
-    };
-  }, []); // Empty dependency array is correct here
+  // Pre-compute random grid positions server-side.
+  // Use a generous grid area (25×25 cells) since the SVG fills its container.
+  const cols = 25;
+  const rows = 25;
+  const squares = Array.from({ length: numSquares }, (_, i) => ({
+    id: i,
+    cx: Math.floor(Math.random() * cols),
+    cy: Math.floor(Math.random() * rows),
+  }));
 
   return (
     <svg
-      ref={containerRef}
       aria-hidden="true"
       className={cn(
         "pointer-events-none absolute inset-0 h-full w-full fill-gray-400/30 stroke-gray-400/30",
         className
       )}
-      {...props}
     >
       <defs>
         <pattern
-          id={id}
+          id="grid-pattern"
           width={width}
           height={height}
           patternUnits="userSpaceOnUse"
@@ -133,24 +63,21 @@ export default function AnimatedGridPattern({
           />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill={`url(#${id})`} />
+      <rect width="100%" height="100%" fill="url(#grid-pattern)" />
       <svg x={x} y={y} className="overflow-visible">
-        {squares.map(({ pos: [x, y], id }, index) => (
-          <motion.rect
-            initial={{ opacity: 0 }}
-            animate={{ opacity: maxOpacity }}
-            transition={{
-              duration,
-              repeat: 1,
-              delay: index * 0.1,
-              repeatType: "reverse",
+        {squares.map(({ id, cx, cy }) => (
+          <rect
+            key={id}
+            className="animate-grid-fade"
+            style={{
+              animationDelay: `${id * 0.15}s`,
+              animationDuration: `${duration}s`,
+              ["--grid-max-opacity" as string]: maxOpacity,
             }}
-            onAnimationComplete={() => updateSquarePosition(id)}
-            key={`${x}-${y}-${index}`}
             width={width - 1}
             height={height - 1}
-            x={x * width + 1}
-            y={y * height + 1}
+            x={cx * width + 1}
+            y={cy * height + 1}
             fill="currentColor"
             strokeWidth="0"
           />

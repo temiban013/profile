@@ -1,25 +1,33 @@
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import { getActiveSubjects, getSubjectCounts } from "@/lib/blog/subjects";
 import { SubjectCard } from "@/components/blog/subject-card";
+import { getTranslation } from "@/lib/i18n";
+import { BlogLanguageSync } from "@/components/blog/blog-language-sync";
 
 export const metadata: Metadata = {
   title: "Blog Subjects | Mario Ayala",
   description: "Browse articles by subject - Web Development, AI Tools, and Business Strategy",
 };
 
-export default function SubjectsPage() {
-  const subjects = getActiveSubjects();
-  const counts = getSubjectCounts();
+export default async function SubjectsPage() {
+  // Read language from cookie (default to "es")
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("lang")?.value as "en" | "es") || "es";
+
+  const subjects = getActiveSubjects(locale);
+  const counts = getSubjectCounts(locale);
 
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900">
+      <BlogLanguageSync />
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <header className="mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Browse by Subject
+            {getTranslation("blogTitle", locale)}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Explore articles organized by topic
+            {locale === "es" ? "Explora artículos organizados por tema" : "Explore articles organized by topic"}
           </p>
         </header>
 
@@ -29,7 +37,7 @@ export default function SubjectsPage() {
               key={subject.slug}
               subject={subject}
               postCount={counts.get(subject.slug) || 0}
-              locale="en"
+              locale={locale}
             />
           ))}
         </div>
