@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import AnimatedGridPattern from "@/components/ui/animated-grid-pattern";
 import { Badge } from "@/components/ui/badge";
@@ -5,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CircleArrowDown, Zap, Code, Briefcase, Award } from "lucide-react";
 import { translations } from "@/lib/i18n";
-import type { LanguageKey } from "@/lib/i18n";
+import { useLanguage } from "@/lib/contexts/language-context";
 
 const FloatingElement = ({
   children,
@@ -27,8 +29,9 @@ const FloatingElement = ({
   </div>
 );
 
-const Hero = ({ locale }: { locale: LanguageKey }) => {
-  const t = translations[locale];
+const Hero = () => {
+  const { language } = useLanguage();
+  const t = translations[language];
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
@@ -76,7 +79,7 @@ const Hero = ({ locale }: { locale: LanguageKey }) => {
         <Badge className="rounded-full border-none bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-300 hover:scale-105 professional-shadow">
           <Zap className="fill-current mr-2 h-4 w-4" />
           <span className="font-medium">
-            {locale === "en"
+            {language === "en"
               ? "Full-Stack AI Engineer"
               : "Ingeniero Full-Stack de IA"}
           </span>
@@ -101,14 +104,14 @@ const Hero = ({ locale }: { locale: LanguageKey }) => {
         <div className="mt-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-            <span className="font-medium">{locale === "en" ? "25+ Years Experience" : "25+ Años de Experiencia"}</span>
+            <span className="font-medium">{language === "en" ? "25+ Years Experience" : "25+ Años de Experiencia"}</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="w-2 h-2 bg-secondary rounded-full animate-pulse"
               style={{ animationDelay: "1s" }}
             ></div>
-            <span className="font-medium">{locale === "en" ? "Enterprise Solutions" : "Soluciones Empresariales"}</span>
+            <span className="font-medium">{language === "en" ? "Enterprise Solutions" : "Soluciones Empresariales"}</span>
           </div>
         </div>
 
@@ -132,7 +135,7 @@ const Hero = ({ locale }: { locale: LanguageKey }) => {
             asChild
           >
             <Link href="#projects">
-              {locale === "en" ? "View Projects" : "Ver Proyectos"}
+              {language === "en" ? "View Projects" : "Ver Proyectos"}
             </Link>
           </Button>
         </div>

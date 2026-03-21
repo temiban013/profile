@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { getAllPostsMeta, getPostStatsMeta } from "@/lib/blog/content";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-import { getTranslation } from "@/lib/i18n";
+import { getTranslation, parseLocale } from "@/lib/i18n";
 import { BlogSectionStructuredData } from "@/components/seo/structured-data";
 import { SubjectFilterTabs } from "@/components/blog/subject-filter-tabs";
 import { getActiveSubjects, getSubjectCounts, getSubject } from "@/lib/blog/subjects";
@@ -25,7 +25,7 @@ export default async function BlogPage({
 }) {
   // Read language from cookie (default to "es")
   const cookieStore = await cookies();
-  const locale = (cookieStore.get("lang")?.value as "en" | "es") || "es";
+  const locale = parseLocale(cookieStore.get("lang")?.value);
 
   // Read subject from searchParams
   const params = await searchParams;

@@ -2,18 +2,22 @@ import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { getActiveSubjects, getSubjectCounts } from "@/lib/blog/subjects";
 import { SubjectCard } from "@/components/blog/subject-card";
-import { getTranslation } from "@/lib/i18n";
+import { getTranslation, parseLocale } from "@/lib/i18n";
 import { BlogLanguageSync } from "@/components/blog/blog-language-sync";
 
 export const metadata: Metadata = {
   title: "Blog Subjects | Mario Ayala",
-  description: "Browse articles by subject - Web Development, AI Tools, and Business Strategy",
+  description:
+    "Browse articles by subject - Web Development, AI Tools, and Business Strategy. | Explora articulos por tema - Desarrollo Web, Herramientas de IA y Negocios.",
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com"}/blog/subjects`,
+  },
 };
 
 export default async function SubjectsPage() {
   // Read language from cookie (default to "es")
   const cookieStore = await cookies();
-  const locale = (cookieStore.get("lang")?.value as "en" | "es") || "es";
+  const locale = parseLocale(cookieStore.get("lang")?.value);
 
   const subjects = getActiveSubjects(locale);
   const counts = getSubjectCounts(locale);

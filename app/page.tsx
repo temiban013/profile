@@ -1,5 +1,4 @@
 // app/page.tsx
-import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
 import Hero from "@/components/hero";
 import { StructuredData } from "@/components/seo/structured-data";
@@ -25,10 +24,7 @@ function SectionSkeleton({ height = "h-64" }: { height?: string }) {
   return <div className={`${height} w-full animate-pulse bg-muted/20 rounded-lg`} />;
 }
 
-export default async function Home() {
-  const cookieStore = await cookies();
-  const locale = (cookieStore.get("lang")?.value as "en" | "es") || "es";
-
+export default function Home() {
   // Check if testimonials should be shown
   const showTestimonials = process.env.NEXT_PUBLIC_SHOW_TESTIMONIALS === 'true';
   // Comprehensive PersonSchema for maximum employer discovery
@@ -235,7 +231,7 @@ export default async function Home() {
       <StructuredData data={professionalServiceSchema} />
 
       <div className="space-y-10 sm:space-y-16">
-        <Hero locale={locale} />
+        <Hero />
         <About />
         <Experience />
         <Projects />

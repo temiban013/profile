@@ -13,10 +13,9 @@ interface AnimatedGridPatternProps {
 }
 
 /**
- * CSS-only animated grid pattern (server component).
- * Pre-computes random grid positions at render time and uses
- * CSS @keyframes for staggered opacity fade — no Framer Motion,
- * no ResizeObserver, no client JS needed.
+ * CSS-only animated grid pattern.
+ * Uses a seeded PRNG so server and client produce identical positions,
+ * avoiding hydration mismatches. CSS @keyframes handle the animation.
  */
 export default function AnimatedGridPattern({
   width = 40,
@@ -29,14 +28,22 @@ export default function AnimatedGridPattern({
   maxOpacity = 0.5,
   duration = 3,
 }: AnimatedGridPatternProps) {
-  // Pre-compute random grid positions server-side.
-  // Use a generous grid area (25×25 cells) since the SVG fills its container.
+  // Seeded PRNG (mulberry32) — deterministic across server/client renders.
+  const seed = numSquares * 7 + 42;
+  let s = seed | 0;
+  function seededRandom() {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
   const cols = 25;
   const rows = 25;
   const squares = Array.from({ length: numSquares }, (_, i) => ({
     id: i,
-    cx: Math.floor(Math.random() * cols),
-    cy: Math.floor(Math.random() * rows),
+    cx: Math.floor(seededRandom() * cols),
+    cy: Math.floor(seededRandom() * rows),
   }));
 
   return (

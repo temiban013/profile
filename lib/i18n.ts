@@ -1,5 +1,12 @@
 export type LanguageKey = "en" | "es";
 
+const SUPPORTED_LOCALES: ReadonlySet<string> = new Set<LanguageKey>(["en", "es"]);
+
+/** Safely parse a locale string, returning fallback if invalid */
+export function parseLocale(value: string | undefined, fallback: LanguageKey = "es"): LanguageKey {
+  return value && SUPPORTED_LOCALES.has(value) ? (value as LanguageKey) : fallback;
+}
+
 // Type-safe labels for different languages
 export type TranslationLabels = {
   about: string;

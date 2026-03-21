@@ -6,7 +6,7 @@ import { getPostsBySubject, getSubject, getActiveSubjects } from "@/lib/blog/sub
 import { SubjectBadge } from "@/components/blog/subject-badge";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
 import { postToLegacyPost } from "@/lib/blog/to-legacy-post";
-import { getTranslation } from "@/lib/i18n";
+import { getTranslation, parseLocale } from "@/lib/i18n";
 import { BlogLanguageSync } from "@/components/blog/blog-language-sync";
 
 interface Props {
@@ -38,7 +38,7 @@ export default async function SubjectPage({ params }: Props) {
 
   // Read language from cookie (default to "es")
   const cookieStore = await cookies();
-  const locale = (cookieStore.get("lang")?.value as "en" | "es") || "es";
+  const locale = parseLocale(cookieStore.get("lang")?.value);
 
   const posts = getPostsBySubject(subjectSlug, locale);
 

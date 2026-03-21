@@ -8,15 +8,15 @@ import { subjectIconMap } from "@/components/blog/subject-icons";
 
 interface SubjectFilterTabsProps {
   /** Currently active subject slug, or null for "all" */
-  activeSubject: string | null;
+  readonly activeSubject: string | null;
   /** Subjects that have posts (hide empty subjects) */
-  availableSubjects: string[];
+  readonly availableSubjects: readonly string[];
   /** Locale for display names */
-  locale: "en" | "es";
+  readonly locale: "en" | "es";
   /** Post counts per subject */
-  counts: Record<string, number>;
+  readonly counts: Readonly<Record<string, number>>;
   /** Total post count (for "All" tab) */
-  totalCount: number;
+  readonly totalCount: number;
 }
 
 export function SubjectFilterTabs({
@@ -91,12 +91,12 @@ export function SubjectFilterTabs({
 }
 
 interface FilterTabProps {
-  label: string;
-  count: number;
-  isActive: boolean;
-  onClick: () => void;
-  color?: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  readonly label: string;
+  readonly count: number;
+  readonly isActive: boolean;
+  readonly onClick: () => void;
+  readonly color?: string;
+  readonly icon?: React.ComponentType<{ className?: string }>;
 }
 
 function FilterTab({

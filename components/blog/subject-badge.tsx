@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { getSubject } from "@/config/blog-subjects";
 import { subjectIconMap } from "@/components/blog/subject-icons";

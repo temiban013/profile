@@ -130,8 +130,10 @@ export type PostMeta = Omit<Post, "body" | "raw">;
  * Get all posts metadata (without body and raw content)
  */
 export function getAllPostsMeta(options: GetPostsOptions = {}): PostMeta[] {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return getAllPosts(options).map(({ body, raw, ...meta }) => meta);
+  return getAllPosts(options).map((post): PostMeta => {
+    const { body, raw, ...meta } = post; // eslint-disable-line @typescript-eslint/no-unused-vars
+    return meta;
+  });
 }
 
 /**

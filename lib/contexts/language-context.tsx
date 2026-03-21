@@ -23,8 +23,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
   undefined
 );
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<LanguageKey>("es");
+export function LanguageProvider({ children, initialLanguage = "es" }: { children: ReactNode; initialLanguage?: LanguageKey }) {
+  const [language, setLanguageState] = useState<LanguageKey>(initialLanguage);
   const isInitializedRef = useRef(false);
 
   const setLanguage = useCallback((newLanguage: LanguageKey) => {

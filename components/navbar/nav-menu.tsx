@@ -83,7 +83,7 @@ const NavMenuItem = ({
         "hover:bg-accent hover:text-accent-foreground",
         "focus:bg-accent focus:text-accent-foreground",
         "ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50",
-        "flex flex-col gap-1 rounded-full py-2 px-4 text-sm",
+        "flex flex-col gap-1 rounded-full py-2 px-4 text-sm whitespace-nowrap",
         "focus-visible:ring-4 focus-visible:outline-1",
         // Active state styling
         isActive && [
@@ -135,10 +135,10 @@ export const NavMenu = ({ className, ...props }: NavigationMenuProps) => {
 
   return (
     <NavigationMenu
-      className={cn("data-[orientation=vertical]:items-start", className)}
+      className={cn("max-w-none data-[orientation=vertical]:items-start", className)}
       {...props}
     >
-      <NavigationMenuList className="gap-1 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
+      <NavigationMenuList className="w-full justify-evenly space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
         <NavMenuItem
           href="#about"
           isActive={isOnHomePage && activeSection === "about"}

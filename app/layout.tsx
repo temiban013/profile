@@ -10,6 +10,8 @@ import { Suspense } from "react";
 import LanguageUrlHandler from "@/components/language-url-handler";
 import { generateMetadata } from "@/lib/metadata-i18n";
 import { BreadcrumbNav } from "@/components/navbar/breadcrumb-nav";
+import { cookies } from "next/headers";
+import { parseLocale } from "@/lib/i18n";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -25,15 +27,18 @@ export const viewport = {
 // We'll update this in the client-side
 export const metadata = generateMetadata("es");
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const initialLang = parseLocale(cookieStore.get("lang")?.value);
+
   return (
-    <html lang="es">
+    <html lang={initialLang}>
       <body className={`${geistSans.className} antialiased`}>
-        <LanguageProvider>
+        <LanguageProvider initialLanguage={initialLang}>
           <Suspense fallback={null}>
             <LanguageUrlHandler />
           </Suspense>
