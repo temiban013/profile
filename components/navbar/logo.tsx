@@ -17,17 +17,17 @@ export const Logo = ({
     header: {
       width: 160,
       height: 46,
-      imageClasses: "h-10 w-40 object-contain",
+      imageClasses: "h-10 w-auto object-contain",
     },
     mobile: {
       width: 140,
       height: 40,
-      imageClasses: "h-8 w-35 object-contain",
+      imageClasses: "h-8 w-auto object-contain",
     },
     footer: {
       width: 120,
       height: 34,
-      imageClasses: "h-6 w-30 object-contain",
+      imageClasses: "h-6 w-auto object-contain",
     },
   };
 

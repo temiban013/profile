@@ -17,14 +17,12 @@
     "velite:watch": "velite build --watch"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-navigation-menu": "^1.2.5",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
-    "@react-email/components": "^1.0.6",
     "@shikijs/rehype": "^3.17.0",
     "@tailwindcss/typography": "^0.5.19",
     "@vercel/analytics": "^1.5.0",
@@ -39,15 +37,12 @@
     "prettier": "^3.6.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-hook-form": "^7.66.1",
     "reading-time": "^1.5.0",
-    "resend": "^6.9.1",
     "schema-dts": "^1.1.5",
     "shiki": "^3.17.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
-    "velite": "^0.3.1",
-    "zod": "^4.0.14"
+    "velite": "^0.3.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",

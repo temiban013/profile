@@ -80,19 +80,6 @@ export const trackEvent = (eventName: string, eventParams?: Record<string, unkno
 
 // Specific event trackers for services page
 export const analytics = {
-  // Form events
-  formStart: () => trackEvent("form_start", { form_name: "servicios_contact" }),
-  formSubmit: (formData: { business_type?: string; website_status?: string }) =>
-    trackEvent("form_submit", {
-      form_name: "servicios_contact",
-      ...formData,
-    }),
-  formError: (error: string) =>
-    trackEvent("form_error", {
-      form_name: "servicios_contact",
-      error_message: error,
-    }),
-
   // Section engagement
   sectionView: (sectionName: string) =>
     trackEvent("section_view", {

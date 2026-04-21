@@ -35,15 +35,6 @@ export interface FAQItem {
   answer: string;
 }
 
-export interface ContactFormData {
-  name: string;
-  email: string;
-  phone: string;
-  businessType: string;
-  hasWebsite: "yes" | "no";
-  goals: string;
-}
-
 export interface ServicesContent {
   hero: {
     headline: string;

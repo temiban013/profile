@@ -1,5 +1,19 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
+// React 19.2 dev mode uses eval() for call-stack reconstruction;
+// production builds never do. Gate 'unsafe-eval' to dev only so the
+// production CSP stays hardened.
+const scriptSrc = [
+  "'self'",
+  "'unsafe-inline'",
+  ...(isDev ? ["'unsafe-eval'"] : []),
+  "https://www.googletagmanager.com",
+  "https://www.google-analytics.com",
+  "https://va.vercel-scripts.com",
+].join(" ");
+
 const nextConfig: NextConfig = {
   devIndicators: false,
   images: {
@@ -38,7 +52,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
+              `script-src ${scriptSrc}`,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
