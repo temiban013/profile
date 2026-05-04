@@ -130,7 +130,7 @@ export default function Home() {
     name: "Nitaíno Digital",
     alternateName: "Nitaino Digital",
     url: "https://www.mariorafaelayala.com",
-    logo: "https://www.mariorafaelayala.com/mra-logo-sq.png",
+    logo: "https://www.mariorafaelayala.com/ma-logo.png",
     founder: {
       "@id": "https://www.mariorafaelayala.com#person"
     },

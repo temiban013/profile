@@ -42,7 +42,7 @@ export function BlogPostStructuredData({
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
-        "url": `${baseUrl}/mra-logo-sq.png`
+        "url": `${baseUrl}/ma-logo.png`
       }
     },
     "datePublished": post.publishedAt.toISOString(),

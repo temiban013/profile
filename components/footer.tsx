@@ -62,8 +62,8 @@ const Footer = () => {
           {/* Enhanced Logo with Professional Styling */}
           <div className="relative group">
             <Image
-              src={"/mra-logo-sq.png"}
-              alt="Logo MRA"
+              src={"/ma-logo.png"}
+              alt="Mario Rafael Ayala — Full-Stack AI Engineer"
               width={100}
               height={100}
               className="h-20 w-20 rounded-2xl professional-shadow transition-all duration-300 group-hover:scale-110 group-hover:professional-shadow-lg"

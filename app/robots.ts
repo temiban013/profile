@@ -15,7 +15,11 @@ export default function robots(): MetadataRoute.Robots {
         // Special rules for job search crawlers and recruiting bots
         userAgent: ["LinkedInBot", "facebookexternalhit", "Twitterbot", "WhatsApp"],
         allow: ["/", "/*.pdf"],
-      }
+      },
+      {
+        userAgent: "Claude-User",
+        allow: ["/", "/*.pdf"],
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
     // Add additional host information for better crawling
