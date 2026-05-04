@@ -240,35 +240,36 @@ export function generateMetadata(language: LanguageKey): Metadata {
     icons: {
       icon: [
         {
-          url: "https://www.mariorafaelayala.com/favicon.ico",
+          url: "/favicon.ico",
           type: "image/x-icon",
         },
         {
-          url: "https://www.mariorafaelayala.com/favicon-32x32.png",
+          url: "/favicon-32x32.png",
           sizes: "32x32",
           type: "image/png",
         },
         {
-          url: "https://www.mariorafaelayala.com/favicon-16x16.png",
+          url: "/favicon-16x16.png",
           sizes: "16x16",
           type: "image/png",
         },
       ],
       apple: [
         {
-          url: "https://www.mariorafaelayala.com/apple-touch-icon.png",
+          url: "/apple-touch-icon.png",
           sizes: "180x180",
           type: "image/png",
         },
       ],
       shortcut: [
         {
-          url: "https://www.mariorafaelayala.com/favicon.ico",
+          url: "/favicon.ico",
           type: "image/x-icon",
         },
       ],
     },
-    manifest: "https://www.mariorafaelayala.com/manifest.webmanifest",
+    // metadata.manifest intentionally omitted — app/manifest.ts (Next.js
+    // File Convention) auto-emits <link rel="manifest" href="/manifest.webmanifest">.
     verification: {
       google:
         "google-site-verification=2uRJuyTYErHg2stXKELBTwZif3Kc7FlbMjyNDwwNwnQ",
