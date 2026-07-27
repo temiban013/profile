@@ -53,13 +53,13 @@ export const metadata: Metadata = {
       "$4.6 mil millones gastados en comida en PR en 2024. Asegura que los turistas te encuentren.",
     type: "website",
     locale: "es_PR",
-    url: "https://www.mariorafaelayala.com/servicios",
+    url: "https://www.nitainodigital.com/servicios",
   },
   alternates: {
-    canonical: "https://www.mariorafaelayala.com/servicios",
+    canonical: "https://www.nitainodigital.com/servicios",
     languages: {
-      "es-PR": "https://www.mariorafaelayala.com/servicios",
-      "en-US": "https://www.mariorafaelayala.com/services",
+      "es-PR": "https://www.nitainodigital.com/servicios",
+      "en-US": "https://www.nitainodigital.com/services",
     },
   },
 };
@@ -73,7 +73,7 @@ export default function ServicesPage() {
     provider: {
       "@type": "LocalBusiness",
       name: "Nitaíno Digital",
-      url: "https://www.mariorafaelayala.com",
+      url: "https://www.nitainodigital.com",
       telephone: "+1-407-476-7353",
       areaServed: "PR",
     },
@@ -98,10 +98,10 @@ export default function ServicesPage() {
   const localBusinessSchema = {
     "@type": "LocalBusiness",
     name: "Nitaíno Digital",
-    image: "https://www.mariorafaelayala.com/logo.png",
+    image: "https://www.nitainodigital.com/logo.png",
     description:
       "Desarrollo web profesional para negocios en Puerto Rico. Sitios web, e-commerce, menús digitales y optimización de Google Business.",
-    url: "https://www.mariorafaelayala.com",
+    url: "https://www.nitainodigital.com",
     telephone: "+1-407-476-7353",
     address: {
       "@type": "PostalAddress",
@@ -140,8 +140,8 @@ export default function ServicesPage() {
                 {
                   "@type": "Organization",
                   name: "Nitaíno Digital",
-                  url: "https://www.mariorafaelayala.com",
-                  logo: "https://www.mariorafaelayala.com/logo.png",
+                  url: "https://www.nitainodigital.com",
+                  logo: "https://www.nitainodigital.com/logo.png",
                   description:
                     "Desarrollo web profesional para negocios en Puerto Rico",
                   areaServed: "PR",
@@ -158,20 +158,20 @@ export default function ServicesPage() {
                       "@type": "ListItem",
                       position: 1,
                       name: "Inicio",
-                      item: "https://www.mariorafaelayala.com",
+                      item: "https://www.nitainodigital.com",
                     },
                     {
                       "@type": "ListItem",
                       position: 2,
                       name: "Servicios",
-                      item: "https://www.mariorafaelayala.com/servicios",
+                      item: "https://www.nitainodigital.com/servicios",
                     },
                   ],
                 },
                 ...servicesSchema.map((schema, index) => ({
                   ...schema,
                   "@context": undefined,
-                  url: `https://www.mariorafaelayala.com/servicios#service-${index}`,
+                  url: `https://www.nitainodigital.com/servicios#service-${index}`,
                 })),
                 {
                   "@type": "AggregateOffer",

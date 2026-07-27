@@ -16,44 +16,40 @@ import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
 import { getFormattedSocialLinks } from "@/lib/social-links";
 import { NitainoCredit } from "./nitaino-credit";
+import { usePathname, useRouter } from "next/navigation";
+import { scrollToSection } from "@/lib/hooks/use-active-section";
 
 const Footer = () => {
   const { language } = useLanguage();
   const t = translations[language];
   const socialLinks = getFormattedSocialLinks();
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const footerLinks = {
-    es: [
-      {
-        title: "Sobre mí",
-        href: "/#about",
-      },
-      {
-        title: "Experiencia",
-        href: "/#experience",
-      },
-      {
-        title: "Proyectos",
-        href: "/#projects",
-      },
-    ],
-    en: [
-      {
-        title: "About",
-        href: "/#about",
-      },
-      {
-        title: "Experience",
-        href: "/#experience",
-      },
-      {
-        title: "Projects",
-        href: "/#projects",
-      },
-    ],
+  // Section links scroll hash-less (same behavior as the navbar)
+  const handleSectionClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    if (!href.startsWith("/#")) return;
+    e.preventDefault();
+    const sectionId = href.slice(2);
+    if (pathname !== "/") {
+      router.push("/");
+    }
+    scrollToSection(sectionId);
   };
 
-  const currentLanguageData = footerLinks[language];
+  // Same labels and destinations as the top navbar (single source: lib/i18n.ts)
+  const footerLinks = [
+    { title: t.about, href: "/#fundador" },
+    { title: t.experience, href: "/#experiencia" },
+    { title: t.projects, href: "/#casos-de-estudio" },
+    { title: t.services, href: "/servicios" },
+    { title: t.blog, href: "/blog" },
+  ];
+
+  const currentLanguageData = footerLinks;
 
   return (
     <footer className="mt-20 bg-muted/30">
@@ -62,24 +58,21 @@ const Footer = () => {
           {/* Enhanced Logo with Professional Styling */}
           <div className="relative group">
             <Image
-              src={"/ma-logo.png"}
-              alt="Mario Rafael Ayala — Full-Stack AI Engineer"
-              width={100}
-              height={100}
-              className="h-20 w-20 rounded-2xl professional-shadow transition-all duration-300 group-hover:scale-110 group-hover:professional-shadow-lg"
+              src={"/nitaino-logo.png"}
+              alt="Nitaíno Digital"
+              width={741}
+              height={252}
+              className="h-16 w-auto object-contain transition-all duration-300 group-hover:scale-105"
             />
-            {/* Professional glow effect on hover */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            {/* Subtle border */}
-            <div className="absolute inset-0 rounded-2xl border border-primary/10 group-hover:border-primary/20 transition-colors duration-300"></div>
           </div>
 
           {/* Navigation Links */}
-          <ul className="mt-8 flex items-center gap-6 flex-wrap">
+          <ul className="mt-8 flex items-center justify-center gap-x-6 gap-y-3 flex-wrap px-6">
             {currentLanguageData.map(({ title, href }) => (
               <li key={title}>
                 <Link
                   href={href}
+                  onClick={(e) => handleSectionClick(e, href)}
                   className="text-muted-foreground hover:text-primary transition-colors duration-300 font-medium hover:underline underline-offset-4"
                 >
                   {title}

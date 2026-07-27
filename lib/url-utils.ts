@@ -4,7 +4,7 @@
  */
 export function getAbsoluteUrl(path: string): string {
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com";
+    process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com";
   return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
@@ -16,7 +16,7 @@ export function isExternalUrl(url: string): boolean {
   // URLs that start with http/https and don't include our domain
   if (url.startsWith("http")) {
     const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com";
+      process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com";
     return !url.startsWith(baseUrl);
   }
 

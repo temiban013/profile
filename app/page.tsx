@@ -4,6 +4,9 @@ import Hero from "@/components/hero";
 import { StructuredData } from "@/components/seo/structured-data";
 
 // Below-fold sections: code-split, load on demand
+const ServicesTeaser = dynamic(() => import("@/components/services-teaser"), {
+  loading: () => <SectionSkeleton height="h-64" />,
+});
 const About = dynamic(() => import("@/components/about"), {
   loading: () => <SectionSkeleton height="h-96" />,
 });
@@ -31,11 +34,11 @@ export default function Home() {
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    "@id": "https://www.mariorafaelayala.com#person",
+    "@id": "https://www.nitainodigital.com#person",
     name: "Mario Rafael Ayala",
     alternateName: "Mario R. Ayala",
-    description: "Full-Stack AI Engineer with 20+ years enterprise experience. Architected multi-agent orchestration system with Claude Code managing 7 concurrent projects. Expert in AI agent development, Next.js, TypeScript, .NET Core with teaching experience across diverse learners. US Navy veteran.",
-    jobTitle: "Independent Technology Consultant",
+    description: "Founder of Nitaíno Digital. Full-Stack AI Engineer with 25+ years enterprise experience. Architected multi-agent orchestration system with Claude Code managing 7 concurrent projects. Expert in AI agent development, Next.js, TypeScript, .NET Core with teaching experience across diverse learners. US Navy veteran.",
+    jobTitle: "Founder & Full-Stack AI Engineer",
     hasOccupation: {
       "@type": "Occupation",
       name: "Full-Stack AI Engineer",
@@ -50,13 +53,13 @@ export default function Home() {
         "Digital Transformation", "Systems Integration", "Cloud Computing",
         "Full Stack Development", "Agentic AI", "Educational Technology"
       ],
-      experienceRequirements: "20+ years",
+      experienceRequirements: "25+ years",
       qualifications: "Master's Computer Science - Magna Cum Laude"
     },
-    url: "https://www.mariorafaelayala.com",
-    image: "https://www.mariorafaelayala.com/mra-profile.jpg",
+    url: "https://www.nitainodigital.com",
+    image: "https://www.nitainodigital.com/mra-profile.jpg",
     telephone: "+1-407-476-7353",
-    email: "marioayaladev@gmail.com",
+    email: "contact@nitainodigital.com",
     address: {
       "@type": "PostalAddress",
       addressRegion: "Puerto Rico",
@@ -76,7 +79,7 @@ export default function Home() {
     ],
     worksFor: {
       "@type": "Organization",
-      "@id": "https://www.mariorafaelayala.com#organization",
+      "@id": "https://www.nitainodigital.com#organization",
       name: "Nitaíno Digital"
     },
     hasCredential: [
@@ -119,23 +122,33 @@ export default function Home() {
     workLocation: "Remote",
     availableLanguage: ["English", "Spanish"],
     sameAs: [
-      "https://www.mariorafaelayala.com"
+      "https://www.nitainodigital.com",
+      "https://github.com/temiban013",
+      "https://www.linkedin.com/in/marioayaladev/",
+      "https://youtube.com/@mariorafaelayala8703"
     ]
   };
 
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": "https://www.mariorafaelayala.com#organization",
+    "@id": "https://www.nitainodigital.com#organization",
     name: "Nitaíno Digital",
     alternateName: "Nitaino Digital",
-    url: "https://www.mariorafaelayala.com",
-    logo: "https://www.mariorafaelayala.com/ma-logo.png",
+    url: "https://www.nitainodigital.com",
+    logo: "https://www.nitainodigital.com/nitaino-logo.png",
     founder: {
-      "@id": "https://www.mariorafaelayala.com#person"
+      "@id": "https://www.nitainodigital.com#person"
     },
     foundingDate: "2026-01",
-    description: "Full-Stack AI Engineering & Agent Development. Enterprise software consulting, digital transformation, and AI-powered solutions.",
+    description: "Puerto Rico–based digital studio for AI engineering, web development, video production, and training & education. Enterprise software consulting, digital transformation, e-commerce, AI-powered platforms, AI-assisted video production, and bilingual corporate and community training.",
+    knowsAbout: [
+      "AI Engineering", "Agentic Software Development", "Web Development",
+      "E-Commerce", "SaaS Platforms", "Video Production",
+      "Corporate Accessibility Training", "Digital Literacy Training",
+      "Digital Transformation", "SEO & Generative Engine Optimization"
+    ],
+    slogan: "Digital solutions rooted in heritage",
     areaServed: [
       {
         "@type": "Place",
@@ -149,13 +162,13 @@ export default function Home() {
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+1-407-476-7353",
-      email: "marioayaladev@gmail.com",
+      email: "contact@nitainodigital.com",
       contactType: "customer service",
       availableLanguage: ["English", "Spanish"]
     },
     sameAs: [
       "https://github.com/temiban013",
-      "https://www.linkedin.com/in/marioayalamscs/",
+      "https://www.linkedin.com/in/marioayaladev/",
       "https://youtube.com/@mariorafaelayala8703"
     ]
   };
@@ -163,11 +176,11 @@ export default function Home() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Mario Rafael Ayala | Full-Stack AI Engineer Portfolio",
-    url: "https://www.mariorafaelayala.com",
-    description: "Professional portfolio of Mario Rafael Ayala, Full-Stack AI Engineer with 20+ years experience specializing in AI agent development, multi-agent orchestration, and full-stack solutions",
+    name: "Nitaíno Digital — Mario Rafael Ayala",
+    url: "https://www.nitainodigital.com",
+    description: "Nitaíno Digital, a Puerto Rico–based studio for AI engineering, web development, video production, and training—founded by Mario Rafael Ayala, Full-Stack AI Engineer with 25+ years of experience",
     author: {
-      "@id": "https://www.mariorafaelayala.com#person"
+      "@id": "https://www.nitainodigital.com#organization"
     },
     inLanguage: ["en", "es"],
   };
@@ -175,17 +188,18 @@ export default function Home() {
   const professionalServiceSchema = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    name: "Nitaíno Digital — AI Engineering & Software Consulting",
-    description: "AI engineering, multi-agent orchestration, and enterprise software consulting services",
+    name: "Nitaíno Digital — AI Engineering, Web, Video & Training",
+    description: "AI engineering, web development, video production, and training & education services from Puerto Rico",
     provider: {
-      "@id": "https://www.mariorafaelayala.com#person"
+      "@id": "https://www.nitainodigital.com#organization"
     },
     serviceType: [
-      "Software Engineering Consulting",
-      "Enterprise Architecture",
-      "Digital Transformation",
-      "Full Stack Development",
-      "Technical Leadership"
+      "AI Engineering",
+      "Web Development",
+      "E-Commerce Development",
+      "Video Production",
+      "Training & Education",
+      "Digital Transformation"
     ],
     areaServed: {
       "@type": "Place",
@@ -218,6 +232,22 @@ export default function Home() {
             name: "Digital Transformation Services",
             description: "Legacy system modernization and digital transformation projects"
           }
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "AI-Assisted Video Production",
+            description: "From raw footage to published film: transcription, researched motion graphics, and programmatic editing"
+          }
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Training & Education",
+            description: "Corporate accessibility training and bilingual community digital-literacy programs"
+          }
         }
       ]
     }
@@ -232,9 +262,10 @@ export default function Home() {
 
       <div className="space-y-10 sm:space-y-16">
         <Hero />
+        <ServicesTeaser />
+        <Projects />
         <About />
         <Experience />
-        <Projects />
         {showTestimonials && <Testimonials />}
         <Contact />
       </div>

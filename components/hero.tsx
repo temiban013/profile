@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import AnimatedGridPattern from "@/components/ui/animated-grid-pattern";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { CircleArrowDown, Zap, Code, Briefcase, Award } from "lucide-react";
 import { translations } from "@/lib/i18n";
 import { useLanguage } from "@/lib/contexts/language-context";
+import { scrollToSection } from "@/lib/hooks/use-active-section";
 
 const FloatingElement = ({
   children,
@@ -34,7 +34,7 @@ const Hero = () => {
   const t = translations[language];
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
+    <div id="inicio" className="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
       {/* Animated Background Grid */}
       <AnimatedGridPattern
         numSquares={30}
@@ -78,11 +78,7 @@ const Hero = () => {
         {/* Professional Badge */}
         <Badge className="rounded-full border-none bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-300 hover:scale-105 professional-shadow">
           <Zap className="fill-current mr-2 h-4 w-4" />
-          <span className="font-medium">
-            {language === "en"
-              ? "Full-Stack AI Engineer"
-              : "Ingeniero Full-Stack de IA"}
-          </span>
+          <span className="font-medium">Nitaíno Digital</span>
         </Badge>
 
         {/* Main Title with Gradient */}
@@ -104,14 +100,14 @@ const Hero = () => {
         <div className="mt-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-            <span className="font-medium">{language === "en" ? "25+ Years Experience" : "25+ Años de Experiencia"}</span>
+            <span className="font-medium">{language === "en" ? "Founded on 25+ Years of Engineering" : "Fundado sobre 25+ Años de Ingeniería"}</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="w-2 h-2 bg-secondary rounded-full animate-pulse"
               style={{ animationDelay: "1s" }}
             ></div>
-            <span className="font-medium">{language === "en" ? "Enterprise Solutions" : "Soluciones Empresariales"}</span>
+            <span className="font-medium">{language === "en" ? "Crafted with Pride in Puerto Rico" : "Hecho con Orgullo en Borikén"}</span>
           </div>
         </div>
 
@@ -122,10 +118,17 @@ const Hero = () => {
             className="rounded-full text-base font-medium professional-shadow-lg hover:scale-105 transition-all duration-300 bg-primary hover:bg-primary/90"
             asChild
           >
-            <Link href="#about" className="flex items-center gap-2">
+            <a
+              href="/#fundador"
+              className="flex items-center gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection("fundador");
+              }}
+            >
               {t.inSummary}
               <CircleArrowDown className="h-5 w-5" />
-            </Link>
+            </a>
           </Button>
 
           <Button
@@ -134,25 +137,42 @@ const Hero = () => {
             className="rounded-full text-base font-medium professional-shadow hover:scale-105 transition-all duration-300 border-primary/20 hover:border-primary/40 hover:bg-secondary/80"
             asChild
           >
-            <Link href="#projects">
-              {language === "en" ? "View Projects" : "Ver Proyectos"}
-            </Link>
+            <a
+              href="/#casos-de-estudio"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection("casos-de-estudio");
+              }}
+            >
+              {language === "en" ? "View Case Studies" : "Ver Casos de Estudio"}
+            </a>
           </Button>
         </div>
 
-        {/* Tech Stack Pills */}
+        {/* Service Pillars */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          {["Next.js", "TypeScript", "React", "Node.js", "PostgreSQL"].map(
-            (tech, index) => (
-              <div
-                key={tech}
-                className="px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border rounded-full text-xs font-medium text-muted-foreground transition-colors duration-300"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {tech}
-              </div>
-            )
-          )}
+          {(language === "en"
+            ? [
+                "AI Engineering",
+                "Web Development",
+                "Video Production",
+                "Training & Education",
+              ]
+            : [
+                "Ingeniería de IA",
+                "Desarrollo Web",
+                "Producción de Video",
+                "Adiestramiento y Educación",
+              ]
+          ).map((pillar, index) => (
+            <div
+              key={pillar}
+              className="px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border rounded-full text-xs font-medium text-muted-foreground transition-colors duration-300"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              {pillar}
+            </div>
+          ))}
         </div>
       </div>
 

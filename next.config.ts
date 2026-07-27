@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Access-Control-Allow-Origin",
-            value: "https://marioayala.dev",
+            value: "https://www.nitainodigital.com",
           },
         ],
       },

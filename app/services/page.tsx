@@ -20,13 +20,13 @@ export const metadata: Metadata = {
       "$4.6 billion spent on food in PR in 2024. Make sure tourists can find you.",
     type: "website",
     locale: "en_US",
-    url: "https://www.mariorafaelayala.com/services",
+    url: "https://www.nitainodigital.com/services",
   },
   alternates: {
-    canonical: "https://www.mariorafaelayala.com/services",
+    canonical: "https://www.nitainodigital.com/services",
     languages: {
-      "es-PR": "https://www.mariorafaelayala.com/servicios",
-      "en-US": "https://www.mariorafaelayala.com/services",
+      "es-PR": "https://www.nitainodigital.com/servicios",
+      "en-US": "https://www.nitainodigital.com/services",
     },
   },
 };

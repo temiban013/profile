@@ -3,14 +3,14 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Mario Rafael Ayala | Full-Stack AI Engineer | Ingeniero Full-Stack de IA",
-    short_name: "Mario Ayala",
+    name: "Nitaíno Digital — AI Engineering, Web & Video | Mario Rafael Ayala",
+    short_name: "Nitaíno",
     description:
-      "Full-Stack AI Engineer specialized in AI agent development, Next.js, TypeScript, and multi-agent orchestration | Ingeniero Full-Stack de IA especializado en desarrollo de agentes de IA, Next.js, TypeScript y orquestación multi-agente",
+      "Puerto Rico–based studio for AI engineering, web development, video production, and training & education | Estudio con base en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y adiestramiento",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#000000",
+    background_color: "#EFF6FA",
+    theme_color: "#1E3A8A",
     icons: [
       {
         src: "/android-chrome-192x192.png",

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 
   const translation = getPostTranslation(post);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com";
 
   return {
     title: `${post.title} | Blog`,

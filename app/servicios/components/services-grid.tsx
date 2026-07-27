@@ -70,7 +70,9 @@ function ServiceCard({
     >
       {/* Price Badge */}
       <div className="absolute -top-4 -right-4 bg-gradient-to-br from-teal-500 to-teal-400 text-white rounded-full px-4 py-2 shadow-lg font-bold">
-        ${service.price.toLocaleString()}
+        {service.price === "quote"
+          ? "Cotización"
+          : `$${service.price.toLocaleString()}`}
       </div>
 
       {/* Icon */}
@@ -184,6 +186,52 @@ function ServiceIcon({ icon }: { icon: string }) {
           strokeLinejoin="round"
           strokeWidth={2}
           d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+        />
+      </svg>
+    ),
+    film: (
+      <svg
+        className="w-8 h-8 text-white"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+        />
+      </svg>
+    ),
+    "graduation-cap": (
+      <svg
+        className="w-8 h-8 text-white"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 14l9-5-9-5-9 5 9 5z" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
+        />
+      </svg>
+    ),
+    bot: (
+      <svg
+        className="w-8 h-8 text-white"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M8 9h.01M16 9h.01M9 13a4 4 0 006 0M12 3v2m-7 4a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2V9zm-2 3H2m20 0h-1"
         />
       </svg>
     ),

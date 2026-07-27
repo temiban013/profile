@@ -96,6 +96,48 @@ export const servicesContentES: ServicesContent = {
         ],
         icon: "map-pin",
       },
+      {
+        id: "video-production",
+        name: "Producción de Video",
+        description:
+          "De material crudo a película publicada: transcripción con IA, gráficos investigados y edición programática.",
+        price: "quote",
+        features: [
+          "Transcripción automática (Whisper)",
+          "Gráficos broadcast diseñados con IA",
+          "Edición profesional en Kdenlive",
+          "Publicación optimizada en YouTube",
+        ],
+        icon: "film",
+      },
+      {
+        id: "training-education",
+        name: "Adiestramiento y Educación",
+        description:
+          "Programas corporativos de accesibilidad y alfabetización digital comunitaria, en español e inglés.",
+        price: "quote",
+        features: [
+          "Adiestramiento corporativo en accesibilidad",
+          "Cursos de alfabetización digital (hasta 150 horas)",
+          "Material didáctico y certificados",
+          "Presencial o virtual",
+        ],
+        icon: "graduation-cap",
+      },
+      {
+        id: "ai-customer-service",
+        name: "IA para Servicio al Cliente",
+        description:
+          "Chatbots y automatización de soporte construidos a la medida de tu negocio.",
+        price: "quote",
+        features: [
+          "Chatbot bilingüe entrenado con tu contenido",
+          "Automatización de preguntas frecuentes",
+          "Integración con web y mensajería",
+          "Diseño e implementación a la medida",
+        ],
+        icon: "bot",
+      },
     ],
   },
   comparison: {
@@ -337,6 +379,48 @@ export const servicesContentEN: ServicesContent = {
           "Local SEO setup",
         ],
         icon: "map-pin",
+      },
+      {
+        id: "video-production",
+        name: "Video Production",
+        description:
+          "From raw footage to published film: AI transcription, researched graphics, and programmatic editing.",
+        price: "quote",
+        features: [
+          "Automatic transcription (Whisper)",
+          "AI-designed broadcast graphics",
+          "Professional editing in Kdenlive",
+          "Optimized YouTube publishing",
+        ],
+        icon: "film",
+      },
+      {
+        id: "training-education",
+        name: "Training & Education",
+        description:
+          "Corporate accessibility training and community digital-literacy programs, in Spanish and English.",
+        price: "quote",
+        features: [
+          "Corporate accessibility training",
+          "Digital literacy courses (up to 150 hours)",
+          "Course materials and certificates",
+          "On-site or virtual",
+        ],
+        icon: "graduation-cap",
+      },
+      {
+        id: "ai-customer-service",
+        name: "AI for Customer Service",
+        description:
+          "Chatbots and support automation built custom for your business.",
+        price: "quote",
+        features: [
+          "Bilingual chatbot trained on your content",
+          "FAQ automation",
+          "Web and messaging integration",
+          "Custom design and implementation",
+        ],
+        icon: "bot",
       },
     ],
   },

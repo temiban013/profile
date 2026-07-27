@@ -2,12 +2,12 @@ import { getAllPosts } from "@/lib/blog/content";
 
 export async function GET() {
   const posts = getAllPosts({ locale: "en" });
-  const baseUrl = "https://www.mariorafaelayala.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com";
 
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Mario Rafael Ayala - Blog</title>
+    <title>Nitaíno Digital — Mario Rafael Ayala - Blog</title>
     <link>${baseUrl}</link>
     <description>Software engineering insights and tutorials</description>
     <language>en-us</language>

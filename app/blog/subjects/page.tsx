@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Browse articles by subject - Web Development, AI Tools, and Business Strategy. | Explora articulos por tema - Desarrollo Web, Herramientas de IA y Negocios.",
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com"}/blog/subjects`,
+    canonical: `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com"}/blog/subjects`,
   },
 };
 

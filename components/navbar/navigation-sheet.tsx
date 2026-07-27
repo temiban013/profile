@@ -17,6 +17,7 @@ import {
   Briefcase,
   FolderOpen,
   BookOpen,
+  Wrench,
   ChevronRight,
 } from "lucide-react";
 import { JSX, useState } from "react";
@@ -72,14 +73,12 @@ const MobileNavItem = ({
     // Context-aware navigation logic
     // Different href patterns require different navigation strategies
     if (href.startsWith("#")) {
-      // Hash navigation - scroll to section on current page
+      // Hash navigation - scroll to section, keeping the URL hash-less
       if (pathname !== "/") {
-        // Navigate to home page first, then scroll to section
-        router.push(`/${href}`);
-      } else {
-        // Already on home page, just scroll to section
-        scrollToSection(href.substring(1));
+        router.push("/");
       }
+      // scrollToSection retries until the (lazily mounted) section exists
+      scrollToSection(href.substring(1));
     } else if (isExternal) {
       // External link - open in new tab with security measures
       window.open(href, "_blank", "noopener,noreferrer");
@@ -170,11 +169,14 @@ const MobileNavItem = ({
   );
 };
 
+// Module scope: a stable array identity keeps useActiveSection's effect from
+// re-binding on every render.
+const SECTION_IDS = ["fundador", "experiencia", "casos-de-estudio"];
+
 export const NavigationSheet = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { language } = useLanguage();
   const t = translations[language];
-  const SECTION_IDS = ["about", "experience", "projects"];
   const activeSection = useActiveSection({ sectionIds: SECTION_IDS });
   const pathname = usePathname();
 
@@ -224,6 +226,8 @@ export const NavigationSheet = (): JSX.Element => {
         className={cn(
           // Enhanced spacing for mobile comfort
           "pt-10 px-6 w-80 sm:w-96",
+          // Scrollable content — nav items must stay reachable on short screens
+          "overflow-y-auto",
           // Superior visual depth and contrast
           "bg-background/96 backdrop-blur-2xl",
           "border-l-2 border-border/50",
@@ -270,10 +274,10 @@ export const NavigationSheet = (): JSX.Element => {
         */}
         <nav className="space-y-4">
           <MobileNavItem
-            href="#about"
+            href="#fundador"
             icon={<User className="h-6 w-6" />}
             description="Background, skills, and expertise"
-            isActive={activeSection === "about"}
+            isActive={activeSection === "fundador"}
             delay={200}
             onNavigate={handleNavigate}
           >
@@ -281,10 +285,10 @@ export const NavigationSheet = (): JSX.Element => {
           </MobileNavItem>
 
           <MobileNavItem
-            href="#experience"
+            href="#experiencia"
             icon={<Briefcase className="h-6 w-6" />}
             description="Professional journey and achievements"
-            isActive={activeSection === "experience"}
+            isActive={activeSection === "experiencia"}
             delay={300}
             onNavigate={handleNavigate}
           >
@@ -292,10 +296,10 @@ export const NavigationSheet = (): JSX.Element => {
           </MobileNavItem>
 
           <MobileNavItem
-            href="#projects"
+            href="#casos-de-estudio"
             icon={<FolderOpen className="h-6 w-6" />}
             description="Portfolio of development work"
-            isActive={activeSection === "projects"}
+            isActive={activeSection === "casos-de-estudio"}
             delay={400}
             onNavigate={handleNavigate}
           >
@@ -303,11 +307,22 @@ export const NavigationSheet = (): JSX.Element => {
           </MobileNavItem>
 
           <MobileNavItem
+            href="/servicios"
+            icon={<Wrench className="h-6 w-6" />}
+            description="Services and pricing"
+            isActive={pathname.startsWith("/servicios") || pathname.startsWith("/services")}
+            delay={500}
+            onNavigate={handleNavigate}
+          >
+            {t.services}
+          </MobileNavItem>
+
+          <MobileNavItem
             href="/blog"
             icon={<BookOpen className="h-6 w-6" />}
             description="Technical insights and articles"
             isActive={pathname.startsWith("/blog")}
-            delay={500}
+            delay={600}
             onNavigate={handleNavigate}
           >
             Blog
@@ -320,7 +335,7 @@ export const NavigationSheet = (): JSX.Element => {
         */}
         <div
           className={cn(
-            "absolute bottom-8 left-6 right-6",
+            "mt-10 mb-8",
             "animate-in slide-in-from-bottom-4 fade-in duration-500 delay-700",
             // Enhanced visual styling for professional presentation
             "glass-effect p-6 rounded-3xl text-center",

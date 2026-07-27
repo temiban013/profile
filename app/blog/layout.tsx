@@ -7,7 +7,7 @@ import "./blog-styles.css";
  * This provides proper metadata for the blog section
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mariorafaelayala.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.nitainodigital.com';
 
   const baseMetadata = {
     title: "Blog | AI & Software Engineering Insights",

@@ -272,12 +272,12 @@ const ExperienceItem = ({
     <TimelineItem index={index} icon={Briefcase} skipStagger={skipStagger}>
       <div className="bg-card border border-border rounded-2xl p-6 professional-shadow hover:professional-shadow-lg transition-all duration-300 hover:border-primary/20 group">
         <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
               <Building className="w-6 h-6 text-primary" />
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+            <div className="min-w-0">
+              <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 [overflow-wrap:anywhere]">
                 {title}
               </h3>
               <div className="flex items-center gap-2 text-lg font-semibold text-muted-foreground">
@@ -510,7 +510,7 @@ const ExperienceItem = ({
             <Badge
               key={tech}
               variant="outline"
-              className={`text-xs hover:bg-primary/10 hover:text-primary transition-all duration-300 transform hover:scale-105`}
+              className={`text-xs whitespace-normal text-center hover:bg-primary/10 hover:text-primary transition-all duration-300 transform hover:scale-105`}
               style={{
                 animationDelay: `${index * 200 + techIndex * 50}ms`,
               }}
@@ -690,6 +690,22 @@ const Experience = () => {
             "Blockchain",
             "Vercel",
             "SEO",
+          ],
+        },
+        {
+          title: "Digital Literacy & Multimedia Instructor — 'Mi Negocio en Línea'",
+          company: "MPA Consultants Group",
+          location: "Las Marías, Puerto Rico",
+          period: "May 2026 - June 2026",
+          description:
+            "Delivered 'Alfabetización Digital y Multimedia — Mi Negocio en Línea', a 150-hour intensive program (30 sessions × 5 hours) preparing Las Marías residents to take their businesses online. • **Computer & Internet Skills (50 hrs)**: hardware and software fundamentals, laptops, storage media and the cloud, smartphones, operating systems, Windows, email, and information management—with pre/post skills assessments. • **Programs & Applications (50 hrs)**: Word (letters and résumés), Excel (budgets, charts, data classification), PowerPoint presentations, Publisher, and virtual platforms (Google Meet, Zoom, Microsoft Teams). • **Employability & Online Business (25 hrs)**: online job search, LinkedIn, virtual storefronts, strategies for entering online business, social media management, digital marketing, and internet advertising. • **Cybersecurity (25 hrs)**: password and data protection, risk management, threat detection, malware analysis fundamentals, network security, and identity management. Closed with certificate delivery to every participant.",
+          technologies: [
+            "Digital Literacy",
+            "Microsoft Office",
+            "LinkedIn & Employability",
+            "Digital Marketing",
+            "Cybersecurity",
+            "Virtual Platforms",
           ],
         },
         {
@@ -1111,6 +1127,22 @@ const Experience = () => {
             "Blockchain",
             "Vercel",
             "SEO",
+          ],
+        },
+        {
+          title: "Instructor de Alfabetización Digital y Multimedia — 'Mi Negocio en Línea'",
+          company: "MPA Consultants Group",
+          location: "Las Marías, Puerto Rico",
+          period: "Mayo 2026 - Junio 2026",
+          description:
+            "Impartí 'Alfabetización Digital y Multimedia — Mi Negocio en Línea', un programa intensivo de 150 horas (30 sesiones × 5 horas) preparando a residentes de Las Marías para llevar sus negocios en línea. • **Manejo de Computadoras e Internet (50 hrs)**: fundamentos de hardware y software, laptops, medios de almacenamiento y la nube, teléfonos inteligentes, sistemas operativos, Windows, correo electrónico y manejo de información—con pre y post pruebas de destrezas. • **Programas y Aplicaciones (50 hrs)**: Word (cartas y resumés), Excel (presupuestos, gráficas, clasificación de datos), presentaciones en PowerPoint, Publisher y plataformas virtuales (Google Meet, Zoom, Microsoft Teams). • **Empleabilidad y Negocio en Línea (25 hrs)**: búsqueda de empleo en línea, LinkedIn, tienda virtual, estrategias para entrar al negocio en línea, manejo de redes sociales, mercadeo digital y publicidad en internet. • **Seguridad Cibernética (25 hrs)**: protección de datos y contraseñas, gestión de riesgos, detección de amenazas, fundamentos de análisis de malware, seguridad de la red y gestión de identidad. Cerró con entrega de certificados a cada participante.",
+          technologies: [
+            "Alfabetización Digital",
+            "Microsoft Office",
+            "LinkedIn y Empleabilidad",
+            "Mercadeo Digital",
+            "Ciberseguridad",
+            "Plataformas Virtuales",
           ],
         },
         {
@@ -1553,16 +1585,16 @@ const Experience = () => {
     let currentIndex = 0;
 
     // Stage 1: Show first 5 original experiences (up to Disney)
-    const initialCount = showAllExperiences ? originalExperiences.length : 5;
+    const initialCount = showAllExperiences ? originalExperiences.length : 6;
 
     for (let i = 0; i < initialCount; i++) {
       const exp = originalExperiences[i];
 
-      // Skip Yukayeke (2) and WOTEC (3) when collapsed behind MPA button
-      if ((i === 2 || i === 3) && !showAfterMPA) continue;
+      // Skip Yukayeke (3) and WOTEC (4) when collapsed behind MPA button
+      if ((i === 3 || i === 4) && !showAfterMPA) continue;
 
-      // Skip stagger for experiences revealed after clicking "Show More" (indices 5+)
-      const skipStagger = (showAllExperiences && i >= 5) || (showAfterMPA && (i === 2 || i === 3));
+      // Skip stagger for experiences revealed after clicking "Show More" (indices 6+)
+      const skipStagger = (showAllExperiences && i >= 6) || (showAfterMPA && (i === 3 || i === 4));
 
       experiences.push(
         <ExperienceItem
@@ -1573,8 +1605,8 @@ const Experience = () => {
         />
       );
 
-      // After MPA (index 1), add inline button for Yukayeke + WOTEC
-      if (i === 1) {
+      // After MPA (index 2), add inline button for Yukayeke + WOTEC
+      if (i === 2) {
         if (!showAfterMPA) {
           experiences.push(
             <InlineShowMoreButton
@@ -1586,8 +1618,8 @@ const Experience = () => {
         }
       }
 
-      // After Disney (index 4), add inline button for Ibeza + Jíbaro
-      if (i === 4 && showAllExperiences) {
+      // After Disney (index 5), add inline button for Ibeza + Jíbaro
+      if (i === 5 && showAllExperiences) {
         if (!showAfterDisney && newExperiencesByPosition.afterDisney.length > 0) {
           experiences.push(
             <InlineShowMoreButton
@@ -1610,8 +1642,8 @@ const Experience = () => {
         }
       }
 
-      // After AVM (index 5), add inline button for TradeStation
-      if (i === 5 && showAllExperiences) {
+      // After AVM (index 6), add inline button for TradeStation
+      if (i === 6 && showAllExperiences) {
         if (!showAfterAVM && newExperiencesByPosition.afterAVM.length > 0) {
           experiences.push(
             <InlineShowMoreButton
@@ -1634,8 +1666,8 @@ const Experience = () => {
         }
       }
 
-      // After ABB (index 6), add inline button for Primerica
-      if (i === 6 && showAllExperiences) {
+      // After ABB (index 7), add inline button for Primerica
+      if (i === 7 && showAllExperiences) {
         if (!showAfterABB && newExperiencesByPosition.afterABB.length > 0) {
           experiences.push(
             <InlineShowMoreButton
@@ -1658,8 +1690,8 @@ const Experience = () => {
         }
       }
 
-      // After Office Depot (index 7), add inline button for remaining experiences
-      if (i === 7 && showAllExperiences) {
+      // After Office Depot (index 8), add inline button for remaining experiences
+      if (i === 8 && showAllExperiences) {
         if (!showAfterOfficeDepot && newExperiencesByPosition.afterOfficeDepot.length > 0) {
           experiences.push(
             <InlineShowMoreButton
@@ -1687,7 +1719,7 @@ const Experience = () => {
   };
 
   return (
-    <section id="experience" className="py-20 scroll-mt-16 bg-muted/30">
+    <section id="experiencia" className="py-20 scroll-mt-24 bg-muted/30">
       <div className="max-w-screen-xl mx-auto px-6">
         {/* Experience Section */}
         <div className="text-center mb-16">

@@ -18,6 +18,7 @@ export type TranslationLabels = {
   certifications: string;
   recognitions: string;
   projects: string;
+  services: string;
   featuredWork: string;
   innovativeTech: string;
   viewSite: string;
@@ -66,7 +67,7 @@ export type TranslationLabels = {
 
 export const translations: Record<LanguageKey, TranslationLabels> = {
   en: {
-    about: "About me",
+    about: "The Founder",
     experience: "Experience",
     professionalCareer: "Professional Career",
     careerTimeline: "Timeline of my professional growth and achievements",
@@ -75,7 +76,8 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
       "Solid foundations for continuous professional development",
     certifications: "Certifications and Affiliations",
     recognitions: "Recognitions and Community Participation",
-    projects: "Projects",
+    projects: "Case Studies",
+    services: "Services",
     featuredWork: "Featured Work",
     innovativeTech:
       "Innovative technological solutions I have developed and implemented",
@@ -102,9 +104,9 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     article: "article",
     articles: "articles",
     noArticlesInCategory: "No articles found in this category.",
-    heroTitle: "Developing Scalable and Efficient Web Solutions",
+    heroTitle: "Digital Solutions Rooted in Heritage",
     heroSubtitle:
-      "Greetings! I'm Mario Ayala, a Software Engineer with over 20 years of experience spanning enterprise systems at Disney to modern AI-augmented development. With a foundation in Computer Science and a passion for emerging technologies, I now leverage Claude Code and agentic programming to deliver solutions that traditionally require entire development teams. My approach combines decades of enterprise expertise with cutting-edge AI tools to create exceptional digital experiences. Shall we collaborate on your next project? 🚀",
+      "Nitaíno Digital is a Puerto Rico–based studio founded by Mario Rafael Ayala, a software engineer with 25+ years of experience spanning enterprise systems at Disney to modern AI-augmented development. We build AI-powered web platforms, e-commerce, video productions, and training programs—combining enterprise discipline with agentic AI tooling to deliver what traditionally required entire development teams. Shall we build your next project? 🚀",
     contactMe: "Contact Me",
     viewMore: "View More",
     proprietaryCode: "Proprietary Code",
@@ -115,17 +117,17 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     youtubeaccount: "YouTube Channel",
     whatsappaccount: "WhatsApp Contact",
     meta: {
-      title: "Mario Rafael Ayala | Full-Stack AI Engineer",
+      title: "Nitaíno Digital — Mario Rafael Ayala | Full-Stack AI Engineering",
       description:
-        "With over 20 years of experience in software development, I specialize in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects. My academic background in Computer Science (obtained with honors) and my military experience have provided me with a solid foundation of discipline and methodology that I apply to every project. I'm passionate about finding elegant solutions to complex problems using modern technologies like Next.js, TypeScript, and .NET Core, always maintaining a pragmatic, results-oriented approach.",
+        "Nitaíno Digital is a Puerto Rico–based studio for AI engineering, web development, video production, and training—founded by Mario Rafael Ayala, a software engineer with over 25 years of experience including key roles at Disney and Office Depot. We combine enterprise architecture discipline with agentic AI development (Claude Code) to deliver high-performance platforms, e-commerce, and digital experiences with a pragmatic, results-oriented approach.",
       ogDescription:
-        "With over 20 years of experience in software development, I specialize in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects. My academic background in Computer Science (obtained with honors) and my military experience have provided me with a solid foundation of discipline and methodology that I apply to every project. I'm passionate about finding elegant solutions to complex problems using modern technologies like Next.js, TypeScript, and .NET Core, always maintaining a pragmatic, results-oriented approach.",
+        "Nitaíno Digital is a Puerto Rico–based studio for AI engineering, web development, video production, and training—founded by Mario Rafael Ayala, a software engineer with over 25 years of experience including key roles at Disney and Office Depot. We combine enterprise architecture discipline with agentic AI development (Claude Code) to deliver high-performance platforms, e-commerce, and digital experiences with a pragmatic, results-oriented approach.",
       twitterDescription:
-        "With over 20 years of experience in software development, I specialize in enterprise architectures and high-performance web applications. My professional career includes key roles at companies like Disney and Office Depot, where I led digital transformation and systems integration projects. My academic background in Computer Science (obtained with honors) and my military experience have provided me with a solid foundation of discipline and methodology that I apply to every project. I'm passionate about finding elegant solutions to complex problems using modern technologies like Next.js, TypeScript, and .NET Core, always maintaining a pragmatic, results-oriented approach.",
+        "Nitaíno Digital is a Puerto Rico–based studio for AI engineering, web development, video production, and training—founded by Mario Rafael Ayala, a software engineer with over 25 years of experience including key roles at Disney and Office Depot. We combine enterprise architecture discipline with agentic AI development (Claude Code) to deliver high-performance platforms, e-commerce, and digital experiences with a pragmatic, results-oriented approach.",
     },
   },
   es: {
-    about: "Sobre mí",
+    about: "El Fundador",
     experience: "Experiencia",
     professionalCareer: "Carrera Profesional",
     careerTimeline: "Cronología de mi crecimiento profesional y logros",
@@ -133,7 +135,8 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     academicBackground: "Bases sólidas para un desarrollo profesional continuo",
     certifications: "Certificaciones y Afiliaciones",
     recognitions: "Reconocimientos y Participación",
-    projects: "Proyectos",
+    projects: "Casos de Estudio",
+    services: "Servicios",
     featuredWork: "Trabajo Destacado",
     innovativeTech:
       "Soluciones tecnológicas innovadoras que he desarrollado e implementado",
@@ -160,9 +163,9 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     article: "artículo",
     articles: "artículos",
     noArticlesInCategory: "No se encontraron artículos en esta categoría.",
-    heroTitle: "Desarrollando Soluciones Web Escalables y Eficientes",
+    heroTitle: "Soluciones Digitales con Raíces Taínas",
     heroSubtitle:
-      "¡Saludos! Soy Mario Ayala, un Ingeniero de Software con más de 20 años de experiencia que abarca desde sistemas empresariales en Disney hasta desarrollo moderno aumentado por IA. Con formación en Ciencias de la Computación y pasión por tecnologías emergentes, ahora aprovecho Claude Code y programación agéntica para entregar soluciones que tradicionalmente requieren equipos de desarrollo completos. Mi enfoque combina décadas de experiencia empresarial con herramientas de IA de vanguardia para crear experiencias digitales excepcionales. ¿Colaboramos en su próximo proyecto? 🚀",
+      "Nitaíno Digital es un estudio con base en Puerto Rico fundado por Mario Rafael Ayala, ingeniero de software con más de 25 años de experiencia que abarca desde sistemas empresariales en Disney hasta desarrollo moderno aumentado por IA. Construimos plataformas web impulsadas por IA, e-commerce, producciones de video y programas de adiestramiento—combinando disciplina empresarial con herramientas de IA agéntica para entregar lo que tradicionalmente requería equipos de desarrollo completos. ¿Construimos su próximo proyecto? 🚀",
     contactMe: "Contáctame",
     viewMore: "Ver Más",
     proprietaryCode: "Código Propietario",
@@ -173,13 +176,13 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     youtubeaccount: "Canal de YouTube",
     whatsappaccount: "Contactar por WhatsApp",
     meta: {
-      title: "Mario Rafael Ayala | Ingeniero Full-Stack de IA",
+      title: "Nitaíno Digital — Mario Rafael Ayala | Ingeniería Full-Stack de IA",
       description:
-        "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
+        "Nitaíno Digital es un estudio con base en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y adiestramiento—fundado por Mario Rafael Ayala, ingeniero de software con más de 25 años de experiencia que incluye roles clave en Disney y Office Depot. Combinamos disciplina de arquitectura empresarial con desarrollo agéntico de IA (Claude Code) para entregar plataformas de alto rendimiento, e-commerce y experiencias digitales con un enfoque pragmático orientado a resultados.",
       ogDescription:
-        "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
+        "Nitaíno Digital es un estudio con base en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y adiestramiento—fundado por Mario Rafael Ayala, ingeniero de software con más de 25 años de experiencia que incluye roles clave en Disney y Office Depot. Combinamos disciplina de arquitectura empresarial con desarrollo agéntico de IA (Claude Code) para entregar plataformas de alto rendimiento, e-commerce y experiencias digitales con un enfoque pragmático orientado a resultados.",
       twitterDescription:
-        "Con más de 20 años de experiencia en el desarrollo de software, me he especializado en arquitecturas empresariales y aplicaciones web de alto rendimiento. Mi trayectoria profesional incluye roles clave en compañías como Disney y Office Depot, donde lideré proyectos de transformación digital e integración de sistemas. Mi formación académica en Ciencias de la Computación (obtenida con honores) y mi experiencia militar me han proporcionado una base sólida de disciplina y metodología que aplico en cada proyecto. Me apasiona encontrar soluciones elegantes a problemas complejos utilizando tecnologías modernas como Next.js, TypeScript y .NET Core, siempre manteniendo un enfoque pragmático orientado a resultados.",
+        "Nitaíno Digital es un estudio con base en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y adiestramiento—fundado por Mario Rafael Ayala, ingeniero de software con más de 25 años de experiencia que incluye roles clave en Disney y Office Depot. Combinamos disciplina de arquitectura empresarial con desarrollo agéntico de IA (Claude Code) para entregar plataformas de alto rendimiento, e-commerce y experiencias digitales con un enfoque pragmático orientado a resultados.",
     },
   },
 };

@@ -24,7 +24,8 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-16 sm:px-6 sm:py-20 md:px-8">
+      {/* pt clears the floating fixed navbar (h-16 + top-4 ≈ 80px) on short screens */}
+      <div className="relative z-10 container mx-auto px-4 pt-32 pb-16 sm:px-6 sm:pb-20 md:px-8">
         <div className="max-w-4xl mx-auto text-center">
           {/* Headline */}
           <motion.h1
@@ -33,7 +34,11 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {hero.headline}
+            {/* Same split-gradient treatment as the home hero, on light stops for the dark bg */}
+            <span className="block bg-gradient-to-r from-teal-300 via-sky-400 to-blue-400 bg-clip-text text-transparent">
+              {hero.headline.split(" ").slice(0, 3).join(" ")}
+            </span>
+            {hero.headline.split(" ").slice(3).join(" ")}
           </motion.h1>
 
           {/* Subheadline */}

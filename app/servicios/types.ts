@@ -6,7 +6,8 @@ export interface ServiceOffering {
   id: string;
   name: string;
   description: string;
-  price: number;
+  /** Fixed price in USD, or "quote" for custom-quoted services */
+  price: number | "quote";
   features: string[];
   icon: string;
 }

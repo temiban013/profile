@@ -1,7 +1,7 @@
 // app/resume/layout.tsx
 import { Metadata } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mariorafaelayala.com';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.nitainodigital.com';
 
 export const metadata: Metadata = {
   title: "Mario Rafael Ayala Resume | Full-Stack AI Engineer | Disney Alumni | Download CV",

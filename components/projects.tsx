@@ -20,6 +20,7 @@ import {
 import Image from "next/image";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
+import { scrollToSection } from "@/lib/hooks/use-active-section";
 import { useState, useEffect, useMemo } from "react";
 import { type Project, projectData } from "@/lib/data/projects";
 
@@ -335,7 +336,7 @@ const EnhancedProjects = () => {
   }, []);
 
   return (
-    <section id="projects" className="relative py-20 px-6">
+    <section id="casos-de-estudio" className="relative py-20 px-6 scroll-mt-24">
       <div className="max-w-7xl mx-auto">
         {/* Section Header with Animation */}
         <div
@@ -417,7 +418,13 @@ const EnhancedProjects = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="rounded-full professional-shadow-lg" asChild>
-                <a href="#contact">
+                <a
+                  href="#contacto"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("contacto");
+                  }}
+                >
                   {language === "en"
                     ? "Start a Project"
                     : "Iniciar un Proyecto"}

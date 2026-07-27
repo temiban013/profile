@@ -5,15 +5,24 @@ import type { LanguageKey } from "./contexts/language-context";
 export const siteMetadata: Record<LanguageKey, Metadata> = {
   en: {
     title: {
-      default: "Mario Rafael Ayala | Nitaíno Digital — Full-Stack AI Engineer",
-      template: "%s | Nitaíno Digital — Mario Rafael Ayala",
+      default: "Nitaíno Digital — AI Engineering, Web & Video | Mario Rafael Ayala",
+      template: "%s | Nitaíno Digital",
     },
     description:
-      "Full-Stack AI Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in AI agent development, multi-agent orchestration, Next.js 15, TypeScript, React 19, PostgreSQL. Digital Literacy Instructor with 35+ course presentations. Available for remote work, consulting, training. Specialized in AI-assisted development, ROI-focused digital transformation, and scalable business solutions. MS Computer Science (Magna Cum Laude).",
+      "Nitaíno Digital is a Puerto Rico–based studio for AI engineering, web development, video production, and training & education. Founded by Mario Rafael Ayala, Full-Stack AI Engineer with 25+ years enterprise experience including Disney Parks and Office Depot. Expert in AI agent development, multi-agent orchestration, Next.js, TypeScript, React 19, PostgreSQL. Available for remote work, consulting, training. MS Computer Science (Magna Cum Laude).",
     keywords: [
-      "mario rafael ayala",
       "nitaíno digital",
       "nitaino digital",
+      "nitainodigital.com",
+      "mario rafael ayala",
+      "ai agency puerto rico",
+      "digital studio puerto rico",
+      "video production puerto rico",
+      "ai video production",
+      "corporate accessibility training",
+      "corporate asl training",
+      "digital literacy training puerto rico",
+      "e-commerce development puerto rico",
       "full-stack ai engineer",
       "ai agent developer",
       "ai engineer",
@@ -86,34 +95,43 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "professional development instructor"
     ],
     openGraph: {
-      siteName: "Nitaíno Digital — Mario Rafael Ayala",
-      url: "https://www.mariorafaelayala.com/",
+      siteName: "Nitaíno Digital",
+      url: "https://www.nitainodigital.com/",
       type: "website",
-      title: "Mario Rafael Ayala | Nitaíno Digital — Full-Stack AI Engineer | Available for Hire",
+      title: "Nitaíno Digital — AI Engineering, Web & Video | Mario Rafael Ayala",
       description:
-        "Full-Stack AI Engineer with 25+ years enterprise experience including Disney Parks, Office Depot. Expert in AI agent development, multi-agent orchestration, Next.js 15, React 19, PostgreSQL. Digital Literacy Instructor with 35+ course presentations. ROI-focused portfolio: Café Papamín e-commerce, PFDH.org platform, modern web development. Available for remote work, consulting & training.",
+        "Puerto Rico–based studio for AI engineering, web development, video production, and training. Founded by Mario Rafael Ayala (25+ years, Disney Parks, Office Depot). Case studies: Gespervis ASL platform, Berríos accessibility pilot, Pabellón digital museum, Café Papamín e-commerce. Available for remote work, consulting & training.",
       locale: "en-US",
-      images: "https://www.mariorafaelayala.com/mra-profile.jpg",
+      images: "https://www.nitainodigital.com/og-nitaino.png",
     },
     twitter: {
       card: "summary_large_image",
-      title: "Mario Rafael Ayala | Nitaíno Digital — Full-Stack AI Engineer",
-      images: "https://www.mariorafaelayala.com/mra-profile.jpg",
+      title: "Nitaíno Digital — AI Engineering, Web & Video | Mario Rafael Ayala",
+      images: "https://www.nitainodigital.com/og-nitaino.png",
       description:
-        "Full-Stack AI Engineer with 25+ years enterprise experience including Disney & Office Depot. AI agent development, multi-agent orchestration, Next.js 15/React 19/PostgreSQL expert. Digital Literacy Instructor with 35+ course presentations. MS Computer Science. Available for remote work, consulting & training.",
+        "Puerto Rico–based studio for AI engineering, web development, video production, and training. Founded by Mario Rafael Ayala (25+ years, Disney & Office Depot). MS Computer Science. Available for remote work, consulting & training.",
     },
   },
   es: {
     title: {
-      default: "Mario Rafael Ayala | Nitaíno Digital — Ingeniero Full-Stack de IA",
-      template: "%s | Nitaíno Digital — Mario Rafael Ayala",
+      default: "Nitaíno Digital — Ingeniería de IA, Web y Video | Mario Rafael Ayala",
+      template: "%s | Nitaíno Digital",
     },
     description:
-      "Ingeniero Full-Stack de IA con 25+ años de experiencia empresarial incluyendo Disney Parks, Office Depot. Experto en desarrollo de agentes de IA, orquestación multi-agente, Next.js 15, TypeScript, React 19, PostgreSQL, arquitectura empresarial. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Disponible para trabajo remoto, consultoría, capacitación. Especializado en desarrollo asistido por IA, transformación digital enfocada en ROI y soluciones empresariales escalables. MS Ciencias de la Computación (Magna Cum Laude).",
+      "Nitaíno Digital es un estudio con base en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y adiestramiento. Fundado por Mario Rafael Ayala, Ingeniero Full-Stack de IA con 25+ años de experiencia empresarial incluyendo Disney Parks y Office Depot. Experto en desarrollo de agentes de IA, orquestación multi-agente, Next.js, TypeScript, React 19, PostgreSQL. Disponible para trabajo remoto, consultoría, capacitación. MS Ciencias de la Computación (Magna Cum Laude).",
     keywords: [
-      "mario rafael ayala",
       "nitaíno digital",
       "nitaino digital",
+      "nitainodigital.com",
+      "mario rafael ayala",
+      "agencia ia puerto rico",
+      "estudio digital puerto rico",
+      "producción de video puerto rico",
+      "producción de video con ia",
+      "adiestramiento accesibilidad corporativa",
+      "adiestramiento asl empresas",
+      "alfabetización digital puerto rico",
+      "desarrollo e-commerce puerto rico",
       "ingeniero full-stack de ia",
       "desarrollador agentes ia",
       "ingeniero ia",
@@ -185,21 +203,21 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
       "instructor desarrollo profesional"
     ],
     openGraph: {
-      siteName: "Nitaíno Digital — Mario Rafael Ayala",
-      url: "https://www.mariorafaelayala.com/",
+      siteName: "Nitaíno Digital",
+      url: "https://www.nitainodigital.com/",
       type: "website",
-      title: "Mario Rafael Ayala | Nitaíno Digital — Ingeniero Full-Stack de IA | Disponible para Contratar",
+      title: "Nitaíno Digital — Ingeniería de IA, Web y Video | Mario Rafael Ayala",
       description:
-        "Ingeniero Full-Stack de IA con 25+ años incluyendo Disney Parks, Office Depot. Experto en desarrollo de agentes de IA, orquestación multi-agente, Next.js 15, React 19, PostgreSQL. Instructor de Alfabetización Digital con 35+ presentaciones de cursos. Portfolio enfocado en ROI: Café Papamín e-commerce, plataforma PFDH.org, desarrollo web moderno. Disponible para trabajo remoto, consultoría y capacitación.",
+        "Estudio con base en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y adiestramiento. Fundado por Mario Rafael Ayala (25+ años, Disney Parks, Office Depot). Casos de estudio: plataforma ASL Gespervis, piloto de accesibilidad Berríos, museo digital del Pabellón, e-commerce Café Papamín. Disponible para trabajo remoto, consultoría y capacitación.",
       locale: "es-PR",
-      images: "https://www.mariorafaelayala.com/mra-profile.jpg",
+      images: "https://www.nitainodigital.com/og-nitaino.png",
     },
     twitter: {
       card: "summary_large_image",
-      title: "Mario Rafael Ayala | Nitaíno Digital — Ingeniero Full-Stack de IA",
-      images: "https://www.mariorafaelayala.com/mra-profile.jpg",
+      title: "Nitaíno Digital — Ingeniería de IA, Web y Video | Mario Rafael Ayala",
+      images: "https://www.nitainodigital.com/og-nitaino.png",
       description:
-        "Ingeniero Full-Stack de IA con 25+ años experiencia empresarial incluyendo Disney y Office Depot. Desarrollo de agentes de IA, orquestación multi-agente, experto Next.js 15/React 19/PostgreSQL. Instructor de Alfabetización Digital con 35+ presentaciones. MS Ciencias Computación. Disponible trabajo remoto, consultoría y capacitación.",
+        "Estudio con base en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y adiestramiento. Fundado por Mario Rafael Ayala (25+ años, Disney y Office Depot). MS Ciencias Computación. Disponible trabajo remoto, consultoría y capacitación.",
     },
   },
 };
@@ -208,16 +226,16 @@ export const siteMetadata: Record<LanguageKey, Metadata> = {
 export function generateMetadata(language: LanguageKey): Metadata {
   return {
     ...siteMetadata[language],
-    metadataBase: new URL("https://www.mariorafaelayala.com/"),
+    metadataBase: new URL("https://www.nitainodigital.com/"),
     alternates: {
-      canonical: "https://www.mariorafaelayala.com/",
+      canonical: "https://www.nitainodigital.com/",
       languages: {
-        "en-US": "https://www.mariorafaelayala.com/?lang=en",
-        "es-PR": "https://www.mariorafaelayala.com/?lang=es",
+        "en-US": "https://www.nitainodigital.com/?lang=en",
+        "es-PR": "https://www.nitainodigital.com/?lang=es",
       },
     },
     authors: [
-      { name: "Mario R. Ayala", url: "https://www.mariorafaelayala.com" },
+      { name: "Mario R. Ayala", url: "https://www.nitainodigital.com" },
     ],
     creator: "Mario R. Ayala",
     publisher: "Nitaíno Digital",

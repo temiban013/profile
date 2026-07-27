@@ -18,106 +18,76 @@ import {
   scrollToSection,
 } from "@/lib/hooks/use-active-section";
 
-const SECTION_IDS = ["hero", "about", "experience", "projects"];
+const SECTION_IDS = ["inicio", "fundador", "experiencia", "casos-de-estudio"];
 
 interface NavMenuItemProps {
   href: string;
   children: React.ReactNode;
   isActive?: boolean;
   onClick?: () => void;
-  isExternal?: boolean;
 }
 
 /**
  * Smart Navigation Component
  *
- * This component implements a hybrid navigation pattern that elegantly handles
- * both single-page section scrolling and multi-page routing. The key insight
- * is that we need to detect the current page context and route accordingly:
+ * Every item renders the exact same element (a next/link anchor styled by
+ * NavigationMenuLink) so hover/focus/active states are identical across
+ * section links and page links. Hash hrefs get smart routing:
  *
- * 1. If we're on the home page (/): Use smooth scrolling to sections
- * 2. If we're on another page (/blog): Navigate to home page with hash fragment
- * 3. If navigating to /blog: Use standard Next.js routing
+ * 1. On the home page (/): smooth-scroll to the section (works on repeat clicks)
+ * 2. On another page: navigate home, then scroll to the section
+ * 3. Page hrefs (/servicios, /blog): standard Next.js navigation
  */
-const NavMenuItem = ({
-  href,
-  children,
-  isActive,
-  onClick,
-  isExternal = false,
-}: NavMenuItemProps) => {
+const NavMenuItem = ({ href, children, isActive, onClick }: NavMenuItemProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const isHash = href.startsWith("#");
 
-  const handleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+  const handleClick = (e: React.MouseEvent) => {
     onClick?.();
 
-    // Handle external links (like /blog) with standard Next.js navigation
-    if (isExternal) {
-      return; // Let the Link component handle this
+    if (!isHash) {
+      return; // Standard Next.js navigation for page links
     }
 
-    // For internal sections, we need smart routing logic
     e.preventDefault();
-    const sectionId = href.replace("#", "");
+    const sectionId = href.slice(1);
 
     if (pathname === "/") {
-      // We're on the home page - use smooth scrolling
       scrollToSection(sectionId);
     } else {
-      // We're on a different page - navigate to home page with hash
-      router.push(`/${href}`);
-
-      // After navigation completes, scroll to the section
-      // We use a small delay to ensure the page has loaded
-      setTimeout(() => {
-        scrollToSection(sectionId);
-      }, 100);
+      // Navigate hash-less (keeps the URL clean) — scrollToSection retries
+      // internally until the lazily-mounted section exists.
+      router.push("/");
+      scrollToSection(sectionId);
     }
   };
 
-  const linkContent = (
-    <span
-      className={cn(
-        "cursor-pointer transition-all duration-300 relative",
-        "hover:bg-accent hover:text-accent-foreground",
-        "focus:bg-accent focus:text-accent-foreground",
-        "ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50",
-        "flex flex-col gap-1 rounded-full py-2 px-4 text-sm whitespace-nowrap",
-        "focus-visible:ring-4 focus-visible:outline-1",
-        // Active state styling
-        isActive && [
-          "bg-primary/10 text-primary",
-          "professional-shadow",
-          "before:absolute before:bottom-0 before:left-1/2 before:w-0 before:h-0.5",
-          "before:bg-gradient-to-r before:from-primary before:to-accent",
-          "before:transition-all before:duration-300",
-          "before:-translate-x-1/2",
-          "before:w-3/4",
-        ]
-      )}
-    >
-      {children}
-      {/* Active indicator dot */}
-      {isActive && (
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full animate-pulse-glow" />
-      )}
-    </span>
-  );
-
   return (
     <NavigationMenuItem>
+      {/* Active styling is applied ONLY via the className below (single source):
+          no Radix `active` prop (its data-active bg would stack on ours) and
+          lingering mouse-focus is neutralized so a clicked item looks the same
+          as one activated by navigation. Keyboard focus-visible ring remains. */}
       <NavigationMenuLink asChild>
-        {isExternal ? (
-          <Link href={href}>{linkContent}</Link>
-        ) : (
-          <a
-            href={`/${href}`}
-            onClick={handleClick}
-          >
-            {linkContent}
-          </a>
-        )}
+        <Link
+          href={isHash ? `/${href}` : href}
+          onClick={handleClick}
+          className={cn(
+            "relative cursor-pointer whitespace-nowrap transition-all duration-300",
+            "focus:bg-transparent focus:text-inherit",
+            isActive && [
+              "bg-primary/10 text-primary professional-shadow",
+              "focus:bg-primary/10 focus:text-primary",
+            ]
+          )}
+        >
+          {children}
+          {/* Active indicator dot */}
+          {isActive && (
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full animate-pulse-glow" />
+          )}
+        </Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
   );
@@ -140,24 +110,30 @@ export const NavMenu = ({ className, ...props }: NavigationMenuProps) => {
     >
       <NavigationMenuList className="w-full justify-evenly space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
         <NavMenuItem
-          href="#about"
-          isActive={isOnHomePage && activeSection === "about"}
+          href="#fundador"
+          isActive={isOnHomePage && activeSection === "fundador"}
         >
           {t.about}
         </NavMenuItem>
         <NavMenuItem
-          href="#experience"
-          isActive={isOnHomePage && activeSection === "experience"}
+          href="#experiencia"
+          isActive={isOnHomePage && activeSection === "experiencia"}
         >
           {t.experience}
         </NavMenuItem>
         <NavMenuItem
-          href="#projects"
-          isActive={isOnHomePage && activeSection === "projects"}
+          href="#casos-de-estudio"
+          isActive={isOnHomePage && activeSection === "casos-de-estudio"}
         >
           {t.projects}
         </NavMenuItem>
-        <NavMenuItem href="/blog" isActive={isOnBlogPage} isExternal={true}>
+        <NavMenuItem
+          href="/servicios"
+          isActive={pathname.startsWith("/servicios") || pathname.startsWith("/services")}
+        >
+          {t.services}
+        </NavMenuItem>
+        <NavMenuItem href="/blog" isActive={isOnBlogPage}>
           {t.blog || "Blog"}
         </NavMenuItem>
       </NavigationMenuList>

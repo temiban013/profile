@@ -106,8 +106,8 @@ const Contact: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      id="contact"
-      className="py-16 sm:py-24 relative overflow-hidden"
+      id="contacto"
+      className="py-16 sm:py-24 relative overflow-hidden scroll-mt-24"
     >
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">

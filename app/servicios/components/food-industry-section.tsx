@@ -153,7 +153,7 @@ export function FoodIndustrySection() {
                   transition={{ duration: 0.6, delay: 0.65 }}
                 >
                   <p className="text-teal-100 font-medium">
-                    <span className="text-gold-400">Resultado:</span> Ventas en línea activas en 3 territorios
+                    <span className="text-gold-400">Resultado:</span> +124% impresiones en Google en 6 meses y envíos cotizados a 3 zonas de EE.UU.
                   </p>
                 </motion.div>
 

@@ -19,7 +19,7 @@ interface BlogPostStructuredDataProps {
 export function BlogPostStructuredData({
   post,
   translationSlug,
-  baseUrl = "https://www.mariorafaelayala.com"
+  baseUrl = "https://www.nitainodigital.com"
 }: BlogPostStructuredDataProps) {
   const structuredData: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -32,8 +32,9 @@ export function BlogPostStructuredData({
       "name": "Mario Rafael Ayala",
       "url": baseUrl,
       "sameAs": [
-        "https://github.com/MarioRayala",
-        "https://linkedin.com/in/mariorafaelayala",
+        "https://github.com/temiban013",
+        "https://www.linkedin.com/in/marioayaladev/",
+        "https://youtube.com/@mariorafaelayala8703",
       ]
     },
     "publisher": {
@@ -42,7 +43,7 @@ export function BlogPostStructuredData({
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
-        "url": `${baseUrl}/ma-logo.png`
+        "url": `${baseUrl}/nitaino-logo.png`
       }
     },
     "datePublished": post.publishedAt.toISOString(),
@@ -86,7 +87,7 @@ interface BlogSectionStructuredDataProps {
 export function BlogSectionStructuredData({
   posts,
   language,
-  baseUrl = "https://www.mariorafaelayala.com"
+  baseUrl = "https://www.nitainodigital.com"
 }: BlogSectionStructuredDataProps) {
   const structuredData = {
     "@context": "https://schema.org",
@@ -141,7 +142,7 @@ export function BreadcrumbStructuredData({
   postTitle,
   postSlug,
   language,
-  baseUrl = "https://www.mariorafaelayala.com"
+  baseUrl = "https://www.nitainodigital.com"
 }: BreadcrumbStructuredDataProps) {
   const homeLabel = language === 'en' ? 'Home' : 'Inicio';
   const blogLabel = 'Blog';

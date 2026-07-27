@@ -4,17 +4,20 @@
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, Mail, Phone, MapPin } from "lucide-react";
 import { StructuredData } from "@/components/seo/structured-data";
+import { useRouter } from "next/navigation";
+import { scrollToSection } from "@/lib/hooks/use-active-section";
 
 export default function ResumePage() {
+  const router = useRouter();
   // Structured data specifically for the resume page
   const resumeSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    "@id": "https://www.mariorafaelayala.com#person",
+    "@id": "https://www.nitainodigital.com#person",
     name: "Mario Rafael Ayala",
     jobTitle: "Full-Stack AI Engineer",
     description: "Full-Stack AI Engineer with 25+ years of enterprise experience at Disney Parks and Office Depot. Specialized in AI agent development and multi-agent orchestration",
-    url: "https://www.mariorafaelayala.com",
+    url: "https://www.nitainodigital.com",
     email: "marioayaladev@gmail.com",
     telephone: "+1-407-476-7353",
     address: {
@@ -220,7 +223,10 @@ export default function ResumePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
-                onClick={() => window.location.href = '/#contact'}
+                onClick={() => {
+                  router.push("/");
+                  scrollToSection("contacto");
+                }}
                 size="lg"
                 className="rounded-full professional-shadow hover:professional-shadow-lg"
               >

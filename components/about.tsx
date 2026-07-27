@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { translations } from "@/lib/i18n";
+import { scrollToSection } from "@/lib/hooks/use-active-section";
 import { useState, useEffect, memo } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -187,9 +188,9 @@ const About = () => {
       },
       {
         icon: Globe,
-        title: "Modern Web Technologies",
+        title: "AI-Orchestrated Delivery",
         description:
-          "Passionate about cutting-edge technologies including blockchain development and progressive web applications.",
+          "Built AgenticOps: a custom governance layer of 5 MCP servers coordinating AI agents across 8 concurrent projects—billing, compliance scoring, and RAG-backed project memory.",
       },
       {
         icon: Lightbulb,
@@ -225,9 +226,9 @@ const About = () => {
       },
       {
         icon: Globe,
-        title: "Tecnologías Web Modernas",
+        title: "Entrega Orquestada por IA",
         description:
-          "Apasionado por tecnologías de vanguardia incluyendo desarrollo blockchain y aplicaciones web progresivas.",
+          "Construí AgenticOps: una capa de gobernanza propia de 5 servidores MCP coordinando agentes de IA en 8 proyectos concurrentes—facturación, puntuación de cumplimiento y memoria de proyectos con RAG.",
       },
       {
         icon: Lightbulb,
@@ -380,7 +381,7 @@ const About = () => {
   const achievementsToShow = showAllAchievements ? achievements[language] : achievements[language].slice(0, 2);
 
   return (
-    <section id="about" className="py-20 scroll-mt-16">
+    <section id="fundador" className="py-20 scroll-mt-24">
       <div className="max-w-screen-xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16">
@@ -396,15 +397,15 @@ const About = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {language === "en"
-              ? "With over 20 years of software engineering experience, I specialize in AI-assisted development and full-stack solutions. Architected multi-agent orchestration systems with Claude Code, managing concurrent projects while delivering innovative educational technology and digital transformation solutions."
-              : "Con más de 20 años de experiencia en ingeniería de software, me especializo en desarrollo asistido por IA y soluciones full-stack. Arquitecté sistemas de orquestación multi-agente con Claude Code, gestionando proyectos concurrentes mientras entrego soluciones innovadoras de tecnología educativa y transformación digital."}
+              ? "Nitaíno Digital is founded on 25+ years of software engineering experience. I specialize in AI-assisted development and full-stack solutions—architecting multi-agent orchestration systems with Claude Code, managing concurrent projects while delivering innovative educational technology and digital transformation solutions."
+              : "Nitaíno Digital está fundado sobre más de 25 años de experiencia en ingeniería de software. Me especializo en desarrollo asistido por IA y soluciones full-stack—arquitectando sistemas de orquestación multi-agente con Claude Code, gestionando proyectos concurrentes mientras entrego soluciones innovadoras de tecnología educativa y transformación digital."}
           </p>
         </div>
 
         {/* Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
           <AnimatedStat
-            value={20}
+            value={25}
             label={
               language === "en" ? "Years Experience" : "Años de Experiencia"
             }
@@ -455,8 +456,8 @@ const About = () => {
               </p>
               <p>
                 {language === "en"
-                  ? "Today, as an independent consultant, I leverage Claude Code and agentic programming to deliver solutions that traditionally require entire development teams. Using Next.js, TypeScript, and multi-agent orchestration, I manage multiple concurrent projects while maintaining the quality and reliability that enterprise clients expect."
-                  : "Hoy, como consultor independiente, aprovecho Claude Code y programación agéntica para entregar soluciones que tradicionalmente requieren equipos de desarrollo completos. Usando Next.js, TypeScript y orquestación multi-agente, gestiono múltiples proyectos concurrentes manteniendo la calidad y confiabilidad que los clientes empresariales esperan."}
+                  ? "Today, as founder of Nitaíno Digital, I leverage Claude Code and agentic programming to deliver solutions that traditionally require entire development teams. Using Next.js, TypeScript, and multi-agent orchestration, I manage multiple concurrent projects while maintaining the quality and reliability that enterprise clients expect."
+                  : "Hoy, como fundador de Nitaíno Digital, aprovecho Claude Code y programación agéntica para entregar soluciones que tradicionalmente requieren equipos de desarrollo completos. Usando Next.js, TypeScript y orquestación multi-agente, gestiono múltiples proyectos concurrentes manteniendo la calidad y confiabilidad que los clientes empresariales esperan."}
               </p>
             </div>
 
@@ -474,7 +475,13 @@ const About = () => {
                 className="rounded-full professional-shadow hover:professional-shadow-lg transition-all duration-300"
                 asChild
               >
-                <a href="#projects">
+                <a
+                  href="#casos-de-estudio"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("casos-de-estudio");
+                  }}
+                >
                   <Target className="w-4 h-4 mr-2" />
                   {language === "en" ? "View Projects" : "Ver Proyectos"}
                 </a>
@@ -506,8 +513,8 @@ const About = () => {
                   <div className="font-semibold">Mario Rafael Ayala</div>
                   <div className="text-sm text-muted-foreground">
                     {language === "en"
-                      ? "Full-Stack AI Engineer"
-                      : "Ingeniero Full-Stack de IA"}
+                      ? "Founder, Nitaíno Digital"
+                      : "Fundador, Nitaíno Digital"}
                   </div>
                 </div>
               </div>
@@ -567,8 +574,8 @@ const About = () => {
                   <div className="flex-shrink-0 w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
                     <cert.icon className="w-7 h-7 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-start justify-between gap-y-1 mb-2">
                       <h4 className="font-bold text-lg group-hover:text-primary transition-colors duration-300">
                         {cert.title}
                       </h4>

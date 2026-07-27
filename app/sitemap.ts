@@ -5,10 +5,10 @@ import { blogSubjects } from "@/config/blog-subjects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Base URL for your site
-  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.mariorafaelayala.com"}`;
+  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com"}`;
 
   // Main site pages (hash fragments excluded - search engines ignore them)
-  const routes = ["", "/resume", "/servicios", "/services"];
+  const routes = ["", "/resume", "/servicios", "/services", "/casos-de-exito/papamin"];
 
   // Generate sitemap entries for each route
   const routeEntries = routes.map((route) => ({

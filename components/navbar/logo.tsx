@@ -8,15 +8,16 @@ interface LogoProps {
   className?: string;
 }
 
-// Source asset is a perfect 541x541 square (public/ma-logo.png).
-// Intrinsic width/height props MUST stay 1:1 to satisfy Next.js Image's
-// aspect-ratio contract — this is the same constraint that drove the
-// 2026-04-21 fix. Keeping `h-X w-auto` rather than `h-X w-X` so the
-// component remains tolerant if the source asset is ever re-exported.
+// Source asset is the Nitaíno Digital lockup at 741x252 (public/nitaino-logo.png,
+// transparent background). Intrinsic width/height props MUST keep that exact
+// ratio to satisfy Next.js Image's aspect-ratio contract; `h-X w-auto` lets
+// height drive rendered size while width follows the intrinsic ratio.
+const LOGO_INTRINSIC = { width: 741, height: 252 } as const;
+
 const LOGO_CONFIG = {
-  header: { intrinsic: 64, imageClasses: "h-10 w-auto object-contain" },
-  mobile: { intrinsic: 64, imageClasses: "h-8 w-auto object-contain" },
-  footer: { intrinsic: 64, imageClasses: "h-6 w-auto object-contain" },
+  header: { imageClasses: "h-10 w-auto object-contain" },
+  mobile: { imageClasses: "h-8 w-auto object-contain" },
+  footer: { imageClasses: "h-6 w-auto object-contain" },
 } as const;
 
 export const Logo = ({
@@ -29,10 +30,10 @@ export const Logo = ({
   if (variant === "mobile") {
     return (
       <Image
-        src="/ma-logo.png"
-        alt="Mario Rafael Ayala — Full-Stack AI Engineer"
-        width={config.intrinsic}
-        height={config.intrinsic}
+        src="/nitaino-logo.png"
+        alt="Nitaíno Digital"
+        width={LOGO_INTRINSIC.width}
+        height={LOGO_INTRINSIC.height}
         className={cn(
           config.imageClasses,
           "transition-opacity duration-200 hover:opacity-90",
@@ -57,10 +58,10 @@ export const Logo = ({
       )}
     >
       <Image
-        src="/ma-logo.png"
-        alt="Mario Rafael Ayala — Full-Stack AI Engineer"
-        width={config.intrinsic}
-        height={config.intrinsic}
+        src="/nitaino-logo.png"
+        alt="Nitaíno Digital"
+        width={LOGO_INTRINSIC.width}
+        height={LOGO_INTRINSIC.height}
         className={cn(
           config.imageClasses,
           "transition-opacity duration-200 hover:opacity-90"
