@@ -47,6 +47,8 @@ export default function PrivacidadPage() {
           <address className="mt-4 not-italic">
             Mario Rafael Ayala DBA Nitaíno Digital
             <br />
+            15 Calle Santa Ana
+            <br />
             Las Marías, PR 00670
             <br />
             Registro de Comerciante 1641272-0011
