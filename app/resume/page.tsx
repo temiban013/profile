@@ -12,16 +12,27 @@ const CONTACT_EMAIL =
 
 export default function ResumePage() {
   const router = useRouter();
-  // ProfilePage that REFERENCES the canonical #person node declared on the
-  // homepage, rather than re-declaring it (C-4).
+  // ProfilePage carrying a MINIMAL INLINE Person under mainEntity, sharing the
+  // canonical #person @id declared on the homepage (WP-18).
   //
-  // This page previously emitted a second full Person under the SAME @id as
-  // app/page.tsx, disagreeing on jobTitle, description, hasOccupation.skills,
-  // and seeks — the homepage node offers consulting services while this one
-  // announced it was seeking employment. It also used alumniOf for Disney
-  // Parks and Office Depot, which are past employers, not alma maters.
-  // Every property it asserted was either already on the canonical node or
-  // contradicting it, so nothing is lost by referencing instead.
+  // Google's Rich Results Test evaluates a page in isolation and cannot resolve
+  // a cross-page @id reference. The bare { "@id": ... } this previously held was
+  // rejected as "Invalid object type for field mainEntity", leaving /resume
+  // ineligible for ProfilePage rich results. ProfilePage requires mainEntity to
+  // be a Person whose name is present ON THIS PAGE.
+  //
+  // EVERY value below is copied VERBATIM from personSchema in app/page.tsx.
+  // Do not edit them here — change the canonical node and re-copy. The C-4
+  // defect was duplication that DISAGREED, not duplication as such: the same
+  // @id plus identical values plus a deliberately minimal subset leaves no
+  // contradiction surface.
+  //
+  // C-4 history, preserved because it is why the subset is minimal: this page
+  // once emitted a second FULL Person under the same @id, disagreeing on
+  // jobTitle, description, hasOccupation.skills, and seeks — the homepage node
+  // offers consulting services while this one announced it was seeking
+  // employment. It also used alumniOf for Disney Parks and Office Depot, which
+  // are past employers, not alma maters.
   const resumeSchema = {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
@@ -30,7 +41,17 @@ export default function ResumePage() {
     name: "Mario Rafael Ayala — Résumé",
     inLanguage: ["en", "es"],
     mainEntity: {
-      "@id": "https://www.nitainodigital.com#person"
+      "@type": "Person",
+      "@id": "https://www.nitainodigital.com#person",
+      name: "Mario Rafael Ayala",
+      jobTitle: "Founder & Full-Stack AI Engineer",
+      url: "https://www.nitainodigital.com",
+      sameAs: [
+        "https://www.nitainodigital.com",
+        "https://github.com/temiban013",
+        "https://www.linkedin.com/in/marioayalamscs/",
+        "https://youtube.com/@mariorafaelayala8703"
+      ]
     }
   };
 
