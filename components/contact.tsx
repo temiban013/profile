@@ -26,8 +26,8 @@ import Link from "next/link";
 
 // Contact information constants
 const contactInfo = {
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "marioayaladev@gmail.com",
-  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+1 (407) 476-7353",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "mario@nitainodigital.com",
+  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+1 (787) 458-5702",
   location: "Puerto Rico",
   github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || "#",
   linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "#",

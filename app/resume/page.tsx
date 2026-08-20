@@ -7,6 +7,9 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { useRouter } from "next/navigation";
 import { scrollToSection } from "@/lib/hooks/use-active-section";
 
+const CONTACT_EMAIL =
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL || "mario@nitainodigital.com";
+
 export default function ResumePage() {
   const router = useRouter();
   // Structured data specifically for the resume page
@@ -18,8 +21,8 @@ export default function ResumePage() {
     jobTitle: "Full-Stack AI Engineer",
     description: "Full-Stack AI Engineer with 25+ years of enterprise experience at Disney Parks and Office Depot. Specialized in AI agent development and multi-agent orchestration",
     url: "https://www.nitainodigital.com",
-    email: "marioayaladev@gmail.com",
-    telephone: "+1-407-476-7353",
+    email: CONTACT_EMAIL,
+    telephone: "+1-787-458-5702",
     address: {
       "@type": "PostalAddress",
       addressRegion: "Puerto Rico",
@@ -101,11 +104,11 @@ export default function ResumePage() {
             <div className="grid md:grid-cols-3 gap-6 text-center">
               <div className="flex items-center justify-center gap-3">
                 <Mail className="w-5 h-5 text-primary" />
-                <span className="text-sm">marioayaladev@gmail.com</span>
+                <span className="text-sm">{CONTACT_EMAIL}</span>
               </div>
               <div className="flex items-center justify-center gap-3">
                 <Phone className="w-5 h-5 text-primary" />
-                <span className="text-sm">+1 (407) 476-7353</span>
+                <span className="text-sm">+1 (787) 458-5702</span>
               </div>
               <div className="flex items-center justify-center gap-3">
                 <MapPin className="w-5 h-5 text-primary" />

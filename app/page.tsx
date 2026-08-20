@@ -58,8 +58,8 @@ export default function Home() {
     },
     url: "https://www.nitainodigital.com",
     image: "https://www.nitainodigital.com/mra-profile.jpg",
-    telephone: "+1-407-476-7353",
-    email: "contact@nitainodigital.com",
+    telephone: "+1-787-458-5702",
+    email: "mario@nitainodigital.com",
     address: {
       "@type": "PostalAddress",
       addressRegion: "Puerto Rico",
@@ -161,8 +161,8 @@ export default function Home() {
     ],
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+1-407-476-7353",
-      email: "contact@nitainodigital.com",
+      telephone: "+1-787-458-5702",
+      email: "mario@nitainodigital.com",
       contactType: "customer service",
       availableLanguage: ["English", "Spanish"]
     },
