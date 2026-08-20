@@ -105,8 +105,10 @@ export default function ServicesPage() {
     telephone: "+1-787-458-5702",
     address: {
       "@type": "PostalAddress",
-      addressCountry: "PR",
-      addressLocality: "Puerto Rico",
+      addressLocality: "Las Marías",
+      addressRegion: "PR",
+      postalCode: "00670",
+      addressCountry: "US",
     },
     areaServed: "PR",
     priceRange: "$500 - $8000",

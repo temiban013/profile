@@ -34,6 +34,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
+  // Legal pages — low change frequency, but must be discoverable by crawlers
+  // and by anyone verifying the business (WP-4). Only the Spanish canonicals
+  // are listed; /privacy and /terms are redirect stubs.
+  const legalEntries = ["/privacidad", "/terminos"].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.3,
+  }));
+
   // Blog main page
   const blogMainEntry = {
     url: `${baseUrl}/blog`,
@@ -94,6 +104,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...routeEntries,
     ...resumeEntries,
+    ...legalEntries,
     blogMainEntry,
     ...subjectEntries,
     ...blogPostEntries,

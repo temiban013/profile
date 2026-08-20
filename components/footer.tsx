@@ -80,15 +80,53 @@ const Footer = () => {
               </li>
             ))}
           </ul>
+
+          {/* Legal links — reachable in one click from every page (WP-4) */}
+          <ul className="mt-4 flex items-center justify-center gap-x-6 gap-y-2 flex-wrap px-6">
+            <li>
+              <Link
+                href="/privacidad"
+                className="text-muted-foreground text-sm hover:text-primary transition-colors duration-300 hover:underline underline-offset-4"
+              >
+                {t.privacy}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/terminos"
+                className="text-muted-foreground text-sm hover:text-primary transition-colors duration-300 hover:underline underline-offset-4"
+              >
+                {t.terms}
+              </Link>
+            </li>
+          </ul>
         </div>
 
         <Separator className="bg-border/50" />
 
         <div className="py-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6 xl:px-0">
-          <span className="text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} Nitaíno Digital | Mario R. Ayala. {t.rightsreserved}
-            .
-          </span>
+          <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
+            <span className="text-muted-foreground text-sm">
+              &copy; {new Date().getFullYear()} Nitaíno Digital | Mario R. Ayala. {t.rightsreserved}
+              .
+            </span>
+
+            {/* Business identity block — indexable operational proof (WP-3) */}
+            <address className="text-muted-foreground text-sm not-italic leading-relaxed">
+              Mario Rafael Ayala DBA Nitaíno Digital
+              <br />
+              Las Marías, PR 00670
+              <br />
+              {t.merchantRegistration}: 1641272-0011
+              <br />
+              <Link
+                href="tel:+17874585702"
+                className="hover:text-primary transition-colors duration-300"
+              >
+                +1 (787) 458-5702
+              </Link>
+            </address>
+          </div>
 
           {/* Enhanced Social Media Icons */}
           <div className="flex items-center gap-4 text-muted-foreground">

@@ -22,6 +22,7 @@ import {
   Youtube,
 } from "lucide-react";
 import { useLanguage } from "@/lib/contexts/language-context";
+import { formatSocialUrl } from "@/lib/social-links";
 import Link from "next/link";
 
 // Contact information constants
@@ -314,7 +315,12 @@ const Contact: React.FC = () => {
                   <Youtube className="h-5 w-5" />
                 </Link>
                 <Link
-                  href={process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "#"}
+                  href={
+                    formatSocialUrl(
+                      "whatsapp",
+                      process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || ""
+                    ) || "#"
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="WhatsApp"

@@ -62,7 +62,9 @@ export default function Home() {
     email: "mario@nitainodigital.com",
     address: {
       "@type": "PostalAddress",
-      addressRegion: "Puerto Rico",
+      addressLocality: "Las Marías",
+      addressRegion: "PR",
+      postalCode: "00670",
       addressCountry: "US"
     },
     alumniOf: [
@@ -124,7 +126,7 @@ export default function Home() {
     sameAs: [
       "https://www.nitainodigital.com",
       "https://github.com/temiban013",
-      "https://www.linkedin.com/in/marioayaladev/",
+      "https://www.linkedin.com/in/marioayalamscs/",
       "https://youtube.com/@mariorafaelayala8703"
     ]
   };
@@ -149,6 +151,13 @@ export default function Home() {
       "Digital Transformation", "SEO & Generative Engine Optimization"
     ],
     slogan: "Digital solutions rooted in heritage",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Las Marías",
+      addressRegion: "PR",
+      postalCode: "00670",
+      addressCountry: "US"
+    },
     areaServed: [
       {
         "@type": "Place",
@@ -168,7 +177,7 @@ export default function Home() {
     },
     sameAs: [
       "https://github.com/temiban013",
-      "https://www.linkedin.com/in/marioayaladev/",
+      "https://www.linkedin.com/in/marioayalamscs/",
       "https://youtube.com/@mariorafaelayala8703"
     ]
   };

@@ -33,7 +33,7 @@ export function BlogPostStructuredData({
       "url": baseUrl,
       "sameAs": [
         "https://github.com/temiban013",
-        "https://www.linkedin.com/in/marioayaladev/",
+        "https://www.linkedin.com/in/marioayalamscs/",
         "https://youtube.com/@mariorafaelayala8703",
       ]
     },

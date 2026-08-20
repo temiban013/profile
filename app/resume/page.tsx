@@ -12,60 +12,26 @@ const CONTACT_EMAIL =
 
 export default function ResumePage() {
   const router = useRouter();
-  // Structured data specifically for the resume page
+  // ProfilePage that REFERENCES the canonical #person node declared on the
+  // homepage, rather than re-declaring it (C-4).
+  //
+  // This page previously emitted a second full Person under the SAME @id as
+  // app/page.tsx, disagreeing on jobTitle, description, hasOccupation.skills,
+  // and seeks — the homepage node offers consulting services while this one
+  // announced it was seeking employment. It also used alumniOf for Disney
+  // Parks and Office Depot, which are past employers, not alma maters.
+  // Every property it asserted was either already on the canonical node or
+  // contradicting it, so nothing is lost by referencing instead.
   const resumeSchema = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "@id": "https://www.nitainodigital.com#person",
-    name: "Mario Rafael Ayala",
-    jobTitle: "Full-Stack AI Engineer",
-    description: "Full-Stack AI Engineer with 25+ years of enterprise experience at Disney Parks and Office Depot. Specialized in AI agent development and multi-agent orchestration",
-    url: "https://www.nitainodigital.com",
-    email: CONTACT_EMAIL,
-    telephone: "+1-787-458-5702",
-    address: {
-      "@type": "PostalAddress",
-      addressRegion: "Puerto Rico",
-      addressCountry: "US"
-    },
-    hasOccupation: {
-      "@type": "Occupation",
-      name: "Full-Stack AI Engineer",
-      skills: [
-        "AI Agent Development", "Multi-Agent Orchestration", "Claude Code",
-        "Next.js", "TypeScript", "React", "JavaScript", "Node.js",
-        ".NET Core", "C#", "SQL Server", "Enterprise Architecture",
-        "Digital Transformation", "Systems Integration"
-      ],
-      experienceRequirements: "25+ years"
-    },
-    workLocation: "Remote",
-    seeks: {
-      "@type": "Demand",
-      name: "Full-Stack AI Engineer Position",
-      description: "Seeking AI engineering roles, technical leadership positions, or consulting opportunities in AI-assisted development"
-    },
-    hasCredential: [
-      {
-        "@type": "EducationalOccupationalCredential",
-        name: "Master of Science in Computer Science",
-        credentialCategory: "degree",
-        recognizedBy: {
-          "@type": "Organization",
-          name: "Ellis University"
-        }
-      }
-    ],
-    alumniOf: [
-      {
-        "@type": "Organization",
-        name: "Disney Parks"
-      },
-      {
-        "@type": "Organization",
-        name: "Office Depot"
-      }
-    ]
+    "@type": "ProfilePage",
+    "@id": "https://www.nitainodigital.com/resume#profilepage",
+    url: "https://www.nitainodigital.com/resume",
+    name: "Mario Rafael Ayala — Résumé",
+    inLanguage: ["en", "es"],
+    mainEntity: {
+      "@id": "https://www.nitainodigital.com#person"
+    }
   };
 
   const downloadResume = (language: 'en' | 'es') => {

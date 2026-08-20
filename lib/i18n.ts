@@ -57,6 +57,9 @@ export type TranslationLabels = {
   sendemail: string;
   youtubeaccount: string;
   whatsappaccount: string;
+  merchantRegistration: string; // Label for the Registro de Comerciante number in the footer
+  privacy: string; // Footer link to /privacidad
+  terms: string; // Footer link to /terminos
   meta: {
     title: string;
     description: string;
@@ -116,6 +119,9 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     sendemail: "Send Email",
     youtubeaccount: "YouTube Channel",
     whatsappaccount: "WhatsApp Contact",
+    merchantRegistration: "Merchant Registration",
+    privacy: "Privacy",
+    terms: "Terms",
     meta: {
       title: "Nitaíno Digital — Mario Rafael Ayala | Full-Stack AI Engineering",
       description:
@@ -175,6 +181,9 @@ export const translations: Record<LanguageKey, TranslationLabels> = {
     sendemail: "Enviar Correo",
     youtubeaccount: "Canal de YouTube",
     whatsappaccount: "Contactar por WhatsApp",
+    merchantRegistration: "Registro de Comerciante",
+    privacy: "Privacidad",
+    terms: "Términos",
     meta: {
       title: "Nitaíno Digital — Mario Rafael Ayala | Ingeniería Full-Stack de IA",
       description:
