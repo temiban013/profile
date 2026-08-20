@@ -9,7 +9,7 @@ import { analytics } from "./analytics";
 const CALENDLY_URL =
   process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/temiban013";
 const CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL || "marioayaladev@gmail.com";
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL || "mario@nitainodigital.com";
 
 export function CTAForm() {
   const { cta } = servicesContentES;

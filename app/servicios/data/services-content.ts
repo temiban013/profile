@@ -280,7 +280,7 @@ export const servicesContentES: ServicesContent = {
     headline: "¿Listo para que los turistas te encuentren?",
     subtext: "Agenda una consulta gratuita de 30 minutos. Sin compromiso.",
     button: "Agendar Mi Consulta Gratis",
-    alternative: "O escríbeme directamente: marioayaladev@gmail.com",
+    alternative: "O escríbeme directamente: mario@nitainodigital.com",
   },
 };
 
@@ -564,6 +564,6 @@ export const servicesContentEN: ServicesContent = {
     headline: "Ready for tourists to find you?",
     subtext: "Schedule a free 30-minute consultation. No commitment.",
     button: "Schedule My Free Consultation",
-    alternative: "Or write to me directly: marioayaladev@gmail.com",
+    alternative: "Or write to me directly: mario@nitainodigital.com",
   },
 };

@@ -74,7 +74,7 @@ export default function ServicesPage() {
       "@type": "LocalBusiness",
       name: "Nitaíno Digital",
       url: "https://www.nitainodigital.com",
-      telephone: "+1-407-476-7353",
+      telephone: "+1-787-458-5702",
       areaServed: "PR",
     },
     offers: {
@@ -102,7 +102,7 @@ export default function ServicesPage() {
     description:
       "Desarrollo web profesional para negocios en Puerto Rico. Sitios web, e-commerce, menús digitales y optimización de Google Business.",
     url: "https://www.nitainodigital.com",
-    telephone: "+1-407-476-7353",
+    telephone: "+1-787-458-5702",
     address: {
       "@type": "PostalAddress",
       addressCountry: "PR",
