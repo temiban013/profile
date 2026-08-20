@@ -54,35 +54,6 @@ export const projectData: Record<"en" | "es", Project[]> = {
       industry: "Food & Beverage",
     },
     {
-      id: "berrios-sign-library",
-      titulo: "Berríos Corporate Sign Library",
-      descripcion:
-        "B2B corporate accessibility pilot built on the Gespervis platform: a 138-sign workplace ASL library with video delivery via Cloudflare R2, a mirror-mode player so employees imitate signs as in a mirror, and a fully partner-branded learning portal with dedicated SEO. Includes the Shopper Accesible proposal for accessible in-store customer service.",
-      imagen: "/berrios-preview.webp",
-      tecnologias: [
-        "Next.js 16",
-        "TypeScript",
-        "Cloudflare R2",
-        "Video Streaming",
-        "Prisma",
-        "PostgreSQL",
-        "JSON-LD SEO",
-      ],
-      categoria: "Corporate Accessibility",
-      urlSitio: "https://www.gespervis.com/empresas/berrios",
-      // No GitHub (client project)
-      destacado: true,
-      anio: 2026,
-      businessImpact: {
-        metric: "Corporate Accessibility Pilot",
-        result: "138-sign corporate library on a partner-branded portal",
-        efficiency: "Mirror-mode video player for natural sign learning",
-        timeline: "B2B pilot launched in 2026",
-      },
-      clientType: "Enterprise Retail Partner",
-      industry: "Corporate Accessibility Training",
-    },
-    {
       id: "dinamico-menu",
       titulo: "Dinamico.menu",
       descripcion:
@@ -112,6 +83,35 @@ export const projectData: Record<"en" | "es", Project[]> = {
       },
       clientType: "SaaS Product",
       industry: "Food & Beverage Technology",
+    },
+    {
+      id: "berrios-sign-library",
+      titulo: "Berríos Corporate Sign Library",
+      descripcion:
+        "B2B corporate accessibility pilot built on the Gespervis platform: a 138-sign workplace ASL library with video delivery via Cloudflare R2, a mirror-mode player so employees imitate signs as in a mirror, and a fully partner-branded learning portal with dedicated SEO. Includes the Shopper Accesible proposal for accessible in-store customer service.",
+      imagen: "/berrios-preview.webp",
+      tecnologias: [
+        "Next.js 16",
+        "TypeScript",
+        "Cloudflare R2",
+        "Video Streaming",
+        "Prisma",
+        "PostgreSQL",
+        "JSON-LD SEO",
+      ],
+      categoria: "Corporate Accessibility",
+      urlSitio: "https://www.gespervis.com/empresas/berrios",
+      // No GitHub (client project)
+      destacado: true,
+      anio: 2026,
+      businessImpact: {
+        metric: "Corporate Accessibility Pilot",
+        result: "138-sign corporate library on a partner-branded portal",
+        efficiency: "Mirror-mode video player for natural sign learning",
+        timeline: "B2B pilot launched in 2026",
+      },
+      clientType: "Enterprise Retail Partner",
+      industry: "Corporate Accessibility Training",
     },
     {
       id: "gespervis-school",
@@ -298,35 +298,6 @@ export const projectData: Record<"en" | "es", Project[]> = {
       industry: "Alimentación y Bebidas",
     },
     {
-      id: "berrios-sign-library",
-      titulo: "Biblioteca Corporativa de Señas Berríos",
-      descripcion:
-        "Piloto B2B de accesibilidad corporativa construido sobre la plataforma Gespervis: una biblioteca de 138 señas del entorno laboral con video servido desde Cloudflare R2, un reproductor en modo espejo para que los empleados imiten las señas como frente a un espejo, y un portal de aprendizaje con la marca del socio y SEO dedicado. Incluye la propuesta Shopper Accesible para servicio al cliente accesible en tienda.",
-      imagen: "/berrios-preview.webp",
-      tecnologias: [
-        "Next.js 16",
-        "TypeScript",
-        "Cloudflare R2",
-        "Video Streaming",
-        "Prisma",
-        "PostgreSQL",
-        "JSON-LD SEO",
-      ],
-      categoria: "Accesibilidad Corporativa",
-      urlSitio: "https://www.gespervis.com/empresas/berrios",
-      // No GitHub (proyecto cliente)
-      destacado: true,
-      anio: 2026,
-      businessImpact: {
-        metric: "Piloto de Accesibilidad Corporativa",
-        result: "Biblioteca corporativa de 138 señas en un portal con marca del socio",
-        efficiency: "Reproductor en modo espejo para aprendizaje natural de señas",
-        timeline: "Piloto B2B lanzado en 2026",
-      },
-      clientType: "Socio Empresarial de Retail",
-      industry: "Adiestramiento en Accesibilidad Corporativa",
-    },
-    {
       id: "dinamico-menu",
       titulo: "Dinamico.menu",
       descripcion:
@@ -356,6 +327,35 @@ export const projectData: Record<"en" | "es", Project[]> = {
       },
       clientType: "Producto SaaS",
       industry: "Tecnología de Alimentos y Bebidas",
+    },
+    {
+      id: "berrios-sign-library",
+      titulo: "Biblioteca Corporativa de Señas Berríos",
+      descripcion:
+        "Piloto B2B de accesibilidad corporativa construido sobre la plataforma Gespervis: una biblioteca de 138 señas del entorno laboral con video servido desde Cloudflare R2, un reproductor en modo espejo para que los empleados imiten las señas como frente a un espejo, y un portal de aprendizaje con la marca del socio y SEO dedicado. Incluye la propuesta Shopper Accesible para servicio al cliente accesible en tienda.",
+      imagen: "/berrios-preview.webp",
+      tecnologias: [
+        "Next.js 16",
+        "TypeScript",
+        "Cloudflare R2",
+        "Video Streaming",
+        "Prisma",
+        "PostgreSQL",
+        "JSON-LD SEO",
+      ],
+      categoria: "Accesibilidad Corporativa",
+      urlSitio: "https://www.gespervis.com/empresas/berrios",
+      // No GitHub (proyecto cliente)
+      destacado: true,
+      anio: 2026,
+      businessImpact: {
+        metric: "Piloto de Accesibilidad Corporativa",
+        result: "Biblioteca corporativa de 138 señas en un portal con marca del socio",
+        efficiency: "Reproductor en modo espejo para aprendizaje natural de señas",
+        timeline: "Piloto B2B lanzado en 2026",
+      },
+      clientType: "Socio Empresarial de Retail",
+      industry: "Adiestramiento en Accesibilidad Corporativa",
     },
     {
       id: "gespervis-school",
