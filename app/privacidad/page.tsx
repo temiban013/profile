@@ -27,7 +27,7 @@ const EFFECTIVE_DATE = "20 de agosto de 2026";
 
 export default function PrivacidadPage() {
   return (
-    <div className="max-w-screen-md mx-auto px-6 py-16 md:py-24">
+    <div className="max-w-screen-md mx-auto px-6 pt-32 pb-16 md:pb-24">
       <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
         Política de Privacidad
       </h1>

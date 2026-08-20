@@ -27,7 +27,7 @@ const EFFECTIVE_DATE = "August 20, 2026";
 
 export default function TermsPage() {
   return (
-    <div className="max-w-screen-md mx-auto px-6 py-16 md:py-24">
+    <div className="max-w-screen-md mx-auto px-6 pt-32 pb-16 md:pb-24">
       <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
         Terms of Service
       </h1>
