@@ -35,7 +35,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Desarrollo Web para Negocios en Puerto Rico | Nitaíno Digital",
+  title: "Desarrollo Web para Negocios en Puerto Rico",
   description:
     "Sitios web profesionales para restaurantes y negocios en Puerto Rico. 7.5M turistas buscan en Google. ¿Pueden encontrarte? Consulta gratis.",
   keywords: [
@@ -103,8 +103,10 @@ export default function ServicesPage() {
       "Desarrollo web profesional para negocios en Puerto Rico. Sitios web, e-commerce, menús digitales y optimización de Google Business.",
     url: "https://www.nitainodigital.com",
     telephone: "+1-787-458-5702",
+    // streetAddress in structured data only — see app/page.tsx (decision D-3).
     address: {
       "@type": "PostalAddress",
+      streetAddress: "15 Calle Santa Ana",
       addressLocality: "Las Marías",
       addressRegion: "PR",
       postalCode: "00670",

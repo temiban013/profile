@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Términos de Servicio | Nitaíno Digital",
+  title: "Términos de Servicio",
   description:
     "Términos que rigen el uso de nitainodigital.com: alcance de los servicios, propiedad intelectual, limitación de responsabilidad y ley aplicable.",
   alternates: {
@@ -240,12 +240,18 @@ export default function TerminosPage() {
         </section>
       </div>
 
-      <div className="mt-14 pt-8 border-t border-border">
+      <div className="mt-14 pt-8 border-t border-border flex flex-wrap gap-x-6 gap-y-2">
         <Link
           href="/privacidad"
           className="text-primary hover:underline underline-offset-4"
         >
           Política de Privacidad
+        </Link>
+        <Link
+          href="/terms"
+          className="text-primary hover:underline underline-offset-4"
+        >
+          Read in English
         </Link>
       </div>
     </div>

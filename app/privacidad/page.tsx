@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Política de Privacidad | Nitaíno Digital",
+  title: "Política de Privacidad",
   description:
     "Cómo Nitaíno Digital maneja los datos de las personas que visitan nitainodigital.com: cookies, analíticas, servicios de terceros y sus derechos.",
   alternates: {
@@ -279,12 +279,18 @@ export default function PrivacidadPage() {
         </section>
       </div>
 
-      <div className="mt-14 pt-8 border-t border-border">
+      <div className="mt-14 pt-8 border-t border-border flex flex-wrap gap-x-6 gap-y-2">
         <Link
           href="/terminos"
           className="text-primary hover:underline underline-offset-4"
         >
           Términos de Servicio
+        </Link>
+        <Link
+          href="/privacy"
+          className="text-primary hover:underline underline-offset-4"
+        >
+          Read in English
         </Link>
       </div>
     </div>

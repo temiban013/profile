@@ -85,7 +85,7 @@ const Footer = () => {
           <ul className="mt-4 flex items-center justify-center gap-x-6 gap-y-2 flex-wrap px-6">
             <li>
               <Link
-                href="/privacidad"
+                href={language === "en" ? "/privacy" : "/privacidad"}
                 className="text-muted-foreground text-sm hover:text-primary transition-colors duration-300 hover:underline underline-offset-4"
               >
                 {t.privacy}
@@ -93,7 +93,7 @@ const Footer = () => {
             </li>
             <li>
               <Link
-                href="/terminos"
+                href={language === "en" ? "/terms" : "/terminos"}
                 className="text-muted-foreground text-sm hover:text-primary transition-colors duration-300 hover:underline underline-offset-4"
               >
                 {t.terms}

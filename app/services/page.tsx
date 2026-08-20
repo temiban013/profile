@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Web Development for Puerto Rico Businesses | Nitaíno Digital",
+  title: "Web Development for Puerto Rico Businesses",
   description:
     "Professional websites for restaurants and businesses in Puerto Rico. 7.5M tourists search on Google. Can they find you? Free consultation.",
   keywords: [

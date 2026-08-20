@@ -39,6 +39,9 @@ const contactInfo = {
   timezone: "Eastern Time (EST/EDT)",
 };
 
+// Convert phone to E.164 format (RFC 3966 compliant tel: hrefs)
+const toE164 = (phone: string) => `+${phone.replace(/\D/g, "")}`;
+
 // Translations
 const translations = {
   en: {
@@ -256,7 +259,7 @@ const Contact: React.FC = () => {
                   <span className="text-sm">{contactInfo.email}</span>
                 </Link>
                 <Link
-                  href={`tel:${contactInfo.phone}`}
+                  href={`tel:${toE164(contactInfo.phone)}`}
                   className="flex items-center p-3 rounded-lg hover:bg-primary/5 transition-colors group"
                 >
                   <Phone className="h-4 w-4 text-muted-foreground group-hover:text-primary mr-3" />

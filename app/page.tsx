@@ -151,8 +151,14 @@ export default function Home() {
       "Digital Transformation", "SEO & Generative Engine Optimization"
     ],
     slogan: "Digital solutions rooted in heritage",
+    // streetAddress is published in structured data only, never in visible
+    // page text (decision D-3, rev. 5). It is the operational-address artifact
+    // Twilio's onboarding team asked for in writing; error 18603 fired twice
+    // on this address. Machine-readable for automated verification, absent
+    // from the rendered footer. Note it remains public and indexable.
     address: {
       "@type": "PostalAddress",
+      streetAddress: "15 Calle Santa Ana",
       addressLocality: "Las Marías",
       addressRegion: "PR",
       postalCode: "00670",
