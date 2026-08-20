@@ -16,6 +16,15 @@ When writing Next.js code, consult the version-matched docs at
 **Task Completion (MANDATORY)**
 - `npm run type-check` must pass (strict TypeScript)
 - `npm run build` must pass
+- **Never run git.** Mario runs every `add`, `commit`, and `push` himself —
+  these deploy straight to a live customer-facing site.
+- **A turn MUST NOT end with a dirty working tree and no commit message.**
+  Before replying, run `git status`. If anything is modified, staged, or
+  untracked, the reply MUST include the `git add` scope and a complete,
+  ready-to-paste commit message. This is a blocking output requirement, not a
+  reminder — "commit this when ready" without the message is an incomplete
+  turn. If the work spans several concerns, give one message per commit and
+  say which files belong to each.
 
 **Content Strategy**
 - Lead with business outcomes, not technical details
