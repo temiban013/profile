@@ -16,6 +16,8 @@ const scriptSrc = [
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  // Dev only: let a phone on the local network load dev assets and HMR.
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
   images: {
     formats: ['image/avif', 'image/webp'],
   },
@@ -61,7 +63,10 @@ const nextConfig: NextConfig = {
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
-              "upgrade-insecure-requests",
+              // Production only: over plain http on a LAN IP (phone testing against
+              // `pnpm dev -H 0.0.0.0`) it rewrites every asset URL to https and
+              // the page loads unstyled. localhost is exempt, a LAN IP is not.
+              ...(isDev ? [] : ["upgrade-insecure-requests"]),
             ].join("; "),
           },
           {
