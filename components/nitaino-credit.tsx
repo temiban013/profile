@@ -41,39 +41,21 @@ const CONTENT = {
 } as const;
 
 // ──────────────────────────────────────────────
-// Inline SVG: Stylized coquí + code bracket mark
+// Inline SVG: traced three-polygon brand mark
+// (same shapes as public/nitaino-mark.svg — PTF-107)
 // ──────────────────────────────────────────────
 
 function NitainoMark({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 24 24"
-      fill="none"
+      viewBox="0 0 512 512"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden="true"
     >
-      <path
-        d="M8 6L3 12L8 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.6"
-      />
-      <path
-        d="M16 6L21 12L16 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.6"
-      />
-      <path
-        d="M12 8C10.5 8 9.5 9 9.5 10.5C9.5 13 12 15.5 12 15.5C12 15.5 14.5 13 14.5 10.5C14.5 9 13.5 8 12 8Z"
-        fill="currentColor"
-        opacity="0.85"
-      />
+      <polygon points="36,255 409,106 257,466" fill="#53d5f6" />
+      <polygon points="101,106 254,255 101,404" fill="#183673" />
+      <polygon points="257,46 476,253 257,253" fill="#286ce0" />
     </svg>
   );
 }

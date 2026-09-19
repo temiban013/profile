@@ -283,6 +283,11 @@ export function generateMetadata(language: LanguageKey): Metadata {
           type: "image/x-icon",
         },
       ],
+      other: {
+        rel: "mask-icon",
+        url: "/safari-pinned-tab.svg",
+        color: "#183673",
+      },
     },
     // metadata.manifest intentionally omitted — app/manifest.ts (Next.js
     // File Convention) auto-emits <link rel="manifest" href="/manifest.webmanifest">.
