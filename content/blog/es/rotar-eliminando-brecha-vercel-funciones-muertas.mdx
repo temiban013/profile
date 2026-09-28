@@ -25,13 +25,13 @@ La tesis de este post es sencilla: la forma más rápida y más segura de maneja
 
 No voy a repetir aquí todo el reporte de incidente de Vercel; el boletín es público y vale la pena leerlo directo de la fuente: [el boletín de seguridad de Vercel de abril de 2026](https://vercel.com/kb/bulletin/vercel-april-2026-security-incident). Pero la forma del incidente importa para el resto de este post, así que aquí va la versión corta, tomada de ese boletín.
 
-Vercel dice que el incidente "involved unauthorized access to certain internal Vercel systems" (involucró acceso no autorizado a ciertos sistemas internos de Vercel; traducción mía). La cadena por la que entró el atacante es la parte a la que sigo volviendo. Según el boletín: "the incident originated with a compromise of Context.ai, a third-party AI tool used by a Vercel employee. The attacker used that access to take over the employee's individual Vercel Google Workspace account, which enabled them to gain access to that employee's Vercel account. From there, they were able to pivot into a Vercel environment, and subsequently maneuvered through systems to enumerate and decrypt non-sensitive environment variables" (el incidente se originó con el compromiso de Context.ai, una herramienta de IA de terceros usada por un empleado de Vercel. El atacante usó ese acceso para tomar control de la cuenta individual de Google Workspace del empleado, lo que le permitió acceder a la cuenta de Vercel de ese empleado. Desde ahí pudo moverse hacia un entorno de Vercel, y luego maniobrar entre sistemas para enumerar y desencriptar variables de entorno no sensibles; traducción mía).
+Vercel dice que el incidente "involved unauthorized access to certain internal Vercel systems" (involucró acceso no autorizado a ciertos sistemas internos de Vercel; traducción mía). La cadena por la que entró el atacante es la parte a la que sigo volviendo. Según el boletín, todo empezó con Context.ai, una herramienta de IA de terceros que usaba un empleado de Vercel. El atacante la comprometió, de ahí se quedó con la cuenta de Google Workspace de ese empleado y después con su cuenta de Vercel, y una vez adentro se fue moviendo por los sistemas internos hasta poder enumerar y desencriptar las variables de entorno que no estaban marcadas como sensibles.
 
 Vale la pena quedarse con la manera en que Vercel lo enmarca: "Our investigation has revealed that the incident originated from a small, third-party AI tool whose Google Workspace OAuth app was the subject of a broader compromise, potentially affecting its hundreds of users across many organizations" (nuestra investigación reveló que el incidente se originó en una herramienta de IA de terceros, pequeña, cuya aplicación OAuth de Google Workspace fue objeto de un compromiso más amplio, afectando potencialmente a sus cientos de usuarios en muchas organizaciones; traducción mía). Una herramienta pequeña, un permiso de OAuth, y una cadena de decisiones de confianza que cada una por separado parecía razonable, terminaron con alguien enumerando variables de entorno dentro de una plataforma de hospedaje. Ya he escrito antes sobre cómo los atacantes explotan justo este tipo de confianza en capas; en mi post sobre [la estafa de la entrevista de trabajo crypto](/blog/estafa-entrevista-crypto), el blanco eran desarrolladores individuales en vez de una plataforma, pero el mecanismo es el mismo: encontrar el eslabón más pequeño y menos vigilado en la cadena de confianza de alguien, y jalar de ahí.
 
 La recomendación de Vercel a sus clientes fue directa. Las variables de entorno no sensibles (las que se desencriptan a texto plano en vez de estar marcadas como "sensitive") deben tratarse como potencialmente expuestas y rotarse como prioridad. Vercel también recomienda activar la función de variables de entorno sensibles de ahí en adelante, habilitar autenticación multifactor, revisar el registro de actividad, y dejar la Protección de Despliegue como mínimo en Standard. Vercel también afirma que ningún paquete de npm publicado por Vercel fue comprometido, lo cual importa si te preocupaba un problema de cadena de suministro del lado del build y no del lado de los secretos.
 
-Quiero ser preciso sobre lo que no estoy afirmando aquí. Vercel no me contactó. Nada en mi proyecto fue señalado. No tengo evidencia de que alguna de mis variables de entorno haya sido leída por nadie. Lo que tengo es la guía del boletín, que aplica a todo cliente de Vercel que corre variables no sensibles: tratarlas como potencialmente expuestas, y actuar en consecuencia. Esa guía, no una notificación personal, fue lo que me mandó a revisar mi propio proyecto.
+Quiero ser preciso sobre lo que estoy afirmando aquí. No tengo evidencia de que alguna de mis variables de entorno haya sido leída por nadie. Lo que tengo es la guía del boletín, que aplica a todo cliente de Vercel que corre variables no sensibles: tratarlas como potencialmente expuestas, y actuar en consecuencia. Esa guía fue lo que me mandó a revisar mi propio proyecto.
 
 ---
 
@@ -92,9 +92,9 @@ import "server-only";
 import { z } from "zod";
 
 const serverEnvSchema = z.object({
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.url(),
   EMAIL_API_KEY: z.string().min(1),
-  EMAIL_FROM: z.string().email(),
+  EMAIL_FROM: z.email(),
 });
 
 const parsed = serverEnvSchema.safeParse(process.env);

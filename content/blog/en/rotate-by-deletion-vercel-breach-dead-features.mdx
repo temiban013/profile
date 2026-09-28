@@ -25,13 +25,13 @@ The thesis of this post is simple: the fastest, safest way to handle a credentia
 
 I'm not going to relitigate Vercel's incident report here; the bulletin is public and worth reading directly at the source: [Vercel's April 2026 security incident bulletin](https://vercel.com/kb/bulletin/vercel-april-2026-security-incident). But the shape of it matters for the rest of this post, so here's the short version, sourced from that bulletin.
 
-Vercel says the incident "involved unauthorized access to certain internal Vercel systems." The chain that got the attacker in is the part I keep coming back to. Per the bulletin, "the incident originated with a compromise of Context.ai, a third-party AI tool used by a Vercel employee. The attacker used that access to take over the employee's individual Vercel Google Workspace account, which enabled them to gain access to that employee's Vercel account. From there, they were able to pivot into a Vercel environment, and subsequently maneuvered through systems to enumerate and decrypt non-sensitive environment variables."
+Vercel says the incident "involved unauthorized access to certain internal Vercel systems." The chain that got the attacker in is the part I keep coming back to. Per the bulletin, the attacker compromised Context.ai, a third-party AI tool a Vercel employee used, took over that employee's Google Workspace account and then their Vercel account, and from there moved through internal systems until they could enumerate and decrypt environment variables that weren't marked sensitive.
 
 Vercel's own framing is worth sitting with: "Our investigation has revealed that the incident originated from a small, third-party AI tool whose Google Workspace OAuth app was the subject of a broader compromise, potentially affecting its hundreds of users across many organizations." A small tool, an OAuth grant, and a chain of individually reasonable trust decisions ended with someone enumerating environment variables inside a hosting platform. I've written before about attackers exploiting exactly this kind of layered trust; in my post on [the crypto job interview scam](/blog/crypto-job-scam-exposure), the target was individual developers instead of a platform, but the mechanism is the same: find the smallest, least-scrutinized link in someone's chain of trust and pull on it.
 
 Vercel's guidance to customers was direct. Non-sensitive environment variables (the ones that decrypt to plaintext rather than being marked "sensitive") should be treated as potentially exposed and rotated as a priority. Vercel also recommends turning on the sensitive environment variables feature going forward, enabling multi-factor authentication, reviewing your activity log, and setting Deployment Protection to Standard at minimum. Vercel states plainly that no npm packages published by Vercel were compromised, which matters if you were worried about a supply-chain problem on the build side rather than the secrets side.
 
-I want to be precise about what I'm not claiming here. Vercel did not contact me. Nothing in my project was flagged. I have no evidence that any of my environment variables were actually read by anyone. What I have is the bulletin's guidance, which applies to every Vercel customer running non-sensitive variables: treat them as potentially exposed, and act accordingly. That guidance, not a personal notification, is what sent me into my own project.
+I want to be precise about what I'm claiming here. I have no evidence that any of my environment variables were actually read by anyone. What I have is the bulletin's guidance, which applies to every Vercel customer running non-sensitive variables: treat them as potentially exposed, and act accordingly. That guidance is what sent me into my own project.
 
 ---
 
@@ -92,9 +92,9 @@ import "server-only";
 import { z } from "zod";
 
 const serverEnvSchema = z.object({
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.url(),
   EMAIL_API_KEY: z.string().min(1),
-  EMAIL_FROM: z.string().email(),
+  EMAIL_FROM: z.email(),
 });
 
 const parsed = serverEnvSchema.safeParse(process.env);
