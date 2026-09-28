@@ -1,0 +1,119 @@
+---
+title: "Rotar eliminando: lo que me enseñó la brecha de Vercel sobre las funciones muertas"
+slug: rotar-eliminando-brecha-vercel-funciones-muertas
+description: "El incidente de seguridad de Vercel de abril 2026 me llevó a auditar mis variables de entorno y borrar una integración de Resend que ya no servía."
+date: 2026-04-29
+author: mario-ayala
+locale: es
+category: Seguridad
+subject: web-development
+tags: ["Seguridad", "Vercel", "Next.js", "Variables de Entorno", "Cadena de Suministro", "Respuesta a Incidentes"]
+featured: false
+draft: false
+translationSlug: rotate-by-deletion-vercel-breach-dead-features
+---
+
+Vercel publicó un boletín de seguridad el 19 de abril de 2026, y lo leí como leo casi todos los avisos de seguridad de mis proveedores: buscando las partes que tocan mi propio stack. Cuando terminé, no estaba pensando en el atacante. Estaba pensando en la pantalla de variables de entorno de mi propio proyecto en Vercel, y en cuánto tiempo llevaba sin revisar de verdad qué había ahí guardado.
+
+En marzo escribí sobre [qué pasa cuando tu proveedor de IA se convierte en un actor geopolítico](/blog/proveedor-ia-lista-negra-anthropic-pentagono-desarrolladores) — riesgo de proveedor en la capa donde eliges qué modelo corre tu flujo de trabajo. Esto es el mismo problema una capa más abajo: riesgo de proveedor en la capa que aloja ese flujo de trabajo. La lección aquí resultó más filosa, porque no se quedó en lo teórico. Me mandó a hurgar en mi propio proyecto, y lo que encontré no fue una amenaza. Fue una función que llevaba tiempo fallando en silencio, acumulando riesgo sin ninguna razón.
+
+La tesis de este post es sencilla: la forma más rápida y más segura de manejar una credencial que aparece en una auditoría es borrar lo que la necesita, si ya nada legítimo la necesita. No siempre; hay integraciones vivas y esenciales que sí necesitan una rotación de verdad, no un borrado. Pero cuando la auditoría saca a la luz una variable que nadie está usando, borrarla le gana a rotarla, porque rotar mantiene vivos tanto la superficie de ataque como el mantenimiento, mientras que borrar elimina los dos.
+
+---
+
+## Lo que pasó en Vercel
+
+No voy a repetir aquí todo el reporte de incidente de Vercel; el boletín es público y vale la pena leerlo directo de la fuente: [el boletín de seguridad de Vercel de abril de 2026](https://vercel.com/kb/bulletin/vercel-april-2026-security-incident). Pero la forma del incidente importa para el resto de este post, así que aquí va la versión corta, tomada de ese boletín.
+
+Vercel dice que el incidente "involved unauthorized access to certain internal Vercel systems" (involucró acceso no autorizado a ciertos sistemas internos de Vercel; traducción mía). La cadena por la que entró el atacante es la parte a la que sigo volviendo. Según el boletín: "the incident originated with a compromise of Context.ai, a third-party AI tool used by a Vercel employee. The attacker used that access to take over the employee's individual Vercel Google Workspace account, which enabled them to gain access to that employee's Vercel account. From there, they were able to pivot into a Vercel environment, and subsequently maneuvered through systems to enumerate and decrypt non-sensitive environment variables" (el incidente se originó con el compromiso de Context.ai, una herramienta de IA de terceros usada por un empleado de Vercel. El atacante usó ese acceso para tomar control de la cuenta individual de Google Workspace del empleado, lo que le permitió acceder a la cuenta de Vercel de ese empleado. Desde ahí pudo moverse hacia un entorno de Vercel, y luego maniobrar entre sistemas para enumerar y desencriptar variables de entorno no sensibles; traducción mía).
+
+Vale la pena quedarse con la manera en que Vercel lo enmarca: "Our investigation has revealed that the incident originated from a small, third-party AI tool whose Google Workspace OAuth app was the subject of a broader compromise, potentially affecting its hundreds of users across many organizations" (nuestra investigación reveló que el incidente se originó en una herramienta de IA de terceros, pequeña, cuya aplicación OAuth de Google Workspace fue objeto de un compromiso más amplio, afectando potencialmente a sus cientos de usuarios en muchas organizaciones; traducción mía). Una herramienta pequeña, un permiso de OAuth, y una cadena de decisiones de confianza que cada una por separado parecía razonable, terminaron con alguien enumerando variables de entorno dentro de una plataforma de hospedaje. Ya he escrito antes sobre cómo los atacantes explotan justo este tipo de confianza en capas; en mi post sobre [la estafa de la entrevista de trabajo crypto](/blog/estafa-entrevista-crypto), el blanco eran desarrolladores individuales en vez de una plataforma, pero el mecanismo es el mismo: encontrar el eslabón más pequeño y menos vigilado en la cadena de confianza de alguien, y jalar de ahí.
+
+La recomendación de Vercel a sus clientes fue directa. Las variables de entorno no sensibles (las que se desencriptan a texto plano en vez de estar marcadas como "sensitive") deben tratarse como potencialmente expuestas y rotarse como prioridad. Vercel también recomienda activar la función de variables de entorno sensibles de ahí en adelante, habilitar autenticación multifactor, revisar el registro de actividad, y dejar la Protección de Despliegue como mínimo en Standard. Vercel también afirma que ningún paquete de npm publicado por Vercel fue comprometido, lo cual importa si te preocupaba un problema de cadena de suministro del lado del build y no del lado de los secretos.
+
+Quiero ser preciso sobre lo que no estoy afirmando aquí. Vercel no me contactó. Nada en mi proyecto fue señalado. No tengo evidencia de que alguna de mis variables de entorno haya sido leída por nadie. Lo que tengo es la guía del boletín, que aplica a todo cliente de Vercel que corre variables no sensibles: tratarlas como potencialmente expuestas, y actuar en consecuencia. Esa guía, no una notificación personal, fue lo que me mandó a revisar mi propio proyecto.
+
+---
+
+## El inventario
+
+Así que abrí la pantalla de variables de entorno de mi proyecto de portafolio en Vercel y la fui recorriendo una entrada a la vez, haciéndome la única pregunta que de verdad importa para cada una: ¿quién consume esto?
+
+Para una variable que está viva, esa pregunta tiene una respuesta de una línea: un pedazo de código específico, todavía en producción, todavía haciendo su trabajo, la lee. Para esas variables está escrita la guía de Vercel. Rótalas y márcalas como sensibles.
+
+Tres variables no tenían esa respuesta tan limpia: `RESEND_API_KEY`, `RESEND_FROM_EMAIL` y `RESEND_TO_EMAIL`. Resend es un proveedor de correo transaccional, y esas tres variables existían para que un solo pedazo de código enviara correo a través de él. Rastreé al consumidor. Había exactamente uno: el formulario de contacto en el llamado a la acción de mi página `/servicios`.
+
+Tener un solo consumidor es en realidad el caso bueno para este tipo de inventario: es fácil de razonar. Lo malo vino después. Ese único consumidor estaba roto en producción. El formulario renderizaba bien y aceptaba el input. Los mensajes no llegaban a ningún lado.
+
+---
+
+## Por qué borrar le ganó a rotar
+
+Aquí está la bifurcación a la que llega tarde o temprano cualquiera de estas auditorías. Encuentras una variable, rastreas a su consumidor, y tienes que decidir qué hacer con la credencial. El boletín de Vercel es explícito en que la respuesta para secretos expuestos es rotarlos, no borrar el proyecto: "Deleting your Vercel projects or account is not sufficient to eliminate risk. Compromised secrets may still provide access to production systems, so you must rotate them before deleting your projects or account" (borrar tus proyectos o cuenta de Vercel no basta para eliminar el riesgo. Los secretos comprometidos aún pueden dar acceso a sistemas de producción, así que debes rotarlos antes de borrar tus proyectos o tu cuenta; traducción mía). Eso es correcto, y es una distinción que vale la pena precisar, porque "rotar eliminando" no es una excusa para saltarse la rotación. Es una afirmación específica sobre qué cuenta como una rotación completa cuando lo que consume el secreto es código muerto.
+
+Borrar solo las variables `RESEND_*` de mi proyecto en Vercel no habría rotado nada. La llave de API en sí seguiría siendo válida en Resend hasta que yo la revocara ahí. Cualquiera que tuviera esa llave (copiada de un log de build, de un archivo `.env` filtrado, de una estación de trabajo comprometida, lo que sea) todavía podría llamar a la API de Resend con ella después de que yo la quitara del panel de Vercel. Que Vercel borre la variable y que la credencial deje de ser válida son dos eventos distintos, y solo el segundo es rotación de verdad.
+
+Lo que hizo este caso distinto de un "rota la llave" normal es que el código que consumía la llave estaba roto y no hacía falta. Rotar una llave para una función que sigue sirviendo tráfico real es lo correcto: generar una credencial nueva, actualizarla en todos los lugares donde se consume, confirmar que nada se rompe, revocar la vieja. Pero rotar una llave para una función que tiene un solo consumidor, y ese consumidor de todos modos no funciona, solo produce un secreto nuevo, igual de inútil, sentado en el mismo entorno, listo para ser lo próximo que un atacante enumere. El costo de mantenimiento tampoco desaparece; alguien igual tiene que acordarse de que esa integración existe, que necesita un dominio remitente verificado, que tiene tres variables amarradas a ella.
+
+El 21 de abril de 2026 eliminé la integración de Resend por completo en lugar de rotar su llave. El llamado a la acción del formulario de contacto en `/servicios` pasó a ser un enlace a Calendly y un enlace `mailto`: menos piezas en movimiento, ninguna credencial del lado del servidor, y cero dependencia de que un proveedor de correo transaccional estuviera bien configurado. Con eso se fueron también cinco dependencias del proyecto. Ese mismo día también saqué una actualización a Next.js 16 y un endurecimiento de CSP, que es otra historia, pero dejó el proyecto en un estado donde eliminar toda una integración fue un cambio pequeño y controlado, no uno arriesgado.
+
+La rotación de verdad, en el sentido de "revocar la credencial en su origen" que menciona el boletín, es un procedimiento corto y mecánico, y vale la pena escribirlo como procedimiento y no como anécdota, porque es el mismo procedimiento para cualquier integración muerta que encuentres en tu propia auditoría: borrar la llave de API en el panel del propio proveedor para que la credencial deje de funcionar, borrar las variables correspondientes de tu proyecto en Vercel en todos los entornos (producción, preview y desarrollo), y volver a desplegar para que ningún build en caché siga guardando los valores viejos. El orden importa. Revoca en el origen primero; una variable borrada de Vercel mientras la llave sigue viva en el proveedor no es una credencial rotada, es una credencial escondida.
+
+---
+
+## La falla silenciosa
+
+La parte que me incomoda más que el ángulo de seguridad es cuánto tiempo puede pasar un formulario roto en producción luciendo completamente normal. No fue un build roto. La página cargaba, el formulario renderizaba, los campos aceptaban el input. La falla estaba del otro lado del botón de enviar: un dominio remitente sin verificar en el proveedor de correo, sobre un cupo de dominio del plan gratuito que ya estaba ocupado por otro de mis proyectos.
+
+La falla fue silenciosa en la dirección que más importaba: hacia mí. El manejador de la ruta hacía lo que hace casi cualquier manejador cuando falla un envío. Le devolvía un error al visitante y escribía una línea en el log del servidor. Ninguna alerta, ningún correo, ningún panel poniéndose rojo. Una línea de log que nadie está leyendo no es una señal.
+
+No sé cuánto tiempo llevaba roto el formulario. No sé cuántos mensajes se perdieron. Esa es una respuesta honesta, y también es la lección de fondo: un formulario de contacto no es una función que puedas verificar solo mirándola. Necesita tener una forma de avisarte, por sí sola, cuando deja de hacer su trabajo.
+
+Que una interfaz se vea bien no es evidencia de que el sistema detrás funcione. Ahí exactamente vive este tipo de falla, y ahí exactamente nadie mira hasta que algo obliga a hacerse la pregunta. En mi caso, lo que obligó fue un boletín de seguridad de mi proveedor de hospedaje, no una función rota que alguien reportara.
+
+---
+
+## Una lista práctica para Next.js en Vercel
+
+Nada de esto requiere un incidente de seguridad para ponerse en práctica. Unos cuantos hábitos, más o menos en orden de qué tan barato es adoptarlos:
+
+**Marca los secretos de verdad como sensibles.** Las variables no sensibles de Vercel se desencriptan a texto plano, y son justo las que tocó este incidente. Si un valor es una credencial y no una bandera de configuración pública, márcala como sensible para que no quede legible en texto plano más adelante, ya sea desde el propio panel de Vercel o desde cualquiera con el acceso equivocado.
+
+**Dale a cada variable un dueño con nombre.** No un equipo, no "el backend", sino el pedazo de código específico que la consume. Cuando llegue una auditoría como esta, "¿quién consume esto?" necesita una respuesta de una línea, no una investigación.
+
+**Borra las variables sin uso cuando las encuentres, en vez de rotarlas.** Si ya nada legítimo lee una credencial, rotarla solo produce un secreto nuevo con el mismo propósito de cero. Quita la variable, quita el código que la habría consumido, y revoca la credencial en su origen.
+
+**Valida el entorno de servidor requerido al arrancar, para que un valor faltante o mal configurado falle con ruido en vez de en silencio.** Por sí sola no habría atrapado mi problema con Resend, y explico por qué debajo del ejemplo. Lo que sí hace es convertir "¿esto está configurado siquiera?" en una pregunta que la aplicación contesta al arrancar, en vez de un misterio en producción.
+
+Aquí va un ejemplo genérico de eso último, no código sacado de mi portafolio, solo un patrón que vale la pena adaptar. Necesita los paquetes `zod` y `server-only`:
+
+```ts
+import "server-only";
+import { z } from "zod";
+
+const serverEnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  EMAIL_API_KEY: z.string().min(1),
+  EMAIL_FROM: z.string().email(),
+});
+
+const parsed = serverEnvSchema.safeParse(process.env);
+
+if (!parsed.success) {
+  // Report key names only. Never print values.
+  const keys = [...new Set(parsed.error.issues.map((issue) => issue.path.join(".")))];
+  throw new Error(`Invalid or missing server environment variables: ${keys.join(", ")}`);
+}
+
+export const serverEnv = parsed.data;
+```
+
+Sé honesto contigo mismo sobre qué valida esto y qué no. Verifica presencia y forma al cargar el módulo, si `EMAIL_API_KEY` está definida, si `EMAIL_FROM` es una cadena con forma de dirección de correo, y avienta un error con los nombres de las llaves que fallaron, nunca con sus valores. Lo que no te puede decir es si Resend, o cualquier otro proveedor, de verdad va a aceptar esa llave y ese remitente. Un formulario como el mío puede pasar exactamente este tipo de validación estando roto: una dirección de remitente puede tener la forma perfecta y aun así pertenecer a un dominio que el proveedor no ha verificado. Probar que un servicio de terceros acepta tus credenciales necesita una verificación de salud real contra ese servicio, no una validación de esquema contra `process.env`. La validación de esquema atrapa "alguien se le olvidó configurar esto." No atrapa "esto está configurado con algo que el proveedor va a rechazar en silencio."
+
+---
+
+## Verificar, no asumir
+
+El boletín no comprometió nada mío que yo sepa. Lo que sí hizo fue obligarme a hacer una pregunta que debí haberme hecho con regularidad, en vez de esperar a que un incidente de un proveedor me la impusiera: de cada credencial en este proyecto, ¿quién la usa, y todavía funciona? La mayoría de las respuestas estaban bien. Una no. Y el arreglo no fue una llave rotada. Fue una cosa menos en el proyecto que necesitara una llave.
+
+*Si te interesa el riesgo de proveedores en general, he escrito sobre qué pasa cuando ese riesgo está [en la capa del proveedor de IA en vez de en la capa de hospedaje](/blog/proveedor-ia-lista-negra-anthropic-pentagono-desarrolladores), y sobre [endurecer el resto de una configuración de Claude Code y Next.js](/blog/optimizacion-claude-code-seguridad-eficiencia) una vez que ya cerraste los huecos obvios.*
