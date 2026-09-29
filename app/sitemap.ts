@@ -1,7 +1,7 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
 import { getAllPosts, getPostTranslation } from "@/lib/blog/content";
-import { blogSubjects } from "@/config/blog-subjects";
+import { getActiveSubjects } from "@/lib/blog/subjects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Base URL for your site
@@ -52,8 +52,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   };
 
-  // Blog subject pages for better organization and SEO
-  const subjectEntries = blogSubjects.map((subject) => ({
+  // Blog subject pages: only subjects with at least one published post.
+  // A configured subject with no posts would point crawlers at an empty page.
+  const subjectEntries = getActiveSubjects().map((subject) => ({
     url: `${baseUrl}/blog/subjects/${subject.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
