@@ -65,6 +65,34 @@ export const blogSubjects: BlogSubject[] = [
     icon: "TrendingUp",
     order: 3,
   },
+  {
+    slug: "accessibility",
+    name: {
+      en: "Accessibility",
+      es: "Accesibilidad",
+    },
+    description: {
+      en: "Inclusive design, WCAG conformance, and building for people with disabilities",
+      es: "Diseño inclusivo, cumplimiento con WCAG y desarrollo para personas con discapacidad",
+    },
+    color: "bg-sky-700",
+    icon: "Accessibility",
+    order: 4,
+  },
+  {
+    slug: "faith-technology",
+    name: {
+      en: "Faith & Technology",
+      es: "Fe y Tecnología",
+    },
+    description: {
+      en: "Reflections on faith, ethics, and human dignity in building and using technology",
+      es: "Reflexiones sobre la fe, la ética y la dignidad humana al crear y usar la tecnología",
+    },
+    color: "bg-rose-700",
+    icon: "HandHeart",
+    order: 5,
+  },
 ] as const;
 
 /** Get all subject slugs for validation */
