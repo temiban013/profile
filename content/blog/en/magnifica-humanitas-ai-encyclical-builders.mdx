@@ -1,0 +1,106 @@
+---
+title: "Magnifica Humanitas: What the Pope's AI Encyclical Asks of Those Who Build It"
+slug: magnifica-humanitas-ai-encyclical-builders
+description: "Pope Leo XIV's encyclical on AI says technology is never neutral. What that asks of the people who design it, and four practices a builder can use today."
+date: 2026-06-18
+author: mario-ayala
+locale: en
+category: Faith & Technology
+subject: faith-technology
+tags: ["Magnifica Humanitas", "AI Ethics", "Human Dignity", "Faith", "Responsible AI", "Software Engineering"]
+featured: false
+draft: false
+translationSlug: magnifica-humanitas-enciclica-ia-constructores
+---
+
+On May 25, 2026, the Vatican released Pope Leo XIV's first encyclical, *Magnifica humanitas*, and presented it that morning in the New Synod Hall. Alongside two cardinals and two theology professors, [Vatican News](https://www.vaticannews.va/en/pope/news/2026-05/pope-leo-xiv-first-encyclical-magnifica-humanitas.html) listed Christopher Olah, co-founder of Anthropic and head of research on the interpretability of artificial intelligence, among the announced speakers. In his address at the presentation, the Pope thanked Olah by name for accepting the invitation ([Holy See Press Office](https://press.vatican.va/content/salastampa/en/bollettino/pubblico/2026/05/25/260525g.html)).
+
+I build software with AI agents, mostly through Claude Code, Anthropic's coding tool, so this was not news from another world. The next day, a consortium of four universities announced research on how AI models handle religion in everyday questions. Together, the two put a direct question to people like me: if the tools we build are not neutral, what exactly are we responsible for?
+
+This post is a builder's reading. *Magnifica humanitas* is a document of Catholic social teaching, but its questions for the people who design technology apply whatever the reader's faith, and those are the questions I want to work through. I will not draw theological conclusions. I quote the [official English text on vatican.va](https://www.vatican.va/content/leo-xiv/en/encyclicals/documents/20260515-magnifica-humanitas.html), cite it by paragraph number in parentheses, and paraphrase the rest.
+
+---
+
+## What the Document Says
+
+The full title is *Magnifica humanitas: On Safeguarding the Human Person in the Time of Artificial Intelligence*. The Pope signed it on May 15, the 135th anniversary of Leo XIII's *Rerum novarum* ([Vatican News](https://www.vaticannews.va/en/pope/news/2026-05/pope-leo-xiv-encyclical-magnifica-humanitas-ai.html)). That 1891 encyclical, concerned with the protection of workers in the industrial age, is where the Church's modern social teaching begins (148), and the new text returns to it when it turns to work (148, 155).
+
+After two chapters on the Church's social doctrine and its principles, the document turns to technology and power, then to three areas: truth, work and freedom. A final chapter addresses the culture of power, including war.
+
+The premise that runs through all of it is in paragraph 9. In the abstract, the text says, technology is neither the answer to humanity's problems nor evil in itself. In practice, though, "technology is never neutral, because it takes on the characteristics of those who devise, finance, regulate and use it" (9).
+
+Paragraph 104 draws the consequence for AI. It cannot be treated as morally neutral, because every tool carries choices in what it measures, what it leaves out, what it optimizes and how it sorts people and situations. From there comes the line that matters most to anyone who builds: "ethical discernment cannot be limited to asking whether we are using a system for good or bad purposes" (104). Discernment also has to look at how the system is designed, and at the picture of the person and of society that is built into its data and models.
+
+Then, in paragraph 111, the Pope makes a direct appeal to the people who develop AI: "Developers, therefore, bear a particular ethical and spiritual responsibility, for every design choice reflects a vision of humanity" (111). Like an artist weighing what a work conveys, developers are asked to treat the values in their projects seriously: with transparency, responsibility toward affected communities, and care that what they grow is a real good.
+
+One more passage caught my attention because it is technically precise. Paragraph 98 observes that today's AI systems are grown more than they are built: developers create a framework within which the system develops, and its internal representations remain largely unknown, even to its designers. Interpretability, the research area Olah leads at Anthropic, studies exactly those internals, and the text asks for both deeper scientific research and moral discernment (98).
+
+---
+
+## The CEFE-AI Gap
+
+On May 26, the day after the encyclical, [BYU announced](https://news.byu.edu/intellect/new-research-from-byu-led-multi-institution-consortium-finds-all-major-ai-models-ignore-faith-religion-in-responses) research from a new group of researchers at Brigham Young University, Baylor University, the University of Notre Dame and Yeshiva University: the Consortium for Evaluating Faith and Ethics in AI, or CEFE-AI. Their work is not a response to the encyclical, but it measures something paragraph 104 asks about: what picture of the person is built into a model.
+
+The first paper, [*Omissive Bias in Religious Representation*](https://arxiv.org/abs/2605.24319), asks a deliberately narrow question: when people ask an AI model an everyday ethical or personal question, about grief, forgiveness, marriage, honesty or purpose, does the answer mention religion at all? The bar was set very low: any mention of a religion, a religious practice or a religious leader counted.
+
+The researchers surveyed a nationally representative sample of 1,125 Americans about which questions they would expect to include some religious perspective. From a pool of 343 questions, they kept the 150 with the largest mismatch between people and models, and ran them against 27 frontier and open-source models. Across the nine question themes, respondents expected some religious content between 45% and 59% of the time. The models mentioned it between 5% and 16% of the time. For grief, loss and supporting others, 59% expected religion to come up; the models mentioned it 16% of the time (Figure 2 of the paper). Because the questions were chosen for their mismatch, these figures show where the gap is sharpest, not an average over all questions.
+
+The authors are careful here. They do not read their results as evidence of anti-religious bias, and it is not their purpose to decide which values models should hold. Their claim is narrower: current models miss chances to reflect frameworks many people lean on. They also name the tension providers face, since surfacing religion too often can feel like proselytizing. And they note that two published alignment documents, OpenAI's Model Spec and Anthropic's Claude Constitution, say almost nothing about religion, which they take as a sign that the omission is emergent, perhaps a product of alignment incentives, safety policies and default response patterns.
+
+A second paper from the same group, [*When AI Takes Sides on Questions of Faith*](https://arxiv.org/abs/2605.22975), tested 20 models across 182 religion pairings by asking each for advice on a hypothetical move from one faith to another. Every model showed reproducible asymmetries, encouraging some moves and discouraging others, and the pattern of preferences was different for each model.
+
+You do not need to share any religious commitment to see the engineering lesson. On the paper's reading, nobody wrote a rule telling models to leave religion out of answers about grief. The omission behaves like a default. Paragraph 100 of the encyclical makes the general point: the apparent objectivity of an AI system's answers can hide the cultural assumptions of the people who designed and trained it. CEFE-AI measured that on one axis; the same could be asked about language, region, disability or income.
+
+---
+
+## What It Asks of Builders
+
+Here are four questions I take from the text, and what each one looks like at the level of a pull request.
+
+### 1. Who decides what "moral AI" means?
+
+For anyone who works on alignment, evaluations or system prompts, paragraph 107 is the sharpest passage. Aligning AI with human values is not enough, it says, unless the ethical frameworks involved can be openly debated and held to shared standards of social justice. Otherwise, the moral vision of whoever controls the system becomes its invisible infrastructure. In one line: "A more moral AI is not enough if that morality is determined by a few" (107).
+
+At the scale I work at, nobody asks me to align a frontier model. But I do write system prompts, choose which cases go into a test set, and decide what good output means for an agent. Each of those is a small moral default. The practical answer is the one CEFE-AI used: measure the system against what the people it serves actually expect, not only against what its builder expects. And write the defaults down, so that someone else can argue with them.
+
+### 2. Who holds the power, and who holds the data?
+
+Paragraphs 95 and 108 describe control over platforms, infrastructure, data and computing power gathering in the hands of a few large actors. Paragraph 108 argues that data comes from many people and should not simply be sold off or handed to a small group, and paragraph 109 adds the often invisible, often exploited workers whose labor keeps algorithmic systems running.
+
+A developer does not fix market concentration from a laptop, but the question applies at small scale: what data does this feature collect, who else gets a copy, and could it work with less? Every third-party integration decides who else can reach your users' information. After Vercel's April security incident, I wrote about [deleting a dead integration instead of rotating its key](/blog/rotate-by-deletion-vercel-breach-dead-features). The encyclical gives that habit a wider frame: fewer parties holding access means less concentration, too.
+
+### 3. Does the system serve the worker, or set the worker's pace?
+
+Paragraph 150 warns that AI often forces workers to keep up with the speed and demands of machines, instead of machines being designed to support the people who work, and it concludes that systems should be designed around the person and not only around performance. Paragraph 156 asks that every introduction of automation and AI come with measures that can be checked, protecting jobs, retraining and workers' participation, and that companies count the quality and dignity of work among their indicators of success.
+
+For a builder, that is a requirements question. When I automate part of someone's job, whose metric am I optimizing? Throughput is easy to measure. Whether the person using the tool still exercises judgment, or has become a checker of machine output at machine speed, is harder, and it can be asked in a design review.
+
+### 4. Can a person answer for what the system did?
+
+Paragraph 105 asks that responsibility be clearly assigned at every stage, from the people who design and build AI systems to the people who rely on them for decisions. It names accountability: being able to identify who must answer for a decision, justify it, monitor it and, when needed, repair the harm. Paragraph 132, on truth, adds that truthful information requires verification and the cross-checking of sources, and that disinformation, while older than AI, now has a powerful amplifier in it.
+
+In engineering terms, that is traceability and verification. Can you say who approved a change? Can a user challenge an automated decision? Did anyone check the output before it went out, or did the system report success and everyone moved on?
+
+---
+
+## From Principle to Practice
+
+Here is what this looks like in my own workflow. I run my projects through Protocol Manager, a multi-agent coordination system for Claude Code that I built, where AI agents do much of the implementation. Four of its practices were in place before this encyclical, each with a dated record. None was designed with the encyclical in mind; reading it made me see them as more than process hygiene.
+
+**A person approves the plan before the work starts.** Agents propose; I approve. Since March 2026, the supervisor workflow has archived each incoming task handoff only after its plan is approved, so the same work is not implemented twice. It is the simplest answer I have to paragraph 105: a named person answers for the decision, before the work begins.
+
+**Agent output is verified before it is accepted.** Also in March 2026, I added a structured output contract. Every workagent returns a typed completion report, with its status, its test result and its typecheck result, and the supervisor checks that report before it accepts the work. What an agent says it did is a claim, not a result.
+
+**Verify before claiming completion.** Since April 2026, the rules every agent loads tell it plainly that it makes mistakes and must verify before it claims a task is complete. At the end of May, I wrote about [four bugs that passed their tests or reported success](/blog/green-tests-silent-failures-runtime-verification) and were caught only by checking the real effect. That post was about software quality, but the discipline is the one paragraph 132 asks of public communication: verification before assertion.
+
+**Staged changes are reviewed for secrets before a commit.** Since March 2026, the supervisor's startup checklist has included reviewing the staged diff for secrets before committing. It is a small check, and it concerns privacy in the most literal sense: credentials and data that should never leave the machine. Paragraph 102 lists violations of privacy among the clearly harmful uses of AI.
+
+None of these practices is a moral achievement. They are ordinary engineering. What the encyclical changed for me is the reason behind them: they are how a small operation keeps a named person answerable for what automated systems do, and paragraph 105 treats that as a condition for AI to serve the common good.
+
+---
+
+## A Builder's Questions, Not a Theologian's Answers
+
+I have read *Magnifica humanitas* as someone who designs and ships software, and I have taken from it the questions that land on my desk. That leaves most of the document untouched, including its theology and its chapter on war and peace. Theologians and Catholic readers will find far more in it than I have covered, and other readers may not accept its premises and still find its questions useful.
+
+The questions hold either way. Paragraph 14 asks that principles be turned into practices, such as responsible planning and assessing the human and social impact of what we build. That is a request any engineering team can act on this week: write down the defaults, measure them against the people you serve, keep a person accountable for each decision, and verify before you claim.

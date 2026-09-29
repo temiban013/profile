@@ -1,0 +1,106 @@
+---
+title: "Magnifica Humanitas: lo que la encíclica sobre IA nos pide a quienes la construimos"
+slug: magnifica-humanitas-enciclica-ia-constructores
+description: "La encíclica de León XIV sobre la IA dice que la tecnología no es neutral. Qué nos pide a quienes la diseñamos y cuatro prácticas para aplicarlo hoy."
+date: 2026-06-18
+author: mario-ayala
+locale: es
+category: Fe y Tecnología
+subject: faith-technology
+tags: ["Magnifica Humanitas", "Ética de la IA", "Dignidad Humana", "Fe", "IA Responsable", "Ingeniería de Software"]
+featured: false
+draft: false
+translationSlug: magnifica-humanitas-ai-encyclical-builders
+---
+
+El 25 de mayo de 2026, el Vaticano publicó la primera encíclica del papa León XIV, *Magnifica humanitas*, y esa misma mañana la presentó en el Aula Nueva del Sínodo. Junto a dos cardenales y dos especialistas en teología, [Vatican News](https://www.vaticannews.va/en/pope/news/2026-05/pope-leo-xiv-first-encyclical-magnifica-humanitas.html) incluyó entre los ponentes anunciados a Christopher Olah, cofundador de Anthropic y jefe de investigación en interpretabilidad de la inteligencia artificial. En su discurso durante la presentación, el Papa le agradeció a Olah por nombre haber aceptado la invitación ([Oficina de Prensa de la Santa Sede](https://press.vatican.va/content/salastampa/en/bollettino/pubblico/2026/05/25/260525g.html)).
+
+Yo desarrollo software con agentes de IA, casi siempre a través de Claude Code, la herramienta de programación de Anthropic, así que esto no me llegó como noticia de otro mundo. Al día siguiente, un consorcio de cuatro universidades anunció una investigación sobre cómo los modelos de IA tratan la religión en preguntas cotidianas. Entre las dos cosas, a gente como yo nos quedó planteada una pregunta directa: si las herramientas que construimos no son neutrales, ¿de qué somos responsables exactamente?
+
+Este artículo es la lectura de alguien que construye. *Magnifica humanitas* es un documento de la Doctrina social de la Iglesia católica, pero las preguntas que les hace a quienes diseñan tecnología valen sea cual sea la fe del lector, y esas son las que quiero trabajar aquí. No voy a sacar conclusiones teológicas. Cito el [texto oficial en español en vatican.va](https://www.vatican.va/content/leo-xiv/es/encyclicals/documents/20260515-magnifica-humanitas.html), indico el número de párrafo entre paréntesis y parafraseo lo demás.
+
+---
+
+## Qué dice el documento
+
+El título completo es *Magnifica humanitas: sobre la custodia de la persona humana en el tiempo de la inteligencia artificial*. El Papa la firmó el 15 de mayo, en el 135.º aniversario de la *Rerum novarum* de León XIII ([Vatican News](https://www.vaticannews.va/en/pope/news/2026-05/pope-leo-xiv-encyclical-magnifica-humanitas-ai.html)). Aquella encíclica de 1891, centrada en la protección de los trabajadores de la era industrial, es el punto de partida de la Doctrina social moderna de la Iglesia (148), y el texto nuevo vuelve a ella cuando habla del trabajo (148, 155).
+
+Después de dos capítulos sobre la Doctrina social y sus principios, el documento pasa a la tecnología y el poder, y luego a tres terrenos concretos: la verdad, el trabajo y la libertad. Un capítulo final trata la cultura del poder, incluida la guerra.
+
+La premisa que atraviesa todo está en el párrafo 9. En abstracto, dice el texto, la tecnología no es la solución a los problemas de la humanidad, ni tampoco un mal en sí misma. Pero, en lo concreto, "no es neutral, porque toma el rostro de quien la concibe, la financia, la regula, la utiliza" (9).
+
+El párrafo 104 saca la consecuencia para la IA: no se la puede considerar moralmente neutra, porque toda herramienta lleva decisiones en lo que mide, en lo que deja fuera, en lo que optimiza y en cómo clasifica a las personas. De ahí sale la frase que más le importa a quien construye: "el discernimiento ético no se puede limitar a preguntarse si usamos un determinado sistema para un fin bueno o malo" (104). También tiene que mirar cómo está diseñado el sistema y qué idea de persona y de sociedad queda metida en sus datos y en sus modelos.
+
+Luego, en el párrafo 111, el Papa se dirige directamente a quienes desarrollan IA: "Los desarrolladores llevan, por tanto, un importante peso ético y espiritual, ya que cada elección de proyecto expresa una visión de la humanidad" (111). Igual que un artista sopesa los valores que transmite su obra, a los desarrolladores se les pide tomarse en serio los valores de sus proyectos: con transparencia, con responsabilidad hacia las comunidades afectadas y con cuidado de que lo que cultivan sea de verdad un bien.
+
+Otro pasaje me llamó la atención por su precisión técnica. El párrafo 98 señala que los sistemas de IA actuales se cultivan más de lo que se construyen: los desarrolladores crean una arquitectura sobre la cual el sistema crece, y sus representaciones internas siguen siendo en gran parte desconocidas, incluso para quienes los diseñan. La interpretabilidad, el área de investigación que Olah dirige en Anthropic, estudia precisamente ese interior, y el texto pide a la vez más investigación científica y discernimiento moral (98).
+
+---
+
+## La brecha que midió CEFE-AI
+
+El 26 de mayo, un día después de la encíclica, [BYU anunció](https://news.byu.edu/intellect/new-research-from-byu-led-multi-institution-consortium-finds-all-major-ai-models-ignore-faith-religion-in-responses) la investigación de un nuevo grupo formado por investigadores de Brigham Young University, Baylor University, la Universidad de Notre Dame y Yeshiva University: el Consortium for Evaluating Faith and Ethics in AI, o CEFE-AI. Su trabajo no responde a la encíclica, pero mide algo por lo que pregunta el párrafo 104: qué idea de persona queda metida en un modelo.
+
+El primer estudio, [*Omissive Bias in Religious Representation*](https://arxiv.org/abs/2605.24319), hace una pregunta deliberadamente estrecha: cuando alguien le hace a un modelo de IA una pregunta ética o personal de todos los días, sobre el duelo, el perdón, el matrimonio, la honestidad o el propósito de vida, ¿la respuesta menciona la religión siquiera? La vara se puso bien baja: cualquier mención de una religión, una práctica religiosa o un líder religioso contaba.
+
+Los investigadores encuestaron a una muestra representativa a nivel nacional de 1,125 estadounidenses sobre qué preguntas esperarían que incluyeran alguna perspectiva religiosa. De un banco de 343 preguntas, se quedaron con las 150 donde la diferencia entre personas y modelos era mayor, y las corrieron en 27 modelos, tanto de frontera como de código abierto. En los nueve temas de preguntas, las personas esperaban algún contenido religioso entre el 45% y el 59% de las veces. Los modelos lo mencionaron entre el 5% y el 16% de las veces. En duelo, pérdida y apoyo a otros, el 59% esperaba que saliera la religión; los modelos la mencionaron el 16% de las veces (Figura 2 del estudio). Como las preguntas se escogieron por esa diferencia, las cifras muestran dónde la brecha es más marcada, no un promedio sobre todas las preguntas posibles.
+
+Los autores son cuidadosos. No interpretan sus resultados como prueba de un sesgo antirreligioso, y no pretenden decidir qué valores deben tener los modelos. Su planteamiento es más modesto: los modelos actuales pierden oportunidades de reflejar marcos en los que mucha gente se apoya. También reconocen la tensión que enfrentan los proveedores, porque sacar la religión a relucir demasiado puede sentirse como proselitismo. Y señalan que dos documentos de alineación publicados, el Model Spec de OpenAI y la Claude Constitution de Anthropic, casi no mencionan la religión, lo que para ellos sugiere que la omisión es emergente, quizás producto de los incentivos de alineación, las políticas de seguridad y los patrones de respuesta por defecto.
+
+Un segundo estudio del mismo grupo, [*When AI Takes Sides on Questions of Faith*](https://arxiv.org/abs/2605.22975), probó 20 modelos en 182 combinaciones de religiones, pidiéndoles consejo sobre un cambio hipotético de una fe a otra. Todos los modelos mostraron asimetrías reproducibles, animando unos cambios y desanimando otros, y el patrón de preferencias fue distinto en cada modelo.
+
+No hace falta compartir ningún compromiso religioso para ver la lección de ingeniería. Según la lectura del estudio, nadie escribió una regla que les dijera a los modelos que dejaran la religión fuera de las respuestas sobre el duelo. La omisión se comporta como un valor por defecto. El párrafo 100 de la encíclica lo plantea en general: la aparente objetividad de las respuestas de un sistema de IA puede esconder los parámetros culturales de quienes lo proyectaron y entrenaron. CEFE-AI lo midió en un eje; lo mismo se podría preguntar sobre idioma, región, discapacidad o ingreso. Para quienes escribimos software en Puerto Rico y en América Latina, la pregunta del idioma no es teórica.
+
+---
+
+## Lo que nos pide a quienes construimos
+
+Estas son cuatro preguntas que saco del texto, y cómo se ve cada una a la altura de un pull request.
+
+### 1. ¿Quién decide qué es una "IA moral"?
+
+Para quien trabaja en alineación, evaluaciones o system prompts, el párrafo 107 es el pasaje más afilado del documento. Alinear la IA con los valores humanos no basta, dice, si no se pueden discutir abiertamente los marcos éticos que se usan y someterlos a criterios compartidos de justicia social. Si no, la visión moral de quien controla el sistema se convierte en su infraestructura invisible. En una línea: "No serviría de nada una IA más moral, si esta moral es decidida por unos pocos" (107).
+
+A la escala en que yo trabajo, nadie me pide alinear un modelo de frontera. Pero sí escribo system prompts, escojo qué casos entran en un conjunto de pruebas y decido qué cuenta como buen resultado para un agente. Cada una de esas cosas es un pequeño valor moral por defecto. La respuesta práctica es la que usó CEFE-AI: medir el sistema contra lo que de verdad esperan las personas a las que sirve, no solo contra lo que espera quien lo construye. Y dejar esos valores por defecto por escrito, para que otra persona pueda discutirlos.
+
+### 2. ¿Quién tiene el poder, y quién tiene los datos?
+
+Los párrafos 95 y 108 describen cómo el control de las plataformas, la infraestructura, los datos y la capacidad de cómputo se va quedando en manos de unos pocos actores grandes. El párrafo 108 sostiene que los datos vienen de muchas personas y no deberían venderse sin más ni quedar en manos de un grupo pequeño, y el párrafo 109 añade a los trabajadores, a menudo invisibles y explotados, que sostienen los sistemas algorítmicos.
+
+Un desarrollador no arregla la concentración del mercado desde su laptop, pero la pregunta aplica a pequeña escala: ¿qué datos recoge esta funcionalidad, quién más recibe una copia y podría funcionar con menos? Cada integración con un tercero decide quién más puede llegar a la información de tus usuarios. Después del incidente de seguridad de Vercel en abril, escribí sobre [eliminar una integración muerta en vez de rotar su clave](/blog/rotar-eliminando-brecha-vercel-funciones-muertas). La encíclica le da a ese hábito un marco más amplio: menos terceros con acceso también es menos concentración.
+
+### 3. ¿El sistema sirve al trabajador, o le marca el ritmo?
+
+El párrafo 150 advierte que la IA a menudo obliga a los trabajadores a adaptarse a la velocidad y las exigencias de las máquinas, en lugar de que las máquinas estén diseñadas para ayudar a quienes trabajan, y concluye que hay que diseñar sistemas centrados en la persona y no solo en el rendimiento. El párrafo 156 pide que toda introducción de automatización y de IA venga acompañada de medidas verificables que protejan el empleo, la recualificación y la participación de los trabajadores, y que las empresas cuenten la calidad y la dignidad del trabajo entre sus indicadores de éxito.
+
+Para quien construye, esa es una pregunta de requisitos. Cuando automatizo parte del trabajo de alguien, ¿qué métrica estoy optimizando, y de quién? La productividad es fácil de medir. Si la persona que usa la herramienta sigue ejerciendo su criterio, o se ha convertido en alguien que revisa lo que produce la máquina al ritmo de la máquina, es más difícil, y se puede preguntar en una revisión de diseño.
+
+### 4. ¿Hay una persona que responda por lo que hizo el sistema?
+
+El párrafo 105 pide que las responsabilidades estén claras en todas las etapas, desde quienes diseñan y programan los sistemas hasta quienes los usan para tomar decisiones. Y nombra la rendición de cuentas: poder identificar quién debe responder por una decisión, justificarla, controlarla y, cuando haga falta, reparar el daño. El párrafo 132, sobre la verdad, añade que la información veraz requiere verificación y cotejo de fuentes, y que la desinformación, aunque no nació con la IA, hoy encuentra en ella un multiplicador potente.
+
+En términos de ingeniería, eso es trazabilidad y verificación. ¿Puedes decir quién aprobó un cambio? ¿Puede un usuario impugnar una decisión automatizada? ¿Alguien revisó el resultado antes de que saliera, o el sistema reportó éxito y todos siguieron adelante?
+
+---
+
+## Del principio a la práctica
+
+Así se ve esto en mi propio flujo de trabajo. Manejo mis proyectos con Protocol Manager, un sistema de coordinación multiagente para Claude Code que construí, donde los agentes de IA hacen buena parte de la implementación. Cuatro de sus prácticas ya existían antes de esta encíclica, y cada una tiene un registro fechado. Ninguna se diseñó pensando en la encíclica; leerla me hizo verlas como algo más que buenas costumbres de proceso.
+
+**Una persona aprueba el plan antes de empezar.** Los agentes proponen; yo apruebo. Desde marzo de 2026, el flujo del supervisor archiva cada traspaso de tarea solo después de que su plan se aprueba, para que el mismo trabajo no se implemente dos veces. Es la respuesta más sencilla que tengo al párrafo 105: una persona con nombre responde por la decisión, antes de que empiece el trabajo.
+
+**Lo que entrega un agente se verifica antes de aceptarlo.** También en marzo de 2026 añadí un contrato de salida estructurado. Cada agente de trabajo devuelve un informe de cierre tipado, con su estado, el resultado de las pruebas y el de la verificación de tipos, y el supervisor revisa ese informe antes de aceptar el trabajo. Lo que un agente dice que hizo es una afirmación, no un resultado.
+
+**Verificar antes de dar algo por terminado.** Desde abril de 2026, las reglas que carga cada agente le dicen sin rodeos que comete errores y que tiene que verificar antes de declarar terminada una tarea. A finales de mayo escribí sobre [cuatro fallos que pasaron sus pruebas o reportaron éxito](/blog/pruebas-verdes-fallos-silenciosos-verificacion) y que solo se detectaron comprobando el efecto real. Ese artículo era sobre calidad de software, pero la disciplina es la misma que el párrafo 132 le pide a la comunicación pública: verificar antes de afirmar.
+
+**Los cambios preparados se revisan en busca de secretos antes de cada commit.** Desde marzo de 2026, la lista de inicio del supervisor incluye revisar el diff preparado en busca de secretos antes de hacer commit. Es una verificación pequeña, y tiene que ver con la privacidad en el sentido más literal: credenciales y datos que nunca deberían salir de la máquina. El párrafo 102 menciona las violaciones de la privacidad entre los usos claramente dañinos de la IA.
+
+Ninguna de estas prácticas es un logro moral. Son ingeniería de todos los días. Lo que la encíclica cambió para mí es la razón detrás de ellas: son la manera en que una operación pequeña mantiene a una persona con nombre respondiendo por lo que hacen los sistemas automatizados, y el párrafo 105 lo trata como condición para que la IA sirva al bien común.
+
+---
+
+## Preguntas de alguien que construye, no respuestas de teólogo
+
+Leí *Magnifica humanitas* como alguien que diseña y entrega software, y saqué de ella las preguntas que me caen en el escritorio. Eso deja fuera la mayor parte del documento, incluida su teología y su capítulo sobre la guerra y la paz. Los teólogos y los lectores católicos encontrarán en ella mucho más de lo que cubrí aquí, y otros lectores quizás no acepten sus premisas y aun así encuentren útiles sus preguntas.
+
+Las preguntas se sostienen de todas formas. El párrafo 14 pide traducir los principios en prácticas, como la planificación responsable y la evaluación del impacto humano y social de lo que construimos. Es algo que cualquier equipo de ingeniería puede empezar esta misma semana: poner por escrito los valores por defecto, medirlos contra las personas a las que sirve, mantener a una persona responsable de cada decisión y verificar antes de afirmar.
