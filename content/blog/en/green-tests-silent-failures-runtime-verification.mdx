@@ -1,0 +1,153 @@
+---
+title: "Green Tests, Silent Failures: Why My AI Agents Verify at Runtime"
+slug: green-tests-silent-failures-runtime-verification
+description: "Four bugs passed their tests or reported success. Each was caught only by checking the real effect: files on disk, real versions, the real list, real scores."
+date: 2026-05-31
+author: mario-ayala
+locale: en
+category: AI Engineering
+subject: ai-tools
+tags: ["Protocol Manager", "AI Agents", "Testing", "Verification", "Claude Code", "Multi-Agent Systems"]
+featured: false
+draft: false
+translationSlug: pruebas-verdes-fallos-silenciosos-verificacion
+---
+
+Today's release of Protocol Manager, v65.0, went out with 2,457 passing tests, 7 skipped, and 0 failing. Typecheck and build were clean. By every signal a test runner can give me, it was done. And the rollout that was supposed to carry the release to my managed projects quietly stopped after touching exactly one of them.
+
+The halt was silent. If I had taken the green suite and the sync tool's success flag as the answer, I would have believed seven projects were up to date when one was.
+
+This post is about that gap, and about three other times it showed up. Each case passed its checks or reported success, and each was caught by looking at the actual effect: files on disk, a real version comparison, the real list of directories, real model scores. The thesis is short. A green test suite and a tool's success flag are claims, not evidence.
+
+Some context. Protocol Manager is my multi-agent coordination system for Claude Code, an MCP server that coordinates AI agents across seven managed projects, one of which is this site's own repo, `portfolio`. Work is done by parallel workagents and then verified. Changes to shared hooks and skills are synced from Protocol Manager out to the projects, with a "canary" project going first; `portfolio` is the canary. I have written before about [running AI agent systems in production](/blog/ai-agent-systems-production) and about [consolidating MCP tools in Protocol Manager](/blog/mcp-tool-consolidation). This post is about what happens after the agents say they are finished.
+
+---
+
+## The Rollout That Stopped After One Project
+
+Release v65.0 shipped three items, implemented by 3 parallel workagents. A handoff validator hook changed from warn-only to blocking. The code reviewer's critical findings were capped at the top 5, with a visible "elided: N more" line so nothing disappears without a trace. And a staged-output logger was added so a failed chain can resume from the last good stage instead of starting over.
+
+What the checks said: the numbers above, all green.
+
+What actually happened: the canary-to-fleet sync silently halted at the canary gate. The staged sync ran the canary's `typecheck` script, but `portfolio` and some of the other projects expose that script as `type-check`, and some have no typecheck script at all. So canary validation failed with `Missing script: "typecheck"`, and the rollout stopped after touching only `portfolio`.
+
+I completed the rollout with a direct, non-canary sync of hooks and skills to all 7 projects. The part I care about is what came next: I verified the files on disk, not just trusting the tool's success flag, before claiming zero drift. The result was 7 of 7 projects carrying the new files.
+
+The recorded follow-up for the root cause: the canary validator should resolve `typecheck`, then `type-check`, then skip, per project. The gate was checking a script name the projects never agreed on, and the tests did not know how my seven projects name their scripts.
+
+There was a second catch in the same release. A new example fixture was first placed in the `eval-fixtures/` folder, which broke a guard test that expects exactly 20 calibration fixtures. It was moved to a file at the skill root, and the full suite went green. That one the tests caught, which is what tests are for; nothing in the suite was looking at the world the canary gate runs in.
+
+---
+
+## The Version Comparison That Said Yes
+
+This one comes from a hardening pass, v62.2, on May 11, 2026. I had a checker that reads the running kernel release, from `uname -r`, and compares it with the version that contains a fix, using `dpkg --compare-versions`. It reports PASS or FAIL, and also WARN or UNKNOWN. The question: is this machine running a kernel at least as new as the one that contains the fix?
+
+The unit tests passed because they used a mocked command runner, so they never touched a real `uname` or `dpkg`.
+
+The verification pass used the real `dpkg` instead of the mock, and the real comparison said yes to a kernel older than the fixed version. `uname -r` returns strings with a flavor suffix such as `-generic`; others include `-lowlatency`, `-aws`, `-azure`, and `-oracle`. dpkg treats the `-generic` part as the Debian revision, so an older kernel compared as greater-or-equal to a newer one, and the checker answered PASS for an input where the right answer is FAIL.
+
+Here is the behavior as I observed it. The versions are illustrative; they are not from any real machine:
+
+- `dpkg --compare-versions 6.8.0-40-generic ge 6.8.0-41` returns true (exit code 0)
+- `dpkg --compare-versions 6.8.0-40 ge 6.8.0-41` returns false (exit code 1)
+
+Same older kernel, same fixed version, two different answers depending only on the flavor suffix. A checker that says PASS there is worse than none, because it produces confidence.
+
+The fix was a new helper, `normalizeKernelVersion()`, which strips the flavor suffix before comparing. I added a regression test that reproduces the wrong-true behavior, plus 5 unit tests for the normalizer, and verified them red-then-green: the tests failed before the fix and passed after it. Here is the helper as it exists in Protocol Manager, with the comment shortened and illustrative versions in the usage lines:
+
+```ts
+// Strip a trailing flavor suffix such as "-generic" or "-aws" from a kernel
+// release string, so the version comparison only sees the numeric part.
+export function normalizeKernelVersion(release: string): string {
+  return release.replace(/-[a-zA-Z][a-zA-Z0-9_]*$/, '');
+}
+
+// Illustrative versions, not taken from any real machine.
+const running = normalizeKernelVersion("6.8.0-40-generic"); // "6.8.0-40"
+const fixedIn = "6.8.0-41";
+
+// Raw string:  dpkg --compare-versions 6.8.0-40-generic ge 6.8.0-41  -> true
+// Normalized:  dpkg --compare-versions 6.8.0-40 ge 6.8.0-41          -> false
+console.log(`compare ${running} against ${fixedIn}`);
+```
+
+The regex strips a final hyphen-separated segment that starts with a letter. A final segment that starts with a digit, the ABI number such as `-40`, is left alone.
+
+The same hardening pass produced a second bug with the same signature. The build tool's entry points, tsup in this case, omitted the checker module. The compiled file never existed, so the documented CLI invocation failed with `MODULE_NOT_FOUND`. The tests import the module from the TypeScript source, so a file missing from the build output was outside what they could see. The fix was to add the module to the build entry points. It was found by running the built CLI.
+
+---
+
+## The Audit That Checked the Wrong List
+
+Release v63.1, also May 11, 2026. I had an audit script that checks the managed projects for the Next.js upgrade and for a per-project `AGENTS.md`. The bug was in how it decided which projects to check. It iterated every subdirectory of my development folder that had a `package.json`, instead of the explicit list of 7 managed projects. So it flagged directories that are not part of the fleet, including Protocol Manager itself, as fleet failures.
+
+The script's 8 unit tests passed. They used stub fleet directories. The run against the real fleet, which the verification gate explicitly demands, was the one that caught the scope leak, because the real development folder contains more than the fleet.
+
+The fix: iterate over the explicit list of the 7 declared projects. A missing directory for a declared project now reports FAIL instead of being silently skipped, which closes the opposite failure as well. A regression test was added with 7 valid members plus 1 stray directory, verified red-green. After the fix, the real-fleet audit exited 0.
+
+The commit notes that this was the lesson of the v62.2 pass re-applied: run the deliverable on the live host. The same class of mistake showed up in a different tool the same day, so the lesson has to live in the workflow, not in my memory.
+
+---
+
+## The Ranking That Ranked Nothing
+
+This one is from May 10, 2026, and played out across v61.0 to v61.2 on the same day.
+
+v61.0 added a real cross-encoder reranker to reorder retrieval candidates by relevance. The model is `Xenova/ms-marco-MiniLM-L-6-v2`, loaded through `@huggingface/transformers`. The implementation used `pipeline('text-classification', model)`.
+
+That pipeline applies softmax to the model's output. This model outputs a single logit. Softmax over a single value is always 1.0, so every candidate scored 1.0. The ranking signal was destroyed, and candidates came back in input order. That is not a bad reranker; it is no reranking at all, dressed up as a working one.
+
+The bug was masked because all 12 unit tests mocked the library globally. That included the 2 tests gated behind an environment flag and labelled as real-model end-to-end tests. They were still hitting the mock. The tests checked that my code called the library as I expected; they said nothing about whether a real model produced a useful order.
+
+The fix in v61.2: load the tokenizer and model directly with `AutoTokenizer` and `AutoModelForSequenceClassification`, and sort by the raw logit, descending, with no softmax. I also added a new end-to-end test file with no mock: 2 real-model tests gated by an environment flag, plus 1 always-running guard test.
+
+Measured after the fix, a relevant document scored a logit of 7.96 and an unrelated one scored -11.12. A gap of that size is a ranking. A column of identical 1.0 values is not.
+
+One more, briefly. In v62.1 on May 11, 2026, the skill sync copied only `SKILL.md` and subdirectories, and top-level sibling files next to `SKILL.md` were silently dropped. The fleet drift report showed 14 drift items. The fix was to iterate every entry in the skill directory, with one regression test. It was a sync that silently left files behind, the v65.0 story in a smaller form.
+
+---
+
+## The Pattern
+
+Line the failures up and the shape repeats: a canary gate that depended on script names, a mocked runner that never produced a flavor suffix, tests that imported source while users run the build, stub directories standing in for a real folder, a mocked library in tests labelled real.
+
+Tests verify the code's intent: that it does what its author believed it should, in the world the author imagined. Runtime checks verify the world: what the machine actually returns, what is actually on disk, what directories actually exist, what the real model actually outputs. Each of these bugs lived in the space between the imagined world and the real one, and that is the one place a mock or a stub cannot look.
+
+In every case the misleading signal was not a lie. A mocked test that passes is telling the truth about the mock. A tool that returns success is telling the truth about its own narrow definition of success. The failure is reading that narrow truth as a broad one. I wrote about the same instinct in [Rotate by Deletion](/blog/rotate-by-deletion-vercel-breach-dead-features), where a contact form rendered fine while its messages went nowhere: a thing that looks right is not evidence that the thing behind it works.
+
+---
+
+## What I Changed in the Workflow
+
+Each of these was caught by a verification pass that runs the deliverable for real, what I call verification-before-completion. In practice that meant running the built CLI on a real machine, running the audit against the real fleet, running the real model, and checking the files on disk.
+
+That is the whole mechanism, and I do not want to oversell it. It is a gate an agent's report has to pass before I accept it: the report says the work is done, and the gate asks whether the deliverable was actually run and its effect actually looked at. A report that says "tests pass" answers a different question.
+
+The clearest example is the end of the v65.0 story. After the canary halt, the claim "drift 0" was only made after checking the files on disk in all 7 projects. The sync tool's success flag was an input to that check, not a substitute for it.
+
+I am not claiming more than that. I have no numbers for how much the gate saves or catches, and I would rather say so than invent them. What the record shows is a set of bugs that passed their own checks, each found because something ran the real thing.
+
+---
+
+## Practical Takeaways for Teams Using AI Agents
+
+If you run AI agents that write code and report their own results, a few habits follow from this.
+
+**Treat "done" as a claim.** An agent's report that the tests pass or the sync succeeded is a statement to be checked. Decide what the observable effect is, and look at it: the file exists, the command gives the right answer on real input.
+
+**Run the deliverable the way a user runs it.** The `MODULE_NOT_FOUND` bug lived between the source and the build output. If you ship a compiled CLI, run the compiled CLI. If it is an audit, run it against the real thing it audits.
+
+**Audit your mocks for what they hide.** Three of my four stories involved a mock or a stub standing in for the exact behavior that was broken. A test labelled end-to-end that hits a mock has authority it has not earned. When a test claims to use the real dependency, check that it does.
+
+**Make gates fail loudly and skips visible.** The audit fix turned a silently skipped missing directory into a FAIL, and the reviewer cap prints "elided: N more" instead of dropping findings. A check that can quietly do less than you think is a check you cannot rely on.
+
+**Reproduce the bug in a test before you fix it.** The kernel comparison fix and the audit fix each came with a regression test verified red, then green: failing without the fix, passing with it. That is what shows the test targets the failure you saw.
+
+---
+
+## Verify, Don't Assume
+
+The last section of [Rotate by Deletion](/blog/rotate-by-deletion-vercel-breach-dead-features) was titled "Verify, Don't Assume," and it was about a contact form that looked fine while its messages went nowhere. Here is the same lesson about my own tooling, in a checker, a build config, an audit, a ranking model, and a rollout.
+
+A green suite tells me my code does what I meant. It does not tell me that what I meant matches the world. The only way I know to close that gap is to go and look: read the files, run the command, count the directories, score the documents. Then say "done."

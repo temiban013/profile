@@ -1,0 +1,153 @@
+---
+title: "Pruebas en verde, fallos silenciosos: por qué mis agentes de IA verifican en ejecución"
+slug: pruebas-verdes-fallos-silenciosos-verificacion
+description: "Cuatro bugs pasaron sus pruebas o reportaron éxito. Cada uno se atrapó solo al mirar el efecto real: archivos en disco, versiones, la lista real y puntajes."
+date: 2026-05-31
+author: mario-ayala
+locale: es
+category: Ingeniería de IA
+subject: ai-tools
+tags: ["Protocol Manager", "Agentes de IA", "Pruebas", "Verificación", "Claude Code", "Sistemas Multiagente"]
+featured: false
+draft: false
+translationSlug: green-tests-silent-failures-runtime-verification
+---
+
+El release de hoy de Protocol Manager, v65.0, salió con 2,457 pruebas pasando, 7 omitidas y 0 fallando. El typecheck y el build salieron limpios. Por cualquier señal que me pueda dar un test runner, estaba terminado. Y el despliegue que debía llevar el release a mis proyectos administrados se detuvo en silencio después de tocar exactamente uno de ellos.
+
+La detención fue silenciosa. Si hubiera tomado la suite en verde y la bandera de éxito de la herramienta de sincronización como la respuesta, habría creído que siete proyectos estaban al día cuando solo uno lo estaba.
+
+Este post trata de ese hueco, y de otras tres veces en que apareció. Cada caso pasó sus chequeos o reportó éxito, y cada uno se atrapó mirando el efecto real: archivos en disco, una comparación de versiones de verdad, la lista real de directorios, puntajes reales de un modelo. La tesis es corta. Una suite de pruebas en verde y la bandera de éxito de una herramienta son afirmaciones, no evidencia.
+
+Algo de contexto. Protocol Manager es mi sistema de coordinación multiagente para Claude Code, un servidor MCP que coordina agentes de IA a través de siete proyectos administrados, uno de los cuales es el repo de este mismo sitio, `portfolio`. El trabajo lo hacen workagents en paralelo y después se verifica. Los cambios a hooks y skills compartidos se sincronizan desde Protocol Manager hacia los proyectos, con un proyecto "canary" que va primero; `portfolio` es el canary. Ya escribí sobre [correr sistemas de agentes de IA en producción](/blog/sistemas-agentes-ia-produccion) y sobre [consolidar herramientas MCP en Protocol Manager](/blog/consolidacion-herramientas-mcp). Este post trata de lo que pasa después de que los agentes dicen que terminaron.
+
+---
+
+## El despliegue que se detuvo después de un proyecto
+
+El release v65.0 incluyó tres cosas, implementadas por 3 workagents en paralelo. Un hook validador de handoff pasó de solo advertir a bloquear. Los hallazgos críticos del code reviewer se limitaron a los 5 principales, con una línea visible "elided: N more" para que nada desaparezca sin dejar rastro. Y se añadió un logger de salida por etapas para que una cadena fallida pueda retomar desde la última etapa buena en vez de empezar de cero.
+
+Lo que dijeron los chequeos: los números de arriba, todo en verde.
+
+Lo que pasó de verdad: la sincronización de canary a flota se detuvo en silencio en la puerta del canary. La sincronización por etapas corrió el script `typecheck` del canary, pero `portfolio` y algunos de los otros proyectos exponen ese script como `type-check`, y algunos no tienen ningún script de typecheck. Así que la validación del canary falló con `Missing script: "typecheck"`, y el despliegue se detuvo después de tocar solo `portfolio`.
+
+Terminé el despliegue con una sincronización directa, sin canary, de hooks y skills a los 7 proyectos. Lo que me importa es lo que vino después: verifiqué los archivos en disco, en vez de confiar solo en la bandera de éxito de la herramienta, antes de afirmar cero drift. El resultado fue 7 de 7 proyectos con los archivos nuevos.
+
+El seguimiento registrado para la causa raíz: el validador del canary debe resolver `typecheck`, luego `type-check`, y luego omitir, por proyecto. La puerta revisaba el nombre de un script en el que los proyectos nunca se pusieron de acuerdo, y las pruebas no sabían cómo nombran sus scripts mis siete proyectos.
+
+Hubo un segundo hallazgo en el mismo release. Un fixture de ejemplo nuevo se puso primero en la carpeta `eval-fixtures/`, lo cual rompió una prueba de guardia que espera exactamente 20 fixtures de calibración. Se movió a un archivo en la raíz del skill, y la suite completa quedó en verde. Ese sí lo atrapó la suite, que es para lo que sirven las pruebas; nada en la suite miraba el mundo en el que corre la puerta del canary.
+
+---
+
+## La comparación de versiones que dijo que sí
+
+Este viene de una pasada de endurecimiento, v62.2, el 11 de mayo de 2026. Tenía un chequeador que lee el release del kernel en ejecución, con `uname -r`, y lo compara con la versión que contiene un arreglo, usando `dpkg --compare-versions`. Reporta PASS o FAIL, y también WARN o UNKNOWN. La pregunta: ¿esta máquina corre un kernel al menos tan nuevo como el que contiene el arreglo?
+
+Las pruebas unitarias pasaban porque usaban un runner de comandos con mock, así que nunca tocaron un `uname` ni un `dpkg` reales.
+
+La pasada de verificación usó el `dpkg` real en vez del mock, y la comparación real dijo que sí para un kernel más viejo que la versión arreglada. `uname -r` devuelve cadenas con un sufijo de variante (flavor) como `-generic`; otros incluyen `-lowlatency`, `-aws`, `-azure` y `-oracle`. dpkg trata la parte `-generic` como la revisión de Debian, así que un kernel más viejo comparaba como mayor o igual que uno más nuevo, y el chequeador respondía PASS para una entrada donde la respuesta correcta es FAIL.
+
+Aquí va el comportamiento como lo observé. Las versiones son ilustrativas; no son de ninguna máquina real:
+
+- `dpkg --compare-versions 6.8.0-40-generic ge 6.8.0-41` devuelve verdadero (código de salida 0)
+- `dpkg --compare-versions 6.8.0-40 ge 6.8.0-41` devuelve falso (código de salida 1)
+
+El mismo kernel viejo, la misma versión arreglada, dos respuestas distintas que dependen solo del sufijo de variante. Un chequeador que dice PASS ahí es peor que ninguno, porque produce confianza.
+
+El arreglo fue un helper nuevo, `normalizeKernelVersion()`, que quita el sufijo de variante antes de comparar. Añadí una prueba de regresión que reproduce el comportamiento de verdadero equivocado, más 5 pruebas unitarias para el normalizador, y las verifiqué en rojo y luego en verde: las pruebas fallaron antes del arreglo y pasaron después. Aquí está el helper tal como existe en Protocol Manager, con el comentario acortado y versiones ilustrativas en las líneas de uso:
+
+```ts
+// Strip a trailing flavor suffix such as "-generic" or "-aws" from a kernel
+// release string, so the version comparison only sees the numeric part.
+export function normalizeKernelVersion(release: string): string {
+  return release.replace(/-[a-zA-Z][a-zA-Z0-9_]*$/, '');
+}
+
+// Illustrative versions, not taken from any real machine.
+const running = normalizeKernelVersion("6.8.0-40-generic"); // "6.8.0-40"
+const fixedIn = "6.8.0-41";
+
+// Raw string:  dpkg --compare-versions 6.8.0-40-generic ge 6.8.0-41  -> true
+// Normalized:  dpkg --compare-versions 6.8.0-40 ge 6.8.0-41          -> false
+console.log(`compare ${running} against ${fixedIn}`);
+```
+
+La regex quita un último segmento separado por guion que empieza con una letra. Un último segmento que empieza con un dígito, el número de ABI como `-40`, no se toca.
+
+La misma pasada de endurecimiento produjo un segundo bug con la misma firma. Los entry points de la herramienta de build, tsup en este caso, omitían el módulo del chequeador. El archivo compilado nunca existió, así que la invocación documentada del CLI falló con `MODULE_NOT_FOUND`. Las pruebas importan el módulo desde el código fuente en TypeScript, así que un archivo ausente en la salida del build quedaba fuera de lo que podían ver. El arreglo fue añadir el módulo a los entry points del build. Se encontró corriendo el CLI ya compilado.
+
+---
+
+## La auditoría que revisó la lista equivocada
+
+Release v63.1, también el 11 de mayo de 2026. Tenía un script de auditoría que revisa los proyectos administrados en busca de la actualización de Next.js y de un `AGENTS.md` por proyecto. El bug estaba en cómo decidía qué proyectos revisar. Recorría cada subdirectorio de mi carpeta de desarrollo que tuviera un `package.json`, en vez de la lista explícita de los 7 proyectos administrados. Así que marcaba como fallas de la flota directorios que no son parte de ella, incluido el propio Protocol Manager.
+
+Las 8 pruebas unitarias del script pasaron. Usaban directorios de flota stub. La corrida contra la flota real, que la puerta de verificación exige de manera explícita, fue la que atrapó la fuga de alcance, porque la carpeta de desarrollo real contiene más que la flota.
+
+El arreglo: recorrer la lista explícita de los 7 proyectos declarados. Un directorio ausente para un proyecto declarado ahora reporta FAIL en vez de omitirse en silencio, lo cual cierra también la falla opuesta. Se añadió una prueba de regresión con 7 miembros válidos más 1 directorio suelto, verificada en red-green. Después del arreglo, la auditoría contra la flota real terminó con código de salida 0.
+
+El commit anota que esta fue la lección de la pasada v62.2 aplicada de nuevo: correr el entregable en el host real. La misma clase de error apareció en otra herramienta el mismo día, así que la lección tiene que vivir en el flujo de trabajo, no en mi memoria.
+
+---
+
+## El ranking que no rankeaba nada
+
+Este es del 10 de mayo de 2026, y se desarrolló de v61.0 a v61.2 el mismo día.
+
+v61.0 añadió un reranker cross-encoder real, el componente que reordena los candidatos de recuperación por relevancia. El modelo es `Xenova/ms-marco-MiniLM-L-6-v2`, cargado a través de `@huggingface/transformers`. La implementación usaba `pipeline('text-classification', model)`.
+
+Ese pipeline aplica softmax a la salida del modelo. Este modelo produce un solo logit. Softmax sobre un solo valor siempre da 1.0, así que todos los candidatos sacaron 1.0. La señal de ranking quedó destruida, y los candidatos volvieron en el orden de entrada. Eso no es un mal reranker; es ningún reranking, disfrazado de uno que funciona.
+
+El bug quedó tapado porque las 12 pruebas unitarias usaban mock de la librería de forma global. Eso incluía las 2 pruebas protegidas por una bandera de entorno y etiquetadas como pruebas end-to-end con el modelo real. Seguían pegándole al mock. Las pruebas verificaban que mi código llamaba a la librería como yo esperaba; no decían nada sobre si un modelo real producía un orden útil.
+
+El arreglo en v61.2: cargar el tokenizer y el modelo directamente con `AutoTokenizer` y `AutoModelForSequenceClassification`, y ordenar por el logit crudo, de mayor a menor, sin softmax. También añadí un archivo nuevo de pruebas end-to-end sin mock: 2 pruebas con el modelo real protegidas por una bandera de entorno, más 1 prueba de guardia que siempre corre.
+
+Medido después del arreglo, un documento relevante sacó un logit de 7.96 y uno no relacionado sacó -11.12. Una brecha de ese tamaño es un ranking. Una columna de valores 1.0 idénticos no lo es.
+
+Uno más, brevemente. En v62.1, el 11 de mayo de 2026, la sincronización de skills copiaba solo `SKILL.md` y subdirectorios, y los archivos hermanos de primer nivel junto a `SKILL.md` se descartaban en silencio. El reporte de fleet drift mostraba 14 ítems de drift. El arreglo fue recorrer cada entrada del directorio del skill, con una prueba de regresión. Fue una sincronización que dejaba archivos atrás en silencio, la historia de v65.0 en versión pequeña.
+
+---
+
+## El patrón
+
+Alinea las fallas y la forma se repite: una puerta de canary que dependía de nombres de scripts, un runner con mock que nunca produjo un sufijo de variante, pruebas que importaban el código fuente mientras los usuarios corren el build, directorios stub haciendo de carpeta real, una librería con mock en pruebas etiquetadas como reales.
+
+Las pruebas verifican la intención del código: que hace lo que su autor creyó que debía hacer, en el mundo que el autor imaginó. Los chequeos en ejecución verifican el mundo: lo que la máquina realmente devuelve, lo que realmente hay en disco, qué directorios realmente existen, lo que el modelo real realmente produce. Cada uno de estos bugs vivía en el espacio entre el mundo imaginado y el real, y ese es el único lugar que un mock o un stub no puede mirar.
+
+En cada caso la señal engañosa no era una mentira. Una prueba con mock que pasa dice la verdad sobre el mock. Una herramienta que devuelve éxito dice la verdad sobre su propia definición estrecha de éxito. La falla es leer esa verdad estrecha como una amplia. Escribí sobre ese mismo instinto en [Rotar eliminando](/blog/rotar-eliminando-brecha-vercel-funciones-muertas), donde un formulario de contacto renderizaba bien mientras sus mensajes no llegaban a ningún lado: algo que se ve bien no es evidencia de que lo que hay detrás funcione.
+
+---
+
+## Qué cambié en el flujo de trabajo
+
+Cada uno de estos se atrapó con una pasada de verificación que corre el entregable de verdad, lo que llamo verification-before-completion. En la práctica eso significó correr el CLI compilado en una máquina real, correr la auditoría contra la flota real, correr el modelo real y revisar los archivos en disco.
+
+Ese es todo el mecanismo, y no quiero venderlo de más. Es una puerta que el reporte de un agente tiene que pasar antes de que yo lo acepte: el reporte dice que el trabajo está terminado, y la puerta pregunta si el entregable de verdad se corrió y si su efecto de verdad se miró. Un reporte que dice "las pruebas pasan" responde otra pregunta.
+
+El ejemplo más claro es el final de la historia de v65.0. Después de la detención del canary, la afirmación "drift 0" solo se hizo tras revisar los archivos en disco en los 7 proyectos. La bandera de éxito de la herramienta de sync fue un insumo de esa revisión, no un sustituto.
+
+No afirmo más que eso. No tengo números de cuánto ahorra o atrapa la puerta, y prefiero decirlo a inventarlos. Lo que muestra el registro es un conjunto de bugs que pasaron sus propios chequeos, cada uno encontrado porque algo corrió la cosa real.
+
+---
+
+## Lecciones prácticas para equipos que usan agentes de IA
+
+Si corres agentes de IA que escriben código y reportan sus propios resultados, de esto se desprenden unos cuantos hábitos.
+
+**Trata "terminado" como una afirmación.** Que un agente reporte que las pruebas pasan o que la sincronización tuvo éxito es un enunciado que hay que verificar. Decide cuál es el efecto observable, y míralo: el archivo existe, el comando da la respuesta correcta con una entrada real.
+
+**Corre el entregable como lo corre un usuario.** El bug de `MODULE_NOT_FOUND` vivía entre el código fuente y la salida del build. Si distribuyes un CLI compilado, corre el CLI compilado. Si es una auditoría, córrela contra lo real que audita.
+
+**Audita tus mocks para ver qué esconden.** Tres de mis cuatro historias involucraron un mock o un stub haciendo de la conducta exacta que estaba rota. Una prueba etiquetada end-to-end que le pega a un mock tiene una autoridad que no se ha ganado. Cuando una prueba dice usar la dependencia real, verifica que de verdad lo haga.
+
+**Haz que las puertas fallen con ruido y que las omisiones se vean.** El arreglo de la auditoría convirtió un directorio faltante omitido en silencio en un FAIL, y el tope del reviewer imprime "elided: N more" en vez de descartar hallazgos. Un chequeo que puede hacer en silencio menos de lo que crees es un chequeo en el que no puedes confiar.
+
+**Reproduce el bug en una prueba antes de arreglarlo.** El arreglo de la comparación del kernel y el de la auditoría vinieron cada uno con una prueba de regresión verificada en rojo y luego en verde: fallando sin el arreglo, pasando con él. Eso es lo que demuestra que la prueba apunta a la falla que viste.
+
+---
+
+## Verificar, no asumir
+
+La última sección de [Rotar eliminando](/blog/rotar-eliminando-brecha-vercel-funciones-muertas) se titulaba "Verificar, no asumir", y trataba de un formulario de contacto que se veía bien mientras sus mensajes no llegaban a ningún lado. Aquí va la misma lección sobre mi propio tooling, en un chequeador, una configuración de build, una auditoría, un modelo de ranking y un despliegue.
+
+Una suite en verde me dice que mi código hace lo que quise. No me dice que lo que quise coincide con el mundo. La única forma que conozco de cerrar ese hueco es ir y mirar: leer los archivos, correr el comando, contar los directorios, puntuar los documentos. Y entonces decir "terminado".
