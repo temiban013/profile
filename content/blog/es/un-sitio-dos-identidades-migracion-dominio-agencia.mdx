@@ -1,0 +1,207 @@
+---
+title: "Un sitio, dos identidades: cómo mudé mi portafolio al dominio de mi agencia"
+slug: un-sitio-dos-identidades-migracion-dominio-agencia
+description: "Por qué integré mi agencia al portafolio que ya tenía en vez de lanzar otro sitio, y cómo planifiqué la mudanza de dominio para no perder su historial."
+date: 2026-07-30
+author: mario-ayala
+locale: es
+category: Estrategia de Negocios
+subject: business
+tags: ["SEO", "Migración de Dominio", "Marca", "Next.js", "Datos Estructurados", "Nitaíno Digital"]
+featured: false
+draft: false
+translationSlug: one-site-two-identities-portfolio-agency-domain-migration
+---
+
+Por años, mi portafolio personal vivió en mariorafaelayala.com. Tenía mi currículum, un blog en dos idiomas y la reseña de mis proyectos, y llevaba tiempo acumulando lo que un sitio solo se gana poco a poco: su historial con los buscadores y los enlaces que apuntan hacia él. Entonces fundé Nitaíno Digital, un estudio en Puerto Rico de ingeniería de IA, desarrollo web, producción de video y capacitación, y el portafolio dejó de describir lo que de verdad estaba ofreciendo.
+
+Lo lógico parecía un segundo sitio: un dominio nuevo para la agencia y el portafolio tranquilo donde estaba. No lo hice así. Esta semana terminé de mudar el portafolio completo al dominio de la agencia, www.nitainodigital.com, y lo convertí en el sitio de la agencia. El trabajo fue del 19 al 27 de julio, el día en que el dominio nuevo quedó en vivo.
+
+En este artículo cuento por qué integré la marca en vez de empezar de cero, qué cambió en la página y para las máquinas que la leen, cómo funciona el cambio de dominio y qué queda pendiente. Al final hay una comparación para cualquier consultor o dueño de negocio que esté ante la misma encrucijada.
+
+---
+
+## La decisión: integrar, no duplicar
+
+El argumento a favor de un segundo sitio es la separación limpia. El portafolio sigue siendo portafolio, la agencia estrena su propia identidad y ninguno tiene que ceder nada. El argumento en contra es todo lo que el sitio viejo ya había construido.
+
+Un dominio nuevo empieza en cero. Los buscadores nunca lo han visitado, nadie lo enlaza y cada una de sus direcciones es desconocida. Mientras tanto, el sitio viejo sigue recibiendo enlaces y visitas que apuntan a una persona, no a un negocio. Es un argumento que les he hecho a mis clientes antes, en [por qué tu negocio necesita su propio dominio](/blog/dominio-propio-vs-plataformas) y en la [guía práctica para establecerlo](/blog/guia-practica-dominio-propio-negocio): el dominio es el activo, porque es lo que tú controlas y lo que sigue acumulando valor. Hubiera sido raro predicar eso y después abandonar el mío.
+
+Así que lo que buscaba era mantener en un solo lugar el historial de búsqueda y los enlaces del sitio, y que la agencia los heredara. El portafolio no desapareció. La historia del fundador, el currículum y el blog siguen ahí. Lo que cambió es que ahora van debajo del nombre de la agencia, no al frente.
+
+Esa decisión tiene un costo, y vale la pena decirlo. Un solo sitio ahora tiene que cargar dos identidades: un estudio que vende servicios y la persona que lo fundó. Lograr ese balance fue casi todo el trabajo.
+
+---
+
+## Qué cambió en la página
+
+Antes, la página principal abría conmigo. Ahora abre con el estudio. El nuevo orden de secciones es:
+
+1. **Portada (Hero):** la marca Nitaíno Digital y su lema, "Soluciones digitales con raíces taínas".
+2. **Servicios:** un adelanto nuevo con cuatro pilares.
+3. **Casos de estudio:** la sección de proyectos, ahora presentada como casos de estudio.
+4. **Fundador:** lo que antes era "Sobre mí", ahora presentado como la persona detrás del estudio.
+5. **Experiencia**
+6. **Contacto**
+
+El tono cambió en ambos idiomas, de currículum en primera persona a voz de agencia. La versión en inglés tiene su propio lema en vez de una traducción literal: "Digital solutions rooted in heritage".
+
+También añadí una ruta nueva para casos de éxito en formato largo. El primero vive en [/casos-de-exito/papamin](/casos-de-exito/papamin). Un portafolio enseña lo que construiste. El sitio de una agencia tiene que enseñar lo que hizo por alguien, y eso necesita más espacio que una tarjeta de proyecto.
+
+---
+
+## Qué cambió para las máquinas
+
+Los visitantes ven la página principal. Los buscadores, las vistas previas en redes sociales, los lectores de feeds y los asistentes de IA ven metadatos, datos estructurados y un puñado de archivos generados. Una mudanza de dominio que solo actualiza lo visible deja todo eso apuntando a la dirección vieja.
+
+El cambio tocó más de 20 archivos. Esto es lo que más importó, con fragmentos tomados del commit que lo publicó. El código se queda en inglés, tal como está en el proyecto.
+
+### Títulos y URLs canónicas
+
+El título del sitio ahora empieza con el estudio. Mi nombre pasa al final en vez de desaparecer.
+
+```ts
+// lib/metadata-i18n.ts
+title: {
+  default: "Nitaíno Digital — AI Engineering, Web & Video | Mario Rafael Ayala",
+  template: "%s | Nitaíno Digital",
+},
+```
+
+La URL base y la URL canónica pasaron al dominio nuevo. `metadataBase` es la URL base que Next.js usa para los campos de metadatos que necesitan una dirección completa, como las imágenes de Open Graph. Si todavía apunta al dominio viejo, cada vista previa que alguien comparta también.
+
+```ts
+// lib/metadata-i18n.ts
+metadataBase: new URL("https://www.nitainodigital.com/"),
+alternates: {
+  canonical: "https://www.nitainodigital.com/",
+  languages: {
+    "en-US": "https://www.nitainodigital.com/?lang=en",
+    "es-PR": "https://www.nitainodigital.com/?lang=es",
+  },
+},
+```
+
+Los archivos que se generan a partir de una URL base, como el sitemap, usan el dominio nuevo como respaldo cuando la variable de entorno no está definida. Así, una variable que falte no puede publicar el dominio viejo sin que nadie se entere.
+
+```ts
+// app/sitemap.ts
+const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com"}`;
+```
+
+### Datos estructurados: primero la organización
+
+Aquí es donde lo de "dos identidades" se vuelve literal. Antes, el JSON-LD describía a una persona. Ahora la entidad principal es una `Organization`, el fundador es una `Person` enlazada y cada una apunta a la otra por su `@id`. Así un buscador las lee como dos cosas conectadas y no como dos descripciones sueltas.
+
+```ts
+// app/page.tsx (recortado)
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://www.nitainodigital.com#organization",
+  name: "Nitaíno Digital",
+  url: "https://www.nitainodigital.com",
+  founder: {
+    "@id": "https://www.nitainodigital.com#person"
+  },
+  foundingDate: "2026-01",
+  slogan: "Digital solutions rooted in heritage",
+};
+
+// inside personSchema ("@id": "https://www.nitainodigital.com#person")
+worksFor: {
+  "@type": "Organization",
+  "@id": "https://www.nitainodigital.com#organization",
+  name: "Nitaíno Digital"
+},
+```
+
+Las entradas `WebSite` y `ProfessionalService` siguen la misma regla: su `author` y su `provider` apuntan a `#organization`, no a mí. Si tienes un sitio con dos identidades, decide cuál es la principal y haz que todas las demás entidades se refieran a ella.
+
+### llms.txt
+
+El sitio sirve un archivo `llms.txt`, un resumen en texto plano pensado para asistentes y rastreadores de IA. Antes presentaba a una persona. Ahora presenta al estudio.
+
+```diff
+// app/llms.txt/route.ts
+-  const content = `# Mario Rafael Ayala
++  const content = `# Nitaíno Digital
+```
+
+Todos los enlaces de ese archivo también pasaron al dominio nuevo.
+
+### Cómo lo comprobé
+
+Es fácil que se te escape una URL escrita a mano en un footer o en un feed. Por eso la verificación no fue "creo que las cambié todas". Después del build de producción, busqué el dominio viejo en el código compilado del servidor y quedó registrado: cero apariciones del dominio viejo en `.next/server`. También se revisaron el sitemap, el archivo robots, el feed, el llms.txt y el manifiesto web generados, para confirmar que sirven el dominio nuevo.
+
+Hay un detalle fácil de pasar por alto: los datos estructurados ahora publican un correo en el dominio nuevo. La lista de pasos exigía que el reenvío de ese correo estuviera activo antes del despliegue, porque una dirección que rebota es peor que no tener dirección.
+
+---
+
+## El cambio de dominio: por qué importa una redirección permanente que conserve la ruta
+
+El 27 de julio, www.nitainodigital.com pasó a ser el dominio principal. Otras tres direcciones ahora redirigen hacia él:
+
+- `nitainodigital.com` (el dominio raíz, sin `www`)
+- `mariorafaelayala.com`
+- `www.mariorafaelayala.com`
+
+Las tres responden con un HTTP `308` y conservan la ruta. Si alguien pide un artículo viejo en mariorafaelayala.com, llega a ese mismo artículo en www.nitainodigital.com, no a la página principal.
+
+Dos palabras de esa oración hacen el trabajo pesado.
+
+**Permanente.** Un `308`, igual que el más conocido `301`, les dice a los navegadores y a los buscadores que la página se mudó para siempre. La documentación de Google agrupa ambos como redirecciones permanentes y dice que su sistema de indexación usa la redirección como señal de que el destino debe ser la URL canónica ([Google Search Central: redirecciones y la Búsqueda de Google](https://developers.google.com/search/docs/crawling-indexing/301-redirects)). Una redirección temporal (`302` o `307`) dice lo contrario: quédate con la dirección vieja, esto es por ahora. Para una mudanza de dominio, lo temporal es el mensaje equivocado.
+
+**Que conserve la ruta.** Esta es la parte que mucha gente se salta. Mandar todas las direcciones viejas a la página principal del dominio nuevo es fácil de configurar, y bota casi todo lo que querías conservar. El enlace que alguien compartió a un artículo específico, el marcador en el navegador, la URL que un buscador ya había indexado: cada uno debe llegar a la página que siempre quiso decir. Con una redirección que conserva la ruta, `/blog/un-articulo` en el dominio viejo se convierte en `/blog/un-articulo` en el nuevo.
+
+Las redirecciones no están en el código de la aplicación. Se configuran a nivel de dominio con mi proveedor de hosting: los dominios viejos siguen conectados al proyecto y configurados para redirigir al principal. Eso mantiene la aplicación sencilla, porque solo sirve un dominio, y hace que las redirecciones no dependan de un despliegue.
+
+Puedes comprobar cualquier redirección con un solo comando:
+
+```bash
+curl -sI https://mariorafaelayala.com/blog/some-post
+```
+
+Fíjate en la línea de estado y en el encabezado `location`. Lo que buscas es un estado permanente y un `location` con la misma ruta en el dominio nuevo.
+
+Una consecuencia de este arreglo: las redirecciones solo funcionan mientras yo sea dueño del dominio viejo. El plan es mantener mariorafaelayala.com registrado. Dejarlo vencer rompería justamente los enlaces viejos que las redirecciones existen para proteger.
+
+---
+
+## Lo que queda pendiente
+
+El sitio y las redirecciones están en vivo. La parte de los buscadores todavía no ha terminado. Estos son los próximos pasos al momento de escribir esto:
+
+1. **Verificar el dominio nuevo en Google Search Console.** El plan es verificar la propiedad de nitainodigital.com con un registro DNS TXT.
+2. **Enviar el sitemap** de la propiedad nueva, para que Google encuentre las URLs nuevas directamente y no solo a través de las redirecciones.
+3. **Usar la herramienta de Cambio de dirección** desde la propiedad vieja de mariorafaelayala.com, que le avisa a Google que el sitio completo se mudó y no unas cuantas páginas sueltas.
+4. **Actualizar los perfiles externos.** Los enlaces de mis perfiles en LinkedIn, GitHub y YouTube tienen que pasar al dominio nuevo. Mientras tanto, las redirecciones cubren los enlaces viejos, pero un perfil debe apuntar a la dirección real.
+
+Los pongo como pendientes porque lo son. Un artículo de migración que solo cuenta la mitad terminada hace que todo parezca más fácil de lo que es.
+
+---
+
+## ¿Sitio nuevo o integrar? Una comparación
+
+Si eres consultor o tienes un negocio pequeño, con un sitio personal que ya lleva tiempo y una marca nueva, así es como yo lo pesaría. No tengo números para poner en esta tabla, y desconfiaría de cualquiera que te dé números sin conocer tu sitio.
+
+| | Dominio nuevo desde cero | Integrar con redirecciones permanentes |
+|---|---|---|
+| **Historial de búsqueda y enlaces** | Se quedan con el sitio viejo; el nuevo empieza sin nada | Pasan al dominio nuevo por medio de redirecciones que conservan la ruta |
+| **Claridad de marca** | Limpia: cada sitio tiene una sola identidad | Requiere trabajo deliberado: un sitio, dos identidades y una principal clara |
+| **Esfuerzo** | Construir un sitio y después mantener dos al día | Una migración con una lista larga (URLs, metadatos, datos estructurados, feeds, redirecciones, correo) |
+| **Riesgo** | Poco riesgo técnico; el riesgo es crecer despacio en el dominio nuevo | Una URL escrita a mano que se escape o un tipo de redirección equivocado puede debilitar la mudanza |
+| **Costo a largo plazo** | Dos sitios que mantener y dos audiencias divididas | Un solo sitio que mantener; el dominio viejo tiene que seguir registrado |
+| **Cuándo conviene** | La marca nueva no tiene que ver con la persona, o podría venderse por separado | El fundador *es* la credibilidad de la marca, y la audiencia vieja es la nueva |
+
+En mi caso, la última fila decidió. La credibilidad inicial de Nitaíno Digital es mi trayectoria, así que separarlas hubiera sido reconstruir una confianza que ya tenía.
+
+Si decides integrar, tres cosas cargan casi todo el peso:
+
+- **Escoge una identidad principal y dilo en el código.** En el orden de la página, en los títulos y en los datos estructurados, donde una entidad debe apuntar a la otra.
+- **Redirige de forma permanente y conserva las rutas.** Cada URL vieja debe llegar a su propia página.
+- **Verifica, no asumas.** Busca el dominio viejo en el build, revisa cada archivo generado y prueba las redirecciones con curl.
+
+La mudanza está en vivo y las redirecciones están haciendo su trabajo. Los pasos pendientes son lo que falta, y son lo próximo en mi lista.
+
+*Si todavía estás decidiendo si vale la pena tener un dominio propio, empieza por [por qué tu negocio necesita su propio dominio](/blog/dominio-propio-vs-plataformas).*

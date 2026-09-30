@@ -1,0 +1,207 @@
+---
+title: "One Site, Two Identities: How I Moved My Portfolio to My Agency's Domain"
+slug: one-site-two-identities-portfolio-agency-domain-migration
+description: "Why I folded my agency brand into my existing portfolio site instead of launching a new one, and how I planned the domain move to keep its search history."
+date: 2026-07-30
+author: mario-ayala
+locale: en
+category: Business Strategy
+subject: business
+tags: ["SEO", "Domain Migration", "Branding", "Next.js", "Structured Data", "Nitaíno Digital"]
+featured: false
+draft: false
+translationSlug: un-sitio-dos-identidades-migracion-dominio-agencia
+---
+
+For years, my personal portfolio lived at mariorafaelayala.com. It had a résumé, a blog in two languages, and project write-ups, and it had been building up what a site only earns slowly: its history with search engines and the links that point at it. Then I started Nitaíno Digital, a Puerto Rico–based studio for AI engineering, web development, video production, and training, and the portfolio no longer described what I was actually selling.
+
+The obvious move was a second site: a fresh domain for the agency and the portfolio left alone. I didn't do that. This week I finished moving the whole portfolio onto the agency's domain, www.nitainodigital.com, and turned it into the agency's site. The work ran from July 19 to July 27, when the new domain went live.
+
+This post covers why I folded the brand in instead of starting over, what changed on the page and for the machines that read it, how the cutover works, and what is still open. At the end there's a comparison for any consultant or small-business owner facing the same fork.
+
+---
+
+## The Decision: Fold It In
+
+The case for a second site is clean separation. The portfolio stays a portfolio, the agency gets its own identity, and neither has to compromise. The case against it is everything the old site had already built up.
+
+A new domain starts from nothing. Search engines have never crawled it, no one links to it, and every URL on it is unknown. Meanwhile the old site keeps collecting links and visits that point at a person rather than a business. I've made this argument to clients before, in [why a small business needs its own domain](/blog/own-domain-vs-platforms) and in the [practical guide to setting one up](/blog/practical-guide-own-domain-business): the domain is the asset, because it's the part you control and the part that keeps accumulating value. It would have been odd to preach that and then walk away from my own.
+
+So what I wanted was to keep the site's search history and links in one place, and let the agency inherit them. The portfolio didn't disappear. The founder's story, the résumé, and the blog are still there. They just sit under the agency's name now instead of in front of it.
+
+That choice has a cost, and it's worth naming. One site now has to carry two identities: a studio that sells services and the person who founded it. Getting that balance right was most of the work.
+
+---
+
+## What Changed on the Page
+
+The homepage used to open with me. Now it opens with the studio. The new section order is:
+
+1. **Hero:** the Nitaíno Digital brand and tagline, "Digital solutions rooted in heritage."
+2. **Services:** a new teaser with four pillars.
+3. **Case Studies:** the project section, now titled as case studies.
+4. **Founder:** what used to be "About," now framed as the person behind the studio.
+5. **Experience**
+6. **Contact**
+
+The copy changed voice in both languages, from first-person résumé to agency. The Spanish version carries its own tagline rather than a literal translation: "Soluciones digitales con raíces taínas."
+
+I also added a new route for long-form case studies. The first one lives at [/casos-de-exito/papamin](/casos-de-exito/papamin). A portfolio shows what you built. An agency site has to show what it did for someone, and that needs more room than a project card.
+
+---
+
+## What Changed for Machines
+
+Visitors see the homepage. Search engines, social previews, feed readers, and AI assistants see metadata, structured data, and a handful of generated files. A domain move that only updates the visible page leaves all of those pointing at the old address.
+
+The switch touched more than 20 files. Here's what mattered most, with snippets taken from the commit that shipped it.
+
+### Titles and canonical URLs
+
+The site title now leads with the studio. The founder's name moves to the end instead of disappearing.
+
+```ts
+// lib/metadata-i18n.ts
+title: {
+  default: "Nitaíno Digital — AI Engineering, Web & Video | Mario Rafael Ayala",
+  template: "%s | Nitaíno Digital",
+},
+```
+
+The base URL and the canonical URL moved to the new domain. `metadataBase` is the base URL Next.js uses for metadata fields that need a fully qualified URL, such as Open Graph images, so if it still points at the old domain, every share preview does too.
+
+```ts
+// lib/metadata-i18n.ts
+metadataBase: new URL("https://www.nitainodigital.com/"),
+alternates: {
+  canonical: "https://www.nitainodigital.com/",
+  languages: {
+    "en-US": "https://www.nitainodigital.com/?lang=en",
+    "es-PR": "https://www.nitainodigital.com/?lang=es",
+  },
+},
+```
+
+Files built from a base URL, like the sitemap, fall back to the new domain when the environment variable isn't set, so a missing variable can't quietly publish the old one.
+
+```ts
+// app/sitemap.ts
+const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com"}`;
+```
+
+### Structured data: the Organization comes first
+
+This is where "two identities" becomes literal. The JSON-LD used to describe a person. Now the primary entity is an `Organization`, the founder is a linked `Person`, and each points at the other by `@id`, so a search engine reads them as two connected things instead of two unrelated descriptions.
+
+```ts
+// app/page.tsx (trimmed)
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://www.nitainodigital.com#organization",
+  name: "Nitaíno Digital",
+  url: "https://www.nitainodigital.com",
+  founder: {
+    "@id": "https://www.nitainodigital.com#person"
+  },
+  foundingDate: "2026-01",
+  slogan: "Digital solutions rooted in heritage",
+};
+
+// inside personSchema ("@id": "https://www.nitainodigital.com#person")
+worksFor: {
+  "@type": "Organization",
+  "@id": "https://www.nitainodigital.com#organization",
+  name: "Nitaíno Digital"
+},
+```
+
+The `WebSite` and `ProfessionalService` entries follow the same rule: their `author` and `provider` point at `#organization`, not at me. If you have one site with two identities, decide which one is primary and make every other entity refer to it.
+
+### llms.txt
+
+The site serves an `llms.txt` file, a plain-text summary meant for AI assistants and crawlers. It used to introduce a person. Now it introduces the studio.
+
+```diff
+// app/llms.txt/route.ts
+-  const content = `# Mario Rafael Ayala
++  const content = `# Nitaíno Digital
+```
+
+Every link in that file moved to the new domain as well.
+
+### How I checked it
+
+It's easy to miss one hard-coded URL in a footer or a feed. So the check wasn't "I think I got them all." After the production build, I searched the compiled server output for the old domain and recorded zero old-domain strings in `.next/server`. The generated sitemap, robots file, feed, llms.txt, and web manifest were also checked to confirm they serve the new domain.
+
+One detail is easy to overlook: the structured data now publishes an email address on the new domain. The checklist required forwarding for that address to be live before the deploy, because an address that bounces is worse than no address at all.
+
+---
+
+## The Cutover: Why a Permanent, Path-Preserving Redirect Matters
+
+On July 27, www.nitainodigital.com became the primary host. Three other hostnames now redirect to it:
+
+- `nitainodigital.com` (the apex, without `www`)
+- `mariorafaelayala.com`
+- `www.mariorafaelayala.com`
+
+All three send an HTTP `308` and keep the path. A request for an old blog post on mariorafaelayala.com lands on the same post on www.nitainodigital.com, not on the homepage.
+
+Two words in that sentence do the heavy lifting.
+
+**Permanent.** A `308`, like the more familiar `301`, tells browsers and search engines that the page has moved for good. Google's documentation groups both as permanent redirects and says its indexing pipeline uses the redirect as a signal that the target should be canonical ([Google Search Central: redirects and Google Search](https://developers.google.com/search/docs/crawling-indexing/301-redirects)). A temporary redirect (`302` or `307`) says the opposite: keep the old address, this is just for now. For a domain move, temporary is the wrong message.
+
+**Path-preserving.** This is the part people skip. Sending every old URL to the new homepage is easy to set up, and it throws away almost everything you meant to keep. The link someone posted to a specific article, the bookmark, the URL a search engine already indexed: each of those should land on the page it always meant. With a path-preserving redirect, `/blog/some-post` on the old domain becomes `/blog/some-post` on the new one.
+
+The redirects aren't in the application code. They're set at the domain level with my hosting provider: the old domains stay attached to the project and are configured to redirect to the primary. That keeps the app simple, since it only ever serves one domain, and it means the redirects don't depend on a deploy.
+
+You can check any redirect yourself with one command:
+
+```bash
+curl -sI https://mariorafaelayala.com/blog/some-post
+```
+
+Look at the status line and the `location` header. You want a permanent status and a location with the same path on the new domain.
+
+One consequence of this setup: the redirects work only as long as I own the old domain. The plan is to keep mariorafaelayala.com registered. Letting it lapse would break every old link the redirects exist to protect.
+
+---
+
+## What's Still Open
+
+The site and the redirects are live. The search-engine side of the move isn't finished yet. These are the next steps as of this writing:
+
+1. **Verify the new domain in Google Search Console.** The plan is DNS TXT verification for the nitainodigital.com property.
+2. **Submit the sitemap** for the new property, so Google finds the new URLs directly instead of only through redirects.
+3. **Use Change of Address** from the old mariorafaelayala.com property, which tells Google the whole site has moved rather than a scattering of pages.
+4. **Update external profiles.** My LinkedIn, GitHub, and YouTube profile links need to move to the new domain. The redirects cover the old links in the meantime, but a profile should point at the real address.
+
+I'm listing these as open because they are. A migration post that reports only the finished half makes the whole thing look easier than it is.
+
+---
+
+## New Site or Fold It In? A Comparison
+
+If you're a consultant or small-business owner with an established personal site and a new brand, here's how I'd weigh it. I have no numbers to put in this table, and I'd distrust anyone who gives you some without knowing your site.
+
+| | New domain from scratch | Fold in with permanent redirects |
+|---|---|---|
+| **Search history and inbound links** | Stay with the old site; the new one starts with none | Carried to the new domain through path-preserving redirects |
+| **Brand clarity** | Clean: each site has one identity | Needs deliberate work: one site, two identities, a clear primary |
+| **Effort** | Build a site, then keep two sites current | One migration with a long checklist (URLs, metadata, structured data, feeds, redirects, email) |
+| **Risk** | Low technical risk; the risk is slow growth on the new domain | A missed hard-coded URL or a wrong redirect type can undercut the move |
+| **Ongoing cost** | Two sites to maintain and two audiences to split | One site to maintain; the old domain has to stay registered |
+| **When it fits** | The new brand is unrelated to the person, or might be sold separately | The founder *is* the brand's credibility, and the old audience is the new audience |
+
+For me, the last row decided it. Nitaíno Digital's early credibility is my track record, so separating the two would have meant rebuilding trust I already had.
+
+If you fold in, three things carry most of the weight:
+
+- **Pick a primary identity and encode it.** In the layout, in the titles, and in the structured data, where one entity should point at the other.
+- **Redirect permanently and keep paths.** Every old URL should land on its own page.
+- **Verify, don't assume.** Search the build output for the old domain, check every generated file, and curl the redirects.
+
+The move is live and the redirects are doing their job. The next steps above are what's left, and they're next on my list.
+
+*If you're weighing whether a domain is worth owning in the first place, start with [why your small business needs its own domain](/blog/own-domain-vs-platforms).*
