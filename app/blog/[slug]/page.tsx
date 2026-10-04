@@ -105,7 +105,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const legacyPost = postToLegacyPost(post);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div lang={post.locale} className="min-h-screen bg-white dark:bg-gray-900">
       {/* Language sync - redirects to translation when user changes language */}
       <PostLanguageSync
         currentLocale={post.locale}
