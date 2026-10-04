@@ -90,7 +90,7 @@ const techStack = [
 
 export default function PapaminCasePage() {
   return (
-    <main className="bg-white text-neutral-800">
+    <div className="bg-white text-neutral-800">
       {/* Hero */}
       <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white pt-32 pb-16 px-6">
         <div className="max-w-4xl mx-auto">
@@ -250,6 +250,6 @@ export default function PapaminCasePage() {
           </Link>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

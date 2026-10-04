@@ -194,7 +194,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </header>
 
       {/* Blog post content - MDX rendered with syntax highlighting */}
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
         <article className="prose prose-lg dark:prose-invert max-w-none prose-pre:bg-[#24292e] prose-pre:p-0 prose-code:before:content-none prose-code:after:content-none">
           <MdxContent code={post.body} />
         </article>
@@ -255,7 +255,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           </section>
         )}
-      </main>
+      </div>
     </div>
   );
 }

@@ -133,7 +133,7 @@ export default function ServicesPage() {
       {/* Scroll Depth Tracking */}
       <ScrollTracker />
 
-      <main className={`min-h-screen ${playfair.variable} ${sourceSans.variable} ${dmSans.variable}`}>
+      <div className={`min-h-screen ${playfair.variable} ${sourceSans.variable} ${dmSans.variable}`}>
         {/* Schema.org Structured Data */}
         <script
           type="application/ld+json"
@@ -209,7 +209,7 @@ export default function ServicesPage() {
         <div id="cta-form">
           <CTAForm />
         </div>
-      </main>
+      </div>
     </>
   );
 }

@@ -43,7 +43,7 @@ export default async function SubjectPage({ params }: Props) {
   const posts = getPostsBySubject(subjectSlug, locale);
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <BlogLanguageSync />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Breadcrumb */}
@@ -89,6 +89,6 @@ export default async function SubjectPage({ params }: Props) {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
