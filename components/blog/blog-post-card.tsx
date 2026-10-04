@@ -81,7 +81,7 @@ export function BlogPostCard({ post, variant = "default", language }: BlogPostCa
             </span>
           ))}
           {post.tags.length > 3 && (
-            <span className="text-gray-500 text-xs">
+            <span className="text-gray-500 dark:text-gray-400 text-xs">
               +{post.tags.length - 3} {getTranslation("moreTopics", language)}
             </span>
           )}

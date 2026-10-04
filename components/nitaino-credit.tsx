@@ -101,7 +101,7 @@ export function NitainoCredit({ lang = "es", className = "" }: NitainoCreditProp
           </span>
         </span>
 
-        <span className="text-[10px] opacity-60 italic">
+        <span className="text-[10px] italic">
           — {t.tagline}
         </span>
       </div>
