@@ -28,7 +28,6 @@ const CONTENT = {
     tagline: "Soluciones digitales con raíces taínas",
     by: "por",
     brandName: "Nitaíno Digital",
-    ariaLabel: "Sitio web desarrollado por Nitaíno Digital en Puerto Rico",
   },
   en: {
     craftedIn: "Crafted with pride in",
@@ -36,7 +35,6 @@ const CONTENT = {
     tagline: "Digital solutions rooted in heritage",
     by: "by",
     brandName: "Nitaíno Digital",
-    ariaLabel: "Website developed by Nitaíno Digital in Puerto Rico",
   },
 } as const;
 
@@ -84,8 +82,6 @@ export function NitainoCredit({ lang = "es", className = "" }: NitainoCreditProp
   return (
     <div
       className={`border-t border-border py-5 px-4 text-muted-foreground ${className}`}
-      role="contentinfo"
-      aria-label={t.ariaLabel}
     >
       <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs tracking-wide">
         <span className="inline-flex items-center gap-2">
