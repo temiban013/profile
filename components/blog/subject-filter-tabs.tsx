@@ -59,7 +59,7 @@ export function SubjectFilterTabs({
   return (
     <div
       className="flex flex-wrap gap-2 mb-8"
-      role="tablist"
+      role="group"
       aria-label={locale === "en" ? "Filter by subject" : "Filtrar por tema"}
     >
       {/* "All" tab */}
@@ -96,7 +96,10 @@ interface FilterTabProps {
   readonly isActive: boolean;
   readonly onClick: () => void;
   readonly color?: string;
-  readonly icon?: React.ComponentType<{ className?: string }>;
+  readonly icon?: React.ComponentType<{
+    className?: string;
+    "aria-hidden"?: boolean | "true" | "false";
+  }>;
 }
 
 function FilterTab({
@@ -109,13 +112,13 @@ function FilterTab({
 }: FilterTabProps) {
   return (
     <button
-      role="tab"
-      aria-selected={isActive}
+      type="button"
+      aria-pressed={isActive}
       onClick={onClick}
       className={`
         inline-flex items-center gap-1.5 px-4 py-2 rounded-full
         text-sm font-medium transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500
         ${
           isActive
             ? `${color || "bg-slate-600"} text-white shadow-md`
@@ -123,7 +126,7 @@ function FilterTab({
         }
       `}
     >
-      {Icon && <Icon className="w-4 h-4" />}
+      {Icon && <Icon className="w-4 h-4" aria-hidden="true" />}
       <span>{label}</span>
       <span
         className={`
