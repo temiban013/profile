@@ -181,7 +181,7 @@ const EnhancedProjectCard = ({
                       <Clock className="h-3 w-3" />
                       {language === "en" ? "Timeline" : "Cronograma"}:
                     </span>
-                    <span className="text-orange-600 dark:text-orange-400 font-semibold">{businessImpact.timeline}</span>
+                    <span className="text-orange-700 dark:text-orange-400 font-semibold">{businessImpact.timeline}</span>
                   </div>
                 )}
               </div>
