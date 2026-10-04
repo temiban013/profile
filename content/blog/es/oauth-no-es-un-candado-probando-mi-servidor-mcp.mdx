@@ -55,7 +55,7 @@ La lección de este hallazgo no es realmente sobre URLs de emisor. Es sobre por 
 
 ## Hallazgo 2: OAuth estaba encendido y dejaba entrar a todo el mundo
 
-Con OAuth por fin funcionando, hice la pregunta con la que abre este post: ¿esto frena a otro usuario de Claude? Cualquiera puede crear una cuenta de Claude y añadir un conector personalizado. Si alguien apuntara su Claude a mi servidor, ¿qué pasaría?
+Con OAuth por fin funcionando, hice la pregunta con la que abre este post: ¿esto frena a otro usuario de Claude? Cualquier cliente MCP que conozca la dirección del servidor puede intentar conectarse, incluido el Claude de otra persona que la añada como conector personalizado. Si alguno lo hiciera, ¿qué pasaría?
 
 Así que lo probé como lo haría un extraño, sin nada: sin cuenta en mi servidor, sin secreto, sin token. Esto fue lo que hizo el servidor:
 

@@ -55,7 +55,7 @@ The lesson in this finding isn't really about issuer URLs. It's about why OAuth 
 
 ## Finding 2: OAuth was on, and it let everyone in
 
-With OAuth finally working, I asked the question at the top of this post: does this stop another Claude user? Anyone can create a Claude account and add a custom connector. If someone else pointed their Claude at my server, what would happen?
+With OAuth finally working, I asked the question at the top of this post: does this stop another Claude user? Any MCP client that knows the server's address can try to connect, including someone else's Claude with that address added as a custom connector. If one did, what would happen?
 
 So I tested it the way an outsider would, with nothing: no account on my server, no secret, no token. Here is what the server did:
 
