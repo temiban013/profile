@@ -1,0 +1,142 @@
+---
+title: "OAuth no es un candado: lo que encontré al probar mi propio servidor MCP"
+slug: oauth-no-es-un-candado-probando-mi-servidor-mcp
+description: "Probé mi propio servidor MCP como un extraño: OAuth estaba apagado, luego dejaba entrar a cualquiera y un hook de seguridad no escaneaba nada. Esto arreglé."
+date: 2026-08-27
+author: mario-ayala
+locale: es
+category: Seguridad
+subject: ai-tools
+tags: ["MCP", "OAuth", "Seguridad", "Protocol Manager", "Claude", "Agentes de IA"]
+featured: false
+draft: false
+translationSlug: oauth-isnt-a-lock-testing-my-own-mcp-server
+---
+
+"¿OAuth evita que otro usuario de Claude se conecte a mi servidor?"
+
+Me hice esa pregunta sobre mi propio servidor MCP el 14 de agosto. La respuesta fue que no. El servidor corría OAuth, el flujo de login se completaba, se emitían tokens, y nada de eso decidía quién podía entrar. Cualquiera que encontrara el servidor podía registrarse, aprobarse a sí mismo y salir con un token válido.
+
+Ese fue el segundo problema que encontré ese día. El primero fue que OAuth ni siquiera estaba corriendo. Y una semana antes había descubierto un hook de seguridad que se suponía que escaneara cada prompt en los proyectos que administro y no estaba escaneando nada.
+
+Los tres están arreglados. Este post trata de cómo los encontré, cuál fue el arreglo de cada uno, y la idea que quiero que se lleve todo desarrollador que exponga un servidor MCP: **OAuth emite tokens. No decide quién se merece uno. Esa decisión te toca a ti.**
+
+## El servidor, y por qué importa el alcance
+
+Protocol Manager es el sistema que uso para coordinar agentes de IA entre mis proyectos. Una parte es un servidor MCP, un servicio que habla el [Model Context Protocol](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) para que un cliente de IA pueda llamar sus herramientas. En local, Claude Code le habla directamente. Para usarlo desde Claude en la web, lo corro como servidor HTTP y lo expongo a través de un túnel público, y luego lo añado como conector en Claude.
+
+Por ese conector, Claude puede leer archivos de proyectos. El 14 de agosto el servidor además ganó dos herramientas de descubrimiento, `list_files` y `grep_files`, para que el modelo pudiera encontrar archivos en vez de solo abrir rutas que ya conocía. Las dos herramientas traen exclusiones incorporadas, y solo existen en el transporte web.
+
+Las herramientas de descubrimiento cambian la pregunta que hay que hacerse. Un servidor que puede leer un archivo que le nombras es una cosa. Un servidor que puede buscar en todos los proyectos que conoce es algo mucho más grande para dejar al alcance de cualquiera. Así que la pregunta que importa no es "¿qué pueden hacer mis herramientas?", sino "¿quién las puede llamar?"
+
+## Hallazgo 1: OAuth estaba apagado porque nunca funcionó
+
+Lo primero que aprendí fue incómodo: el conector web había estado corriendo con OAuth apagado.
+
+No se apagó por capricho. Se apagó porque el flujo de OAuth nunca terminaba: el conector no podía completar un login, así que corría sin uno.
+
+Cuando por fin rastreé el porqué, la causa era un solo ajuste que nunca se había llenado: la URL del emisor (issuer), la dirección que un servidor OAuth anuncia como su propia identidad. Sin nada configurado, el servidor recurría a un valor por defecto y anunciaba una dirección localhost como su emisor. Claude llegaba al servidor por el túnel lo suficiente para dar de alta un cliente, pero el emisor que le decían que usara apuntaba a una dirección que Claude jamás podría alcanzar, así que nunca llegaba al paso de autorización. El flujo moría ahí, en silencio.
+
+La evidencia estaba en el propio almacenamiento del servidor: **4 registros de clientes y 0 tokens.** Cuatro veces un cliente se había dado de alta y nunca recibió un token.
+
+Esa configuración además rompía una regla de la especificación de MCP, cuya sección de autorización lo dice sin rodeos: "All authorization server endpoints MUST be served over HTTPS" (todos los endpoints del servidor de autorización DEBEN servirse por HTTPS; traducción mía) ([MCP Authorization, 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)). Un emisor localhost sobre HTTP plano nunca iba a funcionar para un conector que entra desde internet.
+
+Configurar bien el emisor lo arregló. Por primera vez, el conteo de tokens pasó de 0 a 1. Y pude medir qué cambió:
+
+| Solicitud | Antes del arreglo | Después del arreglo |
+|---|---|---|
+| Una solicitud al endpoint de MCP sin autenticación | 200, con acceso completo a las herramientas | 401 |
+
+Lee esa primera fila otra vez. Antes del arreglo, cualquiera que supiera la URL recibía un 200 y todas las herramientas que el servidor ofrecía, incluyendo la que escribe archivos. Con OAuth apagado, el túnel era lo único entre internet y mis herramientas, y un túnel no es un candado. Es una puerta con una dirección larga.
+
+También añadí un seguro para que esto no vuelva a pasar en silencio: si el servidor arranca sin ninguna autenticación activa, descarta la herramienta de escritura por completo, tanto de la lista de herramientas que anuncia como del código que la ejecutaría. Esconder una herramienta no basta por sí solo, porque un cliente que ya conoce el nombre de una herramienta puede llamarla directamente.
+
+La lección de este hallazgo no es realmente sobre URLs de emisor. Es sobre por qué OAuth estaba apagado desde el principio. "La opción segura no funciona, así que la apago por ahora" es como empiezan muchas exposiciones. El arreglo fue un solo ajuste, y hasta que alguien lo rastreó, la autenticación siguió apagada.
+
+## Hallazgo 2: OAuth estaba encendido y dejaba entrar a todo el mundo
+
+Con OAuth por fin funcionando, hice la pregunta con la que abre este post: ¿esto frena a otro usuario de Claude? Cualquiera puede crear una cuenta de Claude y añadir un conector personalizado. Si alguien apuntara su Claude a mi servidor, ¿qué pasaría?
+
+Así que lo probé como lo haría un extraño, sin nada: sin cuenta en mi servidor, sin secreto, sin token. Esto fue lo que hizo el servidor:
+
+1. **El registro estaba abierto.** El servidor soportaba el registro dinámico de clientes, la parte de OAuth que deja a un cliente inscribirse solo, al vuelo. Cualquiera podía registrar un cliente nuevo y recibir de vuelta sus datos de acceso.
+2. **La autorización se aprobaba sola.** Cuando ese cliente nuevo pedía autorización, el servidor decía que sí. No había pantalla de login ni paso de consentimiento. Le entregaba un código de autorización a quien lo pidiera.
+3. **El token venía detrás.** Con el código en la mano, el cliente lo cambiaba por un token de acceso válido.
+
+Corrí esa secuencia completa con cero credenciales y obtuve un token que funcionaba. El flujo de login estaba completo y cumplía el estándar, y no protegía nada.
+
+Lo cerré negándome a registrar clientes. El endpoint de registro ahora responde cada solicitud con un 403, y puse esa verificación delante de las rutas propias de la librería de OAuth, para que no dependa de cómo se comporte la librería por dentro. Después del cambio corrí otra vez la misma secuencia con cero credenciales, tanto en local como a través del túnel, y las dos veces el registro devolvió 403.
+
+### Por qué "OAuth está encendido" no significaba "protegido"
+
+Esta es la parte que más quiero que entiendan otros desarrolladores, porque yo la tenía mal en mi propia cabeza.
+
+OAuth es un protocolo para delegar acceso. Define cómo un cliente pide permiso, cómo recibe un código y cómo cambia ese código por un token. Define la *mecánica* de repartir tokens. No define *quién debería recibir uno*. Esa decisión vive en el paso donde el servidor de autorización normalmente le pediría a la persona que inicie sesión y apruebe. Si ese paso aprueba a todo el mundo, OAuth le va a emitir tokens a todo el mundo, fielmente.
+
+La especificación de MCP lo dice en voz alta, si la lees con cuidado. Describe al servidor de autorización como el componente "responsible for interacting with the user (if necessary) and issuing access tokens" (responsable de interactuar con el usuario, si es necesario, y de emitir tokens de acceso; traducción mía), y luego: "The implementation details of the authorization server are beyond the scope of this specification" (los detalles de implementación del servidor de autorización están fuera del alcance de esta especificación; traducción mía) ([MCP Authorization, 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)). Sobre el registro dinámico, dice que clientes y servidores *deberían* soportarlo, y señala que "Authorization servers can implement their own registration policies" (los servidores de autorización pueden implementar sus propias políticas de registro; traducción mía).
+
+En otras palabras, la especificación te da la tubería y te deja la política a ti. Una implementación con registro abierto y un paso de autorización que aprueba todo está siguiendo el protocolo. Solo que no tiene política.
+
+### Un ejemplo mínimo
+
+Así puede verse negarse al registro dinámico de clientes. **Es ilustrativo, no es el código de mi servidor.** Es un manejador genérico que usa los tipos estándar `Request` y `Response`, y compila bajo TypeScript estricto:
+
+```ts
+// Illustrative only. This is not my server's code.
+// A registration endpoint that refuses every request unless the owner
+// has deliberately turned registration on.
+
+const registrationOpen = false; // decided by the owner, never by the caller
+
+export function handleRegister(request: Request): Response {
+  if (request.method !== "POST") {
+    return new Response(null, { status: 405 });
+  }
+  if (!registrationOpen) {
+    return new Response(
+      JSON.stringify({ error: "Client registration is closed on this server." }),
+      { status: 403, headers: { "content-type": "application/json" } },
+    );
+  }
+  // Only reached when the owner has opened registration on purpose.
+  return new Response(null, { status: 501 });
+}
+```
+
+Lo importante no es el código. Es el comentario sobre la bandera: la decisión la toma el dueño, nunca quien llama. Toda decisión de control de acceso en un servidor que expones debería poder llevar ese comentario.
+
+## Hallazgo 3: un hook de seguridad que no corría en ningún lado
+
+El tercer hallazgo fue el primero en el calendario, el 8 de agosto, y tiene la misma forma que los otros dos: algo reportado como protección que no estaba protegiendo nada.
+
+Protocol Manager sincroniza un conjunto de hooks y configuraciones a cada proyecto que administra. Uno de esos hooks es un escáner de inyección de prompts que revisa cada prompt antes de que Claude lo vea. Cuando incorporé mi proyecto más nuevo, cada prompt que escribía producía un error del hook diciendo que el script del escáner "no se encontraba" ("not found").
+
+La causa: la configuración generada le decía a cada proyecto que corriera el escáner, pero el script en sí no estaba en la lista de archivos que se sincronizan. La configuración apuntaba a un archivo que nunca se entregaba. El proyecto más nuevo fue el primero en toparse con eso porque no tenía una copia vieja por ahí. Los proyectos más viejos tenían copias desactualizadas, y el escáner también fallaba en silencio ahí, porque dependía de un resultado de build que solo existía en el proyecto principal. En la práctica, el escáner no estaba corriendo en ninguno de los proyectos a los que se sincronizaba.
+
+Ese es el peor tipo de falla de seguridad: un error que parece ruido, y un control que parece estar presente en todos los archivos de configuración.
+
+El arreglo tuvo tres partes:
+
+- **Entregarlo.** Añadí el script a la lista de sincronización y lo hice capaz de encontrar el escáner del que depende desde cualquier proyecto administrado.
+- **Desplegarlo solo con advertencia.** En los proyectos administrados el escáner ahora registra cada detección en un archivo dentro de ese proyecto y **nunca bloquea** el prompt. Ahí es un sistema de advertencia, no una puerta, y lo digo con precisión porque "escáner activado" y "escáner bloqueando" son afirmaciones distintas. El proyecto principal conserva su comportamiento original de bloqueo.
+- **Protegerse contra el hueco.** Añadí una prueba que falla si algún hook al que hace referencia la configuración generada no está en la lista de sincronización. Confirmé que muerde quitando una entrada de forma temporal y viendo cómo fallaba.
+
+Luego comprobé que el hook de verdad corriera: los scripts sincronizados eran idénticos y ejecutables en los ocho proyectos administrados, se registró de punta a punta una detección de prueba desde uno de ellos, y una sesión en vivo confirmó que el error de "no se encontró" había desaparecido.
+
+## Lo que no te puedo decir
+
+Antes del 14 de agosto, mientras la autenticación estuvo apagada, cualquiera que conociera la dirección del servidor podía llamar sus herramientas. Me gustaría decir que nadie más lo encontró nunca. No puedo: no tengo ninguna revisión de logs de ese periodo que me permita afirmarlo con honestidad. No se puede probar un negativo a partir de la ausencia de una evidencia que nunca recopilaste. Así que no afirmo ni una cosa ni la otra.
+
+## Tres cosas para llevarte de esto
+
+Si expones un servidor MCP a un cliente de IA por internet, esto es lo que haría distinto desde el principio:
+
+1. **Prueba como un extraño, sin ninguna credencial.** No pruebes tu servidor desde tu propio cliente con la sesión abierta. Empieza desde la nada: sin cuenta, sin secreto, sin token, y mira hasta dónde llegas. Probar desde mi propio conector solo me decía que mi conector funcionaba. La respuesta de verdad apareció cuando empecé desde cero.
+2. **Trata "autenticación activada" como una afirmación que hay que verificar, no como un hecho.** "OAuth está encendido" no me dijo nada sobre quién podía entrar. Revisa qué devuelve de verdad una solicitud sin autenticar, revisa si un desconocido puede registrarse, y revisa qué decide realmente el paso de autorización. Un 401 que has observado vale más que un ajuste que crees que está activo.
+3. **Verifica que tus hooks de seguridad de verdad se ejecuten.** Un hook en un archivo de configuración también es una afirmación. Haz que corra, haz que detecte algo, y encuentra la evidencia en su log. Luego añade una prueba que falle cuando el hook y los archivos que necesita se desalineen.
+
+## La misma lección, dos veces antes
+
+No es la primera vez que escribo sobre confianza que no estaba donde yo suponía. En [Rotar eliminando](/blog/rotar-eliminando-brecha-vercel-funciones-muertas) miré el incidente de Vercel de abril que, en palabras de la propia Vercel, se originó en la aplicación OAuth de Google Workspace de una herramienta de IA de terceros. Una herramienta pequeña, un permiso de OAuth, y una cadena de decisiones de confianza que cada una por separado parecía razonable.
+
+Y en [Pruebas en verde, fallos silenciosos](/blog/pruebas-verdes-fallos-silenciosos-verificacion) escribí sobre por qué mis agentes verifican el efecto real en vez de confiar en una prueba que pasa. Este post es la versión de seguridad de esa idea. Una prueba en verde, un ajuste de "OAuth activado" y un hook listado en un archivo de configuración afirman protección sin demostrarla. La única manera en que encontré cualquiera de estos tres problemas fue revisar qué hacía realmente el servidor.

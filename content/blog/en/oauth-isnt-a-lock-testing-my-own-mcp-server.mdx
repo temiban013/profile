@@ -1,0 +1,142 @@
+---
+title: "OAuth Isn't a Lock: What I Found When I Tested My Own MCP Server"
+slug: oauth-isnt-a-lock-testing-my-own-mcp-server
+description: "I tested my own MCP server as an outsider. OAuth was off, then it gave a token to anyone, and a security hook scanned nothing. What I fixed and what I learned."
+date: 2026-08-27
+author: mario-ayala
+locale: en
+category: Security
+subject: ai-tools
+tags: ["MCP", "OAuth", "Security", "Protocol Manager", "Claude", "AI Agents"]
+featured: false
+draft: false
+translationSlug: oauth-no-es-un-candado-probando-mi-servidor-mcp
+---
+
+"Does OAuth stop another Claude user from connecting to my server?"
+
+I asked that question about my own MCP server on August 14. The answer was no. The server was running OAuth, the login flow completed, tokens were issued, and none of it decided who was allowed in. Anyone who found the server could register, approve themselves, and walk away with a valid token.
+
+That was the second problem I found that day. The first was that OAuth hadn't been running at all. And a week earlier, I had found a security hook that was supposed to scan every prompt in the projects I manage and had been scanning nothing.
+
+All three are fixed. This post is about how I found them, what each fix was, and the one idea I want every developer exposing an MCP server to take away: **OAuth issues tokens. It does not decide who deserves one. That decision is yours.**
+
+## The server, and why reach matters
+
+Protocol Manager is the system I use to coordinate AI agents across my projects. Part of it is an MCP server, a service that speaks the [Model Context Protocol](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) so an AI client can call its tools. Locally, Claude Code talks to it directly. To use it from Claude on the web, I run it as an HTTP server and expose it through a public tunnel, then add it as a connector in Claude.
+
+Through that connector, Claude can read project files. On August 14 the server also gained two discovery tools, `list_files` and `grep_files`, so the model could find files instead of only opening paths it already knew. Both tools have exclusions built in, and they only exist on the web transport.
+
+Discovery tools change the question you have to ask. A server that can read a file you name is one thing. A server that can search across every project it knows about is a much bigger thing to leave reachable. So the question that matters isn't "what can my tools do?" It's "who can call them?"
+
+## Finding 1: OAuth was off, because it never worked
+
+The first thing I learned was uncomfortable: the web connector had been running with OAuth switched off.
+
+It wasn't switched off on a whim. It was switched off because the OAuth flow never finished: the connector could not complete a login, so it ran without one.
+
+When I finally traced why, the cause was a single setting that had never been filled in: the issuer URL, the address an OAuth server announces as its own identity. With nothing set, the server fell back to a default and advertised a localhost address as its issuer. Claude could reach the server through the tunnel well enough to register a client, but the issuer it was told to use pointed at an address Claude could never reach, so it never got to the authorization step. The flow died there, silently.
+
+The evidence was sitting in the server's own storage: **4 client registrations and 0 tokens.** Four times, a client had registered and then never gotten a token.
+
+That setup also broke a rule in the MCP specification, whose authorization section says plainly: "All authorization server endpoints MUST be served over HTTPS" ([MCP Authorization, 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)). A localhost issuer over plain HTTP was never going to work for a connector coming in from the internet.
+
+Setting the issuer correctly fixed it. For the first time, the token count went from 0 to 1. And I could measure what that changed:
+
+| Request | Before the fix | After the fix |
+|---|---|---|
+| A request to the MCP endpoint with no credentials | 200, with full tool access | 401 |
+
+Read that first row again. Before the fix, anyone who knew the URL got a 200 and every tool the server offered, including the one that writes files. With OAuth off, the tunnel was the only thing between the internet and my tools, and a tunnel isn't a lock. It's a door with a long address.
+
+I also added a fail-safe so this can't quietly happen again: if the server starts with no authentication active, it drops the write tool entirely, both from the list of tools it advertises and from the code path that would run it. Hiding a tool isn't enough on its own, because a client that already knows a tool's name can call it directly.
+
+The lesson in this finding isn't really about issuer URLs. It's about why OAuth was off in the first place. "The secure option doesn't work, so I'll turn it off for now" is how a lot of exposures start. The fix was one setting, and until someone traced it, authentication stayed off.
+
+## Finding 2: OAuth was on, and it let everyone in
+
+With OAuth finally working, I asked the question at the top of this post: does this stop another Claude user? Anyone can create a Claude account and add a custom connector. If someone else pointed their Claude at my server, what would happen?
+
+So I tested it the way an outsider would, with nothing: no account on my server, no secret, no token. Here is what the server did:
+
+1. **Registration was open.** The server supported dynamic client registration, the part of OAuth that lets a client sign itself up on the fly. Any caller could register a new client and get its credentials back.
+2. **Authorization auto-approved.** When that new client asked to be authorized, the server said yes. There was no login screen and no consent step. It handed over an authorization code to whoever asked.
+3. **The token followed.** With a code in hand, the client exchanged it for a valid access token.
+
+I ran that sequence end to end with zero credentials and got a working token. The login flow was complete and standards-shaped, and it protected nothing.
+
+I closed it by refusing registration. The registration endpoint now answers every request with a 403, and I put that check in front of the OAuth library's own routes, so it doesn't depend on how the library behaves inside. After the change I ran the same zero-credential sequence again, both locally and through the tunnel, and both times registration came back 403.
+
+### Why "OAuth is on" didn't mean "protected"
+
+This is the part I most want other developers to understand, because I had it wrong in my own head.
+
+OAuth is a protocol for delegating access. It defines how a client asks for permission, how it gets a code, and how it trades that code for a token. It defines the *mechanics* of handing out tokens. It does not define *who should get one*. That decision lives in the step where the authorization server would normally ask the person to log in and approve. If that step approves everyone, OAuth will faithfully issue tokens to everyone.
+
+The MCP specification says this out loud, if you read it closely. It describes the authorization server as the component "responsible for interacting with the user (if necessary) and issuing access tokens," and then: "The implementation details of the authorization server are beyond the scope of this specification" ([MCP Authorization, 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)). On dynamic registration, it says clients and servers *should* support it, and notes that "Authorization servers can implement their own registration policies."
+
+In other words, the spec gives you the plumbing and leaves the policy to you. An implementation with open registration and an approve-everything authorize step is following the protocol. It just has no policy.
+
+### A minimal example
+
+Here's what refusing dynamic client registration can look like. **This is illustrative, not my server's code.** It's a generic handler using the standard `Request` and `Response` types, and it compiles under strict TypeScript:
+
+```ts
+// Illustrative only. This is not my server's code.
+// A registration endpoint that refuses every request unless the owner
+// has deliberately turned registration on.
+
+const registrationOpen = false; // decided by the owner, never by the caller
+
+export function handleRegister(request: Request): Response {
+  if (request.method !== "POST") {
+    return new Response(null, { status: 405 });
+  }
+  if (!registrationOpen) {
+    return new Response(
+      JSON.stringify({ error: "Client registration is closed on this server." }),
+      { status: 403, headers: { "content-type": "application/json" } },
+    );
+  }
+  // Only reached when the owner has opened registration on purpose.
+  return new Response(null, { status: 501 });
+}
+```
+
+The point isn't the code. It's the comment on the flag: the decision is made by the owner, never by the caller. Every access-control decision on a server you expose should be able to carry that comment.
+
+## Finding 3: a security hook that ran nowhere
+
+The third finding came first chronologically, on August 8, and it has the same shape as the other two: something reported as protection that wasn't protecting anything.
+
+Protocol Manager syncs a set of hooks and settings to every project it manages. One of those hooks is a prompt-injection scanner that checks each prompt before Claude sees it. When I onboarded my newest project, every prompt I typed produced a hook error saying the scanner script was "not found."
+
+The cause: the generated settings told each project to run the scanner, but the script itself wasn't on the list of files that get synced. The settings pointed at a file that was never delivered. The newest project hit it first because it had no older copy lying around. The older projects had stale copies, and the scanner was also failing silently there, because it depended on a build output that only existed in the home project. In practice, the scanner was running in none of the projects it was synced to.
+
+That's the worst kind of security failure: an error that looks like noise, and a control that looks present in every settings file.
+
+The fix had three parts:
+
+- **Ship it.** I added the script to the sync list and made it able to find the scanner it depends on from any managed project.
+- **Roll it out warn-only.** In the managed projects the scanner now logs every detection to a file in that project and **never blocks** the prompt. It's a warning system there, not a gate, and I'm stating that precisely because "scanner enabled" and "scanner blocking" are different claims. The home project keeps its original blocking behavior.
+- **Guard against the gap.** I added a test that fails if any hook referenced by the generated settings is missing from the sync list. I confirmed it bites by temporarily removing an entry and watching it fail.
+
+Then I checked that the hook actually ran: the synced scripts were identical and executable in all eight managed projects, a test detection was logged end to end from one of them, and a live session confirmed the "not found" error was gone.
+
+## What I can't tell you
+
+Before August 14, while authentication was off, anyone who knew the server's address could call its tools. I'd like to say no one else ever found it. I can't: I have no log review on record from that period that would let me make that claim honestly. You can't prove a negative from an absence of evidence you never collected. So I'm not claiming it either way.
+
+## Three things to take from this
+
+If you expose an MCP server to an AI client over the internet, here's what I'd do differently from the start:
+
+1. **Test as an outsider, with no credentials.** Don't test your server from your own logged-in client. Start from nothing: no account, no secret, no token, and see how far you get. Testing from my own connector only ever told me that my connector worked. The real answer only showed up when I started from zero.
+2. **Treat "auth enabled" as a claim to verify, not a fact.** "OAuth is on" told me nothing about who could get in. Check what an unauthenticated request actually returns, check whether a stranger can register, and check what the authorize step really decides. A 401 you've observed is worth more than a setting you believe is on.
+3. **Check that your security hooks actually execute.** A hook in a settings file is a claim, too. Make it run, make it detect something, and find the evidence in its log. Then add a test that fails when the hook and the files it needs drift apart.
+
+## The same lesson, twice before
+
+This isn't the first time I've written about trust that wasn't where I assumed it was. In [Rotate by Deletion](/blog/rotate-by-deletion-vercel-breach-dead-features), I looked at Vercel's April incident, which, in Vercel's own words, originated from a third-party AI tool's Google Workspace OAuth app. A small tool, an OAuth grant, and a chain of trust decisions that each looked reasonable on its own.
+
+And in [Green Tests, Silent Failures](/blog/green-tests-silent-failures-runtime-verification), I wrote about why my agents verify the real effect instead of trusting a passing test. This post is the security version of that idea. A green test, an "OAuth enabled" setting, and a hook listed in a settings file all claim protection without showing it. The only way I found any of these three problems was to check what the server actually did.
