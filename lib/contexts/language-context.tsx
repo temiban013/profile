@@ -42,13 +42,17 @@ export function LanguageProvider({ children, initialLanguage = "es" }: { childre
       const storedLanguage = localStorage.getItem("language") as LanguageKey;
       const resolvedLang = storedLanguage && (storedLanguage === "en" || storedLanguage === "es")
         ? storedLanguage
-        : "es";
+        : initialLanguage;
 
       setLanguageState(resolvedLang);
+      localStorage.setItem("language", resolvedLang);
       document.cookie = `lang=${resolvedLang};path=/;max-age=31536000;SameSite=Lax`;
+      if (resolvedLang !== initialLanguage) {
+        document.documentElement.lang = resolvedLang;
+      }
       isInitializedRef.current = true;
     }
-  }, []);
+  }, [initialLanguage]);
 
   const value = useMemo(() => ({ language, setLanguage }), [language, setLanguage]);
 
