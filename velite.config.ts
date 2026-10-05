@@ -72,7 +72,7 @@ export default defineConfig({
       [
         rehypeShiki as never,
         {
-          theme: "github-dark",
+          theme: "github-dark-default",
         },
       ],
     ],
