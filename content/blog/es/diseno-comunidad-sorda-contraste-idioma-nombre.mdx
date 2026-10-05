@@ -1,0 +1,163 @@
+---
+title: "Diseño para la comunidad sorda: guardas de contraste, etiquetas de idioma y el nombre correcto"
+slug: diseno-comunidad-sorda-contraste-idioma-nombre
+description: "El sitio de una escuela de lenguaje de señas: paleta de la Bandera Sorda, una prueba de contraste que solo aprieta, el nombre correcto y códigos de idioma."
+date: 2026-09-16
+author: mario-ayala
+locale: es
+category: Accesibilidad
+subject: accessibility
+tags: ["Accesibilidad", "WCAG", "Comunidad Sorda", "Lenguaje de Señas", "Contraste de Color", "Next.js"]
+featured: false
+draft: false
+translationSlug: deaf-first-design-contrast-language-naming
+---
+
+El código `asl` no significa American Sign Language. En el registro que usan los navegadores, los buscadores y los lectores de pantalla, `asl` es un idioma que se llama asilulu. El código correcto es `ase`.
+
+Me enteré trabajando en [Gespervis](https://www.gespervis.com), una escuela en línea de Puerto Rico que enseña lenguaje de señas. Su página de accesibilidad dice que la plataforma está diseñada pensando en las personas sordas y con dificultades auditivas, y se compromete con WCAG 2.1 AA. En un sitio así, un código de idioma equivocado, una etiqueta que casi no se lee o un nombre escrito a la ligera no son detalles de estética. Le dicen a la gente a la que la escuela sirve que nadie verificó.
+
+Este post trata de cuatro cosas que salieron a producción en ese sitio entre el 14 y el 15 de septiembre: una paleta de colores que significa algo, una prueba de contraste que solo puede ponerse más estricta, una regla de nombres que una prueba hace cumplir, y etiquetas de idioma verificadas contra el registro. También doy los números como fueron, con lo que quedó abierto.
+
+## Colores que significan algo
+
+La paleta del sitio tiene tres colores, y sus nombres se ven en el código de la página: `deaf-blue` (un azul oscuro, `#172983`), `sign-blue` (un turquesa, `#009EE0`) y `sun-yellow` (`#F8E919`). Salen de la Bandera Sorda.
+
+La Federación Mundial de Sordos (WFD) dice que la bandera la diseñó Arnaud Balard, un artista sordociego francés, y que su Asamblea General la aprobó en 2023. La misma página explica los colores. El turquesa "represents the deaf community and Sign Language, pride and unity" (representa a la comunidad sorda y al lenguaje de señas, el orgullo y la unidad). El amarillo "represents the color of light, an enlightened spirit, life and 'thriving in unison'" (representa el color de la luz, un espíritu iluminado, la vida y el "prosperar al unísono"). El azul oscuro "represents the earth, humanity and living in accordance with the planet" (representa la tierra, la humanidad y el vivir en armonía con el planeta). Las traducciones son mías ([WFD, Deaf Flag](https://wfdeaf.org/deaf-flag/)).
+
+Cambiar la paleta fue lo fácil. Después de la primera pasada, el turquesa casi no se veía y el amarillo no aparecía por ningún lado. Había tres colores de la bandera en los tokens de diseño, y en pantalla casi siempre uno.
+
+Una segunda pasada, el 11 y el 12 de septiembre, le dio un trabajo a cada color vivo:
+
+- **Sign Blue va donde aparece el lenguaje de señas o la comunidad.** En las páginas públicas se ve en las franjas anchas de las páginas de organizaciones y de misión, que van de Deaf Blue a Sign Blue.
+- **Sun Yellow va donde el aprendizaje se logró.** En la página de inicio, la etiqueta "Certificación Profesional" va sobre un fondo Sun Yellow. Dentro del área del estudiante, la misma regla cubre el progreso y el trabajo completado.
+- **Deaf Blue se queda de fondo** para todo lo demás.
+
+La regla importa más que los colores. Cuando cada color tiene un trabajo, la pregunta "¿esta insignia va en amarillo?" tiene una respuesta que no depende del gusto de nadie.
+
+## Los colores vivos y el contraste no se llevan
+
+Una paleta con un amarillo brillante y un turquesa medio trae un problema: esos dos colores fallan como texto. El mínimo de contraste de WCAG pide 4.5:1 para texto normal y 3:1 para texto grande ([WCAG 2.1, Criterio de Conformidad 1.4.3](https://www.w3.org/TR/WCAG21/#contrast-minimum)). Esto es lo que dan los tres colores:
+
+| Par | Razón | Texto normal (4.5:1) |
+|---|---|---|
+| Blanco sobre Deaf Blue | 12.49:1 | Pasa |
+| Sign Blue sobre blanco | 3.01:1 | Falla (pasa solo como texto grande) |
+| Sun Yellow sobre blanco | 1.26:1 | Falla |
+
+Por eso los colores vivos se usan como fondos y acentos, con texto oscuro encima. Esa etiqueta "Certificación Profesional" es texto azul oscuro sobre amarillo, no texto amarillo.
+
+Esas tres razones también son pruebas unitarias en el proyecto. Una de ellas dice:
+
+```ts
+it("never treats sun-yellow as readable text on white", () => {
+  expect(findContrastIssues(["bg-white", "text-sun-yellow-500"], colors)[0]?.ratio).toBe(1.26);
+});
+```
+
+## El trinquete de contraste
+
+Una regla como "nunca texto amarillo sobre blanco" dura una semana si vive en un documento. La próxima función se hace con prisa, alguien escoge un color que en su monitor se ve bien, y el fallo sale a producción.
+
+Así que la regla vive en una prueba. Lee cada archivo de código, encuentra los grupos de clases de Tailwind que van juntas en un elemento, empareja cada color de texto con su fondo y calcula la razón de WCAG. El sitio ya tenía pares que fallaban cuando se escribió la prueba. En vez de esperar a arreglarlos todos para encenderla, los fallos conocidos se guardaron en un archivo de línea base, y la prueba verifica dos cosas:
+
+1. **Ningún par nuevo que falle.** Si un archivo gana un par que no está en la línea base, o más copias de uno que sí está, la prueba falla e imprime el archivo, el par, la razón que tiene y la que necesita.
+2. **Ninguna entrada vieja.** Si un par de la línea base ya no aparece porque alguien lo arregló, la prueba también falla hasta que se borre la entrada.
+
+La segunda verificación es la que lo convierte en un trinquete, la pieza que deja girar hacia un lado y no hacia el otro. La línea base puede achicarse y nunca crecer, así que el contraste del sitio solo puede mejorar. Este es el centro de la prueba, recortado (la real tiene además un interruptor que relaja la verificación de entradas viejas mientras hay varios arreglos en curso a la vez):
+
+```ts
+const baseline = JSON.parse(readFileSync(BASELINE_PATH, "utf8")) as Record<string, { count: number }>;
+
+const added = Object.entries(current)
+  .filter(([key, v]) => v.count > (baseline[key]?.count ?? 0))
+  .map(([key, v]) => `${key} → ${v.ratio}:1 (needs ${v.required}:1) at lines ${v.lines.join(", ")}`);
+
+const stale = Object.entries(baseline)
+  .filter(([key, v]) => (current[key]?.count ?? 0) < v.count)
+  .map(([key]) => key);
+
+expect({ added, stale }).toEqual({ added: [], stale: [] });
+```
+
+La prueba se guardó por primera vez el 11 de septiembre. Cuando el trabajo llegó a producción el 14, la línea base tenía 54 pares conocidos. Ese número es la deuda, escrita donde todo el mundo la ve, y cada arreglo la achica.
+
+## Los números, con los que quedaron abiertos
+
+Una prueba que lee nombres de clases es rápida, y también es ciega a todo lo que no puede deducir de las clases, como texto sobre una imagen o un color que se asigna mientras la página corre. Por eso la prueba de clases se acompañó de un escaneo de las páginas ya dibujadas: 143 rutas, cada una a 1280 y a 390 píxeles de ancho, revisadas contra WCAG AA en una copia local del sitio y no en producción.
+
+El escaneo se ganó su lugar. Durante la pasada de color reportó cinco fallos. Cuatro ya se conocían y estaban anotados. El quinto era nuevo: texto gris sobre las fichas sólidas del calendario que la misma pasada acababa de crear, a unos 2.5:1. Se arregló escribiendo primero la prueba que fallaba, y el reescaneo de los dos calendarios salió limpio.
+
+El escaneo del 12 de septiembre, con las 143 rutas, terminó con esos mismos 4 puntos conocidos todavía abiertos, y nada más. Una salvedad sobre ese número: el escaneo corrió antes de la última corrección de texto de esa noche.
+
+No voy a redondear eso a "cero problemas de accesibilidad". Había cuatro abiertos el día que esto salió. Además, un escaneo automático cubre solo una parte de WCAG, así que un escaneo limpio tampoco habría querido decir que el sitio es accesible del todo. Lo que sí puedo decir es más estrecho y es verdad: cada fallo de contraste conocido en la prueba de clases está escrito, uno nuevo hace fallar las pruebas, y la lista solo puede acortarse.
+
+## El nombre correcto
+
+La escuela escogió una sola forma de nombrar lo que enseña: **Lenguaje de Señas Puertorriqueño (LSPR/ASL)**. Esa forma larga exacta, con esa etiqueta, en todas partes, también en los textos en inglés. La forma corta es siempre "LSPR/ASL", nunca "ASL" sola. Se dice siempre "lenguaje de señas". Y la gente es "personas sordas" o "sordos".
+
+No estoy haciendo un argumento lingüístico, ni me toca hacerlo. La escuela conoce a su comunidad y decidió cómo nombrar su propio lenguaje. Mi trabajo era asegurar que el sitio lo diga igual en cada página, en cada correo y en cada título, y que lo siga diciendo después de los próximos cien cambios.
+
+Una guía de estilo no logra eso. El cambio de nombre tocó más de 200 archivos, y basta una persona que escriba la forma vieja para que vuelva. Así que la decisión del nombre también es una prueba:
+
+```ts
+const PR_LONG_FORM = "Lenguaje de Señas Puertorriqueño (LSPR/ASL)";
+
+const RULES: Rule[] = [
+  {
+    id: "standalone-asl",
+    pattern: /\bASL\b/g,
+    isOk: (text, index) => text.slice(Math.max(0, index - 5), index) === "LSPR/",
+  },
+  {
+    id: "tag-without-long-form",
+    pattern: /\(LSPR\/ASL\)/g,
+    isOk: (text, index) => text.slice(0, index).endsWith("Lenguaje de Señas Puertorriqueño "),
+  },
+  // …seven more rules
+];
+```
+
+Dos detalles la hacen práctica:
+
+- **Lee solo lo que la gente lee.** La prueba analiza cada archivo con el compilador de TypeScript y aplica las reglas a las cadenas de texto, al texto de las plantillas y al texto de JSX. Los comentarios y los nombres de variables nunca coinciden, así que una constante con ASL en el nombre no la dispara.
+- **Las excepciones llevan su razón.** Un texto que conserva a propósito una frase marcada va en una lista de excepciones con su archivo y el porqué. Si ese texto desaparece del código, la prueba falla hasta que se borre la entrada. Es la misma idea del trinquete de la línea base de contraste.
+
+Las excepciones se usaron al día siguiente. Las vistas previas de enlaces mostraban "LSPR/ASL" dos veces en el título de la página, una en la forma corta y otra en la etiqueta. El 15 de septiembre los títulos se cambiaron para quitar la etiqueta donde el título ya nombra LSPR/ASL, y el de la página de inicio ahora lee "Gespervis | Cursos de LSPR/ASL en Puerto Rico - Lenguaje de Señas Puertorriqueño". Esos títulos están en la guarda como excepciones, cada uno con su razón. Las descripciones conservan la forma completa.
+
+## Etiquetas de idioma para las máquinas
+
+La gente lee el nombre. Las máquinas leen códigos de idioma, y la página tiene dos lugares para ponerlos.
+
+El primero es el atributo `lang` de la página, que es `es-PR`: español como se escribe en Puerto Rico. Los lectores de pantalla lo usan para escoger la pronunciación.
+
+El segundo son los datos estructurados. El sitio les describe sus clases en vivo a los buscadores con un evento de schema.org, y la propiedad `inLanguage` de schema.org pide "one of the language codes from the IETF BCP 47 standard" (uno de los códigos de idioma del estándar IETF BCP 47; traducción mía) ([schema.org/inLanguage](https://schema.org/inLanguage)). Esos códigos salen del [registro de subetiquetas de idioma de IANA](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry). Las clases en vivo están marcadas así:
+
+```json
+"inLanguage": ["es", "psl", "ase"]
+```
+
+Esto es lo que dice el registro sobre los códigos en cuestión:
+
+| Subetiqueta | Descripción en el registro |
+|---|---|
+| `psl` | Puerto Rican Sign Language |
+| `ase` | American Sign Language |
+| `asl` | Asilulu |
+
+La suposición obvia, `asl`, es un código registrado de otro idioma. Por eso el error es fácil de pasar por alto: una verificación que solo pregunta "¿esto es un código de idioma válido?" lo acepta. Con `asl`, la página les diría a los buscadores que una clase de lenguaje de señas en Puerto Rico se da en asilulu.
+
+Es la misma lección del escaneo de contraste. La única manera de saber que un código de idioma está bien es buscarlo en el registro.
+
+## Qué llevarse de esto
+
+Si construyes para una comunidad que no es la tuya, esto es lo que yo me llevaría al próximo proyecto:
+
+1. **Trata el contraste como una prueba de regresión.** Anota en una línea base los fallos que ya tienes, haz que la prueba falle con cualquiera nuevo, y que falle también con las entradas viejas para que la línea base se achique. No hace falta arreglarlo todo para dejar de empeorarlo.
+2. **Convierte las decisiones de nombre en pruebas.** Cuando una comunidad te dice cómo se llama, eso es un requisito. Pon la forma exacta en una prueba que lea el texto visible, y exige que cada excepción traiga su razón.
+3. **Verifica los códigos de idioma contra el registro.** No adivines por la abreviatura. El registro de IANA es un archivo de texto y la búsqueda toma un minuto.
+4. **Reporta lo que sigue abierto.** "143 rutas escaneadas, 4 puntos conocidos abiertos" es algo que alguien puede comprobar, y una lista que alguien puede terminar. "Totalmente accesible" no es ninguna de las dos cosas.
+
+Dos de estas son la misma idea que escribí en [Pruebas en verde, fallos silenciosos](/blog/pruebas-verdes-fallos-silenciosos-verificacion): una verificación que pasa es una afirmación, y la evidencia es el efecto real. La prueba de clases decía que los colores estaban bien, y el escaneo de las páginas reales encontró las fichas del calendario. El código `asl` se ve correcto y es un código válido, y el registro dice que significa otra cosa.
+
+Diseñar pensando primero en la comunidad sorda, por lo que he aprendido en este proyecto, es sobre todo ese tipo de atención. Alguien decidió qué significan los colores y cómo se llama el lenguaje, y el código se encarga de que el sitio lo siga diciendo.

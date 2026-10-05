@@ -1,0 +1,163 @@
+---
+title: "Deaf-First Design: Contrast Guards, Language Tags, and Getting the Name Right"
+slug: deaf-first-design-contrast-language-naming
+description: "A sign language school's site, built Deaf-first: a Deaf Flag palette, a contrast test that only gets stricter, a naming guard, and the right language codes."
+date: 2026-09-16
+author: mario-ayala
+locale: en
+category: Accessibility
+subject: accessibility
+tags: ["Accessibility", "WCAG", "Deaf Community", "Sign Language", "Color Contrast", "Next.js"]
+featured: false
+draft: false
+translationSlug: diseno-comunidad-sorda-contraste-idioma-nombre
+---
+
+The code `asl` does not mean American Sign Language. In the registry that browsers, search engines, and screen readers rely on, `asl` is a language called Asilulu. American Sign Language is `ase`.
+
+I found that out while working on [Gespervis](https://www.gespervis.com), an online school in Puerto Rico that teaches sign language. Its accessibility page says the platform is designed with Deaf and hard-of-hearing people in mind, and commits to WCAG 2.1 AA. On a site like that, a wrong language code, a pale label, or a careless name is not a cosmetic problem. It tells the people the school serves that nobody checked.
+
+This post covers four things that went into production on that site between September 14 and 15: a color palette that carries meaning, a contrast test that can only get stricter, a naming rule enforced by a test, and language tags checked against the registry. I'll also give the numbers as they were, including the issues that were still open.
+
+## Color that means something
+
+The site's palette has three colors, and their names are visible in the page markup: `deaf-blue` (a dark blue, `#172983`), `sign-blue` (a turquoise, `#009EE0`), and `sun-yellow` (`#F8E919`). They are drawn from the Deaf Flag.
+
+The World Federation of the Deaf says the flag was designed by Arnaud Balard, a French deafblind artist, and that its General Assembly approved it in 2023. The same page explains the colors. Turquoise "represents the deaf community and Sign Language, pride and unity." Yellow "represents the color of light, an enlightened spirit, life and 'thriving in unison'." Dark blue "represents the earth, humanity and living in accordance with the planet" ([WFD, Deaf Flag](https://wfdeaf.org/deaf-flag/)).
+
+Swapping the palette was the easy part. After the first pass, the turquoise was barely visible and the yellow didn't appear at all. Three flag colors were in the design tokens, and mostly one was on the screen.
+
+A second pass, on September 11 and 12, gave each bright color a job:
+
+- **Sign Blue goes where sign language or community appears.** On the public pages you can see it in the wide bands on the organizations and mission pages, which run from Deaf Blue into Sign Blue.
+- **Sun Yellow goes where learning has been achieved.** On the home page, the "Certificación Profesional" label sits on a Sun Yellow fill. Inside the student area, the same rule covers progress and completed work.
+- **Deaf Blue stays as the ground** for everything else.
+
+The rule matters more than the colors. Once each color has a job, "should this badge be yellow?" has an answer that doesn't depend on taste.
+
+## Bright colors and contrast don't get along
+
+A palette with a bright yellow and a mid turquoise has a problem: those two colors fail as text. WCAG's contrast minimum asks for 4.5:1 for normal text and 3:1 for large text ([WCAG 2.1, Success Criterion 1.4.3](https://www.w3.org/TR/WCAG21/#contrast-minimum)). Here is what the three colors give you:
+
+| Pair | Ratio | Normal text (4.5:1) |
+|---|---|---|
+| White on Deaf Blue | 12.49:1 | Passes |
+| Sign Blue on white | 3.01:1 | Fails (passes only as large text) |
+| Sun Yellow on white | 1.26:1 | Fails |
+
+So the bright colors are used as fills and accents, with dark text on top. That "Certificación Profesional" label is dark blue text on yellow, not yellow text.
+
+Those three ratios are also unit tests in the project. One of them reads:
+
+```ts
+it("never treats sun-yellow as readable text on white", () => {
+  expect(findContrastIssues(["bg-white", "text-sun-yellow-500"], colors)[0]?.ratio).toBe(1.26);
+});
+```
+
+## The contrast ratchet
+
+A rule like "never put yellow text on white" survives about a week if it lives in a document. The next feature gets built in a hurry, someone reaches for a color that looks fine on their monitor, and the failure ships.
+
+So the rule lives in a test. It reads every source file, finds the groups of Tailwind classes that sit together on an element, pairs each text color with its background, and computes the WCAG ratio. The site already had failing pairs when the test was written. Rather than wait until every one was fixed before turning the test on, the known failures went into a baseline file, and the test checks two things:
+
+1. **No new failing pair.** If a file gains a pair that isn't in the baseline, or more copies of one that is, the test fails and prints the file, the pair, the ratio, and the ratio it needs.
+2. **No stale entry.** If a pair in the baseline no longer occurs because someone fixed it, the test also fails until the entry is removed.
+
+The second check is what makes it a ratchet. The baseline can shrink and it can never grow, so contrast across the site can only improve. This is the core of the test, trimmed (the real one also has a switch that relaxes the stale check while several fixes are in progress at once):
+
+```ts
+const baseline = JSON.parse(readFileSync(BASELINE_PATH, "utf8")) as Record<string, { count: number }>;
+
+const added = Object.entries(current)
+  .filter(([key, v]) => v.count > (baseline[key]?.count ?? 0))
+  .map(([key, v]) => `${key} → ${v.ratio}:1 (needs ${v.required}:1) at lines ${v.lines.join(", ")}`);
+
+const stale = Object.entries(baseline)
+  .filter(([key, v]) => (current[key]?.count ?? 0) < v.count)
+  .map(([key]) => key);
+
+expect({ added, stale }).toEqual({ added: [], stale: [] });
+```
+
+The test was first committed on September 11. When the work reached production on September 14, the baseline held 54 known pairs. That number is the debt, written down where everyone can see it, and each fix makes it smaller.
+
+## The numbers, including the open ones
+
+A test that reads class names is fast, and it is also blind to anything it can't work out from the classes, such as text drawn over an image or a color set at runtime. So the class test was paired with a scan of the rendered pages: 143 routes, each at 1280 and 390 pixels wide, checked against WCAG AA on a local copy of the site rather than on production.
+
+The scan earned its place. During the color pass it reported five failures. Four were already known and tracked. The fifth was new: gray text on the solid calendar chips the pass had just introduced, at about 2.5:1. It was fixed with a failing test first, and a rescan of both calendar views came back clean.
+
+The September 12 scan of all 143 routes ended with those same 4 known issues still open, and nothing else. One caveat on that number: the scan ran before the last text correction made that evening.
+
+I'm not going to round that to "zero accessibility issues." Four were open on the day this shipped. An automated scan also covers only part of WCAG, so a clean scan would not have meant the site was fully accessible either. What I can say is narrower and true: every known contrast failure in the class test is written down, a new one fails the test suite, and the list can only get shorter.
+
+## Getting the name right
+
+The school chose one way to name what it teaches: **Lenguaje de Señas Puertorriqueño (LSPR/ASL)**. That exact long form, with that tag, everywhere, including in text written in English. The short form is always "LSPR/ASL," never "ASL" alone. The Spanish term is always "lenguaje de señas." Deaf people are "personas sordas" or "sordos."
+
+I'm not making a linguistic argument here, and it isn't mine to make. The school knows its community and decided how to name its own language. My job was to make sure the site says it the same way on every page, in every email, and in every title, and keeps saying it after the next hundred changes.
+
+A style guide can't do that. The rename touched more than 200 files, and one contributor who types the old form brings it back. So the naming decision is a test too:
+
+```ts
+const PR_LONG_FORM = "Lenguaje de Señas Puertorriqueño (LSPR/ASL)";
+
+const RULES: Rule[] = [
+  {
+    id: "standalone-asl",
+    pattern: /\bASL\b/g,
+    isOk: (text, index) => text.slice(Math.max(0, index - 5), index) === "LSPR/",
+  },
+  {
+    id: "tag-without-long-form",
+    pattern: /\(LSPR\/ASL\)/g,
+    isOk: (text, index) => text.slice(0, index).endsWith("Lenguaje de Señas Puertorriqueño "),
+  },
+  // …seven more rules
+];
+```
+
+Two details make it practical:
+
+- **It reads only what people read.** The test parses each file with the TypeScript compiler and applies the rules to string literals, template text, and JSX text. Comments and identifiers never match, so a constant with ASL in its name doesn't trip it.
+- **Exceptions need a reason.** Text that keeps a flagged phrase on purpose goes on an allowlist with its file and why. If an allowlisted text disappears from the code, the test fails until the entry is removed, the same ratchet idea as the contrast baseline.
+
+The exceptions were used the next day. Link previews were showing "LSPR/ASL" twice in the page title, once in the short form and again in the tag. On September 15 the titles were changed to drop the tag where the title already names LSPR/ASL, so the home page title now reads "Gespervis | Cursos de LSPR/ASL en Puerto Rico - Lenguaje de Señas Puertorriqueño." Those titles are listed in the guard as exceptions, each with its reason. The descriptions keep the full form.
+
+## Language tags for machines
+
+People read the name. Machines read language codes, and the page has two places for them.
+
+The first is the `lang` attribute on the page, which is `es-PR`: Spanish as written in Puerto Rico. Screen readers use it to choose pronunciation.
+
+The second is structured data. The site describes its live classes to search engines with a schema.org event, and schema.org's `inLanguage` property asks for "one of the language codes from the IETF BCP 47 standard" ([schema.org/inLanguage](https://schema.org/inLanguage)). Those codes come from the [IANA Language Subtag Registry](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry). The live classes are marked like this:
+
+```json
+"inLanguage": ["es", "psl", "ase"]
+```
+
+Here is what the registry says about the codes involved:
+
+| Subtag | Registry description |
+|---|---|
+| `psl` | Puerto Rican Sign Language |
+| `ase` | American Sign Language |
+| `asl` | Asilulu |
+
+The obvious guess, `asl`, is a registered code for a different language. That is what makes the mistake easy to miss: a check that only asks "is this a valid language code?" accepts it. With `asl`, the page would tell search engines that a sign language class in Puerto Rico is given in Asilulu.
+
+That's the same lesson as the contrast scan. The only way to know a language code is right is to look it up in the registry.
+
+## What to take from this
+
+If you build for a community that isn't yours, here's what I'd carry to the next project:
+
+1. **Treat contrast as a regression test.** Record the failures you have in a baseline, fail the test on any new one, and fail it on stale entries too so the baseline shrinks. You don't have to fix everything before you can stop making it worse.
+2. **Encode naming decisions as tests.** When a community tells you what it's called, that's a requirement. Put the exact form in a test that reads visible text, and make every exception carry a reason.
+3. **Check language codes against the registry.** Don't guess from the abbreviation. The IANA registry is a plain text file and the lookup takes a minute.
+4. **Report what's still open.** "143 routes scanned, 4 known issues open" is a claim someone can check and a list someone can finish. "Fully accessible" is neither.
+
+Two of these are the same idea I wrote about in [Green Tests, Silent Failures](/blog/green-tests-silent-failures-runtime-verification): a passing check is a claim, and the evidence is the real effect. The class test said the colors were fine and the scan of real pages found the calendar chips. The code `asl` looks right and is a valid code, and the registry says it means something else.
+
+Deaf-first design, as far as I've learned it on this project, is mostly that kind of attention. Someone decided what the colors mean and what the language is called, and the code makes sure the site keeps saying it.
