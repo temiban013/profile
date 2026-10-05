@@ -84,13 +84,13 @@ The test was first committed on September 11. When the work reached production o
 
 ## The numbers, including the open ones
 
-A test that reads class names is fast, and it is also blind to anything it can't work out from the classes, such as text drawn over an image or a color set at runtime. So the class test was paired with a scan of the rendered pages: 143 routes, each at 1280 and 390 pixels wide, checked against WCAG AA on a local copy of the site rather than on production.
+A test that reads class names is fast, and it is also blind to anything it can't work out from the classes, such as text drawn over an image or a color set at runtime. So the class test was paired with a scan of the rendered pages: 143 routes, each at 1280 and 390 pixels wide, checked against WCAG AA.
 
 The scan earned its place. During the color pass it reported five failures. Four were already known and tracked. The fifth was new: gray text on the solid calendar chips the pass had just introduced, at about 2.5:1. It was fixed with a failing test first, and a rescan of both calendar views came back clean.
 
 The September 12 scan of all 143 routes ended with those same 4 known issues still open, and nothing else. One caveat on that number: the scan ran before the last text correction made that evening.
 
-I'm not going to round that to "zero accessibility issues." Four were open on the day this shipped. An automated scan also covers only part of WCAG, so a clean scan would not have meant the site was fully accessible either. What I can say is narrower and true: every known contrast failure in the class test is written down, a new one fails the test suite, and the list can only get shorter.
+I'm not going to round that to "zero accessibility issues." Four were open on the day this shipped. The W3C's Web Accessibility Initiative also says that evaluation tools cannot check every aspect of accessibility automatically and that human judgment is required ([Selecting Web Accessibility Evaluation Tools](https://www.w3.org/WAI/test-evaluate/tools/selecting/)), so a clean scan would not have meant the site was fully accessible either. What I can say is narrower and true: every known contrast failure in the class test is written down, a new one fails the test suite, and the list can only get shorter.
 
 ## Getting the name right
 
