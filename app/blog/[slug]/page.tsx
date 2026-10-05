@@ -103,6 +103,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const relatedPosts = getRelatedPosts(post, 2);
   const translation = getPostTranslation(post);
   const legacyPost = postToLegacyPost(post);
+  const dateLocale = post.locale === "es" ? "es-PR" : "en-US";
 
   return (
     <div lang={post.locale} className="min-h-screen bg-white dark:bg-gray-900">
@@ -154,7 +155,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* Post metadata */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-            <time dateTime={post.date}>{formatDate(new Date(post.date))}</time>
+            <time dateTime={post.date}>{formatDate(new Date(post.date), dateLocale)}</time>
             <span>•</span>
             <span>
               {post.readingTime} {post.locale === "es" ? "min de lectura" : "min read"}
@@ -165,7 +166,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <>
                 <span>•</span>
                 <span>
-                  {post.locale === "es" ? "Actualizado" : "Updated"}: {formatDate(new Date(post.updated))}
+                  {post.locale === "es" ? "Actualizado" : "Updated"}: {formatDate(new Date(post.updated), dateLocale)}
                 </span>
               </>
             )}
