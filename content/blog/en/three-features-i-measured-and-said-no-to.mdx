@@ -27,7 +27,7 @@ In each case the "no" was not a hunch. It came from a measurement, and the measu
 
 **The decision.** Closed on June 22 as not applicable, with the reasoning logged next to the item. Adopting it would have added a flag that most likely did nothing, and "most likely nothing" is not the same as "harmless": every flag in a launch command is a claim to the next person who reads it.
 
-**What it cost to say no.** A documentation check before adding a flag. That is the cheapest no in this post, and it only happened because the rule said to check before adding. The default, for a flag with a plausible name, is to add it and feel efficient.
+**What it cost to say no.** A documentation check before adding a flag. That is the cheapest no in this post, and it only happened because the rule said to check first. The default, for a flag with a plausible name, is to add it and feel efficient.
 
 ## 2. Semantic search that nobody searched
 
@@ -41,7 +41,7 @@ In each case the "no" was not a hunch. It came from a measurement, and the measu
 - The server was failing to reconnect, with the same class of launch failure another tool had shown after a migration.
 - The hybrid retrieval tool returned empty results in production. Its index provider was set only in tests; the production provider was null, and the dense-embedding provider defaulted to zero vectors. The tool had been returning nothing to everyone, silently.
 - The corpus was 77 handoff files, about 800 KB in total. At that size, plain keyword search has close to perfect practical recall, and handoff vocabulary is consistent (ticket ids, project names, stable technical terms), so the vocabulary-mismatch problem that semantic search solves barely arose.
-- The service's API key was sitting in plaintext in a local config file and needed revoking regardless.
+- The service's API key was sitting in plaintext in a local config file and needed revoking regardless. (It has since been revoked.)
 
 **The decision.** The whole capability was removed the same day, in five commits: the tool surface, the dormant retrieval stack, the trust-registry entry, the permission-policy entries, and two dependencies, which took 51 packages with them. The test suite went to 2,419 passing with nothing failing. A revisit trigger was written into the backlog: reconsider semantic search when the corpus reaches 500 documents.
 

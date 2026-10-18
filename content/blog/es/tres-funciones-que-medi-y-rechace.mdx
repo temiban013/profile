@@ -27,7 +27,7 @@ En los tres casos el "no" no fue una corazonada. Salió de una medición, y la m
 
 **La decisión.** Cerrada el 22 de junio como no aplicable, con el razonamiento anotado junto al punto. Adoptarla habría añadido una bandera que muy probablemente no hacía nada, y "muy probablemente nada" no es lo mismo que "inofensiva": cada bandera en un comando de lanzamiento es una afirmación para la próxima persona que lo lea.
 
-**Lo que costó decir que no.** Revisar la documentación antes de añadir una bandera. Es el "no" más barato de este artículo, y solo ocurrió porque la regla decía comprobar antes de añadir. Lo normal, con una bandera de nombre convincente, es añadirla y sentirse eficiente.
+**Lo que costó decir que no.** Revisar la documentación antes de añadir una bandera. Es el "no" más barato de este artículo, y solo ocurrió porque la regla decía comprobar primero. Lo normal, con una bandera de nombre convincente, es añadirla y sentirse eficiente.
 
 ## 2. Una búsqueda semántica en la que nadie buscó
 
@@ -41,7 +41,7 @@ En los tres casos el "no" no fue una corazonada. Salió de una medición, y la m
 - El servidor no lograba reconectarse, con la misma clase de fallo de arranque que otra herramienta había mostrado después de una migración.
 - La herramienta de recuperación híbrida devolvía resultados vacíos en producción. Su proveedor de índice solo se configuraba en las pruebas; en producción el proveedor era nulo, y el proveedor de embeddings densos devolvía vectores de ceros por defecto. La herramienta llevaba tiempo devolviéndole nada a todo el mundo, en silencio.
 - El corpus eran 77 archivos de traspaso, unos 800 KB en total. A ese tamaño, la búsqueda simple por palabras clave tiene una cobertura práctica casi perfecta, y el vocabulario de los traspasos es consistente (identificadores de tickets, nombres de proyectos, términos técnicos estables), así que el problema de desajuste de vocabulario que resuelve la búsqueda semántica apenas se presentaba.
-- La clave de API del servicio estaba en texto plano en un archivo de configuración local y había que revocarla de todas formas.
+- La clave de API del servicio estaba en texto plano en un archivo de configuración local y había que revocarla de todas formas. (Ya se revocó.)
 
 **La decisión.** La capacidad completa se eliminó ese mismo día, en cinco commits: la superficie de herramientas, la capa de recuperación inactiva, la entrada en el registro de confianza, las entradas de la política de permisos y dos dependencias, que se llevaron 51 paquetes consigo. La suite de pruebas quedó en 2,419 pasando y ninguna fallando. En el backlog quedó escrito un disparador para reconsiderarlo: volver a evaluar la búsqueda semántica cuando el corpus llegue a 500 documentos.
 
