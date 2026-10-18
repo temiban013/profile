@@ -1,0 +1,114 @@
+---
+title: "The Day kill Logged Me Out: Debugging a Negative PID"
+slug: the-day-kill-logged-me-out
+description: "A test script's cleanup step took down my whole desktop session. It looked like a reboot. Here is how I found the real cause, and the two dashes that would have prevented it."
+date: 2026-11-01
+author: mario-ayala
+locale: en
+category: Software Development
+subject: web-development
+tags: ["Debugging", "Linux", "Node.js", "Process Management", "Postmortem", "Ubuntu"]
+featured: false
+draft: true
+translationSlug: el-dia-que-kill-cerro-mi-sesion
+---
+
+On September 11 at 17:20:28, my desktop session disappeared. Every application went with it: the code editor, the browsers, the AI agent sessions I had running, a remote-desktop agent, and an accessibility scan in the middle of its run. It looked exactly like the machine had rebooted.
+
+It hadn't. And the thing that took everything down was one line in the cleanup step of a test that had just passed.
+
+This is the postmortem: what it looked like, what it was, how I told the two apart, and what I changed so it can't happen the same way again.
+
+## It looked like a reboot. It wasn't.
+
+The first question was the obvious one: did the machine restart? It had not. The kernel stayed up and the uptime counter kept running. Whatever happened, it happened in user space.
+
+The system journal said what it was. At 17:20:28.739 the desktop session manager logged that it was exiting because it had **received SIGTERM**. Then my user's systemd instance started its exit target and shut down everything under it. Nothing had crashed. Something had asked my session, politely and with authority, to end.
+
+That distinction changed the whole investigation. "My computer rebooted" points you at hardware, drivers and the kernel. "My session received SIGTERM" points you at whoever sent it.
+
+## The usual suspects
+
+Before blaming anything specific, I checked the journal for the causes that usually end a desktop session. Each was ruled out the same way: the event that would have proved it wasn't there.
+
+1. **The out-of-memory killer.** No OOM events.
+2. **The graphics driver or GPU.** No GPU errors.
+3. **The login manager ending the session.** No logind events.
+4. **PID 1, the init system itself.** No events from it.
+
+With those gone, the question became: what was running at 17:20 that sends signals?
+
+The answer was a live end-to-end test script for a Protocol Manager feature. It had started a background watcher process, run its checks (15 of 15 passed), and then, in its teardown, tried to stop the watcher and all of its children. Its output stopped right before the line where it would have printed its result. The cleanup was the last thing it did.
+
+## The cause: one digit
+
+To stop a process and everything it started, you signal its process group. In the `kill` command, and in the `kill(2)` system call beneath it, a negative PID means "the process group with this ID". The teardown did this from Node by running the system's `kill` binary:
+
+```js
+// What NOT to do: this is the line that ended the session
+execFileSync("kill", ["-TERM", `-${pgid}`]);
+```
+
+With a group ID of 1602530, that runs `/usr/bin/kill -TERM -1602530`. You would expect the kernel to receive `kill(-1602530, SIGTERM)`.
+
+On this machine, it received `kill(-1, SIGTERM)`.
+
+The `kill` here is from procps-ng 4.0.4 (Ubuntu package `procps 2:4.0.4-4ubuntu3.3`). Without a `--` to mark the end of the options, it read `-1602530` as options and kept only the first digit. The cause is in the tool's own source. In procps-ng 4.0.4, [`src/kill.c`](https://gitlab.com/procps-ng/procps/-/raw/v4.0.4/src/kill.c) handles an option that starts with a digit as a negative PID and computes it as `(long)('0' - optopt)`. `optopt` is a single character, so `-1602530` becomes `'0' - '1'`, which is −1.
+
+And −1 is special. The Linux man page for `kill(2)` says that if the PID equals −1, the signal "is sent to every process for which the calling process has permission to send signals, except for process 1 (init)". For a normal user, that is every process you own: the desktop session, your user's systemd, every app. That is exactly what the journal showed.
+
+A group ID starting with any other digit is quieter but no better: `-2602530` becomes `kill(-2, …)`, a signal to a different, unrelated process group, or to nothing at all.
+
+I established this by tracing the system calls with `strace` inside an isolated PID namespace, where a broadcast signal can only reach the processes inside it. I re-ran the same check on October 18 for this post, with the harmless `SIGCONT`, and got the same results:
+
+| Command | System call the kernel received |
+|---|---|
+| `/usr/bin/kill -CONT -1602530` | `kill(-1, SIGCONT)` |
+| `/usr/bin/kill -CONT -2602530` | `kill(-2, SIGCONT)` |
+| `/usr/bin/kill -CONT -- -1602530` | `kill(-1602530, SIGCONT)` |
+| bash builtin `kill -CONT -- -1602530` | `kill(-1602530, SIGCONT)` |
+| Node `process.kill(-1602530, "SIGCONT")` | `kill(-1602530, SIGCONT)` |
+
+The broken form is the only one that loses digits. The two dashes fix it, and so does not spawning the binary at all.
+
+## The fix and the guardrails
+
+The fix went in the same evening, and it is more than the one line:
+
+- **Signal from Node directly.** `process.kill(-pgid, signal)` calls the system call with the number you gave it. No argument parsing, no external binary.
+- **In shell, use the builtin with `--`.** `kill -TERM -- -"$PGID"`. A shell hook that stops the same watcher already used the bash builtin, and the trace confirmed it was safe.
+- **Refuse the dangerous values.** The code that stops the watcher now only signals a PID greater than 1, and only after checking in `/proc` that the process is really the watcher it started.
+- **A test that forbids the pattern.** A guard test fails the test suite if any source, hook or script spawns the external `kill` binary. Another test puts a fake `kill` first in the `PATH` and proves it is never executed.
+- **Test group kills where they can't escape.** Anything that signals a process group is now tested inside `unshare --user --map-root-user --pid --fork --mount-proc`. One detail mattered here: a `bwrap` sandbox without `--unshare-pid` does **not** contain signals. A sandbox that hides your files can still let a `kill(-1)` through.
+
+Here is the safe version of the teardown, side by side with the shell form:
+
+```ts
+// Safe: signal the whole process group from Node, no external binary.
+function stopGroup(pgid: number): void {
+  if (!Number.isInteger(pgid) || pgid <= 1) {
+    throw new Error(`refusing to signal process group ${pgid}`);
+  }
+  process.kill(-pgid, "SIGTERM");
+}
+```
+
+```bash
+# Safe: bash builtin, with -- before the negative PID
+kill -TERM -- -"$PGID"
+
+# DANGEROUS, do not use: on procps-ng 4.0.4, without --, a group ID
+# starting with 1 becomes kill(-1, SIGTERM): every process you own
+/usr/bin/kill -TERM -<pgid>
+```
+
+This is a known upstream bug, and it is already fixed upstream. It was reported to procps-ng as [issue #354](https://gitlab.com/procps-ng/procps/-/issues/354) in October 2024 and fixed by the commit "[kill: Correctly parse negative pids](https://gitlab.com/procps-ng/procps/-/commit/bfbaf43acade8c9de38737e87f4fc535991c8359)", which shipped in procps-ng 4.0.5. The Ubuntu package on my machine is still 4.0.4. A request to backport the fix to Ubuntu 24.04, [Launchpad bug #2166756](https://bugs.launchpad.net/ubuntu/+source/procps/+bug/2166756), was filed on September 8, three days before my session went down, and lists `2:4.0.4-4ubuntu3.3`, my exact version, as affected. The upstream version number alone won't tell you whether you're affected: the same report notes that Ubuntu 26.04's package, `2:4.0.4-9ubuntu1`, signals only the intended group. Put `--` before a negative PID either way.
+
+## What I took from it
+
+1. **Distrust "it looked like X".** It looked like a reboot. The uptime and one line in the journal said otherwise, and that one correction turned a hardware mystery into a question with a short list of answers.
+2. **Rule things out with evidence, not with a feeling.** Each usual suspect would have left a mark in the journal, and none did. Writing down which mark you looked for is what makes "ruled out" mean something.
+3. **Reproduce where it can't hurt you.** The tempting way to confirm a theory about `kill(-1)` is to run it again. Don't. A PID namespace costs one command and turns a session-killing bug into a line of `strace` output.
+4. **Write the hazard where the next reader will look.** The rule now lives in the project's known issues and in the memory notes my AI agents load when they start working on that project, with the exact forms to use and to avoid. The next script that needs to stop a process group, whoever or whatever writes it, will meet the warning before it meets the bug.
+
+Like the problem in [Green Tests, Silent Failures](/blog/green-tests-silent-failures-runtime-verification), this one hid behind a passing test: all 15 checks were green, and the damage came after them. The checks told me the feature worked. Only the real effect on the machine told me what the test itself did.

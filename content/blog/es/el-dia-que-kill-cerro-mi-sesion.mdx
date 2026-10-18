@@ -1,0 +1,114 @@
+---
+title: "El día que kill cerró mi sesión: depurando un PID negativo"
+slug: el-dia-que-kill-cerro-mi-sesion
+description: "El paso de limpieza de un script de prueba tumbó toda mi sesión de escritorio. Parecía un reinicio. Así encontré la causa real, y los dos guiones que la habrían evitado."
+date: 2026-11-01
+author: mario-ayala
+locale: es
+category: Desarrollo de Software
+subject: web-development
+tags: ["Depuración", "Linux", "Node.js", "Gestión de Procesos", "Postmortem", "Ubuntu"]
+featured: false
+draft: true
+translationSlug: the-day-kill-logged-me-out
+---
+
+El 11 de septiembre a las 17:20:28 mi sesión de escritorio desapareció. Todas las aplicaciones se fueron con ella: el editor de código, los navegadores, las sesiones de agentes de IA que tenía corriendo, un agente de escritorio remoto y un escaneo de accesibilidad que iba por la mitad. Parecía, en todo sentido, que la máquina se había reiniciado.
+
+No se había reiniciado. Y lo que tumbó todo fue una sola línea en el paso de limpieza de una prueba que acababa de pasar.
+
+Este es el postmortem: cómo se veía, qué era en realidad, cómo distinguí una cosa de la otra y qué cambié para que no vuelva a pasar de la misma manera.
+
+## Parecía un reinicio. No lo era.
+
+La primera pregunta era la obvia: ¿se reinició la máquina? No. El kernel siguió arriba y el contador de uptime nunca se detuvo. Lo que fuera que pasó, pasó en el espacio de usuario.
+
+El journal del sistema dijo qué había sido. A las 17:20:28.739 el administrador de la sesión de escritorio registró que salía porque había **recibido SIGTERM**. Luego la instancia de systemd de mi usuario arrancó su objetivo de salida y cerró todo lo que colgaba de ella. Nada se había caído. Alguien le había pedido a mi sesión, con educación y con autoridad, que terminara.
+
+Esa distinción cambió toda la investigación. "Se me reinició la computadora" te manda a mirar el hardware, los drivers y el kernel. "Mi sesión recibió SIGTERM" te manda a buscar quién lo envió.
+
+## Los sospechosos de siempre
+
+Antes de culpar a nada en particular, revisé el journal buscando las causas que normalmente terminan una sesión de escritorio. Todas quedaron descartadas de la misma forma: el evento que las habría probado no estaba.
+
+1. **El OOM killer, que mata procesos cuando se acaba la memoria.** Ningún evento de OOM.
+2. **El driver de gráficos o la GPU.** Ningún error de GPU.
+3. **El gestor de inicio de sesión cerrando la sesión.** Ningún evento de logind.
+4. **El PID 1, el propio sistema de init.** Ningún evento suyo.
+
+Descartados esos, la pregunta pasó a ser: ¿qué estaba corriendo a las 17:20 que envía señales?
+
+La respuesta fue un script de prueba end-to-end en vivo para una funcionalidad de Protocol Manager. Había arrancado un proceso vigilante en segundo plano, había corrido sus verificaciones (15 de 15 pasaron) y luego, en su limpieza, intentó detener el vigilante junto con todos sus hijos. Su salida se detuvo justo antes de la línea donde iba a imprimir el resultado. La limpieza fue lo último que hizo.
+
+## La causa: un solo dígito
+
+Para detener un proceso y todo lo que arrancó, se le envía una señal a su grupo de procesos. En el comando `kill`, y en la llamada al sistema `kill(2)` que está debajo, un PID negativo significa "el grupo de procesos con este ID". La limpieza lo hacía desde Node ejecutando el binario `kill` del sistema:
+
+```js
+// What NOT to do: this is the line that ended the session
+execFileSync("kill", ["-TERM", `-${pgid}`]);
+```
+
+Con un ID de grupo 1602530, eso ejecuta `/usr/bin/kill -TERM -1602530`. Uno esperaría que el kernel recibiera `kill(-1602530, SIGTERM)`.
+
+En esta máquina recibió `kill(-1, SIGTERM)`.
+
+El `kill` aquí es el de procps-ng 4.0.4 (paquete de Ubuntu `procps 2:4.0.4-4ubuntu3.3`). Sin un `--` que marque el final de las opciones, leyó `-1602530` como opciones y se quedó solo con el primer dígito. La causa está en el propio código fuente de la herramienta. En procps-ng 4.0.4, [`src/kill.c`](https://gitlab.com/procps-ng/procps/-/raw/v4.0.4/src/kill.c) trata una opción que empieza con un dígito como un PID negativo y lo calcula como `(long)('0' - optopt)`. `optopt` es un solo carácter, así que `-1602530` se convierte en `'0' - '1'`, que es −1.
+
+Y −1 es especial. La página del manual de Linux para `kill(2)` dice que si el PID es igual a −1, la señal se envía a todos los procesos a los que el proceso que llama tiene permiso de enviar señales, excepto al proceso 1 (init). Para un usuario normal, eso es cada proceso que le pertenece: la sesión de escritorio, el systemd del usuario, cada aplicación. Exactamente lo que mostraba el journal.
+
+Un ID de grupo que empiece con cualquier otro dígito es más silencioso, pero no mejor: `-2602530` se convierte en `kill(-2, …)`, una señal a otro grupo de procesos que no tiene nada que ver, o a nada en absoluto.
+
+Lo comprobé rastreando las llamadas al sistema con `strace` dentro de un espacio de nombres de PID aislado, donde una señal a todos solo puede alcanzar a los procesos que viven adentro. El 18 de octubre repetí la misma prueba para este artículo, con la inofensiva `SIGCONT`, y obtuve los mismos resultados:
+
+| Comando | Llamada al sistema que recibió el kernel |
+|---|---|
+| `/usr/bin/kill -CONT -1602530` | `kill(-1, SIGCONT)` |
+| `/usr/bin/kill -CONT -2602530` | `kill(-2, SIGCONT)` |
+| `/usr/bin/kill -CONT -- -1602530` | `kill(-1602530, SIGCONT)` |
+| `kill` integrado de bash, `kill -CONT -- -1602530` | `kill(-1602530, SIGCONT)` |
+| Node `process.kill(-1602530, "SIGCONT")` | `kill(-1602530, SIGCONT)` |
+
+La forma rota es la única que pierde dígitos. Los dos guiones lo arreglan, y no lanzar el binario también.
+
+## La corrección y las barreras
+
+La corrección entró esa misma noche, y es más que esa línea:
+
+- **Enviar la señal directamente desde Node.** `process.kill(-pgid, signal)` hace la llamada al sistema con el número que le diste. Sin interpretar argumentos, sin binario externo.
+- **En la shell, usar el `kill` integrado con `--`.** `kill -TERM -- -"$PGID"`. Un hook de shell que detiene el mismo vigilante ya usaba el `kill` integrado de bash, y el rastreo confirmó que era seguro.
+- **Rechazar los valores peligrosos.** El código que detiene el vigilante ahora solo envía señales a un PID mayor que 1, y solo después de comprobar en `/proc` que el proceso es de verdad el vigilante que arrancó.
+- **Una prueba que prohíbe el patrón.** Una prueba de guarda hace fallar la suite si cualquier código fuente, hook o script lanza el binario externo `kill`. Otra prueba pone un `kill` falso primero en el `PATH` y demuestra que nunca se ejecuta.
+- **Probar las señales a grupos donde no puedan escaparse.** Todo lo que envía señales a un grupo de procesos ahora se prueba dentro de `unshare --user --map-root-user --pid --fork --mount-proc`. Un detalle importó aquí: un sandbox de `bwrap` sin `--unshare-pid` **no** contiene las señales. Un sandbox que esconde tus archivos todavía puede dejar pasar un `kill(-1)`.
+
+Esta es la versión segura de la limpieza, junto a la forma en shell:
+
+```ts
+// Safe: signal the whole process group from Node, no external binary.
+function stopGroup(pgid: number): void {
+  if (!Number.isInteger(pgid) || pgid <= 1) {
+    throw new Error(`refusing to signal process group ${pgid}`);
+  }
+  process.kill(-pgid, "SIGTERM");
+}
+```
+
+```bash
+# Safe: bash builtin, with -- before the negative PID
+kill -TERM -- -"$PGID"
+
+# DANGEROUS, do not use: on procps-ng 4.0.4, without --, a group ID
+# starting with 1 becomes kill(-1, SIGTERM): every process you own
+/usr/bin/kill -TERM -<pgid>
+```
+
+Este es un error conocido, y ya está corregido en el proyecto original. Se reportó a procps-ng como el [issue #354](https://gitlab.com/procps-ng/procps/-/issues/354) en octubre de 2024 y se corrigió con el commit "[kill: Correctly parse negative pids](https://gitlab.com/procps-ng/procps/-/commit/bfbaf43acade8c9de38737e87f4fc535991c8359)", que salió en procps-ng 4.0.5. El paquete de Ubuntu en mi máquina sigue en 4.0.4. Una solicitud para llevar la corrección a Ubuntu 24.04, el [bug #2166756 de Launchpad](https://bugs.launchpad.net/ubuntu/+source/procps/+bug/2166756), se abrió el 8 de septiembre, tres días antes de que se cayera mi sesión, y lista `2:4.0.4-4ubuntu3.3`, mi versión exacta, como afectada. El número de versión del proyecto original no basta para saber si te afecta: el mismo reporte indica que el paquete de Ubuntu 26.04, `2:4.0.4-9ubuntu1`, envía la señal solo al grupo correcto. Pon `--` antes de un PID negativo de todas formas.
+
+## Lo que me llevo
+
+1. **Desconfía del "parecía X".** Parecía un reinicio. El uptime y una línea del journal decían otra cosa, y esa sola corrección convirtió un misterio de hardware en una pregunta con una lista corta de respuestas.
+2. **Descarta con evidencia, no con una corazonada.** Cada sospechoso de siempre habría dejado una huella en el journal, y ninguno la dejó. Anotar qué huella buscaste es lo que hace que "descartado" signifique algo.
+3. **Reproduce donde no te pueda hacer daño.** La forma tentadora de confirmar una teoría sobre `kill(-1)` es volver a ejecutarlo. No lo hagas. Un espacio de nombres de PID cuesta un comando y convierte un error que mata la sesión en una línea de salida de `strace`.
+4. **Escribe el peligro donde lo va a leer el próximo.** La regla ahora vive en los problemas conocidos del proyecto y en las notas de memoria que mis agentes de IA cargan cuando empiezan a trabajar en ese proyecto, con las formas exactas que hay que usar y las que hay que evitar. El próximo script que necesite detener un grupo de procesos, lo escriba quien lo escriba, persona o agente, va a encontrarse con la advertencia antes que con el error.
+
+Igual que el problema de [Pruebas en verde, fallos silenciosos](/blog/pruebas-verdes-fallos-silenciosos-verificacion), este se escondía detrás de una prueba que pasaba: las 15 verificaciones estaban en verde, y el daño vino después. Las verificaciones me dijeron que la funcionalidad funcionaba. Solo el efecto real en la máquina me dijo lo que hacía la prueba misma.
