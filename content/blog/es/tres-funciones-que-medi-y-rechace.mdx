@@ -1,0 +1,91 @@
+---
+title: "Tres funciones que medí y rechacé"
+slug: tres-funciones-que-medi-y-rechace
+description: "Una bandera de línea de comandos, una búsqueda semántica y una herramienta de flujos multiagente: qué prometía cada una, cómo la medí y por qué dije que no."
+date: 2026-10-25
+author: mario-ayala
+locale: es
+category: Ingeniería de IA
+subject: ai-tools
+tags: ["Protocol Manager", "Agentes de IA", "Decisiones de Ingeniería", "Evaluación", "Claude Code", "Simplicidad"]
+featured: false
+draft: true
+translationSlug: three-features-i-measured-and-said-no-to
+---
+
+Casi todo lo que escribo sobre Protocol Manager, el sistema que coordina mis agentes de IA en los proyectos de clientes, trata de cosas que construí. Este artículo trata de tres que no: una bandera de línea de comandos, una capa de búsqueda semántica y una herramienta de flujos multiagente. Una nunca se adoptó, otra se adoptó y después se arrancó de raíz, y la tercera se probó una vez en condiciones controladas y se descartó.
+
+En los tres casos el "no" no fue una corazonada. Salió de una medición, y la medición es la parte que vale la pena dejar por escrito, porque el "sí" siempre era la historia más fácil de contar.
+
+## 1. Una bandera que prometía ahorrar tokens
+
+**Lo que prometía.** En junio, un punto del backlog proponía añadir una bandera de línea de comandos de Claude Code, `--exclude-dynamic-system-prompt-sections`, a la manera en que Protocol Manager lanza sus agentes. El argumento era la eficiencia de tokens: quitar las partes del prompt de sistema que cambian de una sesión a otra, y la caché de prompts se reutiliza más.
+
+**Cómo se midió.** No probándola. El punto formaba parte de un sprint cuya regla era "verificar primero", así que antes de añadir la bandera comprobé tres cosas: qué hace cuando hay un prompt de sistema personalizado, si la documentación confirma que aplica a la manera en que Protocol Manager lanza agentes (con la opción `--agent`), y a quién beneficia la reutilización de caché que habilita.
+
+**La evidencia.** La bandera se ignora cuando hay un prompt de sistema personalizado, que es justo como corren los agentes. La documentación no podía confirmar que aplicara con el patrón `--agent`. Y su único beneficio, reutilizar la caché de prompts entre usuarios y entre máquinas, no tiene con qué trabajar en una flota de un solo usuario en una sola máquina. Además solo existe en la línea de comandos, sin equivalente en el archivo de configuración, así que habría sido una cosa más que recordar en cada lanzamiento.
+
+**La decisión.** Cerrada el 22 de junio como no aplicable, con el razonamiento anotado junto al punto. Adoptarla habría añadido una bandera que muy probablemente no hacía nada, y "muy probablemente nada" no es lo mismo que "inofensiva": cada bandera en un comando de lanzamiento es una afirmación para la próxima persona que lo lea.
+
+**Lo que costó decir que no.** Una hora de lectura. Es el "no" más barato de este artículo, y solo ocurrió porque la regla decía comprobar antes de añadir. Lo normal, con una bandera de nombre convincente, es añadirla y sentirse eficiente.
+
+## 2. Una búsqueda semántica en la que nadie buscó
+
+**Lo que prometía.** Poder preguntar "¿hemos hecho algo parecido antes?" y obtener una respuesta a partir de los documentos de traspaso del proyecto, por significado y no por palabra clave. Durante la primavera la capa creció a la altura de la promesa: un índice vectorial de Pinecone conectado a la política de herramientas MCP en marzo, una capa de recuperación híbrida en mayo que combinaba búsqueda por palabras clave BM25 con embeddings densos y fusión de rangos, una caché semántica para consultas repetidas, y un reranker cross-encoder al día siguiente. Si leíste [Pruebas en verde, fallos silenciosos](/blog/pruebas-verdes-fallos-silenciosos-verificacion), el reranker es aquel cuyos puntajes salían todos en 1.0 hasta que se arregló el bug del softmax.
+
+**Cómo se midió.** El 8 de agosto, antes de decidir nada, busqué evidencia de uso. Se revisaron todas las transcripciones de sesiones de Claude en la máquina en busca de los nombres de las herramientas. Se revisó el historial de la terminal en busca de comandos de Pinecone. Se comprobó la salud del servidor. Se siguió el código de recuperación dentro del repositorio para saber qué devolvía de verdad en producción.
+
+**La evidencia.**
+
+- Los nombres de las herramientas aparecían solo en los listados de herramientas disponibles. Ni una sola invocación en unos cinco meses con el servidor disponible. Tampoco comandos en la terminal.
+- El servidor no lograba reconectarse, con la misma clase de fallo de arranque que otra herramienta había mostrado después de una migración.
+- La herramienta de recuperación híbrida devolvía resultados vacíos en producción. Su proveedor de índice solo se configuraba en las pruebas; en producción el proveedor era nulo, y el proveedor de embeddings densos devolvía vectores de ceros por defecto. La herramienta llevaba tiempo devolviéndole nada a todo el mundo, en silencio.
+- El corpus eran 77 archivos de traspaso, unos 800 KB en total. A ese tamaño, la búsqueda simple por palabras clave tiene una cobertura práctica casi perfecta, y el vocabulario de los traspasos es consistente (identificadores de tickets, nombres de proyectos, términos técnicos estables), así que el problema de desajuste de vocabulario que resuelve la búsqueda semántica apenas se presentaba.
+- La clave de API del servicio estaba en texto plano en un archivo de configuración local y había que revocarla de todas formas.
+
+**La decisión.** La capacidad completa se eliminó ese mismo día, en cinco commits: la superficie de herramientas, la capa de recuperación inactiva, la entrada en el registro de confianza, las entradas de la política de permisos y dos dependencias, que se llevaron 51 paquetes consigo. La suite de pruebas quedó en 2,419 pasando y ninguna fallando. En el backlog quedó escrito un disparador para reconsiderarlo: volver a evaluar la búsqueda semántica cuando el corpus llegue a 500 documentos.
+
+**Lo que costó decir que no.** Este fue caro, porque primero fue un sí. El trabajo de primavera en recuperación, caché y reranking había sido ingeniería de verdad con pruebas de verdad, y parte de él (el arreglo del reranker) había dado para un artículo. Todo se fue. Lo que la medición mostró no era que el código estuviera mal; era que la pregunta que el código respondía no se estaba haciendo. Los 77 archivos ya se podían buscar con `grep`.
+
+La lección que me llevé es de orden. La comprobación de uso debió venir antes de la capa híbrida, no después del reranker. Una capacidad con cero invocaciones en el mes dos no se gana más capacidad en el mes tres.
+
+## 3. Una herramienta de flujos, probada una vez
+
+**Lo que prometía.** La herramienta Workflow de Claude Code puede repartir una tarea entre muchos agentes desde un solo script: tuberías, etapas en paralelo, pasadas de verificación, todo orquestado de forma determinista. Para un sistema cuyo trabajo entero es coordinar agentes, es algo que uno quiere de entrada. Un registro de decisión de arquitectura de junio permitió exactamente una corrida acotada y enumeró los criterios que una adopción en toda la flota tendría que cumplir.
+
+**Cómo se midió.** El piloto corrió el 25 de septiembre. La tarea era mantenimiento en modo solo preparar: dejar listas versiones recortadas de dos archivos de estado para cuatro proyectos administrados, sin aplicar nada. El script lanzó dos agentes de sondeo, cuatro de recorte y cuatro de verificación adversarial en una tubería. El mismo prompt se corrió también con la herramienta Agent de siempre en uno de los cuatro proyectos, el repositorio de este mismo sitio, como control. Una rúbrica de seis comprobaciones puntuó cada resultado, y todo fue a una página de revisión con los archivos de evidencia al lado.
+
+Hicieron falta tres lanzamientos para conseguir una corrida. El primero lo rechazó la guarda del propio script, porque el tope de presupuesto que yo había dado en el mensaje de autorización nunca llegó al objeto de presupuesto que el script podía leer. El segundo rechazó cada lanzamiento de agente, porque la cifra de "gastado" que expone la herramienta cuenta la salida de toda la conversación y no la de la corrida, y la conversación ya había gastado más que el tope. El tercero corrió con un techo que el script hacía cumplir por su cuenta, relativo a su propio inicio: 10 agentes, 0 errores, 475 segundos, 124 llamadas a herramientas, 79,162 tokens de salida de un tope de 300,000.
+
+**La evidencia.** Repaso los criterios que puedo compartir aquí.
+
+- **Hooks y telemetría.** Condicional. Los hooks que corren después de una llamada a herramienta sí se dispararon dentro de los agentes del flujo, y los eventos de inicio y fin de agente quedaron registrados. Los hooks que corren antes de una llamada no se pudieron demostrar: los agentes de sondeo no tenían manera de provocar el caso que lo habría mostrado. Un hallazgo lateral: los agentes movieron líneas con comandos de terminal en vez de la herramienta de edición, así que 124 llamadas a herramientas produjeron un solo registro de edición en el log que vigila las ediciones.
+- **Un tope de presupuesto firme.** Condicional. El tope aguantó, pero era el del script, no el de la herramienta. La forma de directiva que la herramienta documenta no llegó al objeto de presupuesto en la versión que yo corría.
+- **Calidad frente al control.** Falló según la puntuación. En el repositorio de este sitio, la corrida del flujo sacó 4 de 6: inventó dos líneas de encabezado en los archivos de archivo, y el agente verificador de la tubería no lo vio. La corrida de control, con la herramienta Agent de siempre y el prompt idéntico, sacó 6 de 6. De los otros tres proyectos, uno sacó 6 de 6, otro archivó la sección fechada más reciente del proyecto e invirtió el orden del archivo, y otro no se podía recortar bajo las reglas, cosa que el agente reportó correctamente. Una corrida cada uno; la varianza no se midió.
+- **Nivel de confianza.** Condicional. Los agentes del flujo no tenían herramienta para lanzar ni enviar mensajes a otros agentes, lo cual está bien, pero veían el conjunto completo de herramientas del supervisor en vez del conjunto más estrecho de un trabajador, y el mensaje de autorización que yo había escrito se retransmitió al prompt de cada agente como la única voz del usuario, que gana sobre el script. Por diseño, no una fuga, pero significa que el mensaje de chat que lanza una corrida es una instrucción para cada agente dentro de ella.
+
+**La decisión.** No adoptar. El patrón supervisor-a-agente-de-trabajo construido sobre la herramienta Agent de siempre sigue siendo el predeterminado. La herramienta queda disponible para repartos en modo solo preparar iniciados por el operador, y el registro enumera lo que necesitaría un segundo piloto: definiciones de agentes reparadas para poder sondear un agente de nivel trabajador, un mensaje de lanzamiento neutro sin instrucciones, el techo relativo a la corrida, un prompt de verificación que también busque líneas que no estaban en el original, y al menos dos corridas por proyecto antes de comparar con el control. También enumera lo que reabriría la pregunta, como que la herramienta documente un presupuesto por corrida.
+
+**Lo que costó decir que no.** Una corrida de unos ocho minutos, las herramientas para puntuarla (que pueden puntuar un segundo piloto), y el único resultado que pasó, que sí se aplicó: un archivo de estado de un proyecto pasó de 15,245 a 12,958 bytes. Todo lo demás quedó preparado en la carpeta de la corrida. Comparado con adoptar una herramienta cuya calidad quedó por debajo del control en el único proyecto donde se midieron las dos, es barato.
+
+## Lo que las tres tienen en común
+
+La bandera, la capa de búsqueda y la herramienta de flujos tenían promesas distintas y costos distintos, pero el "no" salió del mismo lugar las tres veces: una medición que el "sí" se habría saltado.
+
+- La medición de la bandera fue leer la documentación contra el patrón real de lanzamiento.
+- La medición de la capa de búsqueda fue contar invocaciones en las transcripciones y seguir lo que el código devolvía en producción.
+- La medición de la herramienta de flujos fue una corrida de control con el mismo prompt y una rúbrica aplicada a las dos.
+
+Ninguna fue sofisticada. Lo difícil fue hacerlas antes de la decisión y no después, y dejar el resultado escrito donde la próxima persona, muchas veces yo mismo, lo encontrara antes de proponer lo mismo otra vez. Los puntos del backlog ahora llevan su razonamiento. El registro de arquitectura lleva los criterios, el veredicto y los disparadores que lo reabrirían.
+
+Escribí en [Cada cifra necesita un recibo](/blog/cada-cifra-necesita-un-recibo-verificacion-evidencia) que una cifra que va a un cliente debe llevar su fuente. Una decisión de adoptar una herramienta merece lo mismo: la evidencia adjunta, para que un "no" se pueda revisar cuando la evidencia cambie, y un "sí" se pueda cotejar con lo que prometió.
+
+## Una lista corta para la próxima herramienta
+
+Cuando aparece algo nuevo que una configuración de ingeniería de IA "debería" tener, esto es lo que ahora pregunto antes de añadirlo:
+
+1. **¿Qué hace en mi configuración real?** No en la demostración. La bandera no hacía nada con un prompt de sistema personalizado. Lee las condiciones y comprueba que las tuyas coinciden.
+2. **¿Quién lo usaría, y hay rastro?** Si ya existe una capacidad parecida, cuenta sus invocaciones antes de ampliarla. Cero en el mes dos es una respuesta.
+3. **¿Cómo se ve el control?** Corre la tarea para la que quieres la herramienta sin la herramienta, con las mismas entradas, y puntúa las dos igual. Si no puedes decir cómo la puntuarías, no puedes decir si ayudó.
+4. **¿Qué reabriría la decisión?** Escribe el disparador junto al "no", para que el "no" no se vuelva permanente por inercia.
+5. **¿Cuánto cuesta deshacer el sí?** Saltarse la bandera no costó nada. Quitar la capa de búsqueda costó cinco commits y 51 paquetes. Haz esa pregunta mientras todavía es barata.

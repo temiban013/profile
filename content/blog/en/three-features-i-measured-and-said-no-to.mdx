@@ -1,0 +1,91 @@
+---
+title: "Three Features I Measured and Said No To"
+slug: three-features-i-measured-and-said-no-to
+description: "A CLI flag, a semantic search stack and a multi-agent workflow tool: what each promised, how I measured it, and why the answer was no."
+date: 2026-10-25
+author: mario-ayala
+locale: en
+category: AI Engineering
+subject: ai-tools
+tags: ["Protocol Manager", "AI Agents", "Engineering Decisions", "Evaluation", "Claude Code", "Simplicity"]
+featured: false
+draft: true
+translationSlug: tres-funciones-que-medi-y-rechace
+---
+
+Most of what I write about Protocol Manager, the system that coordinates my AI agents across client projects, is about things I built. This post is about three things I didn't: a command-line flag, a semantic search stack, and a multi-agent workflow tool. One was never adopted, one was adopted and then torn out, and one was tried once under controlled conditions and declined.
+
+In each case the "no" was not a hunch. It came from a measurement, and the measurement is the part worth writing down, because the yes was always the easier story to tell.
+
+## 1. A flag that promised to save tokens
+
+**What it promised.** In June, a backlog item proposed adding a Claude Code command-line flag, `--exclude-dynamic-system-prompt-sections`, to the way Protocol Manager launches its agents. The pitch was token efficiency: strip the parts of the system prompt that change from one session to the next, and the prompt cache gets reused more.
+
+**How it was measured.** Not by trying it. The item was part of a sprint whose rule was "verify first," so before adding the flag, I checked three things: what the flag does when a custom system prompt is set, whether the documentation confirms it applies to the way Protocol Manager spawns agents (through the `--agent` option), and who benefits from the cache reuse it enables.
+
+**The evidence.** The flag is ignored when a custom system prompt is set, which is exactly how the agents run. The documentation could not confirm it applies under the `--agent` spawn pattern at all. And its one benefit, prompt-cache reuse across users and across machines, has nothing to work with on a fleet with one user on one machine. It is also CLI-only, with no settings-file equivalent, so it would have been one more thing to remember on every launch.
+
+**The decision.** Closed on June 22 as not applicable, with the reasoning logged next to the item. Adopting it would have added a flag that most likely did nothing, and "most likely nothing" is not the same as "harmless": every flag in a launch command is a claim to the next person who reads it.
+
+**What it cost to say no.** An hour of reading. That is the cheapest no in this post, and it only happened because the rule said to check before adding. The default, for a flag with a plausible name, is to add it and feel efficient.
+
+## 2. Semantic search that nobody searched
+
+**What it promised.** The ability to ask "have we done something like this before?" and get an answer from the project's handoff documents by meaning rather than by keyword. Over the spring the stack grew to match the promise: a Pinecone vector index wired into the MCP tool policy in March, a hybrid retrieval layer in May that combined BM25 keyword search with dense embeddings and rank fusion, a semantic cache for repeated queries, and a cross-encoder reranker the day after that. If you read [Green Tests, Silent Failures](/blog/green-tests-silent-failures-runtime-verification), the reranker is the one whose scores all came out as 1.0 until the softmax bug was fixed.
+
+**How it was measured.** On August 8, before deciding anything, I looked for evidence of use. Every Claude session transcript on the machine was searched for the tool names. The shell history was searched for Pinecone commands. The server was checked for health. The in-repo retrieval code was traced to find out what it actually returned in production.
+
+**The evidence.**
+
+- The tool names appeared only in tool-availability listings. Not one invocation, in about five months of the server being available. No shell commands either.
+- The server was failing to reconnect, with the same class of launch failure another tool had shown after a migration.
+- The hybrid retrieval tool returned empty results in production. Its index provider was set only in tests; the production provider was null, and the dense-embedding provider defaulted to zero vectors. The tool had been returning nothing to everyone, silently.
+- The corpus was 77 handoff files, about 800 KB in total. At that size, plain keyword search has close to perfect practical recall, and handoff vocabulary is consistent (ticket ids, project names, stable technical terms), so the vocabulary-mismatch problem that semantic search solves barely arose.
+- The service's API key was sitting in plaintext in a local config file and needed revoking regardless.
+
+**The decision.** The whole capability was removed the same day, in five commits: the tool surface, the dormant retrieval stack, the trust-registry entry, the permission-policy entries, and two dependencies, which took 51 packages with them. The test suite went to 2,419 passing with nothing failing. A revisit trigger was written into the backlog: reconsider semantic search when the corpus reaches 500 documents.
+
+**What it cost to say no.** This one was expensive, because it was a yes first. The spring work on retrieval, caching and reranking had been real engineering with real tests, and some of it (the reranker fix) had been worth a blog post. All of it went. What the measurement showed was not that the code was bad; it was that the question the code answered was not being asked. The 77 files were already searchable with `grep`.
+
+The lesson I took is about order. The usage check should have come before the hybrid layer, not after the reranker. A capability with zero invocations in month two does not earn more capability in month three.
+
+## 3. A workflow tool, tried once
+
+**What it promised.** Claude Code's Workflow tool can fan a task out across many agents from one script: pipelines, parallel stages, verification passes, all orchestrated deterministically. For a system whose whole job is coordinating agents, that is an obvious thing to want. An architecture decision record from June allowed exactly one bounded run and listed the criteria a fleet-wide adoption would have to meet.
+
+**How it was measured.** The pilot ran on September 25. The task was prepare-only housekeeping: stage trimmed versions of two status files for four managed projects, without applying anything. The script spawned two probe agents, four trim agents and four adversarial verify agents in a pipeline. The same prompt was also run through the ordinary Agent tool on one of the four projects, this site's own repository, as a control. A six-check rubric scored every output, and the result went into a review page with the evidence files beside it.
+
+It took three launches to get one run. The first was refused by the script's own guard, because the budget ceiling I had given in the opt-in message never reached the budget object the script could read. The second was refused on every spawn, because the "spent" figure the tool exposes counts the whole conversation's output, not the run's, and the conversation had already spent more than the cap. The third ran with a ceiling the script enforced itself, relative to its own start: 10 agents, 0 errors, 475 seconds, 124 tool calls, 79,162 output tokens of a 300,000 cap.
+
+**The evidence.** I'll go through the criteria I can share here.
+
+- **Hooks and telemetry.** Conditional. The hooks that run after a tool call did fire inside workflow agents, and the agent start and stop events were logged. The hooks that run before a tool call could not be proven to fire: the probe agents had no way to trigger the case that would have shown it. One side finding: the agents moved lines with shell commands rather than the edit tool, so 124 tool calls produced one edit record in the log that watches edits.
+- **A hard budget cap.** Conditional. The cap held, but it was the script's cap, not the tool's. The directive form the tool documents did not reach the budget object in the version I was running.
+- **Quality against the control.** Failed as scored. On this site's repository, the workflow run scored 4 of 6: it invented two header lines in the archive files, and the verify agent in the pipeline missed it. The control run, through the ordinary Agent tool with the identical prompt, scored 6 of 6. Of the other three projects, one scored 6 of 6, one archived the project's newest dated section and reversed the archive order, and one could not be trimmed under the rules at all, which the agent correctly reported. One run each; variance was not measured.
+- **Trust tier.** Conditional. Workflow agents had no tool to spawn or message other agents, which is good, but they saw the supervisor's full tool set rather than the narrower worker set, and the opt-in message I had typed was relayed into every agent's prompt as the one user voice that wins over the script. By design, not a leak, but it means the chat message that launches a run is an instruction to every agent in it.
+
+**The decision.** Do not adopt. The supervisor-to-workagent pattern built on the plain Agent tool stays the default. The tool remains available for operator-started, prepare-only fan-outs, and the record lists what a second pilot would need: repaired agent definitions so a worker-tier agent can be probed, a neutral launch message with no instructions in it, the run-relative ceiling, a verify prompt that also checks for lines that were not in the original, and at least two runs per project before comparing with the control. It also lists what would reopen the question, such as the tool documenting a per-run budget.
+
+**What it cost to say no.** One run of about eight minutes, the tooling to score it (which can score a second pilot), and the one output that passed, which was applied: a status file in one project went from 15,245 to 12,958 bytes. Everything else was staged and left in the run folder. Compared with adopting a tool whose quality came in below the control on the one project where both were measured, that is cheap.
+
+## What the three have in common
+
+The flag, the search stack and the workflow tool had different promises and different costs, but the no came from the same place each time: a measurement that the yes would have skipped.
+
+- The flag's measurement was reading the documentation against the actual launch pattern.
+- The search stack's measurement was counting invocations in the transcripts, and tracing what the production code returned.
+- The workflow tool's measurement was a control run with the same prompt and a rubric applied to both.
+
+None of these were sophisticated. The hard part was doing them before the decision instead of after, and writing the result down where the next person, often me, would find it before proposing the same thing again. The backlog items now carry their reasoning. The architecture record carries the criteria, the verdict, and the triggers that would reopen it.
+
+I wrote in [Every Number Needs a Receipt](/blog/every-number-needs-a-receipt-evidence-gate) that a figure headed for a client should carry its source. A decision to adopt a tool deserves the same: the evidence attached, so that a no can be revisited when the evidence changes, and a yes can be checked against what it promised.
+
+## A short checklist for the next tool
+
+When something new shows up that an AI-engineering setup "should" have, this is what I now ask before adding it:
+
+1. **What does it do in my actual configuration?** Not in the demo. The flag was a no-op under a custom system prompt. Read the conditions, then check that yours match.
+2. **Who would use it, and is there a trace?** If a similar capability already exists, count its invocations before extending it. Zero in month two is an answer.
+3. **What does the control look like?** Run the task you want the tool for without the tool, with the same inputs, and score both the same way. If you can't say how you'd score it, you can't say whether it helped.
+4. **What would reopen the decision?** Write the trigger down with the no, so the no doesn't become permanent by inertia.
+5. **What does the yes cost to undo?** The flag cost nothing to skip. The search stack cost five commits and 51 packages to remove. Ask that question while it's still cheap.
