@@ -3,6 +3,7 @@ title: "When Your AI Provider Gets Blacklisted — The Anthropic-Pentagon Stando
 slug: ai-provider-blacklisted-anthropic-pentagon-developers
 description: "Anthropic became the first US company designated a Pentagon 'supply chain risk.' As a developer running 7 projects on Claude, here's what the standoff means for vendor risk, platform diversification, and the future of AI-dependent workflows."
 date: 2026-03-15
+updated: 2026-10-18
 author: mario-ayala
 locale: en
 category: AI Engineering
@@ -11,6 +12,28 @@ tags: ["AI", "Vendor Risk", "Anthropic", "Claude", "Platform Diversification", "
 featured: true
 draft: false
 translationSlug: proveedor-ia-lista-negra-anthropic-pentagono-desarrolladores
+---
+
+## Update, October 18, 2026
+
+*The original post from March 15 follows below this section, unchanged. This update covers court rulings and filings since then, taken from the court records.*
+
+**Two designations, two courts.** The Pentagon's action rested on two separate designations, both dated March 3. One was made under 10 U.S.C. § 3252. The other was made under the Federal Acquisition Supply Chain Security Act of 2018 (41 U.S.C. § 4713), and that statute sends challenges directly to the U.S. Court of Appeals for the D.C. Circuit. The March 9 entry in the timeline below mentions only the California lawsuit. On the same day, Anthropic also filed a petition for review in the D.C. Circuit (No. 26-1049).
+
+**August 27: Northern District of California.** Judge Rita F. Lin granted summary judgment to Anthropic on its First Amendment and due process claims (No. 3:26-cv-01996-RFL). The court declared that the challenged actions were unlawful retaliation for protected expression: the presidential directive, the Secretary's directive and the § 3252 designation. It permanently enjoined the government from implementing them and directed the government to rescind the guidance and directives issued to carry them out. It also vacated the § 3252 designation. Some defendants were excluded from parts of the relief. The order states that it does not require the Department to use Anthropic's products or services.
+
+**September 25: D.C. Circuit.** A three-judge panel denied Anthropic's petitions for review of the § 4713 determination, 2–1. Judge Katsas wrote for the court and Judge Rao joined; Judge Karen LeCraft Henderson dissented. The majority upheld the Department's conclusion that continued integration of Claude into its information systems, "by the Department or its contractors," presented a national-security risk covered by the statute. It found no due process or First Amendment violation. The opinion addresses the California ruling directly and explains that § 3252 defines "supply chain risk" more narrowly than § 4713. The § 4713 exclusion therefore remains in effect.
+
+**October 13: rehearing petition.** Anthropic petitioned for panel rehearing or rehearing en banc. On October 15, the court directed the government to respond by October 30. As of this update, the court has not ruled on the petition.
+
+**A separate availability event.** On June 12, 2026, after receiving a U.S. government export control directive, Anthropic suspended access to Claude Fable 5 and Claude Mythos 5 for all customers. Anthropic said the controls had been lifted and restored Claude Fable 5 on July 1; Claude Mythos 5 returned for a limited set of U.S. organizations.
+
+**What this means for developers now.** The framing below still applies, with more detail:
+
+- If you work for the Department or one of its contractors, the D.C. Circuit ruling governs whether Claude can be part of that work. The pending rehearing petition means that answer can still change.
+- The two courts reached different results on different designations under different statutes. A single headline does not tell you where a dependency stands. Check which designation applies to your contract.
+- The June suspension makes the same point from another direction: a government directive can take a specific model offline regardless of the code you wrote. The response in "What I'm Doing About It" holds. Treat the provider as a configurable dependency, and test the fallback path before you need it.
+
 ---
 
 I woke up on February 27, 2026 to find that my primary AI development tool had been designated a national security threat by the United States Department of Defense.

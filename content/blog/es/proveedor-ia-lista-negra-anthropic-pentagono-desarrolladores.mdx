@@ -3,6 +3,7 @@ title: "Cuando Tu Proveedor de IA Entra en Lista Negra — Anthropic, el Pentág
 slug: proveedor-ia-lista-negra-anthropic-pentagono-desarrolladores
 description: "Anthropic fue la primera empresa de EE.UU. designada 'riesgo en la cadena de suministro' por el Pentágono. Gestiono 7 proyectos con Claude — esto es lo que significa para riesgo de proveedores, diversificación y flujos de trabajo con IA."
 date: 2026-03-15
+updated: 2026-10-18
 author: mario-ayala
 locale: es
 category: Ingeniería de IA
@@ -11,6 +12,28 @@ tags: ["IA", "Riesgo de Proveedores", "Anthropic", "Claude", "Diversificación d
 featured: true
 draft: false
 translationSlug: ai-provider-blacklisted-anthropic-pentagon-developers
+---
+
+## Actualización, 18 de octubre de 2026
+
+*El artículo original del 15 de marzo sigue a continuación, sin cambios. Esta actualización recoge las decisiones judiciales y los escritos presentados desde entonces, según los expedientes de los tribunales.*
+
+**Dos designaciones, dos tribunales.** La medida del Pentágono se apoyó en dos designaciones distintas, ambas con fecha del 3 de marzo. Una se hizo bajo el título 10 del Código de EE. UU., § 3252. La otra se hizo bajo la Ley de Seguridad de la Cadena de Suministro de Adquisiciones Federales de 2018 (41 U.S.C. § 4713), que envía las impugnaciones directamente al Tribunal de Apelaciones del Circuito de D.C. La entrada del 9 de marzo en la línea de tiempo de más abajo menciona solo la demanda en California. Ese mismo día, Anthropic también presentó una petición de revisión ante el Circuito de D.C. (núm. 26-1049).
+
+**27 de agosto: Distrito Norte de California.** La jueza Rita F. Lin dictó sentencia sumaria a favor de Anthropic en sus reclamaciones basadas en la Primera Enmienda y en el debido proceso (núm. 3:26-cv-01996-RFL). El tribunal declaró que las acciones impugnadas constituían represalias ilícitas por expresión protegida: la directiva presidencial, la directiva del secretario y la designación bajo el § 3252. Prohibió de forma permanente al gobierno aplicarlas y le ordenó revocar las instrucciones y directivas emitidas para ejecutarlas. También anuló la designación bajo el § 3252. Algunos demandados quedaron excluidos de parte de ese remedio. La orden aclara que no obliga al Departamento a usar los productos o servicios de Anthropic.
+
+**25 de septiembre: Circuito de D.C.** Un panel de tres jueces rechazó, por 2 votos a 1, las peticiones de revisión de Anthropic contra la determinación bajo el § 4713. El juez Katsas redactó la opinión del tribunal, con la adhesión del juez Rao; la jueza Karen LeCraft Henderson disintió. La mayoría confirmó la conclusión del Departamento: la integración continuada de Claude en sus sistemas de información, "por el Departamento o sus contratistas", suponía un riesgo de seguridad nacional cubierto por la ley. No encontró violación del debido proceso ni de la Primera Enmienda. La opinión trata directamente la decisión de California y explica que el § 3252 define "riesgo en la cadena de suministro" de forma más estrecha que el § 4713. Por lo tanto, la exclusión bajo el § 4713 sigue vigente.
+
+**13 de octubre: petición de nueva audiencia.** Anthropic solicitó una nueva audiencia ante el mismo panel o ante el pleno del tribunal (en banc). El 15 de octubre, el tribunal ordenó al gobierno responder a más tardar el 30 de octubre. A la fecha de esta actualización, el tribunal no se ha pronunciado sobre la petición.
+
+**Un episodio de disponibilidad aparte.** El 12 de junio de 2026, tras recibir una directiva de control de exportaciones del gobierno de EE. UU., Anthropic suspendió el acceso a Claude Fable 5 y Claude Mythos 5 para todos sus clientes. Anthropic indicó que los controles se habían levantado y restableció Claude Fable 5 el 1 de julio; Claude Mythos 5 volvió para un grupo limitado de organizaciones estadounidenses.
+
+**Lo que esto significa hoy para los desarrolladores.** El planteamiento de más abajo sigue vigente, ahora con más detalle:
+
+- Si trabajas para el Departamento o para uno de sus contratistas, la decisión del Circuito de D.C. es la que determina si Claude puede formar parte de ese trabajo. Como la petición de nueva audiencia sigue pendiente, esa respuesta todavía puede cambiar.
+- Los dos tribunales llegaron a resultados distintos sobre designaciones distintas, bajo leyes distintas. Un solo titular no te dice en qué situación está una dependencia. Revisa qué designación aplica a tu contrato.
+- La suspensión de junio confirma lo mismo desde otro ángulo: una directiva del gobierno puede dejar fuera de servicio un modelo concreto, sin importar el código que hayas escrito. La respuesta de "Lo Que Estoy Haciendo Al Respecto" se mantiene. Trata al proveedor como una dependencia configurable y prueba la ruta alternativa antes de necesitarla.
+
 ---
 
 Me desperté el 27 de febrero de 2026 y descubrí que mi herramienta principal de desarrollo con IA había sido designada como una amenaza a la seguridad nacional por el Departamento de Defensa de los Estados Unidos.
