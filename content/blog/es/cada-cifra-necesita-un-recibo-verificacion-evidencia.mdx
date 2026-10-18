@@ -1,0 +1,133 @@
+---
+title: "Cada cifra necesita un recibo: una verificación de evidencia para lo que la IA le escribe al cliente"
+slug: cada-cifra-necesita-un-recibo-verificacion-evidencia
+description: "Tres cifras equivocadas pasaron una autorrevisión y una llegó a un borrador para el cliente. Qué las detectó y la verificación que construí para darles recibo."
+date: 2026-10-18
+author: mario-ayala
+locale: es
+category: Ingeniería de IA
+subject: ai-tools
+tags: ["Protocol Manager", "Agentes de IA", "Verificación", "Alucinaciones", "Comunicación con Clientes", "Control de Calidad"]
+featured: false
+draft: false
+translationSlug: every-number-needs-a-receipt-evidence-gate
+---
+
+El 16 de septiembre, un borrador de correo para un cliente decía que su catálogo de productos tenía 210 artículos en la edición que estábamos analizando. La cifra verificada era 207.
+
+Nadie escribió 210 por descuido. Un agente de IA que trabajaba en el proyecto había abierto la hoja de cálculo del cliente, había contado, había puesto el número en un documento de planificación, y de ahí el número viajó hasta el borrador. Se leía como un hecho. Tenía la seguridad de un hecho. Estaba equivocado por tres, y había pasado todos los controles que yo tenía en ese momento, incluida la revisión que el propio agente hizo de su trabajo.
+
+Este artículo trata de esa cifra y de otras dos de la misma tarde, de por qué las formas habituales de atraparlas no funcionan, y del mecanismo que construí en los días siguientes para que cada cifra que va camino a un cliente lleve su recibo.
+
+## Tres cifras equivocadas, tres maneras de equivocarse
+
+El proyecto gira alrededor del catálogo de productos de un cliente y de una edición impresa de ese catálogo. Un agente en el rol de Arquitecto analizó directamente la hoja de cálculo del cliente y publicó tres afirmaciones en los archivos de planificación del proyecto. Las tres estaban mal, y cada una estaba mal de una manera distinta:
+
+| Lo que escribió el agente | Lo que era cierto | Clase de error |
+|---|---|---|
+| 210 productos en la edición | 207 | Un conteo con un criterio ambiguo: contó las celdas no vacías de dos columnas en vez de la columna clave |
+| Las imágenes vienen de un sistema, no del otro | El primer sistema guarda enlaces al segundo; los dos estaban involucrados | Un contraste interpretativo que ninguna salida de comando respaldaba |
+| Los números de página de un documento coinciden con el PDF impreso | Nunca se verificó; no existe un desfase consistente | Una suposición presentada como hecho |
+
+El primer error es el que casi todo el mundo espera de una máquina: un error de conteo. Los otros dos son más interesantes, porque ningún conteo los habría corregido. El segundo es una inferencia vestida de observación. El tercero es una afirmación que nunca se comprobó, escrita en el mismo tono que las que sí.
+
+Las tres sobrevivieron a una autorrevisión. Dos se detectaron solo cuando pedí una comprobación independiente, y para entonces el 210 ya había llegado a un borrador de correo para el cliente. El registro no dice más que eso: llegó a un borrador.
+
+## Por qué "que lo revise otro agente" no funciona
+
+Mi primer instinto fue el obvio: añadir un paso de revisión. Que un segundo agente lea el documento y marque lo que esté mal.
+
+El incidente es un buen argumento contra ese instinto. Un revisor que lee una afirmación al lado de la tabla que la respalda está de acuerdo con la afirmación. El 210 estaba junto a un resumen de la hoja de cálculo que decía 210. El trabajo del revisor se convierte en "¿este número coincide con aquel número?", y sí coincide. La revisión comprueba consistencia; no comprueba verdad. Lo mismo pasa con un modelo nuevo leyendo la misma página: el ancla está en la página.
+
+Lo que detectó los errores fue otra cosa: volver a derivar las cifras por un método distinto. Contar la columna clave en vez de las celdas no vacías. Abrir el sistema que supuestamente no tenía las imágenes y mirar. Escoger tres números de página y cotejarlos con el PDF. Cada vez, el segundo método reproducía el número o no lo reproducía, y la discrepancia era el hallazgo.
+
+Eso se convirtió en el principio detrás de todo lo que vino después. Una cifra está verificada cuando un segundo método, ejecutado por alguien que no ha visto el primer resultado, produce la misma cifra. Cualquier cosa menos que eso es una afirmación.
+
+Escribí sobre la misma idea desde el lado de las pruebas en [Pruebas en verde, fallos silenciosos](/blog/pruebas-verdes-fallos-silenciosos-verificacion): una prueba que pasa te dice que el código hizo lo que su autor creía que debía hacer, y la única manera de saber más es mirar el efecto real. Una cifra en un correo al cliente es la versión de ese problema que el cliente ve.
+
+## La verificación
+
+En los dos días siguientes añadí una verificación de evidencia a Protocol Manager, el sistema que coordina mis agentes de IA en los proyectos de clientes. Se integró el 18 de septiembre y tiene tres partes.
+
+**Un registro de cifras.** Cada proyecto mantiene un archivo donde cada número destinado a un cliente tiene una fila: un identificador, el valor y un estado. El estado es `provisional` o `verificada`. Una fila pasa a `verificada` solo después de una comprobación por un segundo método, hecha por otro agente, al que se le indica el método pero no el valor, y al que se le instruye reportar cualquier discrepancia en vez de ajustarse al primer resultado. Un solo lugar canónico por cifra, porque repetir un número en tres documentos significa corregirlo en tres documentos. En el incidente, corregir tres repeticiones requirió un cuarto documento.
+
+**Una bandeja de salida.** El texto que va al cliente, sea un correo, una propuesta o un informe, se escribe en una sola carpeta del proyecto. Todo lo que se escribe ahí es salida al cliente por definición. Un archivo en otro lugar puede marcarse como tal con una bandera en su encabezado.
+
+**Un verificador, en tres lugares.** La misma función corre en cada punto donde se puede escribir texto para el cliente: en la respuesta de la herramienta de escritura de archivos que usa la versión web de Claude, en un hook que se dispara después de una escritura nativa en Claude Code, y en la comprobación de cumplimiento del proyecto. Extrae las cifras del texto saliente, busca cada una en el registro y reporta cada cifra que no tiene una fila `verificada`, con el número de línea y el motivo: `provisional` si existe una fila pero todavía no está verificada, `not_in_ledger` si no hay fila.
+
+El verificador es pequeño a propósito. No sabe qué es un producto ni qué pidió el cliente. Sabe que un número apareció en un texto que va camino a un cliente, y si ese número tiene recibo.
+
+Este es el núcleo de la comparación, recortado del código real. Los nombres de los campos del registro están en español porque los proyectos a los que sirve lo están:
+
+```ts
+// Trimmed from the checker. The ledger's field names are Spanish, as in the project.
+type LedgerStatus = "provisional" | "verificada";
+
+interface LedgerRow {
+  id: string;
+  valor: string;
+  estado: LedgerStatus;
+  /** Numbers found in `valor`, normalized ("15 567" becomes "15567"). */
+  numbers: string[];
+}
+
+interface Figure {
+  value: string;
+  line: number;
+}
+
+/** Comparison key: numeric value, so "1495" and "1495.00" are the same figure. */
+function figureKey(value: string): string {
+  const n = Number(value);
+  return Number.isFinite(n) ? String(n) : value;
+}
+
+export function unverifiedFigures(figures: Figure[], rows: LedgerRow[]) {
+  const keysOf = (estado: LedgerStatus) =>
+    new Set(rows.filter((r) => r.estado === estado).flatMap((r) => r.numbers).map(figureKey));
+  const verified = keysOf("verificada");
+  const provisional = keysOf("provisional");
+
+  return figures
+    .filter((f) => !verified.has(figureKey(f.value)))
+    .map((f) => ({
+      ...f,
+      reason: provisional.has(figureKey(f.value)) ? "provisional" : "not_in_ledger",
+    }));
+}
+```
+
+Lo primero que hice con él fue repetir el incidente. El registro de ese proyecto se sembró con tres filas provisionales, incluida la de 207. Corrido contra el borrador original, el verificador marcó el 210 como `not_in_ledger` y el 207 como `provisional`. Las dos marcas son correctas: un número no tiene recibo, y el otro tiene un recibo que nadie ha contrafirmado todavía.
+
+## Solo advierte, a propósito
+
+La verificación no bloquea nada. Cuando encuentra una cifra sin fila verificada, lo dice, nombra la cifra y la línea, y le pide al agente que me avise antes de que el texto se envíe. La cifra también se añade a un registro de eventos del proyecto.
+
+Elegí que solo advirtiera porque todavía no confiaba en el verificador, y la única manera de ganar esa confianza era verlo trabajar sobre texto real. Una verificación que bloquea por un falso positivo se desactiva en una semana, y una verificación desactivada no protege nada. La regla que dejé escrita en ese momento: revisar el registro antes de cualquier decisión de bloquear. Al momento de escribir esto la verificación sigue solo advirtiendo, y cada comprobación, incluidas las limpias, deja una línea en un segundo registro, porque si no, una prueba silenciosa no puede distinguir "corrió y no encontró nada" de "nunca corrió".
+
+El piloto corrió en el proyecto donde ocurrió el incidente y se desplegó el mismo día, el 18 de septiembre, a los demás proyectos con trabajo de clientes.
+
+## La verificación también tenía que acertar con los números
+
+Un verificador que lee números en prosa hace afirmaciones propias, y la primera semana de prueba encontró cuatro equivocadas. El ajuste entró el 19 de septiembre:
+
+- **1,495 y 1,495.00 son la misma cifra.** La primera versión comparaba el texto tal como estaba escrito, así que una fila verificada de 1,495 no cubría un borrador que decía 1,495.00. La comparación ahora usa el valor numérico; la cifra tal como se escribió se conserva para el reporte.
+- **El signo es parte del número.** Antes del arreglo, una cantidad positiva pasaba como verificada contra una fila del registro con la misma cantidad en negativo. El verificador ahora lee un menos inicial, en las formas en que aparece en borradores reales, y deja en paz el guion dentro de una fecha, un número de teléfono o un código de producto.
+- **Un año se escribe sin separador.** 2026 solo es un año y no es una cifra. Los mismos dígitos con separador de miles son una cantidad, y sí lo son.
+- **Una coma decimal se reporta, no se adivina.** Los borradores para clientes usan el formato numérico de Estados Unidos. Una cantidad escrita como 1.495,00 antes se leía mal como 1.495; ahora se reporta como formato ambiguo, con su línea, y se deja sin verificar en vez de verificarse mal.
+
+Antes de que el verificador ajustado reemplazara al anterior, los dos se corrieron sobre 100 cifras reales en 8 archivos del proyecto contra el registro real, y su salida fue idéntica donde debía serlo. Se dejó una brecha conocida: un rango de páginas escrito como "pp. 105 -107" lee el segundo número como negativo y produce una advertencia de más. Ese es el lado correcto para fallar. Al verificador se le permite fallar con ruido; no se le permite fallar en silencio.
+
+Esta es la parte de la historia que subrayaría para cualquiera que construya una comprobación parecida. El mecanismo que cuida tus números es a su vez un programa que maneja números, y va a tener las mismas clases de error que lo que cuida. Trátalo igual: pruébalo contra texto real, quédate con la comparación que se pueda demostrar, y ante la duda, advierte.
+
+## Qué llevarse de esto
+
+Si usas agentes de IA en trabajo que llega a un cliente, esto es lo que el incidente y la verificación me enseñaron:
+
+1. **Separa la cifra de la oración.** Un número en un texto para el cliente debe tener una fuente que puedas señalar, guardada en un solo lugar, con un estado. Si no puedes decir de dónde salió una cifra, no está verificada, por muy segura que suene la oración que la rodea.
+2. **Vuelve a derivar, no revises.** La comprobación que atrapa un número equivocado es una segunda medición por otro método, hecha sin ver el primer resultado. La revisión atrapa inconsistencias; no atrapa un error consistente.
+3. **Pon la verificación donde el texto sale.** El momento útil para comprobar una cifra es cuando está a punto de salir, no cuando se escribió por primera vez. Una sola carpeta para el texto que va al cliente hace que ese momento se pueda encontrar.
+4. **Empieza solo advirtiendo y lee el registro.** Una verificación que bloquea y en la que no confías termina apagada. Una que advierte y lleva registro te enseña qué bloquear, y cuándo.
+5. **Espera que la verificación también se equivoque con los números.** Formatos equivalentes, signos, años y convenciones regionales van a morder. Prueba el verificador contra documentos reales antes de dejar que juzgue nada.
+
+Después del incidente de Vercel en abril escribí, en [Rotar eliminando](/blog/rotar-eliminando-brecha-vercel-funciones-muertas), que el arreglo más rápido para una credencial que nadie usa es eliminarla. El número de aquel borrador de correo era el mismo tipo de objeto: algo que había entrado sin que nadie comprobara que debía estar ahí. La verificación es mi manera de pedir, cada vez, el recibo.

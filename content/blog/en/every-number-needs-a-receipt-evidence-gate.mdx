@@ -1,0 +1,133 @@
+---
+title: "Every Number Needs a Receipt: An Evidence Gate for AI-Written Client Output"
+slug: every-number-needs-a-receipt-evidence-gate
+description: "Three wrong numbers survived a self-review and one reached a client email draft. What caught them, and the warn-only gate I built so every figure has a receipt."
+date: 2026-10-18
+author: mario-ayala
+locale: en
+category: AI Engineering
+subject: ai-tools
+tags: ["Protocol Manager", "AI Agents", "Verification", "Hallucinations", "Client Communication", "Quality Assurance"]
+featured: false
+draft: false
+translationSlug: cada-cifra-necesita-un-recibo-verificacion-evidencia
+---
+
+On September 16, a draft email to a client said their product catalog had 210 items in the edition we were analyzing. The verified count was 207.
+
+Nobody typed 210 by accident. An AI agent working on the engagement had opened the client's spreadsheet, counted, written the number into a planning document, and the number had travelled from there into the draft. It read like a fact. It had the confidence of a fact. It was off by three, and it had passed every check I had in place at the time, including the agent's own review of its work.
+
+This post is about that number and two others from the same afternoon, why the usual ways of catching them don't work, and the mechanism I built in the following days so that every figure bound for a client carries a receipt.
+
+## Three wrong numbers, three ways to be wrong
+
+The engagement involves a client's product catalog and a printed edition of it. An agent in the Architect role analyzed the client's spreadsheet directly and published three claims in the project's planning files. All three were wrong, and each was wrong in a different way:
+
+| What the agent wrote | What was true | Error class |
+|---|---|---|
+| 210 products in the edition | 207 | A count under an ambiguous criterion: it counted non-empty cells in two columns instead of the key column |
+| The images come from one system, not the other | The first system stores links to the second; both were involved | An interpretive contrast that no command output supported |
+| The page numbers in one document match the printed PDF | Never verified; no consistent offset exists | An assumption stated as fact |
+
+The first error is the one most people expect from a machine: a counting mistake. The other two are more interesting, because no counting would have fixed them. The second is an inference dressed as an observation. The third is a claim that was never checked at all, written in the same tone as the ones that were.
+
+All three survived a self-review. Two were caught only when I asked for an independent re-check, and by then the 210 had reached a client-facing email draft. The record doesn't say more than that: it reached a draft.
+
+## Why "have another agent look at it" doesn't work
+
+My first instinct was the obvious one: add a review step. Have a second agent read the document and flag anything wrong.
+
+The incident is a good argument against that instinct. A reviewer reading a claim next to the table that supports it agrees with the claim. The 210 sat beside a spreadsheet summary that said 210. The reviewer's job becomes "does this number match that number," and it does. Review checks consistency; it does not check truth. The same goes for a fresh model reading the same page: the anchor is on the page.
+
+What caught the errors was something else: re-deriving the figures by a different method. Count the key column instead of the non-empty cells. Open the system that supposedly didn't hold the images and look. Pick three page numbers and check them against the PDF. Each time, the second method either reproduced the number or it didn't, and the discrepancy was the finding.
+
+That became the principle behind everything that followed. A figure is verified when a second method, carried out by someone who hasn't seen the first result, produces the same figure. Anything less is a claim.
+
+I wrote about the same idea from the testing side in [Green Tests, Silent Failures](/blog/green-tests-silent-failures-runtime-verification): a passing check tells you the code did what its author believed it should, and the only way to know more is to look at the real effect. A number in a client email is the client-facing version of that problem.
+
+## The gate
+
+Over the next two days I added an evidence gate to Protocol Manager, the system that coordinates my AI agents across client projects. It was merged on September 18 and has three parts.
+
+**A figures ledger.** Each project keeps one file where every number meant for a client has a row: an id, the value, and a status. The status is either `provisional` or `verificada`. A row becomes `verificada` only after a second-method check by a different agent, who is told the method but not the value, and is instructed to report any discrepancy rather than adjust toward the first result. One canonical location per figure, because restating a number in three documents means correcting it in three documents. In the incident, correcting three restatements took a fourth document.
+
+**An outbox.** Client-bound text, whether an email, a proposal or a report, is written to one folder in the project. Anything written there is client output by definition. A file elsewhere can opt in with a frontmatter flag.
+
+**A checker, in three places.** The same function runs wherever client text can be written: in the response of the file-writing tool that the web version of Claude uses, in a hook that fires after a native file write in Claude Code, and in the project's compliance check. It extracts the figures in the outgoing text, looks each one up in the ledger, and reports every figure that has no `verificada` row, with the line number and the reason: `provisional` if a row exists but isn't verified yet, `not_in_ledger` if there is no row at all.
+
+The checker is deliberately small. It doesn't know what a product is or what the client asked for. It knows that a number appeared in text headed for a client, and whether that number has a receipt.
+
+Here is the core of the comparison, trimmed from the real code. The ledger's field names are Spanish because the projects it serves are:
+
+```ts
+// Trimmed from the checker. The ledger's field names are Spanish, as in the project.
+type LedgerStatus = "provisional" | "verificada";
+
+interface LedgerRow {
+  id: string;
+  valor: string;
+  estado: LedgerStatus;
+  /** Numbers found in `valor`, normalized ("15 567" becomes "15567"). */
+  numbers: string[];
+}
+
+interface Figure {
+  value: string;
+  line: number;
+}
+
+/** Comparison key: numeric value, so "1495" and "1495.00" are the same figure. */
+function figureKey(value: string): string {
+  const n = Number(value);
+  return Number.isFinite(n) ? String(n) : value;
+}
+
+export function unverifiedFigures(figures: Figure[], rows: LedgerRow[]) {
+  const keysOf = (estado: LedgerStatus) =>
+    new Set(rows.filter((r) => r.estado === estado).flatMap((r) => r.numbers).map(figureKey));
+  const verified = keysOf("verificada");
+  const provisional = keysOf("provisional");
+
+  return figures
+    .filter((f) => !verified.has(figureKey(f.value)))
+    .map((f) => ({
+      ...f,
+      reason: provisional.has(figureKey(f.value)) ? "provisional" : "not_in_ledger",
+    }));
+}
+```
+
+The first thing I did with it was replay the incident. The ledger for that engagement was seeded with three provisional rows, including 207. Run against the original draft, the checker flagged 210 as `not_in_ledger` and 207 as `provisional`. Both are right: one number has no receipt at all, and the other has a receipt nobody has countersigned yet.
+
+## Warn-only, on purpose
+
+The gate does not block anything. When it finds a figure without a verified row, it says so, names the figure and the line, and asks the agent to tell me before the text is sent. The figure is also appended to a log in the project.
+
+I chose warn-only because I didn't trust the checker yet, and the only way to earn that trust was to watch it work on real text. A gate that blocks on a false positive gets disabled within a week, and a disabled gate protects nothing. The rule I wrote down at the time: review the log before any decision to block. As of this writing the gate is still warn-only, and every check, including a clean one, leaves one line in a second log, because a quiet trial can't otherwise tell "the check ran and found nothing" from "the check never ran."
+
+The pilot ran on the engagement where the incident happened and was rolled out the same day, September 18, to the other projects with client work.
+
+## The gate had to be right about numbers too
+
+A checker that reads numbers out of prose is making claims of its own, and the first week of the trial found four of them wrong. The tuning went in on September 19:
+
+- **1,495 and 1,495.00 are the same figure.** The first version compared the text as written, so a verified row of 1,495 did not cover a draft that said 1,495.00. The comparison now uses the numeric value; the figure as written is kept for the report.
+- **A sign is part of the number.** Before the fix, a positive amount passed as verified against a ledger row holding the same amount as a negative. The checker now reads a leading minus, in the forms it appears in real drafts, while leaving the hyphen inside a date, a phone number or a product code alone.
+- **A year is written bare.** 2026 on its own is a year and is not a figure. The same digits with a thousands separator are a quantity and are.
+- **A decimal comma is reported, not guessed.** Client drafts use US number format. An amount written as 1.495,00 used to be misread as 1.495; it is now reported as an ambiguous format, with its line, and left unchecked rather than checked wrongly.
+
+Before the tuned checker replaced the old one, both were run over 100 real figures in 8 project files against the real ledger, and their output was identical where it should be. One known gap was left in: a page range written as "pp. 105 -107" reads the second number as negative and produces a spurious warning. That is the right side to fail on. The checker's failures are allowed to be noisy; they are not allowed to be silent.
+
+This is the part of the story I'd underline for anyone building a similar check. The mechanism that guards your numbers is itself a piece of software that handles numbers, and it will have the same classes of error as the thing it guards. Treat it the same way: test it against real text, keep the comparison that can be proven, and when in doubt, warn.
+
+## What to take from this
+
+If you use AI agents on work that reaches a client, here is what the incident and the gate taught me:
+
+1. **Separate the figure from the sentence.** A number in client text should have a source you can point to, kept in one place, with a status. If you can't say where a figure came from, it isn't verified, however confident the sentence around it sounds.
+2. **Re-derive, don't review.** The check that catches a wrong number is a second measurement by a different method, done without seeing the first result. Review catches inconsistency; it doesn't catch a consistent error.
+3. **Put the gate where the text leaves.** The useful moment to check a figure is when it's about to go out, not when it was first written. One folder for client-bound text makes that moment findable.
+4. **Start warn-only and read the log.** A blocking gate you don't trust gets turned off. A warning gate with a log teaches you what to block, and when.
+5. **Expect the gate to be wrong about numbers too.** Equivalent formats, signs, years and locales will all bite. Test the checker against real documents before you let it judge anything.
+
+After Vercel's incident in April I wrote, in [Rotate by Deletion](/blog/rotate-by-deletion-vercel-breach-dead-features), that the fastest fix for a credential nobody uses is to delete it. The number in that email draft was the same kind of object: something that had been let in without anyone checking it was supposed to be there. The gate is my way of asking, every time, for the receipt.
