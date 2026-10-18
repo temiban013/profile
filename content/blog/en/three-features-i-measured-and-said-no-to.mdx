@@ -27,7 +27,7 @@ In each case the "no" was not a hunch. It came from a measurement, and the measu
 
 **The decision.** Closed on June 22 as not applicable, with the reasoning logged next to the item. Adopting it would have added a flag that most likely did nothing, and "most likely nothing" is not the same as "harmless": every flag in a launch command is a claim to the next person who reads it.
 
-**What it cost to say no.** An hour of reading. That is the cheapest no in this post, and it only happened because the rule said to check before adding. The default, for a flag with a plausible name, is to add it and feel efficient.
+**What it cost to say no.** A documentation check before adding a flag. That is the cheapest no in this post, and it only happened because the rule said to check before adding. The default, for a flag with a plausible name, is to add it and feel efficient.
 
 ## 2. Semantic search that nobody searched
 
@@ -57,7 +57,7 @@ The lesson I took is about order. The usage check should have come before the hy
 
 It took three launches to get one run. The first was refused by the script's own guard, because the budget ceiling I had given in the opt-in message never reached the budget object the script could read. The second was refused on every spawn, because the "spent" figure the tool exposes counts the whole conversation's output, not the run's, and the conversation had already spent more than the cap. The third ran with a ceiling the script enforced itself, relative to its own start: 10 agents, 0 errors, 475 seconds, 124 tool calls, 79,162 output tokens of a 300,000 cap.
 
-**The evidence.** I'll go through the criteria I can share here.
+**The evidence.** Here are the results that decided it.
 
 - **Hooks and telemetry.** Conditional. The hooks that run after a tool call did fire inside workflow agents, and the agent start and stop events were logged. The hooks that run before a tool call could not be proven to fire: the probe agents had no way to trigger the case that would have shown it. One side finding: the agents moved lines with shell commands rather than the edit tool, so 124 tool calls produced one edit record in the log that watches edits.
 - **A hard budget cap.** Conditional. The cap held, but it was the script's cap, not the tool's. The directive form the tool documents did not reach the budget object in the version I was running.

@@ -27,7 +27,7 @@ En los tres casos el "no" no fue una corazonada. Salió de una medición, y la m
 
 **La decisión.** Cerrada el 22 de junio como no aplicable, con el razonamiento anotado junto al punto. Adoptarla habría añadido una bandera que muy probablemente no hacía nada, y "muy probablemente nada" no es lo mismo que "inofensiva": cada bandera en un comando de lanzamiento es una afirmación para la próxima persona que lo lea.
 
-**Lo que costó decir que no.** Una hora de lectura. Es el "no" más barato de este artículo, y solo ocurrió porque la regla decía comprobar antes de añadir. Lo normal, con una bandera de nombre convincente, es añadirla y sentirse eficiente.
+**Lo que costó decir que no.** Revisar la documentación antes de añadir una bandera. Es el "no" más barato de este artículo, y solo ocurrió porque la regla decía comprobar antes de añadir. Lo normal, con una bandera de nombre convincente, es añadirla y sentirse eficiente.
 
 ## 2. Una búsqueda semántica en la que nadie buscó
 
@@ -57,7 +57,7 @@ La lección que me llevé es de orden. La comprobación de uso debió venir ante
 
 Hicieron falta tres lanzamientos para conseguir una corrida. El primero lo rechazó la guarda del propio script, porque el tope de presupuesto que yo había dado en el mensaje de autorización nunca llegó al objeto de presupuesto que el script podía leer. El segundo rechazó cada lanzamiento de agente, porque la cifra de "gastado" que expone la herramienta cuenta la salida de toda la conversación y no la de la corrida, y la conversación ya había gastado más que el tope. El tercero corrió con un techo que el script hacía cumplir por su cuenta, relativo a su propio inicio: 10 agentes, 0 errores, 475 segundos, 124 llamadas a herramientas, 79,162 tokens de salida de un tope de 300,000.
 
-**La evidencia.** Repaso los criterios que puedo compartir aquí.
+**La evidencia.** Estos son los resultados que decidieron.
 
 - **Hooks y telemetría.** Condicional. Los hooks que corren después de una llamada a herramienta sí se dispararon dentro de los agentes del flujo, y los eventos de inicio y fin de agente quedaron registrados. Los hooks que corren antes de una llamada no se pudieron demostrar: los agentes de sondeo no tenían manera de provocar el caso que lo habría mostrado. Un hallazgo lateral: los agentes movieron líneas con comandos de terminal en vez de la herramienta de edición, así que 124 llamadas a herramientas produjeron un solo registro de edición en el log que vigila las ediciones.
 - **Un tope de presupuesto firme.** Condicional. El tope aguantó, pero era el del script, no el de la herramienta. La forma de directiva que la herramienta documenta no llegó al objeto de presupuesto en la versión que yo corría.
