@@ -46,6 +46,7 @@ export default function ResumePage() {
       name: "Mario Rafael Ayala",
       jobTitle: "Founder & Full-Stack AI Engineer",
       url: "https://www.nitainodigital.com",
+      image: "https://www.nitainodigital.com/mra-profile.jpg",
       sameAs: [
         "https://www.nitainodigital.com",
         "https://github.com/temiban013",
