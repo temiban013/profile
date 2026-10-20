@@ -31,6 +31,8 @@ export function BlogPostStructuredData({
       "@type": "Person",
       "name": "Mario Rafael Ayala",
       "url": baseUrl,
+      "jobTitle": "Founder & Full-Stack AI Engineer",
+      "image": `${baseUrl}/mra-profile.jpg`,
       "sameAs": [
         "https://github.com/temiban013",
         "https://www.linkedin.com/in/marioayalamscs/",
@@ -105,6 +107,8 @@ export function BlogSectionStructuredData({
       "@type": "Person",
       "name": "Mario Rafael Ayala",
       "url": baseUrl,
+      "jobTitle": "Founder & Full-Stack AI Engineer",
+      "image": `${baseUrl}/mra-profile.jpg`,
     },
     "publisher": {
       "@type": "Organization",
