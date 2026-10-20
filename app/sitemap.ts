@@ -44,10 +44,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.3,
   }));
 
+  // Blog posts, newest first. The blog index's lastModified is the newest
+  // post date so crawlers see a real change signal instead of "now" every build.
+  const allPosts = getAllPosts();
+  const latestPostDate = allPosts.reduce<Date>((latest, post) => {
+    const d = new Date(post.updated ?? post.date);
+    return d > latest ? d : latest;
+  }, new Date(0));
+
   // Blog main page
   const blogMainEntry = {
     url: `${baseUrl}/blog`,
-    lastModified: new Date(),
+    lastModified: latestPostDate,
     changeFrequency: "weekly" as const,
     priority: 0.7,
   };
@@ -62,7 +70,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Individual blog post entries for SEO with hreflang alternates
-  const allPosts = getAllPosts();
   const blogPostEntries = allPosts.map((post) => {
     const translation = getPostTranslation(post);
     const entry: MetadataRoute.Sitemap[number] = {
@@ -76,8 +83,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     if (translation) {
       entry.alternates = {
         languages: {
-          [post.locale === "en" ? "en-US" : "es-ES"]: `${baseUrl}/blog/${post.slug}`,
-          [translation.locale === "en" ? "en-US" : "es-ES"]: `${baseUrl}/blog/${translation.slug}`,
+          [post.locale]: `${baseUrl}/blog/${post.slug}`,
+          [translation.locale]: `${baseUrl}/blog/${translation.slug}`,
+          "x-default": `${baseUrl}/blog/${post.locale === "en" ? post.slug : translation.slug}`,
         },
       };
     }

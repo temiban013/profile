@@ -29,6 +29,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   const translation = getPostTranslation(post);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com";
+  // Nested openGraph/twitter objects replace the root layout's, so the default
+  // share image must be set here or posts ship with no og:image at all.
+  const ogImage = post.image
+    ? { url: `${baseUrl}${post.image}`, alt: post.title }
+    : { url: `${baseUrl}/og-nitaino.png`, width: 1200, height: 630, alt: post.title };
 
   return {
     title: `${post.title} | Blog`,
@@ -43,6 +48,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         ? {
             [post.locale === "en" ? "es" : "en"]: `${baseUrl}/blog/${translation.slug}`,
             [post.locale]: `${baseUrl}/blog/${post.slug}`,
+            "x-default": `${baseUrl}/blog/${post.locale === "en" ? post.slug : translation.slug}`,
           }
         : undefined,
     },
@@ -55,14 +61,15 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       authors: ["Mario Rafael Ayala"],
       tags: post.tags,
       url: `/blog/${post.slug}`,
-      locale: post.locale === "en" ? "en_US" : "es_ES",
-      siteName: "Mario Rafael Ayala - Software Engineer",
+      locale: post.locale === "en" ? "en_US" : "es_PR",
+      siteName: "Nitaíno Digital",
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      creator: "@marioayala",
+      images: [ogImage.url],
     },
     robots: {
       index: true,

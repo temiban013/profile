@@ -24,9 +24,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!subject) return {};
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.nitainodigital.com";
+  const url = `${baseUrl}/blog/subjects/${subject.slug}`;
+
   return {
     title: `${subject.name.en} Articles | Mario Ayala`,
     description: subject.description.en,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${subject.name.en} Articles`,
+      description: subject.description.en,
+      type: "website",
+      url,
+      siteName: "Nitaíno Digital",
+      images: [{ url: `${baseUrl}/og-nitaino.png`, width: 1200, height: 630, alt: subject.name.en }],
+    },
   };
 }
 

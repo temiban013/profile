@@ -35,10 +35,9 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: `${baseUrl}/blog`,
       languages: {
-        'en-US': `${baseUrl}/blog?lang=en`,
-        'es-ES': `${baseUrl}/blog?lang=es`,
         'en': `${baseUrl}/blog?lang=en`,
         'es': `${baseUrl}/blog?lang=es`,
+        'x-default': `${baseUrl}/blog`,
       },
     },
 
@@ -48,11 +47,11 @@ export async function generateMetadata(): Promise<Metadata> {
         "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
       type: "website",
       url: `${baseUrl}/blog`,
-      siteName: 'Mario Rafael Ayala - Full-Stack AI Engineer',
+      siteName: 'Nitaíno Digital',
       locale: 'en_US',
       images: [
         {
-          url: `${baseUrl}/portfolio-preview.png`,
+          url: `${baseUrl}/og-nitaino.png`,
           width: 1200,
           height: 630,
           alt: 'Mario Rafael Ayala Blog - AI & Software Engineering Insights',
@@ -65,8 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Blog | AI & Software Engineering Insights",
       description:
         "Explore software engineering insights, tutorials, and career lessons from 25+ years of professional development experience.",
-      creator: '@marioayala', // Add your Twitter handle if you have one
-      images: [`${baseUrl}/portfolio-preview.png`],
+      images: [`${baseUrl}/og-nitaino.png`],
     },
 
     // Additional SEO enhancements

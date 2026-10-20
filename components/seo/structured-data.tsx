@@ -26,7 +26,7 @@ export function BlogPostStructuredData({
     "@type": "BlogPosting",
     "headline": post.title,
     "description": post.excerpt,
-    "image": post.image || `${baseUrl}/portfolio-preview.png`,
+    "image": post.image ? `${baseUrl}${post.image}` : `${baseUrl}/og-nitaino.png`,
     "author": {
       "@type": "Person",
       "name": "Mario Rafael Ayala",
@@ -53,12 +53,13 @@ export function BlogPostStructuredData({
       "@id": `${baseUrl}/blog/${post.slug}`
     },
     "url": `${baseUrl}/blog/${post.slug}`,
-    "inLanguage": post.language === 'en' ? 'en-US' : 'es-ES',
+    "inLanguage": post.language === 'en' ? 'en-US' : 'es-PR',
     "keywords": post.tags.join(", "),
     "articleSection": post.category,
     "timeRequired": `PT${post.readingTime}M`,
-    "wordCount": Math.round(post.readingTime * 200),
-    "articleBody": post.excerpt,
+    "wordCount": post.content
+      ? post.content.trim().split(/\s+/).length
+      : Math.round(post.readingTime * 200),
   };
 
   // Add translation reference for SEO (Schema.org workTranslation property)
@@ -66,7 +67,7 @@ export function BlogPostStructuredData({
     structuredData["workTranslation"] = {
       "@type": "BlogPosting",
       "url": `${baseUrl}/blog/${translationSlug}`,
-      "inLanguage": post.language === 'en' ? 'es-ES' : 'en-US',
+      "inLanguage": post.language === 'en' ? 'es-PR' : 'en-US',
     };
   }
 
@@ -99,7 +100,7 @@ export function BlogSectionStructuredData({
       ? "Software engineering insights, tutorials, and career lessons from 25+ years of professional development experience."
       : "Perspectivas de ingeniería de software, tutoriales y lecciones profesionales de 25+ años de experiencia en desarrollo.",
     "url": `${baseUrl}/blog`,
-    "inLanguage": language === 'en' ? 'en-US' : 'es-ES',
+    "inLanguage": language === 'en' ? 'en-US' : 'es-PR',
     "author": {
       "@type": "Person",
       "name": "Mario Rafael Ayala",
