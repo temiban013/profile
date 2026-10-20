@@ -16,9 +16,6 @@ const Experience = dynamic(() => import("@/components/experience"), {
 const Projects = dynamic(() => import("@/components/projects"), {
   loading: () => <SectionSkeleton height="h-64" />,
 });
-const Testimonials = dynamic(() => import("@/components/testimonials"), {
-  loading: () => <SectionSkeleton height="h-48" />,
-});
 const Contact = dynamic(() => import("@/components/contact"), {
   loading: () => <SectionSkeleton height="h-48" />,
 });
@@ -28,8 +25,6 @@ function SectionSkeleton({ height = "h-64" }: { height?: string }) {
 }
 
 export default function Home() {
-  // Check if testimonials should be shown
-  const showTestimonials = process.env.NEXT_PUBLIC_SHOW_TESTIMONIALS === 'true';
   // Comprehensive PersonSchema for maximum employer discovery
   const personSchema = {
     "@context": "https://schema.org",
@@ -281,7 +276,6 @@ export default function Home() {
         <Projects />
         <About />
         <Experience />
-        {showTestimonials && <Testimonials />}
         <Contact />
       </div>
     </>
